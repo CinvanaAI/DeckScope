@@ -54,8 +54,13 @@ class SourceRegistry:
     def __init__(self) -> None:
         self.sources: List[Source] = []
         #: IDs that have actually been rendered into a prompt block.
-        #: Empty means no prompt has been built yet, not that none qualify.
         self._admitted: Set[str] = set()
+        #: Whether a prompt block has ever been built. An empty `_admitted` means
+        #: two opposite things without this: "nothing has been asked of a model
+        #: yet, so every source is still a candidate" versus "a prompt was built
+        #: and not one source fit in it, so nothing is citable". Conflating them
+        #: made the second silently behave like the first.
+        self._prompt_built: bool = False
         self._by_url: Dict[str, Source] = {}
 
     # ------------------------------------------------------------ building
@@ -148,6 +153,7 @@ class SourceRegistry:
             "comes from a specific source. Never cite an ID that is not listed here.",
             "",
         ]
+        self._prompt_built = True
         used = sum(len(line) for line in lines)
         omitted = 0
         for s in self.sources:
@@ -198,7 +204,9 @@ class SourceRegistry:
         the unquarantined set stands in.
         """
         alive = [s for s in self.sources if s.status != "quarantined"]
-        if not self._admitted:
+        if not self._prompt_built:
+            # Nothing has been put in front of a model yet, so nothing has been
+            # ruled out. Every surviving source is still a candidate.
             return alive
         return [s for s in alive if s.sid in self._admitted]
 
@@ -213,7 +221,7 @@ class SourceRegistry:
         Reported rather than hidden: if research found evidence the model was
         never shown, the reader should know the analysis did not consider it.
         """
-        if not self._admitted:
+        if not self._prompt_built:
             return []
         return [s for s in self.sources
                 if s.status != "quarantined" and s.sid not in self._admitted]
@@ -240,7 +248,16 @@ class SourceRegistry:
                 "omitted_for_length": len(self.omitted_for_length)}
 
     def to_dict(self) -> Dict[str, Any]:
+        # `admitted` is part of the ledger, not a runtime detail. Dropping it on
+        # serialization silently *widened* what counted as citable: a registry
+        # round-tripped through JSON forgot that some of its sources never fitted
+        # into a prompt, and validation then accepted citations to material no
+        # model had seen. `prompt_built` distinguishes the two states an empty
+        # set would otherwise conflate — no prompt yet, versus a prompt in which
+        # nothing fit — which are opposite trust positions.
         return {"stats": self.stats(),
+                "admitted": sorted(self._admitted),
+                "prompt_built": self._prompt_built,
                 "sources": [s.to_dict() for s in self.sources]}
 
     @classmethod
@@ -251,6 +268,10 @@ class SourceRegistry:
             src = Source(**d)
             reg.sources.append(src)
             reg._by_url[(src.url or f"__title__{src.title}").lower()] = src
+        # Restore the ledger, not just the shelf. Without this a round-trip
+        # forgot which sources a model had actually been shown.
+        reg._admitted = {str(s) for s in ((data or {}).get("admitted") or [])}
+        reg._prompt_built = bool((data or {}).get("prompt_built", False))
         return reg
 
 
@@ -306,6 +327,43 @@ def merge_registries(registries: Dict[str, "SourceRegistry"]
     return merged, remap
 
 
+def merge_into(target: "SourceRegistry", incoming: "SourceRegistry",
+               note: str = "") -> Dict[str, str]:
+    """Fold `incoming`'s sources into `target` and return the ID remapping.
+
+    **The return value is not optional.** Any caller that merges registries must
+    apply this map to whatever model output cited the incoming IDs, because those
+    IDs are about to mean something else.
+
+    This exists because an earlier version of the cold-discovery merge renumbered
+    sources in place and never rewrote the analysis that cited them. The result
+    was silent and severe: a finding about one company displayed a real,
+    openable citation to an unrelated document. Returning the map — rather than
+    mutating and hoping — makes the obligation impossible to miss, and matching
+    on URL means a source both passes found is merged rather than duplicated.
+    """
+    remap: Dict[str, str] = {}
+    for src in incoming.sources:
+        key = (src.url or f"__title__{src.title}").lower()
+        existing = target._by_url.get(key)
+        if existing is not None:
+            remap[src.sid] = existing.sid
+            continue
+        old = src.sid
+        src.sid = f"S{len(target.sources) + 1}"
+        remap[old] = src.sid
+        if note and not src.note:
+            src.note = note
+        target.sources.append(src)
+        target._by_url[key] = src
+        # A source only counts as admitted if it reached a prompt. The incoming
+        # registry knows which of its own did; carry that across under the new
+        # ID rather than losing or inventing it.
+        if old in incoming.admitted_ids:
+            target._admitted.add(src.sid)
+    return remap
+
+
 def rewrite_citations(obj: Any, local_map: Dict[str, str]) -> Any:
     """Rewrite a panelist's local S-IDs to global ones, in place, recursively.
 
@@ -338,9 +396,21 @@ def rewrite_citations(obj: Any, local_map: Dict[str, str]) -> Any:
     return obj
 
 
-def resolve_citations(result: Any) -> SourceRegistry:
-    """Walk a finished AnalysisResult and attribute every citation it contains."""
-    reg = SourceRegistry.from_dict((result.market.get("_meta") or {}).get("registry", {}))
+def resolve_citations(result: Any, registry: Optional[SourceRegistry] = None
+                      ) -> SourceRegistry:
+    """Walk a finished AnalysisResult and attribute every citation it contains.
+
+    `registry` is the live ledger for the run and should always be supplied.
+    Rebuilding from `market._meta.registry` reconstructs a *snapshot* taken when
+    the market agent finished — before cold discovery and the opportunity pass
+    added their sources. Anything those passes found was therefore missing from
+    the final bibliography, and their citations resolved to nothing or, worse, to
+    whatever source happened to occupy that index.
+
+    The fallback remains for callers holding only a serialized result.
+    """
+    reg = registry if registry is not None else SourceRegistry.from_dict(
+        (result.market.get("_meta") or {}).get("registry", {}))
     reg.apply_reliability(result.market)
 
     market = result.market
@@ -372,4 +442,135 @@ def resolve_citations(result: Any) -> SourceRegistry:
         reg.harvest_inline(comp.get("summary", ""), f"{lens}: summary")
         reg.harvest_inline(comp.get("headline", ""), f"{lens}: headline")
 
+    # Everything above names the fields it knows about, which means a new
+    # source-bearing field is invisible to it until somebody remembers to add a
+    # line here. Nobody ever remembers. This sweeps whatever is left — including
+    # the optional passes, which no hand-written branch covered.
+    for section in ("opportunity", "discovery_delta", "cold_market"):
+        payload = getattr(result, section, None)
+        if payload:
+            _attribute_recursively(reg, payload, section)
+
     return reg
+
+
+def _attribute_recursively(reg: SourceRegistry, node: Any, where: str) -> None:
+    """Attribute every `source_ids` list and inline [S#] anywhere beneath `node`."""
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key == "source_ids" and isinstance(value, list):
+                reg.attribute([str(v) for v in value], where)
+            elif isinstance(value, str):
+                reg.harvest_inline(value, where)
+            else:
+                _attribute_recursively(reg, value, where)
+    elif isinstance(node, list):
+        for item in node:
+            _attribute_recursively(reg, item, where)
+
+
+@dataclass
+class CitationAudit:
+    """Every citation in a finished result, checked against the one ledger."""
+
+    #: (where, id) for IDs that name no source at all.
+    dangling: List[Tuple[str, str]] = field(default_factory=list)
+    #: (where, id) for IDs naming a source the security screen removed.
+    quarantined: List[Tuple[str, str]] = field(default_factory=list)
+    #: (where, id) for IDs naming a source no model was ever shown.
+    unadmitted: List[Tuple[str, str]] = field(default_factory=list)
+    checked: int = 0
+
+    @property
+    def ok(self) -> bool:
+        return not (self.dangling or self.quarantined or self.unadmitted)
+
+    def summary(self) -> str:
+        if self.ok:
+            return f"all {self.checked} citation(s) resolve to admitted sources"
+        parts = []
+        if self.dangling:
+            parts.append(f"{len(self.dangling)} to sources that do not exist")
+        if self.quarantined:
+            parts.append(f"{len(self.quarantined)} to quarantined sources")
+        if self.unadmitted:
+            parts.append(f"{len(self.unadmitted)} to sources no model was shown")
+        return f"of {self.checked} citation(s): " + ", ".join(parts)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {"ok": self.ok, "checked": self.checked,
+                "summary": self.summary(),
+                "dangling": [{"where": w, "id": i} for w, i in self.dangling],
+                "quarantined": [{"where": w, "id": i} for w, i in self.quarantined],
+                "unadmitted": [{"where": w, "id": i} for w, i in self.unadmitted]}
+
+
+def audit_citations(result: Any, registry: SourceRegistry,
+                    strip: bool = True) -> CitationAudit:
+    """Check — and optionally strip — every citation in a finished result.
+
+    One pass over the complete artifact, whatever agent or optional feature
+    produced it, enforcing the invariant the product's whole promise rests on:
+
+        every displayed source reference exists, was not quarantined, and was
+        actually shown to the model that cited it.
+
+    Field-by-field validators cannot enforce that. They know the fields somebody
+    remembered to list, so a schema that grows a new `source_ids` slot silently
+    escapes checking — which is exactly what happened to absorbers, absorption
+    precedents, open-source projects and adjacent markets. Walking the finished
+    object instead means a new field is covered the day it is added.
+
+    With `strip`, a citation that fails is removed rather than displayed. A
+    badge pointing at the wrong source is worse than no badge: it converts an
+    unsupported statement into an apparently evidenced one.
+    """
+    audit = CitationAudit()
+    known = {s.sid.upper(): s for s in registry.sources}
+    admitted = registry.admitted_ids
+    prompt_built = registry._prompt_built
+
+    def check(sid: str, where: str) -> bool:
+        audit.checked += 1
+        src = known.get(str(sid).strip().upper())
+        if src is None:
+            audit.dangling.append((where, str(sid)))
+            return False
+        if src.status == "quarantined":
+            audit.quarantined.append((where, str(sid)))
+            return False
+        if prompt_built and src.sid not in admitted:
+            audit.unadmitted.append((where, str(sid)))
+            return False
+        return True
+
+    def walk(node: Any, where: str) -> Any:
+        if isinstance(node, dict):
+            for key, value in list(node.items()):
+                if key == "source_ids" and isinstance(value, list):
+                    kept = [v for v in value if check(v, f"{where}.{key}")]
+                    if strip:
+                        node[key] = kept
+                elif isinstance(value, str):
+                    bad = [f"S{m}" for m in CITE_RX.findall(value)
+                           if not check(f"S{m}", f"{where}.{key}")]
+                    if strip and bad:
+                        # Remove the marker, keep the prose. The sentence may
+                        # still be a reasonable observation; it simply is not
+                        # evidenced, and must stop looking as though it were.
+                        for token in set(bad):
+                            node[key] = re.sub(rf"\[?\b{token}\b\]?", "", node[key])
+                        node[key] = re.sub(r"\s{2,}", " ", node[key]).strip()
+                else:
+                    walk(value, f"{where}.{key}")
+        elif isinstance(node, list):
+            for i, item in enumerate(node):
+                walk(item, where)
+        return node
+
+    for section in ("market", "comparisons", "opportunity", "discovery_delta",
+                    "cold_market"):
+        payload = getattr(result, section, None)
+        if payload:
+            walk(payload, section)
+    return audit

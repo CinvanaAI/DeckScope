@@ -106,7 +106,7 @@ class Handler(BaseHTTPRequestHandler):
         origin = self.headers.get("Origin")
         if not origin:
             return True
-        host, port = self.server.server_address[0], self.server.server_address[1]
+        port = self.server.server_address[1]
         allowed = {f"http://127.0.0.1:{port}", f"http://localhost:{port}"}
         return origin in allowed
 

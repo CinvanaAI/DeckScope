@@ -5,9 +5,9 @@ import html
 from pathlib import Path
 from typing import Any, Dict, List
 
-from .common import (ASSESSMENT_WORD, SEVERITY_WORD, THEMES, as_list,
-                     findings_for, header_block, safe_url, score_color,
-                     theme, txt)
+from .common import (ASSESSMENT_WORD, SEVERITY_WORD, THEMES, alignment_text,
+                     as_list, findings_for, header_block, safe_url,
+                     score_color, theme, txt)
 
 
 def _e(v: Any) -> str:
@@ -362,12 +362,14 @@ a.cite{{background:none;color:var(--ink);border:1px solid var(--line)}}
             items = as_list(align.get(key))
             if items:
                 add(f'<div class="panel"><h3 style="margin-top:0">{_e(title)}</h3><ul>'
-                    + "".join(f"<li>{_e(i)}</li>" for i in items) + "</ul></div>")
+                    + "".join(f"<li>{_e(alignment_text(i))}</li>" for i in items)
+                    + "</ul></div>")
         add("</div>")
 
     risks = comp.get("risks") or []
     if risks:
-        add('<h2 id="risks">Risks</h2>'); add("<div class='tw'><table><tr><th>Risk</th><th>Severity</th>"
+        add('<h2 id="risks">Risks</h2>')
+        add("<div class='tw'><table><tr><th>Risk</th><th>Severity</th>"
             "<th>Likelihood</th><th>Test or mitigation</th></tr>")
         for r in risks:
             sev = (r.get("severity") or "").lower()

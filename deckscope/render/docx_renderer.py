@@ -4,8 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, List
 
-from .common import (ASSESSMENT_WORD, SEVERITY_WORD, as_list, findings_for,
-                     header_block, txt)
+from .common import (ASSESSMENT_WORD, SEVERITY_WORD, alignment_text, as_list,
+                     findings_for, header_block, txt)
 
 
 def _hex(color: str) -> Any:
@@ -86,7 +86,9 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
             doc.add_paragraph(
                 "Present in the market evidence, absent from the deck.")
             for f in found.omissions:
-                doc.add_paragraph(f.text, style="List Bullet")
+                cites = (" ".join(f"[{s}]" for s in f.source_ids) if f.source_ids
+                         else "(no source — asserted without evidence)")
+                doc.add_paragraph(f"{f.text} {cites}", style="List Bullet")
 
         if found.unverified:
             doc.add_heading("What could not be checked", level=1)
@@ -184,7 +186,8 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
                 if items:
                     doc.add_heading(title, level=2)
                     for i in items:
-                        doc.add_paragraph(str(i), style="List Bullet")
+                        doc.add_paragraph(alignment_text(i),
+                                          style="List Bullet")
 
         # Risks
         risks = comp.get("risks") or []

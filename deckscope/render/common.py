@@ -47,6 +47,21 @@ SEVERITY_WORD = {
 }
 
 
+def alignment_text(item: Any) -> str:
+    """One alignment entry as a readable line, whatever shape it arrived in.
+
+    `blind_spots` became objects so an omission can carry the evidence that
+    established it. Every renderer iterating these lists would otherwise print a
+    raw dict at the reader.
+    """
+    if isinstance(item, dict):
+        text = str(item.get("what") or item.get("text") or "").strip()
+        why = str(item.get("why_it_matters") or "").strip()
+        cites = " ".join(f"[{s}]" for s in (item.get("source_ids") or []))
+        return " — ".join(p for p in (text, why) if p) + (f" {cites}" if cites else "")
+    return str(item)
+
+
 def as_list(value: Any) -> List[Any]:
     if value is None:
         return []

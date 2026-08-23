@@ -20,7 +20,8 @@ from .research.registry import get_researcher
 from .security.policy import SecurityPolicy
 from .security.report import ScanReport
 from .security.screening import screen_deck
-from .sources import SourceRegistry, resolve_citations
+from .sources import (SourceRegistry, audit_citations, merge_into,
+                      resolve_citations, rewrite_citations)
 
 
 @dataclass
@@ -167,17 +168,24 @@ class Pipeline:
                 if cold_agent.corpus and cold_agent.corpus.registry.sources:
                     # Fold the cold pass's sources into the one bibliography, so
                     # a finding it contributes is traceable like any other.
-                    market_agent.registry.add_results(
-                        [], backend=cold_agent.corpus.backend)
-                    for src in cold_agent.corpus.registry.sources:
-                        key = (src.url or f"__title__{src.title}").lower()
-                        if key not in market_agent.registry._by_url:
-                            src.sid = f"S{len(market_agent.registry.sources) + 1}"
-                            src.note = (src.note or "") + (
-                                " Found by the deck-blind discovery pass."
-                                if not src.note else "")
-                            market_agent.registry.sources.append(src)
-                            market_agent.registry._by_url[key] = src
+                    #
+                    # The renumbering here MUST be paired with rewriting the
+                    # citations in `cold_market`. The cold pass numbered its own
+                    # sources from S1, and its model output cites those local
+                    # IDs. Renumbering the source without rewriting the citation
+                    # leaves the number pointing at whatever the main registry
+                    # happens to hold at that index — so a claim about Microsoft
+                    # Power Automate ended up citing a market-sizing document,
+                    # and a claim about ServiceNow cited the Microsoft one.
+                    #
+                    # That is the worst failure this product can have: a visible
+                    # source badge under a claim the source never supported.
+                    # Build the map first, apply it to the output, and only then
+                    # is the merge complete.
+                    remap = merge_into(market_agent.registry,
+                                       cold_agent.corpus.registry,
+                                       note="Found by the claim-blind discovery pass.")
+                    rewrite_citations(cold_market, remap)
                 dobj = compare_discovery(market, cold_market)
                 delta = dobj.to_dict()
                 if dobj.anything_found:
@@ -263,8 +271,26 @@ class Pipeline:
                 "deckscope_version": _version(),
             },
         )
-        # ---- Resolve every citation back to the bibliography.
-        result.registry = resolve_citations(result)
+        # ---- Resolve every citation back to the ONE bibliography.
+        #
+        # The live registry, not a snapshot rebuilt from the market agent's
+        # metadata: the optional passes added sources after that snapshot was
+        # taken, and rebuilding from it silently dropped them.
+        result.registry = resolve_citations(result, market_agent.registry)
+
+        # ---- Then check every citation in the finished artifact, once.
+        #
+        # This is the last line of defence for the product's core promise. A
+        # source badge the reader can open is worthless — actively harmful — if
+        # it can resolve to a document that never supported the claim.
+        audit = audit_citations(result, result.registry, strip=True)
+        result.stats["citation_audit"] = audit.to_dict()
+        if not audit.ok:
+            self._log(f"Citation audit: {audit.summary()} — removed from the report")
+            for where, sid in (audit.dangling + audit.quarantined
+                               + audit.unadmitted)[:5]:
+                self._log(f"  ! {sid} at {where}")
+
         result.stats["references"] = result.registry.stats()
         self._log(f"References: {result.registry.stats()['cited']} cited of "
                   f"{result.registry.stats()['total']} consulted")

@@ -166,7 +166,13 @@ class MockProvider(LLMProvider):
         import copy
 
         out = copy.deepcopy(_COMPARE)
-        audit = _claim_audit_for(prompt)
+        # Strictness varies by panelist, so a panel disagrees about ambiguous
+        # evidence rather than about facts.
+        # Seed 2 reads ambiguous evidence leniently; the rest read it strictly.
+        # The default demo model ("mock-1") lands on seed 1, so the showcase
+        # shows the defensible reading rather than the soft one, while a panel
+        # spanning several model names still contains both.
+        audit = _claim_audit_for(prompt, strictness=0 if self.seed == 2 else 1)
         if audit:
             out["claim_audit"] = audit
         if self.seed == 0:
@@ -174,20 +180,22 @@ class MockProvider(LLMProvider):
         delta = -2 if self.seed == 1 else 1
         for row in out["scorecard"]:
             row["score"] = max(1, min(10, int(row["score"]) + delta))
-        # Guard the indexes: a sparse deck can yield fewer claims than the canned
-        # fixture had, and a demo fixture must never crash a real run.
-        audit = out.get("claim_audit") or []
+        # Panelists must differ, but NOT by falsifying an evidence judgement.
+        #
+        # This used to overwrite a claim's assessment with "contradicted" to
+        # manufacture divergence. That is the one thing a fixture must never do:
+        # it replaced a reading derived from the corpus with a fabricated one, so
+        # the flagship demo reported a claim as contradicted when the evidence
+        # said nothing about it. Divergence now comes from scorecard weighting,
+        # confidence and framing — things a panel legitimately disagrees about —
+        # while the claim audit stays whatever the evidence actually supports.
         if self.seed == 1:
             out["verdict"]["call"] = "LEAN NO"
             out["verdict"]["confidence"] = "low"
             out["headline"] = ("Traction is real, but the incumbent bundling risk is "
                                "unaddressed and the market framing is inflated.")
-            if len(audit) > 1:
-                audit[1]["assessment"] = "contradicted"
         else:
             out["verdict"]["confidence"] = "high"
-            if audit:
-                audit[0]["assessment"] = "contradicted"
         return out
 
     def _ballot(self, prompt: str) -> dict:
@@ -487,7 +495,17 @@ _COMPARE = {
         "where_deck_overstates": ["TAM by roughly an order of magnitude",
                                   "Pipeline figure has no stated definition"],
         "where_deck_understates": ["Approval gates map directly to a compliance requirement buyers already have budget for"],
-        "blind_spots": ["Microsoft Power Automate arriving free inside E5",
+        "blind_spots": [
+            {"what": "Microsoft Power Automate arriving free inside E5",
+             "why_it_matters": "The marginal cost of the bundled option is zero "
+                               "for a buyer already paying for E5.",
+             "source_ids": ["S2"]},
+            {"what": "Buyer budgets are substitution, not net-new",
+             "why_it_matters": "A TAM built by counting companies overstates the "
+                               "reachable market when the buyer must first stop "
+                               "paying someone else.",
+             "source_ids": ["S6"]}],
+        "_legacy_blind_spots": ["Microsoft Power Automate arriving free inside E5",
                         "Buyer budgets are substitution, not net-new"]},
     "risks": [
         {"risk": "Incumbent bundling compresses price before scale", "severity": "high",
@@ -949,7 +967,7 @@ def _figure_supported(claim: str, evidence: str) -> bool:
     return False
 
 
-def _claim_audit_for(prompt: str) -> list:
+def _claim_audit_for(prompt: str, strictness: int = 1) -> list:
     """A claim audit over the claims the deck agent actually extracted.
 
     The assessment rule is deliberately crude: a claim whose figures also appear
@@ -965,18 +983,12 @@ def _claim_audit_for(prompt: str) -> list:
     sources = _sources_in_prompt(raw_evidence)
     audit = []
     for i, text in enumerate(claims, 1):
-        numbers = re.findall(r"\d[\d,.]*", text)
-        echoed = any(n in evidence for n in numbers if len(n) > 1)
         hedged = any(w in text.lower() for w in
                      ("believe", "we think", "large and underserved", "only"))
         if hedged:
             assessment, quality = "unverifiable", "none"
-        elif echoed:
-            assessment, quality = "supported", "moderate"
-        elif evidence:
-            assessment, quality = "contradicted", "moderate"
         else:
-            assessment, quality = "unverifiable", "none"
+            assessment, quality = _assess(text, evidence, strictness)
 
         # Cite the source that actually discusses this claim, not always S1.
         # A fixture that cites the same ID for everything makes the citation
@@ -1005,6 +1017,114 @@ def _claim_audit_for(prompt: str) -> list:
             "sources": [matched["url"]] if matched and cited else [],
         })
     return audit
+
+
+#: Phrases that mean the sentence is *disputing* the figure beside it rather
+#: than confirming it. "not the $45-50B figures circulating in vendor reports"
+#: contains "$45-50B", and a rule that merely looks for the number reads a
+#: refutation as an endorsement.
+_REFUTES = ("not the", "rather than", "instead of", "overstate", "below the",
+            "well below", "sometimes claimed", "sometimes quoted",
+            "circulating in", "has not been observed", "no reliable",
+            "does not support")
+
+
+#: A figure with its unit attached. Matching bare digits is what made "18%" — a
+#: monthly growth rate — match inside "$18-24B", a market size, and be judged
+#: against evidence about something else entirely.
+_FIGURE = re.compile(r"(?P<cur>\$)?(?P<lo>\d[\d,]*(?:\.\d+)?)"
+                     r"(?:\s*[–-]\s*(?P<hi>\d[\d,]*(?:\.\d+)?))?"
+                     r"\s*(?P<unit>[BMK]\b|%)?", re.I)
+
+_SCALE = {"B": 1e9, "M": 1e6, "K": 1e3}
+
+
+def _figures(text: str) -> list:
+    """Every figure in `text` as (low, high, unit) in comparable terms."""
+    out = []
+    for m in _FIGURE.finditer(text or ""):
+        unit = (m.group("unit") or "").upper()
+        currency = bool(m.group("cur"))
+        if not unit and not currency:
+            continue          # a bare integer carries no comparable meaning
+        try:
+            lo = float(m.group("lo").replace(",", ""))
+            hi = float(m.group("hi").replace(",", "")) if m.group("hi") else lo
+        except ValueError:
+            continue
+        if unit in _SCALE:
+            lo, hi = lo * _SCALE[unit], hi * _SCALE[unit]
+        kind = "pct" if unit == "%" else "money"
+        out.append((lo, hi, kind))
+    return out
+
+
+def _assess(claim: str, evidence: str, strictness: int = 1) -> tuple:
+    """A crude but *directionally honest* reading of one claim against evidence.
+
+    Three principles, all of which the previous rule broke:
+
+    1. **Compare like with like.** Figures are matched with their units, so a
+       growth rate is never checked against a market size. Bare-substring
+       matching had "18%" hitting inside "$18-24B" and judging four months of
+       monthly growth against a TAM estimate.
+
+    2. **A figure appearing in the evidence is not agreement.** The corpus says
+       "$18-24B, not the $45-50B figures circulating in vendor reports". Finding
+       "$47B" inside that refuted range means the evidence *disputes* it. The old
+       rule read the same sentence as an endorsement, which is how the flagship
+       demo called an inflated TAM "supported".
+
+    3. **Not finding a figure is not contradicting it.** A $6B serviceable slice
+       is simply not addressed by evidence about the whole category. Reporting
+       that as "contradicted" manufactures a finding out of silence — exactly
+       the failure this product exists to prevent, happening in the sample
+       everybody sees first.
+    """
+    if not evidence:
+        return "unverifiable", "none"
+
+    claimed = _figures(claim)
+    if not claimed:
+        return "unverifiable", "none"
+
+    supporting = refuting = False
+    for sentence in re.split(r"(?<=[.;])\s+", evidence):
+        low = sentence.lower()
+        disputes = any(marker in low for marker in _REFUTES)
+        for c_lo, c_hi, c_kind in claimed:
+            for e_lo, e_hi, e_kind in _figures(sentence):
+                if e_kind != c_kind:
+                    continue          # never compare a percentage to a dollar
+                # Overlap, so a point estimate inside a stated range counts.
+                if c_hi >= e_lo and e_hi >= c_lo:
+                    if disputes:
+                        refuting = True
+                    else:
+                        supporting = True
+
+    if refuting and supporting:
+        # Genuinely mixed evidence, and this is where analysts legitimately
+        # differ. A strict reader calls it contradicted; a lenient one calls it
+        # partly supported. Seeding *this* is how panelists disagree honestly —
+        # an earlier fixture manufactured disagreement by overwriting a claim's
+        # assessment outright, which fabricated a finding rather than reflecting
+        # a different reading of the same evidence.
+        return ("contradicted" if strictness >= 1 else "partially-supported",
+                "moderate")
+    if refuting:
+        return "contradicted", "strong"
+    if supporting:
+        # How much agreement is enough to call something *supported* is itself a
+        # judgement, and a second place panelists legitimately differ. A strict
+        # reader wants more than a single corroborating figure before signing
+        # off; a lenient one accepts it. Both are defensible readings of the same
+        # evidence — which is what makes this honest divergence rather than the
+        # manufactured kind.
+        if strictness >= 1 and len(claimed) > 1:
+            return "partially-supported", "moderate"
+        return "supported", "moderate"
+    return "unverifiable", "none"
 
 
 def _sources_in_prompt(evidence: str) -> list:

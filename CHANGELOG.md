@@ -6,6 +6,73 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ## [Unreleased]
 
+### Fixed (fourth audit) — the evidence ledger
+
+This audit found the most serious defect this product can have, and it was real.
+DeckScope's entire promise is that a reader can open the evidence behind any
+statement. **A citation that resolves to the wrong source is worse than no
+citation**: it converts an unsupported claim into an apparently evidenced one,
+invisibly, with a badge the reader can click.
+
+- **Cold discovery renumbered sources without rewriting the citations that named
+  them.** Reproduced exactly: a finding about Microsoft Power Automate cited a
+  market-sizing document, and a finding about ServiceNow cited the Microsoft one.
+  The cold pass numbers its own sources from S1; folding them into the main
+  bibliography shifted every ID while the model output still pointed at the old
+  numbers. Merging now goes through `merge_into()`, which **returns the remap**
+  so a caller cannot renumber without also rewriting — the obligation is in the
+  signature rather than in someone's memory.
+- **The admitted-source ledger was dropped on serialization.** `to_dict` /
+  `from_dict` lost `_admitted`, so a round-tripped registry forgot which sources
+  had ever reached a prompt and silently *widened* what counted as citable.
+  Fixed, along with the state it was conflating: "no prompt built yet" and
+  "a prompt was built and nothing fit" are opposite trust positions and are now
+  distinguishable.
+- **Validation covered only the fields somebody had listed.** Absorbers,
+  absorption precedents, open-source projects and adjacent markets all carry
+  `source_ids` in the schema and none were checked; invented IDs passed clean.
+  There is now one recursive `audit_citations()` over the *finished* result —
+  every `source_ids` field and every inline `[S#]`, whatever agent or optional
+  pass produced it. Anything that does not resolve, was quarantined, or was never
+  shown to a model is **stripped rather than displayed**, and the run records the
+  audit in its own stats.
+- **Final resolution read a stale snapshot.** It rebuilt the registry from the
+  market agent's metadata — captured before the optional passes added their
+  sources — so those sources were missing from the bibliography entirely. It now
+  uses the live ledger.
+- **Omissions had no provenance.** `blind_spots` were bare strings promoted
+  straight to high-severity headline findings: "the deck omits X, and the
+  evidence says X matters", with nothing to open. They are now objects carrying
+  their own sources, and an unsourced omission is no longer promoted to high
+  severity — the most prominent line in the report was the least checkable one.
+
+**The demo contradicted its own corpus, and the cause was worse than it looked.**
+It called the deck's inflated "$47B, 23% CAGR" *supported* by a corpus sentence
+written to refute it, while calling a $6B serviceable slice *contradicted* on
+evidence that never mentioned it. Three separate defects:
+
+- Figures were matched as bare substrings, so `18%` (a growth rate) matched
+  inside `$18-24B` (a market size) and was judged against unrelated evidence.
+  Matching is now unit-aware and range-aware.
+- A figure appearing in the evidence was read as agreement, even inside "not the
+  $45-50B figures circulating in vendor reports".
+- **Not finding a figure was treated as contradicting it** — manufacturing a
+  finding out of silence, which is precisely the failure this product exists to
+  prevent, in the sample everybody sees first.
+
+And underneath all three: the fixture **overwrote a claim's assessment with
+"contradicted"** to make panelists differ. Divergence now comes from how strictly
+a panelist reads genuinely ambiguous evidence, which is a real analytical
+disagreement rather than a fabricated one.
+
+**The evaluation numbers went down as a result, and that is the point.** Panel
+claim accuracy fell from 0.579 to 0.211 and both single-model modes from 0.421 to
+0.368, because some of those fabricated "contradicted" assessments happened to
+match the planted answers. A score that improves when you stop falsifying inputs
+was never a measurement. README and `docs/PANEL.md` carry the corrected table.
+
+Also: `E702` and an unused variable cleared, so lint is green.
+
 ### Added — choose your models, and see which ones actually work
 
 `deckscope providers` lists the catalogue: everything DeckScope knows how to

@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, List
 
-from .common import ASSESSMENT_WORD, as_list, header_block, score_color, theme as get_theme, txt
+from .common import ASSESSMENT_WORD, as_list, header_block, score_color, theme as get_theme, txt, alignment_text
 
 
 def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) -> List[str]:
@@ -176,7 +176,7 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
                     continue
                 bullet(tf, title, size=13, bold=True, color=color, space=4)
                 for i in items[:4]:
-                    bullet(tf, f"·  {i}", size=12.5, space=3, level=1)
+                    bullet(tf, f"·  {alignment_text(i)}", size=12.5, space=3, level=1)
                 bullet(tf, "", size=6, space=6)
 
         # ----------------------------------------------------------- risks

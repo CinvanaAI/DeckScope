@@ -16,9 +16,23 @@ class PanelStubSearch(Researcher):
     name = "panel_stub"
 
     def search(self, query, max_results=8):
-        return [SearchResult("Analyst note", "https://research.example.org/1",
-                             "Serviceable slice $3-5B; category $18-24B.", "2026-03",
-                             query)]
+        # Deliberately *mixed* on one claim, so the panel has something real to
+        # disagree about. An earlier version supplied a single unambiguous
+        # sentence, and the panel only appeared to disagree because the fixture
+        # overwrote a claim's assessment to manufacture divergence. Three
+        # analysts reading one clear sentence and agreeing is correct behaviour;
+        # the way to test disagreement is to give them evidence that genuinely
+        # admits two readings.
+        return [
+            SearchResult("Analyst note", "https://research.example.org/1",
+                         "Serviceable slice $3-5B; category $18-24B.", "2026-03",
+                         query),
+            SearchResult("Contract value benchmarks",
+                         "https://research.example.org/2",
+                         "An ACV of $28,000 is achievable at the top of the "
+                         "range. Gross margins of 78% are not the norm once "
+                         "inference is loaded into COGS.", "2026-04", query),
+        ]
 
 
 register_researcher(PanelStubSearch)
@@ -53,7 +67,18 @@ def test_panel_runs_and_disagrees(tmp_path):
     assert m["panelists"] == 3
     assert m["verdict"]["agreement"] in ("unanimous", "majority", "split")
     assert m["score"]["spread"] > 0, "the stub panel should not be unanimous"
-    assert m["contested_claims"], "at least one claim should be contested"
+    # Deliberately NOT asserting contested claims here.
+    #
+    # This used to require that the panel disagreed about at least one claim,
+    # and the fixture satisfied it by overwriting a claim's assessment with
+    # "contradicted" regardless of the evidence. That is the one thing a fixture
+    # must never do: it fabricates a finding rather than reflecting a reading.
+    #
+    # Three analysts given the same unambiguous sentence and reaching the same
+    # conclusion have agreed, correctly. Disagreement is tested where it belongs
+    # — against genuinely ambiguous evidence — in
+    # test_analysts_differ_only_where_the_evidence_is_genuinely_ambiguous.
+    assert isinstance(m["contested_claims"], list)
 
 
 def test_cross_review_produces_revisions(tmp_path):

@@ -185,7 +185,15 @@ COMPARISON_SCHEMA: Dict[str, Any] = {
     "alignment": {"where_deck_matches_market": ["str"],
                    "where_deck_overstates": ["str"],
                    "where_deck_understates": ["str"],
-                   "blind_spots": ["what the market shows that the deck never mentions"]},
+                   # Objects, not bare strings. A blind spot is promoted straight
+                   # to a headline finding — "the deck omits X, and the evidence
+                   # says X matters" — so it needs the evidence that established
+                   # it. Without `source_ids` the most prominent claim in the
+                   # report was the only one a reader could not check.
+                   "blind_spots": [{
+                       "what": "what the market shows that the deck never mentions",
+                       "why_it_matters": "str",
+                       "source_ids": ["the sources that establish this"]}]},
     "risks": [{"risk": "str", "severity": "high|medium|low", "likelihood": "high|medium|low",
                 "mitigation_or_test": "str"}],
     "questions": ["the sharpest questions this analysis raises"],

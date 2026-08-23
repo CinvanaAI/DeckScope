@@ -288,12 +288,15 @@ On the five shipped evaluation cases, under the built-in mock provider:
 
 | | claim accuracy | relative input cost |
 |---|:--:|:--:|
-| baseline (one prompt) | 0.421 | 0.2× |
-| pipeline (three agents) | 0.421 | 1.0× |
-| panel (three panelists) | 0.579 | 3.0× |
+| baseline (one prompt) | 0.368 | 0.2× |
+| pipeline (three agents) | 0.368 | 1.0× |
+| panel (three panelists) | 0.211 | 3.0× |
 
-The panel does score higher. It also costs three times the pipeline and fifteen times
-the baseline, and **this is the mock** — a deterministic fixture written for offline
+The panel now scores *lower*. It previously scored higher — 0.579 — but that number was partly earned by a
+fixture that overwrote claim assessments to manufacture disagreement, and some
+of those fabrications matched the planted answers. With the fixture reporting
+only what the evidence supports, the panel is worse than a single prompt on this
+suite while costing three times the pipeline. **This is the mock** — a deterministic fixture written for offline
 testing. It tells you the harness works end to end and that the panel machinery
 produces a materially different analysis. It tells you nothing about whether three
 real models reviewing each other beats one good model, because no real model was

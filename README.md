@@ -728,9 +728,9 @@ Worth reading before you trust anything it produces.
 
   | | claim accuracy | relative input cost |
   |---|:--:|:--:|
-  | baseline (one prompt) | 0.421 | 0.2× |
-  | pipeline (three agents) | 0.421 | 1.0× |
-  | panel (three panelists) | 0.579 | 3.0× |
+  | baseline (one prompt) | 0.368 | 0.2× |
+  | pipeline (three agents) | 0.368 | 1.0× |
+  | panel (three panelists) | 0.211 | 3.0× |
 
   **The pipeline ties the single-prompt baseline exactly.** The three-agent
   architecture — the thing this README leads with — buys nothing measurable here

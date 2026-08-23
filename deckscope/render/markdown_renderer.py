@@ -4,8 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, List
 
-from .common import (ASSESSMENT_WORD, SEVERITY_WORD, as_list, findings_for,
-                     header_block, safe_url, txt)
+from .common import (ASSESSMENT_WORD, SEVERITY_WORD, alignment_text, as_list,
+                     findings_for, header_block, safe_url, txt)
 
 
 def build_markdown(result, lens: str) -> str:
@@ -56,7 +56,9 @@ def build_markdown(result, lens: str) -> str:
         add("Present in the market evidence, absent from the deck.")
         add("")
         for f in found.omissions:
-            add(f"- **{txt(f.text)}**")
+            cites = (" ".join(f"[{s}]" for s in f.source_ids) if f.source_ids
+                     else "_no source — the analysis asserts this without evidence_")
+            add(f"- **{txt(f.text)}** {cites}")
         add("")
 
     if found.unverified:
@@ -157,7 +159,7 @@ def build_markdown(result, lens: str) -> str:
                 add(f"### {title}")
                 add("")
                 for i in items:
-                    add(f"- {i}")
+                    add(f"- {alignment_text(i)}")
                 add("")
 
     # ------------------------------------------------------------ risks
@@ -248,7 +250,7 @@ def build_markdown(result, lens: str) -> str:
             if items:
                 add(f"**{t}:**")
                 for i in items:
-                    add(f"- {i}")
+                    add(f"- {alignment_text(i)}")
                 add("")
         if dem.get("buyer_budget_reality"):
             add(f"**Buyer budget reality:** {dem['buyer_budget_reality']}")

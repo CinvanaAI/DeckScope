@@ -220,13 +220,26 @@ def collect(comparison: Dict[str, Any],
 
     alignment = comparison.get("alignment") or {}
     for blind in (alignment.get("blind_spots") or []):
-        text = blind if isinstance(blind, str) else (
-            blind.get("what") or blind.get("text") or "")
-        text = str(text).strip()
-        if text:
-            out.omissions.append(Finding(
-                kind="omission", text=text,
-                why="The deck does not mention this.", severity="high"))
+        # Both shapes are accepted: the schema now asks for objects carrying
+        # their own sources, but a bare string is what older output and simpler
+        # models produce, and losing the finding entirely would be worse than
+        # showing it unsourced — provided it is *shown* as unsourced.
+        if isinstance(blind, str):
+            text, why, source_ids = blind.strip(), "", []
+        else:
+            text = str(blind.get("what") or blind.get("text") or "").strip()
+            why = str(blind.get("why_it_matters") or "").strip()
+            source_ids = [str(s) for s in (blind.get("source_ids") or [])]
+        if not text:
+            continue
+        out.omissions.append(Finding(
+            kind="omission", text=text,
+            why=why or "The deck does not mention this.",
+            source_ids=source_ids,
+            # An omission is only "high" when evidence establishes it matters.
+            # Promoting an unsourced assertion to a headline finding is how the
+            # most prominent line in the report became the least checkable one.
+            severity="high" if source_ids else "low"))
 
     # Highest-severity first, and within a severity, best-evidenced first. A
     # reader who stops after two lines should have read the two that matter.
