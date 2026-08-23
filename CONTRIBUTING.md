@@ -8,7 +8,7 @@ Thanks for looking. This project is small enough that a good pull request lands 
 
 ```bash
 git clone https://github.com/CinvanaAI/DeckScope.git
-cd deckscope
+cd DeckScope
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[all,dev]"
 ```

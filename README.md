@@ -95,7 +95,7 @@ If Python is missing it opens the download page and tells you exactly which box 
 
 ```bash
 git clone https://github.com/CinvanaAI/DeckScope.git
-cd deckscope
+cd DeckScope
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[all]"
 deckscope setup

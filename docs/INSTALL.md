@@ -78,7 +78,7 @@ private environment fails with a confusing message.
 
 ```bash
 git clone https://github.com/CinvanaAI/DeckScope.git
-cd deckscope
+cd DeckScope
 
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
@@ -199,7 +199,7 @@ Keys are never written into `config.yaml`, so the config file is safe to share o
 ## Updating
 
 ```bash
-cd deckscope
+cd DeckScope
 git pull
 .venv/bin/pip install -e ".[all]" --upgrade    # Windows: .venv\Scripts\pip
 deckscope doctor
