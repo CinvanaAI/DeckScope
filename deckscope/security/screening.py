@@ -80,28 +80,41 @@ def screen_sources(results: List[Any], policy: SecurityPolicy) -> Tuple[List[Any
                                action="quarantined"))
             continue
 
-        report.extend(_scan_url(getattr(r, "url", "") or "", where))
+        # URL findings are a quarantine trigger in their own right: a result
+        # served over javascript:/data:/file:, or from a credential-stuffed or
+        # punycode host, is not evidence about a market no matter what it says.
+        url_report = _scan_url(getattr(r, "url", "") or "", where)
+        report.extend(url_report)
+        url_blocking = [f for f in url_report.findings
+                        if f.severity in ("critical", "high")]
 
-        body = f"{getattr(r, 'title', '')}\n{getattr(r, 'snippet', '')}"
-        sub = scan_text(body, where)
-        report.extend(sub)
-        report.scanned_chars += len(body)
+        title = str(getattr(r, "title", "") or "")
+        snippet = str(getattr(r, "snippet", "") or "")
+        # Scanned separately so each finding's span indexes the string it will
+        # actually be applied to.
+        title_scan = scan_text(title, f"{where} title")
+        snippet_scan = scan_text(snippet, where)
+        report.extend(title_scan)
+        report.extend(snippet_scan)
+        report.scanned_chars += len(title) + len(snippet)
 
-        critical = [f for f in sub.findings if f.severity == "critical"]
-        if critical:
+        critical = [f for f in (title_scan.findings + snippet_scan.findings)
+                    if f.severity == "critical"]
+        if critical or url_blocking:
             if policy.mode is Mode.STRICT:
                 raise SecurityAbort(report)
+            reasons = sorted({f.code for f in critical} | {f.code for f in url_blocking})
             report.add(Finding(
                 "source_quarantined", "critical", where,
-                f"This page contains text aimed at the AI reading it "
-                f"({', '.join(sorted({f.code for f in critical}))}). The result was "
-                f"dropped rather than sanitized — a source that behaves this way is not "
-                f"trustworthy evidence.",
+                f"This source was dropped rather than sanitized ({', '.join(reasons)}). "
+                f"A page that addresses the AI reading it, or that is served over an "
+                f"unsafe URL scheme, is not trustworthy evidence about a market — "
+                f"whatever else it happens to say.",
                 excerpt=(getattr(r, "url", "") or "")[:120], action="quarantined"))
             continue
 
-        r.title = sanitize(str(getattr(r, "title", "") or ""), policy, report, where)
-        snippet = sanitize(str(getattr(r, "snippet", "") or ""), policy, report, where)
+        r.title = sanitize(title, policy, report, f"{where} title")
+        snippet = sanitize(snippet, policy, report, where)
         if len(snippet) > policy.max_source_chars:
             snippet = snippet[:policy.max_source_chars] + "\n[truncated by DeckScope]"
         r.snippet = snippet

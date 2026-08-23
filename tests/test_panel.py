@@ -165,4 +165,60 @@ def test_measure_agreement_math():
     assert m["score"]["spread"] == 60.0
     assert m["score"]["convergence"] == "wide"
     assert m["dimensions"]["Market"]["contested"] is True
-    assert m["contested_claims"] == ["C1"]
+    # Claims are keyed by the panel-level cluster (K1), not by each panelist's
+    # own C-numbering, which is independent and not comparable across panelists.
+    assert m["contested_claims"] == ["K1"]
+    assert m["claims"][0]["local_ids"] == {"A": "C1", "B": "C1"}
+
+
+def test_claims_align_across_independent_numbering():
+    """A's C1 and B's C1 are different claims; matching must be by content."""
+    from deckscope.claim_align import align_claims
+
+    clusters = align_claims({
+        "A": [{"id": "C1", "claim": "$47B TAM growing 23% CAGR",
+               "type": "market-size", "assessment": "partially-supported"},
+              {"id": "C2", "claim": "18% MoM growth for four months",
+               "type": "traction", "assessment": "supported"}],
+        "B": [{"id": "C1", "claim": "18% month-over-month growth sustained four months",
+               "type": "traction", "assessment": "supported"},
+              {"id": "C2", "claim": "Total addressable market of $47B at 23% CAGR",
+               "type": "market-size", "assessment": "contradicted"}],
+    })
+    by_type = {c.claim_type: c for c in clusters}
+    traction = by_type["traction"].to_dict(2)
+    assert traction["raised_by"] == 2
+    assert traction["local_ids"] == {"A": "C2", "B": "C1"}, \
+        "the cross-numbered traction claim must still be matched"
+    assert traction["unanimous"] is True
+
+    sizing = by_type["market-size"].to_dict(2)
+    assert sizing["raised_by"] == 2
+    assert sizing["contested"] is True, "a real disagreement must survive matching"
+
+
+def test_claims_with_a_shared_number_but_different_types_do_not_merge():
+    from deckscope.claim_align import align_claims
+
+    clusters = align_claims({
+        "A": [{"id": "C1", "claim": "$47B total addressable market",
+               "type": "market-size", "assessment": "contradicted"}],
+        "B": [{"id": "C1", "claim": "$47B of signed pipeline this quarter",
+               "type": "traction", "assessment": "unverifiable"}],
+    })
+    assert len(clusters) == 2
+
+
+def test_single_panelist_claim_is_reported_not_dropped():
+    from deckscope.claim_align import align_claims
+
+    clusters = align_claims({
+        "A": [{"id": "C1", "claim": "78% gross margin", "type": "financial",
+               "assessment": "unverifiable"}],
+        "B": [{"id": "C1", "claim": "18% MoM growth", "type": "traction",
+               "assessment": "supported"}],
+    })
+    solo = [c.to_dict(2) for c in clusters]
+    assert all(c["single_panelist"] for c in solo)
+    assert not any(c["contested"] for c in solo), \
+        "one panelist not addressing a claim is silence, not disagreement"

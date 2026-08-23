@@ -1,5 +1,6 @@
 from .lenses import LENS_PROFILES, lens_block
 from .templates import (
+    VOTE_SYSTEM, VOTE_USER,
     DECK_SYSTEM, DECK_USER,
     MARKET_SYSTEM, MARKET_USER,
     COMPARE_SYSTEM, COMPARE_USER,
@@ -10,4 +11,5 @@ __all__ = [
     "LENS_PROFILES", "lens_block",
     "DECK_SYSTEM", "DECK_USER", "MARKET_SYSTEM", "MARKET_USER",
     "COMPARE_SYSTEM", "COMPARE_USER", "QUERY_SYSTEM", "QUERY_USER",
+    "VOTE_SYSTEM", "VOTE_USER",
 ]

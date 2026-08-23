@@ -73,14 +73,23 @@ class LLMProvider(ABC):
         max_tokens: Optional[int] = None,
         temperature: Optional[float] = None,
         retries: int = 2,
+        on_usage: Optional[Any] = None,
     ) -> Dict[str, Any]:
-        """Completion that must parse as a JSON object, with self-repair."""
+        """Completion that must parse as a JSON object, with self-repair.
+
+        `on_usage` receives every Completion, including the ones consumed by a
+        JSON-repair retry. Those retries cost real tokens; an earlier version
+        discarded the Completion here and reported usage as zero, which made the
+        cost figures in a panel report meaningless.
+        """
         messages = [Message("user", user)]
         last_text = ""
         for attempt in range(retries + 1):
             out = self.complete(
                 system, messages, max_tokens=max_tokens, temperature=temperature
             )
+            if on_usage is not None:
+                on_usage(out)
             last_text = out.text
             parsed = extract_json(out.text)
             if parsed is not None:

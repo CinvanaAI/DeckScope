@@ -1,5 +1,58 @@
 # The security layer
 
+## Threat model
+
+Stated plainly, so you can judge whether it matches your situation.
+
+**Who the attacker is.** A founder who wants a better verdict than their deck deserves,
+or anyone who can publish a web page that a research query might retrieve. Both are
+cheap positions to occupy.
+
+**What they want.** To change the analysis: raise a score, suppress a risk, get a
+"STRONG YES", or conceal that they tried. Secondarily, to reach something on the machine
+running DeckScope.
+
+**What they control.** The complete contents of the deck file, including everything a
+renderer hides. The complete contents of a web page and its URL. Nothing else — they do
+not control your configuration, your model, or your machine.
+
+**What DeckScope defends.** The analysis (its conclusions should reflect evidence, not
+instructions), the reader (an attempt to manipulate is reported, never obeyed), and the
+host (an injected instruction should not become file access or code execution).
+
+**What DeckScope does not defend against**, and you should assume is possible:
+
+| Not covered | Why |
+|---|---|
+| Injection inside an image | Text in a picture is never extracted, so it is never scanned |
+| Injection below the fold of a source page | Snippet-returning backends give DeckScope a fragment; it screens what it receives |
+| A merely *misleading* deck | Cherry-picked comparisons and truncated axes are the claim audit's job, not the screen's |
+| A hostile model provider | If the model itself is adversarial, nothing here helps |
+| A novel injection technique | The detections are heuristic and enumerable; a new family will pass until it is added |
+
+**Trust boundary.** Deck content and web content are data. The trust-boundary clause in
+every system prompt is the backstop behind the screen, on the assumption that screening
+will sometimes miss.
+
+## What an audit changed
+
+An external audit in August 2026 found that the detection vocabulary was good but the
+enforcement was not, and that the local web server was the most serious problem in the
+project. All of the following are fixed, and each has a regression test:
+
+| Finding | Now |
+|---|---|
+| `/api/open` passed an arbitrary path to `os.startfile` over unauthenticated GET — remote code execution from any page you visited | Per-launch token, Origin check, POST only, and restricted to files DeckScope produced |
+| Detected base64 payloads were reported but left in the text | Redaction is driven by the findings themselves, so detection and enforcement cannot drift |
+| `redact_on: high` redacted nothing but `critical` | The configured severity is honoured |
+| Dangerous-scheme URLs were flagged "quarantined" and the source kept anyway | URL findings quarantine the source |
+| Concealment anywhere escalated intent findings everywhere in the document | Escalation is span-local |
+| `javascript:` URLs from the model could become live links in reports | All hrefs pass through `safe_url`; unsafe ones render as inert text |
+| URL ingestion had no SSRF guard | Private/loopback/link-local blocked, redirects revalidated, size and time capped |
+| CLI providers ran with the full parent environment in the working directory | Minimal environment, empty temp cwd, no-tool flags |
+| `get_settings` returned API keys over MCP | Structurally redacted |
+| `chmod(0600)` did nothing on Windows | Real owner-only ACL via icacls, and `doctor` reports whether it worked |
+
 ## Why this exists
 
 DeckScope has exactly two inputs, and other people write both of them.
@@ -93,7 +146,10 @@ and names the install command. It does not silently skip the check.
 
 ## Web source screening
 
-Every search result is screened before the market agent reads it:
+Every search result is screened before the market agent reads it. Note the unit: this
+screens **the text the backend returned**, which for Serper and Brave is a snippet.
+Tavily and Exa return substantial page content, so those get deeper coverage. DeckScope
+does not fetch each result page itself.
 
 - the same intent and concealment scan on the title and snippet
 - URL checks: `data:` / `javascript:` / `file:` schemes, credentials before the host,

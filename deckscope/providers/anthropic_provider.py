@@ -11,6 +11,19 @@ from .base import Completion, LLMProvider, Message, ProviderError
 API_URL = "https://api.anthropic.com/v1/messages"
 API_VERSION = "2023-06-01"
 
+#: Models where adaptive thinking is on by default and the sampling parameters
+#: are therefore rejected. Sending `temperature` to one of these returns HTTP 400
+#: — which meant DeckScope's own default configuration could not make a single
+#: successful call. Matching is by prefix so point releases are covered.
+NO_SAMPLING_PARAMS = ("claude-opus-5", "claude-sonnet-5", "claude-haiku-5",
+                      "claude-opus-4-7", "claude-sonnet-4-7", "claude-haiku-4-7")
+
+
+def accepts_sampling_params(model: str) -> bool:
+    """False when this model rejects temperature/top_p/top_k."""
+    m = (model or "").lower()
+    return not any(m.startswith(prefix) for prefix in NO_SAMPLING_PARAMS)
+
 
 class AnthropicProvider(LLMProvider):
     name = "anthropic"
@@ -24,6 +37,10 @@ class AnthropicProvider(LLMProvider):
         ("claude-sonnet-5", "Best balance — recommended"),
         ("claude-haiku-4-5-20251001", "Fast and cheap, lighter analysis"),
     ]
+
+    #: Where to look when a model name stops working. Hard-coded catalogues go
+    #: stale; `deckscope doctor` points here rather than guessing.
+    catalog_url = "https://docs.claude.com/en/docs/about-claude/models"
 
     def __init__(self, config: Optional[ProviderConfig] = None) -> None:
         super().__init__(config)
@@ -53,10 +70,15 @@ class AnthropicProvider(LLMProvider):
         payload: Dict[str, Any] = {
             "model": self.model,
             "max_tokens": max_tokens or self.config.max_tokens,
-            "temperature": self.config.temperature if temperature is None else temperature,
             "system": system,
             "messages": [{"role": m.role, "content": m.content} for m in messages],
         }
+        # Newer Claude models run adaptive thinking by default and reject the
+        # sampling parameters outright. Omitting the field is the supported way
+        # to get default behaviour; sending even the default value is a 400.
+        if accepts_sampling_params(self.model):
+            payload["temperature"] = (self.config.temperature
+                                      if temperature is None else temperature)
         if tools:
             payload["tools"] = tools
 

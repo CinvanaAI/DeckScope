@@ -24,24 +24,53 @@ class MockProvider(LLMProvider):
         # get exercised. The model name seeds a small, deterministic divergence.
         self.seed = sum(ord(c) for c in (self.model or "mock-1")) % 3
 
+    def _usage(self, system, messages, out: str) -> dict:
+        """Rough token counts, so usage accounting is exercised offline.
+
+        Real providers report these; the mock reporting zero meant the accounting
+        path was never tested and a regression there would have been invisible.
+        """
+        chars_in = len(system) + sum(len(m.content) for m in messages)
+        return {"input": max(1, chars_in // 4), "output": max(1, len(out) // 4)}
+
     def complete(self, system, messages, *, max_tokens=None, temperature=None,
                  tools=None) -> Completion:
         self.calls += 1
         joined = " ".join(m.content for m in messages)
         if "JSON array of strings only" in system or "search queries" in system:
-            return Completion(text=json.dumps([
+            body = json.dumps([
                 "workflow automation market size 2026 independent estimate",
                 "Zapier Make n8n pricing comparison mid-market",
                 "RPA vendor consolidation 2026 funding rounds",
-            ]))
+            ])
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "Deck Analyst" in system:
-            return Completion(text=json.dumps(_DECK))
+            body = json.dumps(_DECK)
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "Market Analyst" in system:
             return Completion(text=json.dumps(_MARKET))
+        if "evaluating a pitch deck against its market" in system:
+            # A deliberately thinner answer than the pipeline's: fewer claims
+            # examined and fewer blind spots, so the comparison has something to
+            # show. Real models may of course do better or worse.
+            import copy
+            thin = copy.deepcopy(self._compare())
+            thin["claim_audit"] = thin["claim_audit"][:2]
+            thin["alignment"]["blind_spots"] = thin["alignment"]["blind_spots"][:1]
+            thin["risks"] = thin["risks"][:1]
+            body = json.dumps(thin)
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "Comparison Synthesist" in system:
-            return Completion(text=json.dumps(self._compare()))
+            body = json.dumps(self._compare())
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "one member of a panel" in system:
-            return Completion(text=json.dumps(self._review()))
+            body = json.dumps(self._review())
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "final version of your analysis" in system:
             revised = self._compare()
             revised["revision_log"] = [{
@@ -51,10 +80,20 @@ class MockProvider(LLMProvider):
                 "reason": "A peer cited a source on incumbent bundling that I had missed.",
                 "prompted_by": "Panelist A"}]
             revised["scorecard"][1]["score"] = min(10, revised["scorecard"][1]["score"] + 1)
-            return Completion(text=json.dumps(revised))
+            body = json.dumps(revised)
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
+        if "ranking the other panelists" in system:
+            body = json.dumps(self._ballot(joined))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "chair of a panel" in system:
-            return Completion(text=json.dumps(_CONSENSUS))
-        return Completion(text=json.dumps({"note": "mock", "echo": joined[:200]}))
+            body = json.dumps(_CONSENSUS)
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
+        body = json.dumps({"note": "mock", "echo": joined[:200]})
+        return Completion(text=body, model=self.model,
+                          usage=self._usage(system, messages, body))
 
     def _compare(self) -> dict:
         """A copy of the base comparison, nudged so panelists actually differ."""
@@ -76,6 +115,27 @@ class MockProvider(LLMProvider):
             out["verdict"]["confidence"] = "high"
             out["claim_audit"][0]["assessment"] = "contradicted"
         return out
+
+    def _ballot(self, prompt: str) -> dict:
+        """Rank whichever panelists appear in the prompt, seeded by model name.
+
+        Deterministic but not identical across panelists, so the tally has
+        something real to work with in tests.
+        """
+        import re
+
+        seen = []
+        for label in re.findall(r"Panelist [A-H]", prompt):
+            if label not in seen:
+                seen.append(label)
+        if self.seed == 1:
+            seen = list(reversed(seen))
+        elif self.seed == 2 and len(seen) > 1:
+            seen = seen[1:] + seen[:1]
+        return {"ranking": [{"panelist": label,
+                             "reason": "traceable figures and an honest confidence level"}
+                            for label in seen],
+                "note": "The panel under-weighted incumbent bundling across the board."}
 
     def _review(self) -> dict:
         return {

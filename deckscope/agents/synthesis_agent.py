@@ -8,6 +8,7 @@ from ..config import Lens
 from ..prompts.lenses import lens_block
 from ..prompts.templates import COMPARE_SYSTEM, COMPARE_USER
 from ..schemas import COMPARISON_SCHEMA, coerce, schema_block, scorecard_total
+from ..validate import validate_comparison
 from .base import Agent
 
 
@@ -27,7 +28,8 @@ class ComparisonSynthesist(Agent):
     label = "3/3 Comparison"
 
     def run(self, deck: Dict[str, Any], market: Dict[str, Any], *,
-            lens: Lens = Lens.INVESTOR) -> Dict[str, Any]:
+            lens: Lens = Lens.INVESTOR,
+            valid_source_ids: Any = ()) -> Dict[str, Any]:
         self.label = f"3/3 Comparison ({lens.value})"
         self.emit("comparing deck claims against market evidence")
 
@@ -38,15 +40,19 @@ class ComparisonSynthesist(Agent):
             market_json=json.dumps(_slim(market), indent=2)[:70_000],
         )
         result = self.cached_json(
-            f"compare::{lens.value}:{self.provider.model}:"
-            f"{hash(json.dumps(_slim(deck), sort_keys=True))}:"
-            f"{hash(json.dumps(_slim(market), sort_keys=True))}",
-            lambda: self.provider.complete_json(system, user, temperature=0.3),
+            self.cache_key(lens=lens.value, deck=_slim(deck), market=_slim(market)),
+            lambda: self.complete_json(system, user, temperature=0.3),
         )
         result = coerce(result, COMPARISON_SCHEMA)
+        # Validate BEFORE scoring: a score of 47 or a citation to a source that
+        # was never supplied must not reach the weighted total or the report.
+        validation = validate_comparison(result, valid_source_ids=valid_source_ids)
+        if not validation.ok:
+            self.emit(f"validation: {validation.summary()}")
         result["_meta"] = {
             "lens": lens.value,
             "weighted_score": scorecard_total(result.get("scorecard") or []),
+            "validation": validation.to_dict(),
         }
         verdict = (result.get("verdict") or {}).get("call", "—")
         self.emit(f"verdict: {verdict} "

@@ -54,11 +54,20 @@ def _p(rx: str) -> re.Pattern:
 
 #: (pattern, code, severity, human explanation)
 INTENT_PATTERNS: List[Tuple[re.Pattern, str, str, str]] = [
-    (_p(r"\b(ignore|disregard|forget|override)\b[^.\n]{0,40}\b"
-        r"(previous|prior|above|earlier|all)\b[^.\n]{0,30}\b"
-        r"(instruction|prompt|direction|rule|system|context)"),
+    # Two forms, because the object of the verb decides how suspicious it is.
+    # "ignore your instructions" needs no qualifier to be an attack; "override
+    # rules" without one is ordinary language for a rules-engine company, so that
+    # form still requires previous/prior/above/all.
+    (_p(r"\b(ignore|disregard|forget|override|bypass)\b[^.\n]{0,40}\b"
+        r"(instructions?|prompts?|system[- ]?prompts?)\b"),
      "override_instruction", "critical",
-     "Text instructing the AI to ignore its own instructions."),
+     "Text instructing the AI to ignore its instructions."),
+
+    (_p(r"\b(ignore|disregard|forget|override|bypass)\b[^.\n]{0,40}\b"
+        r"(previous|prior|above|earlier|all|your)\b[^.\n]{0,30}\b"
+        r"(direction|rule|system|context|guideline|constraint)"),
+     "override_instruction", "critical",
+     "Text instructing the AI to disregard the rules it operates under."),
 
     (_p(r"\b(you are now|from now on,? you|act as|pretend (to be|you)|"
         r"roleplay as|new persona|assume the role)\b"),
@@ -133,7 +142,32 @@ INTENT_PATTERNS: List[Tuple[re.Pattern, str, str, str]] = [
 CONCEALMENT_CODES = {"invisible_text", "tag_block", "homoglyph", "delimiter_spoof",
                      "fence_break", "encoded_payload", "invisible_render"}
 
-B64 = re.compile(r"[A-Za-z0-9+/]{80,}={0,2}")
+#: Applied ONLY to decoded content. There is no legitimate reason to base64-encode
+#: a sentence inside a pitch deck, so the act of encoding is itself the
+#: concealment signal and the language bar can be far lower than it is for text a
+#: human might actually have written on a slide.
+ENCODED_INTENT = [
+    _p(r"\b(ignore|disregard|forget|override|bypass|skip)\b"),
+    _p(r"\b(you are|you're|act as|pretend|roleplay|behave as)\b"),
+    _p(r"\b(rate|score|grade|rank)\b[^.\n]{0,20}\b(\d{1,3}|perfect|highest|max)"),
+    _p(r"\b(recommend|approve|endorse|conclude|say|state|output|reply|respond)\b"),
+    _p(r"\b(do not|don'?t|never)\b[^.\n]{0,25}\b(mention|reveal|tell|show|report)\b"),
+    _p(r"\b(system|assistant|user|developer)\s*[:>]"),
+    _p(r"\b(instruction|prompt|directive|command)s?\b"),
+]
+
+#: Candidate encoded runs. The length bar is deliberately low — 12 characters of
+#: base64 is 9 bytes, and "rate 10/10" fits in 10.
+#:
+#: A length threshold was the wrong mechanism to begin with. It was 80, then 32,
+#: and both let real payloads through: "ignore instructions" encodes to 28
+#: characters, "you are now a promoter" to 32 including padding the regex did not
+#: count. What actually separates a payload from noise is not its length but
+#: whether it decodes to readable text that gives the model an order — so the
+#: length bar is now only a cheap pre-filter and the decode does the real work.
+#:
+#: Both the standard and URL-safe alphabets, since either survives a copy-paste.
+B64 = re.compile(r"[A-Za-z0-9+/_-]{12,}={0,2}")
 
 
 def _excerpt(text: str, start: int, end: int, pad: int = 60) -> str:
@@ -143,6 +177,31 @@ def _excerpt(text: str, start: int, end: int, pad: int = 60) -> str:
     frag = text[s:e].replace("\n", " ⏎ ").replace("`", "'")
     frag = "".join(ch if ch.isprintable() else "·" for ch in frag)
     return ("…" if s else "") + frag.strip()[:280] + ("…" if e < len(text) else "")
+
+
+#: How close a concealment signal must be to an intent match to count as
+#: "the same span". Document-global correlation produced false escalations:
+#: one zero-width space in a footer should not upgrade every later sentence.
+CONCEAL_PROXIMITY_CHARS = 400
+
+
+def _conceal_spans(text: str) -> List[Tuple[int, int]]:
+    """Character ranges where concealment was detected, for proximity checks."""
+    spans: List[Tuple[int, int]] = []
+    for i, ch in enumerate(text):
+        if ch in INVISIBLE_CHARS or ord(ch) in TAG_BLOCK or ch in HOMOGLYPHS:
+            spans.append((max(0, i - CONCEAL_PROXIMITY_CHARS),
+                          i + CONCEAL_PROXIMITY_CHARS))
+    if not spans:
+        return []
+    spans.sort()
+    merged = [spans[0]]
+    for a, b in spans[1:]:
+        if a <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], b))
+        else:
+            merged.append((a, b))
+    return merged
 
 
 def scan_text(text: str, where: str = "text") -> ScanReport:
@@ -191,36 +250,71 @@ def scan_text(text: str, where: str = "text") -> ScanReport:
                     f"Latin words — typically used to evade keyword detection."),
             excerpt=", ".join(sorted(set(homo))[:12]), action="stripped"))
 
-    # --- concealment: long encoded blobs that decode to instructions
+    # --- concealment: encoded blobs that decode to instructions
     for m in B64.finditer(text):
-        try:
-            decoded = base64.b64decode(m.group(0) + "==", validate=False).decode(
-                "utf-8", "ignore")
-        except Exception:  # noqa: BLE001
-            continue
-        if len(decoded) > 20 and sum(c.isprintable() for c in decoded) / len(decoded) > 0.85:
+        for decoded in _decode_candidates(m.group(0)):
+            if len(decoded) < 8:
+                continue
+            printable = sum(c.isprintable() or c in "\n\t" for c in decoded)
+            if printable / len(decoded) < 0.85:
+                continue
             hits = [c for rx, c, _, _ in INTENT_PATTERNS if rx.search(decoded)]
-            if hits:
-                concealed = True
-                rep.add(Finding(
-                    code="encoded_payload", severity="critical", where=where,
-                    detail=("A base64 blob decodes to text containing AI instructions "
-                            f"({', '.join(hits[:3])})."),
-                    excerpt=decoded[:200], action="redacted"))
+            if not hits and any(rx.search(decoded) for rx in ENCODED_INTENT):
+                hits = ["encoded imperative"]
+            if not hits:
+                continue
+            concealed = True
+            rep.add(Finding(
+                code="encoded_payload", severity="critical", where=where,
+                detail=("An encoded blob decodes to text containing AI instructions "
+                        f"({', '.join(hits[:3])}). Encoding is not a legitimate way "
+                        f"to put words in a pitch deck."),
+                excerpt=decoded[:200], action="redacted",
+                span=(m.start(), m.end())))
+            break
 
     # --- intent patterns
+    conceal_spans = _conceal_spans(text) if concealed else []
     for rx, code, severity, detail in INTENT_PATTERNS:
         for m in rx.finditer(text):
             sev = severity
-            if concealed and severity in ("medium", "high"):
+            # Escalate only when the concealment is near THIS match, not merely
+            # somewhere in the same document.
+            near = any(a <= m.start() <= b for a, b in conceal_spans)
+            if near and severity in ("medium", "high"):
                 sev = {"medium": "high", "high": "critical"}[severity]
             rep.add(Finding(
-                code=code, severity=sev, where=where, detail=detail,
+                code=code, severity=sev, where=where, detail=detail
+                + (" It sits inside deliberately concealed text." if near else ""),
                 excerpt=_excerpt(text, m.start(), m.end()),
-                action="redacted" if sev in ("critical", "high") else "flagged"))
+                action="redacted" if sev in ("critical", "high") else "flagged",
+                span=(m.start(), m.end())))
             break  # one finding per pattern keeps the report readable
 
     return rep
+
+
+def _decode_candidates(blob: str) -> List[str]:
+    """Every plausible decoding of a candidate run.
+
+    Tries the standard and URL-safe alphabets, and each of the three possible
+    padding lengths, because a payload lifted out of a document often arrives
+    with its padding stripped.
+    """
+    out: List[str] = []
+    cleaned = blob.rstrip("=")
+    for alphabet in (str.maketrans("", ""), str.maketrans("-_", "+/")):
+        candidate = cleaned.translate(alphabet)
+        for pad in range(3):
+            try:
+                raw = base64.b64decode(candidate + "=" * pad, validate=False)
+            except Exception:  # noqa: BLE001
+                continue
+            try:
+                out.append(raw.decode("utf-8"))
+            except UnicodeDecodeError:
+                continue
+    return out
 
 
 def _mixed_script_words(text: str) -> bool:

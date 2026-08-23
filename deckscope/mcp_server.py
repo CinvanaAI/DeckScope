@@ -23,7 +23,7 @@ import traceback
 from pathlib import Path
 from typing import Any, Dict, List
 
-from . import __version__, settings
+from . import __version__, console, settings
 from .config import ALL_LENSES
 
 PROTOCOL_VERSION = "2024-11-05"
@@ -259,10 +259,41 @@ def _capabilities(_: Dict[str, Any]) -> str:
     }, indent=2)
 
 
+#: Any key whose name looks like this is redacted before leaving the process.
+SECRET_HINTS = ("key", "token", "secret", "password", "passwd", "credential",
+                "authorization", "auth", "cookie", "session")
+
+
+def _redact(obj: Any, path: str = "") -> Any:
+    """Deep-redact anything that looks like a secret.
+
+    `provider.extra` is a free-form passthrough — it can legitimately hold an
+    inline api_key or an Authorization header — so returning the settings object
+    verbatim handed those to whatever MCP client asked. Redaction is structural
+    rather than a denylist of known fields, because `extra` has no fixed shape.
+    """
+    if isinstance(obj, dict):
+        out = {}
+        for k, v in obj.items():
+            lowered = str(k).lower()
+            if any(h in lowered for h in SECRET_HINTS) and isinstance(v, str) and v:
+                # api_key_env names an environment variable; that is not a secret
+                # and is genuinely useful to see.
+                out[k] = v if lowered.endswith("_env") else "<redacted>"
+            else:
+                out[k] = _redact(v, f"{path}.{k}")
+        return out
+    if isinstance(obj, list):
+        return [_redact(v, path) for v in obj]
+    return obj
+
+
 def _get_settings(_: Dict[str, Any]) -> str:
-    data = settings.load_settings()
+    data = _redact(settings.load_settings())
     return json.dumps({"configured": settings.is_configured(),
                        "config_path": str(settings.config_path()),
+                       "note": "Secret-looking values are redacted. DeckScope never "
+                               "returns API keys through this interface.",
                        "settings": data}, indent=2, default=str)
 
 
@@ -287,6 +318,7 @@ def _error(req_id: Any, code: int, message: str) -> None:
 
 
 def main() -> int:
+    console.enable()
     settings.load_env()
     for line in sys.stdin:
         line = line.strip()

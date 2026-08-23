@@ -42,17 +42,38 @@ def test_loader_reads_slide_markers():
     assert not doc.is_thin
 
 
+def _available_formats():
+    """Formats whose optional dependency is actually installed.
+
+    The core install has one dependency. Requiring python-docx here made the
+    suite fail on exactly the machine the README tells people to use — a minimal
+    install — which turned an expected limitation into a red test.
+    """
+    needs = {"docx": "docx", "pptx": "pptx", "xlsx": "openpyxl", "pdf": "reportlab"}
+    available = ["md", "html", "json", "txt"]
+    for fmt, module in needs.items():
+        try:
+            __import__(module)
+        except ImportError:
+            continue
+        available.append(fmt)
+    return available
+
+
 def test_full_pipeline_all_formats(tmp_path):
-    pipe = Pipeline(_cfg(tmp_path, ["md", "html", "json", "txt", "docx", "pptx",
-                                    "xlsx", "pdf"]))
+    formats = _available_formats()
+    pipe = Pipeline(_cfg(tmp_path, formats))
     result = pipe.run()
     files = pipe.render(result)
     pipe.close()
 
     assert result.company == "Acme Flow"
     suffixes = {Path(f).suffix for f in files}
-    assert suffixes >= {".md", ".html", ".json", ".txt", ".docx", ".pptx",
-                        ".xlsx", ".pdf"}
+    # These four need nothing beyond the standard library and PyYAML.
+    assert suffixes >= {".md", ".html", ".json", ".txt"}
+    # Everything the environment CAN produce must have been produced.
+    for fmt in formats:
+        assert f".{fmt}" in suffixes, f"{fmt} was requested and is installed, but missing"
     for f in files:
         assert Path(f).stat().st_size > 500, f
 

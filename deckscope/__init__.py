@@ -9,7 +9,10 @@ Every layer is swappable: the model provider, the research backend,
 the analytical lens, and the output format.
 """
 
-__version__ = "1.0.0"
+#: Deliberately not a release number. DeckScope has not had a release: it has an
+#: architecture that works and a list of things that are not yet proven. Calling
+#: it 1.0 would claim a maturity the test suite does not yet back.
+__version__ = "0.0.0.dev0"
 
 from .config import RunConfig, Lens, load_config
 from .orchestrator import Pipeline, analyze

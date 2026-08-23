@@ -8,12 +8,12 @@ and it works with assistants that have no API.
 from __future__ import annotations
 
 import os
-import sys
 import time
 from pathlib import Path
 from typing import Optional
 
 from ..config import ProviderConfig
+from ..console import out as _out
 from .base import Completion, LLMProvider
 
 
@@ -40,20 +40,20 @@ class ManualProvider(LLMProvider):
         pfile.write_text(prompt, encoding="utf-8")
         _try_clipboard(prompt)
 
-        print("\n" + "=" * 70)
-        print(f"  STEP {self.step} — your turn")
-        print("=" * 70)
-        print(f"  1. The prompt is on your clipboard (and saved at {pfile}).")
-        print(f"  2. Paste it into ChatGPT, Claude, Gemini — whichever you use.")
-        print(f"  3. Save the FULL reply into:\n     {rfile}")
-        print(f"  4. Come back here and press Enter.")
-        print("=" * 70)
+        _out("\n" + "=" * 70)
+        _out(f"  STEP {self.step} — your turn")
+        _out("=" * 70)
+        _out(f"  1. The prompt is on your clipboard (and saved at {pfile}).")
+        _out("  2. Paste it into ChatGPT, Claude, Gemini — whichever you use.")
+        _out(f"  3. Save the FULL reply into:\n     {rfile}")
+        _out("  4. Come back here and press Enter.")
+        _out("=" * 70)
         try:
             input("  Waiting... press Enter once the reply file is saved: ")
         except EOFError:
             pass
         while not rfile.exists():
-            print(f"  Still don't see {rfile.name}. Waiting...")
+            _out(f"  Still don't see {rfile.name}. Waiting...")
             time.sleep(self.poll)
             try:
                 input("  Press Enter to check again: ")

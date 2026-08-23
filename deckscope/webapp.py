@@ -1,29 +1,57 @@
 """A small local window for people who never want to see a terminal.
 
-Runs a server on 127.0.0.1 only — nothing is exposed to the network and nothing
-is uploaded anywhere. Uses only the Python standard library, so there is no web
-framework to install.
-
     deckscope app
+
+Security model. Binding to 127.0.0.1 keeps the server off the network, but it is
+NOT an authorization boundary: any process on this machine, and any web page you
+visit while the app is running, can send it requests. Loopback-only was the whole
+defense in an earlier version of this file, and it was not enough.
+
+So every request must carry a per-launch token, which is generated at startup and
+handed to the page in its URL. In addition:
+
+  * State-changing routes are POST only, and their Origin must match this server.
+    That blocks the classic <img src="http://127.0.0.1:8765/..."> forgery, which a
+    GET route cannot defend against at all.
+  * Opening a file is restricted to files this process actually produced. A path
+    that DeckScope did not write is refused, so the endpoint cannot be turned into
+    "launch an arbitrary executable".
+  * Request bodies, concurrent jobs, and job retention are all capped, so a script
+    cannot exhaust memory or run up an API bill in the background.
 """
 from __future__ import annotations
 
+import hmac
 import json
-import mimetypes
 import os
+import secrets
 import threading
 import time
 import traceback
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-from urllib.parse import parse_qs, unquote, urlparse
+from typing import Any, Dict, List
+from urllib.parse import parse_qs, urlparse
 
+from .console import out as _out
 from . import __version__, settings
 from .config import ALL_LENSES
 
 JOBS: Dict[str, Dict[str, Any]] = {}
+JOBS_LOCK = threading.Lock()
+
+#: Regenerated every launch. A stale bookmark cannot drive a later session.
+SESSION_TOKEN = secrets.token_urlsafe(32)
+
+#: Files this process wrote. Only these may be opened through the API.
+PRODUCED_FILES: set = set()
+PRODUCED_LOCK = threading.Lock()
+
+MAX_BODY_BYTES = 256 * 1024      # a job request is a few hundred bytes
+MAX_ACTIVE_JOBS = 2              # each job costs real money at a real provider
+MAX_JOBS_RETAINED = 20
+JOB_TTL_SECONDS = 3600
 
 
 # ------------------------------------------------------------------- server
@@ -40,6 +68,13 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        # The page never embeds third-party content and is never framed.
+        self.send_header("Content-Security-Policy",
+                         "default-src 'none'; script-src 'unsafe-inline'; "
+                         "style-src 'unsafe-inline'; connect-src 'self'; "
+                         "frame-ancestors 'none'; form-action 'none'")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
         self.end_headers()
         self.wfile.write(body)
 
@@ -47,13 +82,41 @@ class Handler(BaseHTTPRequestHandler):
         self._send(code, json.dumps(obj, default=str).encode("utf-8"),
                    "application/json; charset=utf-8")
 
+    # ---- authorization
+    def _token_ok(self, query: Dict[str, List[str]]) -> bool:
+        """Constant-time check of the per-launch token, from header or query."""
+        supplied = (self.headers.get("X-DeckScope-Token")
+                    or (query.get("token", [""])[0] if query else ""))
+        return bool(supplied) and hmac.compare_digest(supplied, SESSION_TOKEN)
+
+    def _origin_ok(self) -> bool:
+        """Reject cross-site requests.
+
+        A browser attaches Origin to every POST. If it is present it must be this
+        server. If it is absent the request did not come from a page, which is
+        fine for a scripted client that already holds the token.
+        """
+        origin = self.headers.get("Origin")
+        if not origin:
+            return True
+        host, port = self.server.server_address[0], self.server.server_address[1]
+        allowed = {f"http://127.0.0.1:{port}", f"http://localhost:{port}"}
+        return origin in allowed
+
     # ---- routes
     def do_GET(self) -> None:  # noqa: N802
         route = urlparse(self.path)
         path = route.path
+        query = parse_qs(route.query)
 
+        # The page itself is served unauthenticated — it contains no data, only
+        # the shell. Everything it then calls requires the token it was given.
         if path in ("/", "/index.html"):
-            return self._send(200, PAGE.encode("utf-8"))
+            body = PAGE.replace("__DECKSCOPE_TOKEN__", SESSION_TOKEN)
+            return self._send(200, body.encode("utf-8"))
+
+        if not self._token_ok(query):
+            return self._json({"error": "unauthorized"}, 401)
 
         if path == "/api/state":
             cfg = settings.load_settings()
@@ -68,50 +131,122 @@ class Handler(BaseHTTPRequestHandler):
                 "out_dir": (cfg.get("output") or {}).get("out_dir")
                            or str(settings.default_output_dir()),
                 "all_lenses": ALL_LENSES,
-                "version": __version__,
             })
 
         if path.startswith("/api/job/"):
-            job = JOBS.get(path.rsplit("/", 1)[-1])
+            _reap_jobs()
+            with JOBS_LOCK:
+                job = JOBS.get(path.rsplit("/", 1)[-1])
+                job = dict(job) if job else None
             if not job:
                 return self._json({"error": "no such job"}, 404)
             return self._json(job)
 
-        if path == "/api/open":
-            target = unquote(parse_qs(route.query).get("path", [""])[0])
-            _reveal(target)
-            return self._json({"ok": True})
-
         return self._send(404, b"Not found")
 
     def do_POST(self) -> None:  # noqa: N802
-        if urlparse(self.path).path != "/api/run":
-            return self._send(404, b"Not found")
-        length = int(self.headers.get("Content-Length", 0))
+        route = urlparse(self.path)
+        query = parse_qs(route.query)
+
+        if not self._token_ok(query):
+            return self._json({"error": "unauthorized"}, 401)
+        if not self._origin_ok():
+            return self._json({"error": "cross-site request refused"}, 403)
+
+        length = int(self.headers.get("Content-Length") or 0)
+        if length > MAX_BODY_BYTES:
+            return self._json({"error": "request too large"}, 413)
         try:
             payload = json.loads(self.rfile.read(length) or b"{}")
         except Exception:  # noqa: BLE001
             return self._json({"error": "bad request"}, 400)
+        if not isinstance(payload, dict):
+            return self._json({"error": "bad request"}, 400)
 
+        if route.path == "/api/open":
+            return self._open(payload)
+        if route.path == "/api/run":
+            return self._run(payload)
+        return self._send(404, b"Not found")
+
+    # ---- actions
+    def _open(self, payload: Dict[str, Any]) -> None:
+        """Open a report. Only files this process produced are eligible.
+
+        Without that restriction this endpoint is "run any program on this
+        machine", because the OS handler for an .exe is to execute it.
+        """
+        target = str(payload.get("path") or "")
+        try:
+            resolved = str(Path(target).resolve(strict=True))
+        except (OSError, ValueError):
+            return self._json({"error": "no such file"}, 404)
+        with PRODUCED_LOCK:
+            allowed = resolved in PRODUCED_FILES
+        if not allowed:
+            return self._json(
+                {"error": "DeckScope will only open reports it created."}, 403)
+        _reveal(resolved)
+        return self._json({"ok": True})
+
+    def _run(self, payload: Dict[str, Any]) -> None:
         deck = (payload.get("deck") or "").strip().strip('"')
-        if not deck:
+        if not deck and not payload.get("demo"):
             return self._json({"error": "Choose a deck file first."}, 400)
-        if not deck.lower().startswith(("http://", "https://")) and not Path(deck).exists():
+        if deck and not deck.lower().startswith(("http://", "https://")) \
+                and not Path(deck).exists():
             return self._json({"error": f"Can't find that file:\n{deck}"}, 400)
 
-        job_id = f"job{int(time.time() * 1000)}"
-        JOBS[job_id] = {"id": job_id, "status": "running", "log": [],
-                        "files": [], "result": None, "error": None}
+        _reap_jobs()
+        with JOBS_LOCK:
+            active = sum(1 for j in JOBS.values() if j["status"] == "running")
+            if active >= MAX_ACTIVE_JOBS:
+                return self._json(
+                    {"error": f"{active} analyses are already running. Each one "
+                              f"costs real API usage, so DeckScope runs at most "
+                              f"{MAX_ACTIVE_JOBS} at a time. Wait for one to finish."},
+                    429)
+            job_id = secrets.token_urlsafe(12)
+            JOBS[job_id] = {"id": job_id, "status": "running", "log": [],
+                            "files": [], "result": None, "error": None,
+                            "started": time.time()}
         threading.Thread(target=_run_job, args=(job_id, payload), daemon=True).start()
         return self._json({"job": job_id})
 
 
+def _reap_jobs() -> None:
+    """Drop finished jobs once they age out, so memory cannot grow unbounded."""
+    now = time.time()
+    with JOBS_LOCK:
+        stale = [k for k, j in JOBS.items()
+                 if j["status"] != "running" and now - j.get("started", now) > JOB_TTL_SECONDS]
+        for k in stale:
+            JOBS.pop(k, None)
+        if len(JOBS) > MAX_JOBS_RETAINED:
+            done = sorted((j for j in JOBS.values() if j["status"] != "running"),
+                          key=lambda j: j.get("started", 0))
+            for j in done[: len(JOBS) - MAX_JOBS_RETAINED]:
+                JOBS.pop(j["id"], None)
+
+
+def _remember(paths: List[str]) -> None:
+    """Record files we produced, so /api/open can be restricted to them."""
+    with PRODUCED_LOCK:
+        for f in paths:
+            try:
+                PRODUCED_FILES.add(str(Path(f).resolve()))
+            except (OSError, ValueError):
+                continue
+
+
 def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
-    job = JOBS[job_id]
+    with JOBS_LOCK:
+        job = JOBS[job_id]
 
     def log(message: str, _data: Any = None) -> None:
-        job["log"].append(message)
-        del job["log"][:-400]
+        with JOBS_LOCK:
+            job["log"].append(message)
+            del job["log"][:-400]
 
     try:
         from .orchestrator import Pipeline
@@ -145,6 +280,7 @@ def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
                           rounds=int(payload.get("rounds", 1)), on_event=log)
             result = panel.run()
             files = panel.render(result)
+            _remember(files)
             job.update({
                 "status": "done", "files": files,
                 "result": {
@@ -173,6 +309,7 @@ def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
         finally:
             pipe.close()
 
+        _remember(files)
         reg = getattr(result, "registry", None)
         job.update({
             "status": "done", "files": files,
@@ -196,7 +333,13 @@ def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
 
 
 def _reveal(path: str) -> None:
-    """Open a file, or its folder, in the desktop file manager."""
+    """Hand a file to the desktop.
+
+    The caller MUST have verified that this path is one DeckScope produced.
+    On Windows `os.startfile` runs the file's registered handler, which for an
+    executable means executing it — so an unvetted path here is remote code
+    execution, not a convenience.
+    """
     p = Path(path)
     if not p.exists():
         return
@@ -222,17 +365,21 @@ def serve(port: int = 8765, open_browser: bool = True) -> None:
         except OSError:
             continue
     else:
-        print(f"Couldn't find a free port near {port}.")
+        _out(f"Couldn't find a free port near {port}.")
         return
-    url = f"http://127.0.0.1:{httpd.server_address[1]}/"
-    print(f"\n  DeckScope is running at {url}")
-    print("  This window stays open while you use it. Press Ctrl+C to stop.\n")
+    port = httpd.server_address[1]
+    url = f"http://127.0.0.1:{port}/?token={SESSION_TOKEN}"
+    _out("\n  DeckScope is running at:")
+    _out(f"    {url}")
+    _out("\n  That link contains a one-time key for this session. Requests without")
+    _out("  it are refused, so another program on this computer cannot drive it.")
+    _out("  Keep this window open while you use it. Press Ctrl+C to stop.\n")
     if open_browser:
         threading.Timer(0.6, lambda: webbrowser.open(url)).start()
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\n  Stopped.\n")
+        _out("\n  Stopped.\n")
 
 
 # --------------------------------------------------------------------- page
@@ -349,6 +496,13 @@ competes in, and tells you where the two agree — and where they don't.</div>
 const $ = s => document.querySelector(s);
 let STATE = {}, PICK = {lenses:[], formats:[], security:'balanced'}, DECK = '', T0 = 0;
 
+// Per-launch key, injected by the server. Every API call carries it; without it
+// the server refuses, so no other page or program can drive this session.
+const TOKEN = "__DECKSCOPE_TOKEN__";
+const api = (path, opts = {}) => fetch(path, Object.assign({}, opts, {
+  headers: Object.assign({'X-DeckScope-Token': TOKEN}, opts.headers || {})
+}));
+
 function chips(el, items, key, multi){
   el.innerHTML = '';
   items.forEach(([val,label]) => {
@@ -366,7 +520,7 @@ function chips(el, items, key, multi){
   });
 }
 
-fetch('/api/state').then(r=>r.json()).then(s => {
+api('/api/state').then(r=>r.json()).then(s => {
   STATE = s;
   PICK.lenses = s.lenses.slice();
   PICK.formats = s.formats.slice();
@@ -412,7 +566,7 @@ function start(extra){
   $('#go').disabled = true; $('#done').classList.add('hidden');
   $('#progress').classList.remove('hidden'); $('#log').textContent = '';
   T0 = Date.now();
-  fetch('/api/run', {method:'POST', headers:{'Content-Type':'application/json'},
+  api('/api/run', {method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify(Object.assign({
       deck: deck, company: $('#company').value, lenses: PICK.lenses,
       formats: PICK.formats, security: PICK.security,
@@ -423,7 +577,7 @@ function start(extra){
 }
 
 function poll(job){
-  fetch('/api/job/' + job).then(r=>r.json()).then(j => {
+  api('/api/job/' + job).then(r=>r.json()).then(j => {
     $('#log').textContent = j.log.join('\n');
     $('#log').scrollTop = 1e9;
     $('#elapsed').textContent = Math.round((Date.now()-T0)/1000) + 's';
@@ -455,13 +609,26 @@ function finish(j){
     if(r.sources.quarantined) html += `, ${r.sources.quarantined} dropped as untrustworthy`;
   }
   html += `</p><label>Your reports</label>`;
-  j.files.forEach(f => {
-    html += `<div class="file"><span>${esc(f.split(/[\\/]/).pop())}</span>
-      <button class="ghost" onclick="openFile('${esc(f).replace(/'/g,"\\'")}')">Open</button></div>`;
-  });
+  html += '<div id="filelist"></div>';
   html += `<p class="hint" style="margin-top:18px">AI-generated analysis. Every figure
     is traceable to the References section of the report — check it before relying on it.</p>`;
   $('#done').innerHTML = html; $('#done').classList.remove('hidden');
+
+  // Build the file rows in the DOM rather than by string concatenation, so a
+  // filename containing quotes or markup can never become executable markup.
+  const list = $('#filelist');
+  (j.files || []).forEach(f => {
+    const row = document.createElement('div');
+    row.className = 'file';
+    const name = document.createElement('span');
+    name.textContent = f.split(/[\\/]/).pop();
+    const btn = document.createElement('button');
+    btn.className = 'ghost';
+    btn.textContent = 'Open';
+    btn.addEventListener('click', () => openFile(f));
+    row.appendChild(name); row.appendChild(btn);
+    list.appendChild(row);
+  });
 }
 
 function fail(msg){
@@ -470,7 +637,12 @@ function fail(msg){
   $('#done').classList.remove('hidden');
 }
 
-function openFile(p){ fetch('/api/open?path=' + encodeURIComponent(p)); }
+function openFile(p){
+  api('/api/open', {method:'POST', headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({path: p})})
+    .then(r => r.json())
+    .then(d => { if(d.error) alert(d.error); });
+}
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,
   c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 </script></div></body></html>

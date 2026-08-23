@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deckscope"
-version = "1.0.0"
+version = "0.0.0.dev0"   # unreleased; see README
 description = "An agentic framework that analyzes a pitch deck, researches its market, and compares the two."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -13,7 +13,7 @@ authors = [{ name = "CinvanaAI" }]
 keywords = ["pitch deck", "venture capital", "market research", "agents", "llm",
             "due diligence", "prompt injection", "mcp"]
 classifiers = [
-  "Development Status :: 4 - Beta",
+  "Development Status :: 3 - Alpha",
   "Intended Audience :: Financial and Insurance Industry",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
@@ -52,3 +52,14 @@ deckscope = ["py.typed"]
 [tool.ruff]
 line-length = 92
 target-version = "py39"
+
+[tool.ruff.lint]
+# Ruff's own defaults, pinned so a future ruff release can't fail CI by adding rules.
+select = ["E4", "E7", "E9", "F"]
+
+[tool.ruff.lint.per-file-ignores]
+# Package __init__ files exist to re-export. Their imports are the public API,
+# so "unused import" is exactly wrong there.
+"__init__.py" = ["F401"]
+# The examples import DeckScope to demonstrate registration side effects.
+"examples/*" = ["F401"]

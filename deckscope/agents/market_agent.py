@@ -1,17 +1,17 @@
 """Agent 2 — researches the market independently of the deck's claims."""
 from __future__ import annotations
 
-import json
 from typing import Any, Dict, List
 
 from ..prompts.templates import (MARKET_SYSTEM, MARKET_USER, QUERY_SYSTEM,
                                  QUERY_USER)
-from ..research.base import Researcher, format_results
+from ..research.base import Researcher
 from ..security.policy import SecurityPolicy
 from ..security.screening import screen_sources
 from ..sources import SourceRegistry
 from ..providers.base import Message, extract_json_array
 from ..schemas import MARKET_SCHEMA, coerce, schema_block
+from ..validate import validate_market
 from ..security.sanitizer import fence
 from .base import Agent
 
@@ -64,7 +64,11 @@ class MarketAnalyst(Agent):
             self.emit(f"  · {q}")
 
         results = self.researcher.search_many(queries, max_results=max_results)
-        self.emit(f"gathered {len(results)} sources")
+        if results:
+            self.emit(f"gathered {len(results)} sources")
+        else:
+            self.emit("no external sources retrieved — the market view will be "
+                      "unverified and the report will say so")
 
         # Register every source BEFORE screening, so anything dropped still appears
         # in the bibliography with the reason it was dropped. A source removed for
@@ -100,12 +104,11 @@ class MarketAnalyst(Agent):
             for c in (deck.get("claims") or [])
         ) or "- (none extracted)"
 
+        have_evidence = bool(self.registry.sources)
         research_note = (
             "The numbered bibliography follows. Cite every figure by its source ID."
-            if results and self.researcher.name != "none" else
-            "NO web research was available for this run. Rely on training knowledge "
-            "only, set sizing_confidence to 'low', and state this limitation "
-            "prominently in research_gaps."
+            if have_evidence else
+            "NO external evidence is available for this run."
         )
 
         user = MARKET_USER.format(
@@ -115,20 +118,38 @@ class MarketAnalyst(Agent):
             segments=", ".join(market.get("customer_segments") or []) or "unspecified",
             claims=claims, research_note=research_note,
             schema=schema_block(MARKET_SCHEMA, "MarketAnalysis"),
-            research_material=fence(self.registry.prompt_block(),
-                                    "RESEARCH MATERIAL"),
+            research_material=(
+                fence(self.registry.prompt_block(), "RESEARCH MATERIAL")
+                if have_evidence
+                else getattr(self.researcher, "NOTICE",
+                             "No external evidence was retrieved for this run.")),
         )
+        # Bound to the EXACT evidence, not just the query list and a count.
+        # Two searches returning the same number of different results must not
+        # replay each other's market analysis.
         out = self.cached_json(
-            f"market::{self.provider.model}:{hash(tuple(queries))}:{len(results)}",
-            lambda: self.provider.complete_json(MARKET_SYSTEM, user),
+            self.cache_key(
+                queries=sorted(queries),
+                backend=self.researcher.name,
+                security=self.policy.mode.value,
+                sources=[{"url": s.url, "title": s.title,
+                          "snippet": s.snippet[:500]} for s in self.registry.sources],
+                claims=claims,
+            ),
+            lambda: self.complete_json(MARKET_SYSTEM, user),
         )
         out = coerce(out, MARKET_SCHEMA)
+        validation = validate_market(
+            out, valid_source_ids=[s.sid for s in self.registry.sources])
+        if not validation.ok:
+            self.emit(f"validation: {validation.summary()}")
         out["_meta"] = {
             "queries": queries, "backend": self.researcher.name,
             "n_results": len(results), "n_results_before_screening": raw_count,
             "registry": self.registry.to_dict(),
             "security": (self.security_report.to_dict()
                          if self.security_report else None),
+            "validation": validation.to_dict(),
         }
         landscape = out.get("competitive_landscape") or {}
         self.emit(f"mapped {len(landscape.get('incumbents') or [])} incumbents, "

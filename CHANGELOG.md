@@ -6,11 +6,127 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ## [Unreleased]
 
-Nothing yet.
+### Panel — added
 
-## [1.0.0] — 2026-08-23
+- **Stopping is now a strategy, not a constant.** `adaptive` (default), `convergence`,
+  `confidence_floor` and `fixed`. Convergence can skip cross-review entirely when the
+  panel already agreed independently; confidence_floor refuses to present a
+  low-confidence result as settled and says so when it hits the cap. Every decision is
+  logged, and the report shows the spread, agreement, position changes and contested
+  claims after each round with the reason it continued or stopped.
+- **Panelists rank each other's finished reports.** Borda count, self-votes structurally
+  impossible, reasons required, and a preference cycle (A > B > C > A) reported as a
+  cycle rather than broken arbitrarily. The chair's synthesis is still the headline, but
+  each panelist's own report is kept intact beside it, ordered by the vote — a synthesis
+  can smooth away the disagreement that is the point.
+- The round sequence is driven by the strategy rather than hardcoded, so new stopping
+  rules are a subclass rather than an edit to `Panel.run()`.
 
-First release.
+### Evaluation — added
+
+- **Single-prompt baseline mode** (`--mode baseline`), and `--mode both` to run it
+  alongside the pipeline on the same deck with identical screening and identical sources.
+  Writes `mode_comparison.json` and prints verdict agreement, score gap, claims examined,
+  claims carrying a citation, blind spots named, and cost in tokens and seconds.
+  Deliberately declines to name a winner: whether the extra passes bought anything is a
+  judgement about reasoning quality that a count cannot make.
+- This is the control the architecture never had. The README no longer says the design is
+  unmeasured; it says how to measure it.
+
+### Security — fixed
+
+- **Local web server could execute arbitrary files.** `GET /api/open` passed any
+  path to the OS handler; on Windows that means running an executable. Any web page
+  open in your browser could trigger it. Now: per-launch token, Origin validation,
+  POST only, and restricted to files DeckScope itself produced. Body size, concurrent
+  jobs and job retention are also capped.
+- **Enforcement now follows detection.** Redaction is driven by the findings and
+  their exact character spans, so a detected base64 payload is removed rather than
+  reported and left in place, and `redact_on: high` redacts high-severity findings
+  instead of silently only doing `critical`.
+- **Dangerous-scheme URLs quarantine their source.** Previously a `javascript:` or
+  `data:` result was flagged and then kept.
+- **Concealment escalation is span-local.** One zero-width character no longer
+  upgrades the severity of every later match in the document.
+- **Unsafe URLs cannot become live links.** All hrefs pass through `safe_url`;
+  anything that is not http(s)/mailto renders as inert text.
+- **Remote deck fetching is SSRF-guarded.** Private, loopback and link-local
+  addresses are refused, redirects are revalidated, downloads are size- and
+  time-capped, and temporary files are uniquely named.
+- **CLI providers are sandboxed.** Minimal environment, empty temporary working
+  directory, and no-tool flags where the CLI supports them.
+- **`get_settings` no longer returns secrets over MCP.**
+- **API keys are genuinely owner-only on Windows**, via a real ACL rather than a
+  `chmod` that does nothing there. `doctor` reports whether it worked.
+- **Encoded-payload detection no longer rests on a length threshold.** It was 80
+  characters, then 32, and both let real payloads through: `"ignore instructions"`
+  encodes to 28 characters and `"you are now a promoter"` to 32 including padding the
+  regex did not count. Length is now only a cheap pre-filter; the decode does the work,
+  across both base64 alphabets and all padding lengths. Zero false positives on git
+  SHAs, embedded images and tenant IDs.
+- **The instruction-override pattern required a qualifier.** `"ignore all instructions"`
+  matched; plain `"ignore instructions"` did not. Split into two forms so the
+  unqualified case is caught without flagging "our rules engine lets admins override
+  rules".
+
+### Correctness — fixed
+
+- **Panel citations could point at the wrong source.** Each panelist numbered its
+  own bibliography from S1, and only one registry survived, so Panelist B's `S1`
+  resolved against Panelist A's document. Registries are now merged into one global
+  namespace before any cross-review, with every panelist's citations rewritten.
+- **Claim agreement compared unrelated claims.** The matrix grouped by each
+  panelist's own C-numbering. It now matches on content — quoted figures and
+  significant words — and reports single-panelist claims as silence rather than
+  disagreement.
+- **The cache never actually hit.** Keys used `hash()`, which is randomized per
+  process. Now SHA-256 over canonicalized inputs, bound to the exact sources, the
+  security policy and a prompt epoch, with a TTL and owner-only permissions.
+- **Token accounting was always zero**, because `complete_json` discarded the
+  provider's response object. Usage is now tracked, including JSON-repair retries.
+- **`--research none` fabricated a source.** It registered its own "no research was
+  performed" notice as a cited bibliography entry. The registry now stays empty and
+  the report says so plainly.
+- **Model output is validated**, not merely coerced: enums, numeric ranges, row
+  shapes, and citations to sources that were never supplied. Every repair is
+  recorded in the report.
+
+### Platform — fixed
+
+- **Windows console output crashed all three demos.** Box-drawing characters cannot
+  be encoded on a CP-1252 console. Output now goes through `deckscope.console`,
+  which requests UTF-8 and transliterates when it cannot get it. A test forbids bare
+  `print()` in the package.
+- **Anthropic defaults returned HTTP 400.** `temperature` is rejected on Claude 4.7
+  and later; it is now omitted for those models.
+- **The default Gemini model was past its shutdown date.** Refreshed, with retired
+  names mapped to an actionable error.
+- **The test suite required optional packages**, so it failed on the minimal install
+  the README recommends. It now skips formats whose dependency is absent.
+- MCP client: enforced timeouts, drained stderr (a chatty server could deadlock),
+  and out-of-order responses are buffered rather than discarded.
+
+### Documentation
+
+- Version dropped. This is unreleased software and now says so.
+- Claims narrowed to what the code enforces: DeckScope screens **retrieved
+  snippets**, not whole source pages; the panel is **role-separated analysis with
+  model diversity**, not independent market discovery; citation resolution checks
+  that a source exists, **not** that it supports the claim.
+- Added a threat model, and a limitations section that states the three-agent design
+  is unproven rather than merely unmeasured.
+
+### Testing
+
+- 99 tests, up from 42, including one regression test per audit finding and full
+  coverage of the stopping strategies, voting maths and baseline mode.
+- The suite passes on a minimal install and on a legacy Windows console.
+
+---
+
+## Earlier
+
+Initial implementation, before external audit.
 
 ### The pipeline
 

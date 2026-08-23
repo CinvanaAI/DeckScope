@@ -10,8 +10,9 @@ from __future__ import annotations
 import html
 import json
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, List
 
+from ..console import out as _out
 from .common import ASSESSMENT_WORD, as_list, score_color, theme as get_theme, txt
 
 
@@ -47,6 +48,8 @@ def build_panel_markdown(result, lens: str) -> str:
     add(f"| **Positions changed after review** | "
         f"{txt(metrics.get('total_position_changes'))} |")
     add(f"| **Panel** | {', '.join(p.name for p in working)} |")
+    add(f"| **Review rounds** | {txt(result.stats.get('rounds_run'))} run "
+        f"({txt(result.stats.get('strategy'))} stopping rule) |")
     add(f"| **Chair** | {txt(result.stats.get('chair'))} |")
     add(f"| **Generated** | {txt(result.stats.get('generated_at'))} |")
     add("")
@@ -79,8 +82,59 @@ def build_panel_markdown(result, lens: str) -> str:
             add(f"- `{txt(f.get('name'))}` — {txt(f.get('error'))}")
         add("")
 
+    if result.stats.get("stopped_because"):
+        add(f"*Why the panel stopped when it did: {result.stats['stopped_because']}*")
+        add("")
+
     add(cons.get("summary") or "")
     add("")
+
+    # ---------------------------------------------------- the ranked reports
+    vote = result.votes.get(lens)
+    if vote and vote.ballots:
+        add("## The individual reports, ranked")
+        add("")
+        add("The synthesis above is a committee document, and a committee document can "
+            "smooth away the disagreement that is the most useful thing here. So each "
+            "panelist's own report is kept intact and listed below, ordered by how the "
+            "rest of the panel ranked it.")
+        add("")
+        add("Panelists ranked each other on whether conclusions follow from the evidence "
+            "cited, not on whether they agreed. Nobody ranked themselves.")
+        add("")
+        add("| Rank | Report | Score | First-place votes | Verdict |")
+        add("|:--:|---|:--:|:--:|---|")
+        for i, label in enumerate(vote.order, 1):
+            p_ = next((x for x in working if x.label == label), None)
+            verdict = ((p_.final(lens).get("verdict") or {}).get("call", "—")
+                       if p_ else "—")
+            mark = " ⭐" if label == vote.winner else ""
+            add(f"| {i}{mark} | **{label}** — {txt(p_.name if p_ else '')} | "
+                f"{txt(vote.scores.get(label))} | {txt(vote.firsts.get(label, 0))} | "
+                f"{verdict} |")
+        add("")
+        add(f"*{vote.note}*")
+        add("")
+        if not vote.decisive:
+            add("Because the vote was tied, no single report is presented as the "
+                "panel's preferred analysis. Read the tied reports side by side.")
+            add("")
+        reasons = [(b.voter, t, r) for b in vote.ballots for t, r in b.reasons.items()]
+        if reasons:
+            add("<details><summary>Why each panelist ranked the others as it did</summary>")
+            add("")
+            for voter, target, reason in reasons[:24]:
+                add(f"- **{voter}** on {target}: {reason}")
+            add("")
+            add("</details>")
+            add("")
+        notes = [b.note for b in vote.ballots if b.note]
+        if notes:
+            add("**What the panel thought it collectively missed:**")
+            add("")
+            for n in notes:
+                add(f"- {n}")
+            add("")
 
     # --------------------------------------------------------- agreement
     agree = cons.get("where_all_agree") or []
@@ -127,24 +181,39 @@ def build_panel_markdown(result, lens: str) -> str:
         add("## Claim-by-claim, across the panel")
         add("")
         labels = [p.label for p in working]
+        add("Claims are matched across panelists by content — the numbers they quote "
+            "and the words they use — not by each panelist's own numbering, which is "
+            "independent and not comparable.")
+        add("")
         add("| Claim | " + " | ".join(labels) + " | Consensus |")
         add("|---|" + "|".join([":--:"] * len(labels)) + "|---|")
-        cons_by_id = {c.get("id"): c for c in (cons.get("claim_consensus") or [])}
         for c in claims:
             row = [f"**{txt(c.get('id'))}** {txt(c.get('claim'))[:70]}"]
             for lbl in labels:
-                a = (c.get("assessments") or {}).get(lbl, "—")
-                row.append(ASSESSMENT_WORD.get(a, a))
-            cc = cons_by_id.get(c.get("id"), {})
-            mark = "" if c.get("unanimous") else " ⚠"
-            row.append(txt(cc.get("consensus") or
-                           ("unanimous" if c.get("unanimous") else "no consensus")) + mark)
+                a = (c.get("assessments") or {}).get(lbl)
+                row.append(ASSESSMENT_WORD.get(a, a) if a else "*not raised*")
+            if c.get("single_panelist"):
+                verdict = "only one panelist raised this"
+            elif c.get("unanimous"):
+                verdict = "unanimous"
+            elif c.get("contested"):
+                verdict = "no consensus ⚠"
+            else:
+                verdict = f"agreed by {c.get('raised_by')} of {c.get('of_panelists')}"
+            row.append(verdict)
             add("| " + " | ".join(row) + " |")
         add("")
         contested_ids = metrics.get("contested_claims") or []
         if contested_ids:
-            add(f"⚠ marks the {len(contested_ids)} claim(s) the panel did not agree on: "
-                f"{', '.join(contested_ids)}. Those are the ones to check yourself.")
+            add(f"⚠ marks the {len(contested_ids)} claim(s) the panel assessed "
+                f"differently: {', '.join(contested_ids)}. Those are the ones to check "
+                f"yourself.")
+            add("")
+        solo = metrics.get("single_panelist_claims") or []
+        if solo:
+            add(f"*{len(solo)} claim(s) were raised by only one panelist. That is not "
+                f"disagreement — the others did not address them at all, which usually "
+                f"means the claim was easy to miss.*")
             add("")
 
     # ------------------------------------------------------- dimension spread
@@ -215,6 +284,21 @@ def build_panel_markdown(result, lens: str) -> str:
             "Read the reliability note below before treating it as confirmation.")
         add("")
 
+    # ------------------------------------------------------- how it stopped
+    if result.round_log:
+        add("<details><summary>How the panel decided to stop</summary>")
+        add("")
+        add("| After round | Spread | Agreement | Changes | Contested | Continue? | Why |")
+        add("|:--:|:--:|---|:--:|:--:|:--:|---|")
+        for e in result.round_log:
+            add(f"| {txt(e.get('after_round'))} | {txt(e.get('spread'))} | "
+                f"{txt(e.get('verdict_agreement'))} | {txt(e.get('position_changes'))} | "
+                f"{txt(e.get('contested_claims'))} | "
+                f"{'yes' if e.get('proceed') else 'stop'} | {txt(e.get('reason'))} |")
+        add("")
+        add("</details>")
+        add("")
+
     # -------------------------------------------------------- reliability
     rel = cons.get("reliability") or {}
     if rel:
@@ -244,11 +328,12 @@ def build_panel_markdown(result, lens: str) -> str:
     add("")
     add("## Annex — each panelist's final analysis")
     add("")
-    from .markdown_renderer import build_markdown
-
     primary = result.primary_result()
-    for p in working:
-        add(f"### {p.label} — {p.name}")
+    ordered = (sorted(working, key=lambda x: (x.rank or 99))
+               if any(x.rank for x in working) else working)
+    for p in ordered:
+        rank = f" — ranked #{p.rank} by the panel" if p.rank else ""
+        add(f"### {p.label} — {p.name}{rank}")
         add("")
         final = p.final(lens)
         v = final.get("verdict") or {}
@@ -282,7 +367,7 @@ def build_panel_markdown(result, lens: str) -> str:
 
     add("---")
     add("")
-    add(f"*Generated by DeckScope {result.stats.get('deckscope_version', '')} · panel of "
+    add(f"*Generated by DeckScope · panel of "
         f"{len(working)} · chaired by {result.stats.get('chair', '?')}. AI-generated "
         f"analysis: verify every figure against its cited source before relying on it. "
         f"Not investment advice.*")
@@ -439,18 +524,27 @@ reviewing each other</div></header>""")
     claims = metrics.get("claims") or []
     if claims:
         labels = [p.label for p in working]
-        cons_by_id = {c.get("id"): c for c in (cons.get("claim_consensus") or [])}
-        add("<h2>Claim-by-claim, across the panel</h2><div class='tw'><table><tr><th>Claim</th>"
+        add("<h2>Claim-by-claim, across the panel</h2>")
+        add("<p style='color:var(--muted)'>Claims are matched across panelists by "
+            "content — the numbers they quote and the words they use — not by each "
+            "panelist's own numbering, which is independent and not comparable.</p>")
+        add("<div class='tw'><table><tr><th>Claim</th>"
             + "".join(f"<th>{_e(l)}</th>" for l in labels) + "<th>Consensus</th></tr>")
         for c in claims:
             add(f"<tr><td><b>{_e(c.get('id'))}</b> {_e(str(c.get('claim'))[:80])}</td>")
             for lbl in labels:
-                a = (c.get("assessments") or {}).get(lbl, "—")
-                add(f"<td>{_e(ASSESSMENT_WORD.get(a, a))}</td>")
-            cc = cons_by_id.get(c.get("id"), {})
-            label = cc.get("consensus") or ("unanimous" if c.get("unanimous")
-                                            else "no consensus")
-            cls = "" if c.get("unanimous") else " class='contested'"
+                a = (c.get("assessments") or {}).get(lbl)
+                cell = (_e(ASSESSMENT_WORD.get(a, a)) if a
+                        else "<i style='color:var(--muted)'>not raised</i>")
+                add(f"<td>{cell}</td>")
+            if c.get("single_panelist"):
+                label, cls = "only one panelist raised this", ""
+            elif c.get("unanimous"):
+                label, cls = "unanimous", ""
+            elif c.get("contested"):
+                label, cls = "no consensus", " class='contested'"
+            else:
+                label, cls = f"agreed by {c.get('raised_by')} of {c.get('of_panelists')}", ""
             add(f"<td{cls}>{_e(label)}</td></tr>")
         add("</table></div>")
 
@@ -561,8 +655,7 @@ reviewing each other</div></header>""")
         add(_references_html(primary))
         add(_security_html(primary))
 
-    add(f"""<footer>Generated by DeckScope
-{_e(result.stats.get('deckscope_version',''))} · panel of {len(working)} ·
+    add(f"""<footer>Generated by DeckScope · panel of {len(working)} ·
 chaired by {_e(result.stats.get('chair'))} · {_e(result.stats.get('generated_at'))}.<br>
 AI-generated analysis. Verify every figure against its cited source before relying on it.
 Not investment advice.</footer></div></body></html>""")
@@ -612,7 +705,7 @@ def render_panel(result, out_dir: Path, base: str, formats: List[str],
                     continue
                 written.append(str(p))
             except Exception as exc:  # noqa: BLE001
-                print(f"[panel] could not write {fmt}: {exc}")
+                _out(f"[panel] could not write {fmt}: {exc}")
 
     # Each panelist's own final report, in the same formats the user asked for.
     single_fmts = [f for f in fmts if f in ("pdf", "docx", "pptx", "md", "html")]
@@ -671,13 +764,16 @@ def _panel_xlsx(result, out_dir: Path, base: str) -> str:
     rows = []
     for lens, m in result.metrics.items():
         for c in m.get("claims") or []:
-            rows.append([lens, c.get("id"), c.get("claim"),
+            rows.append([lens, c.get("id"), c.get("claim"), c.get("type"),
                          json.dumps(c.get("assessments") or {}),
+                         json.dumps(c.get("local_ids") or {}),
+                         f"{c.get('raised_by')}/{c.get('of_panelists')}",
                          "yes" if c.get("unanimous") else "no",
                          c.get("distinct_positions")])
-    sheet("Claim agreement", ["Lens", "ID", "Claim", "Per-panelist assessment",
-                              "Unanimous", "Distinct positions"],
-          rows, [12, 7, 56, 56, 11, 11])
+    sheet("Claim agreement", ["Lens", "Key", "Claim", "Type", "Per-panelist assessment",
+                              "Each panelist's own ID", "Raised by", "Unanimous",
+                              "Distinct positions"],
+          rows, [10, 7, 52, 14, 46, 34, 11, 11, 11])
 
     rows = []
     for lens, m in result.metrics.items():

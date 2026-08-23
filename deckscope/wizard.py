@@ -12,6 +12,7 @@ import textwrap
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from .console import out as _out
 from . import settings
 from .config import ALL_LENSES
 
@@ -49,25 +50,25 @@ WIDTH = min(shutil.get_terminal_size((80, 24)).columns, 84)
 
 
 def rule(char: str = "─") -> None:
-    print(dim(char * WIDTH))
+    _out(dim(char * WIDTH))
 
 
 def banner(title: str, subtitle: str = "") -> None:
-    print()
+    _out()
     rule("━")
-    print(bold(f"  {title}"))
+    _out(bold(f"  {title}"))
     if subtitle:
-        print(dim(f"  {subtitle}"))
+        _out(dim(f"  {subtitle}"))
     rule("━")
-    print()
+    _out()
 
 
 def say(text: str, indent: str = "  ") -> None:
     for para in text.split("\n"):
         if not para.strip():
-            print()
+            _out()
             continue
-        print(textwrap.fill(para, WIDTH - 2, initial_indent=indent,
+        _out(textwrap.fill(para, WIDTH - 2, initial_indent=indent,
                             subsequent_indent=indent))
 
 
@@ -76,7 +77,7 @@ def ask(prompt: str, default: Optional[str] = None) -> str:
     try:
         val = input(f"  {blue('›')} {prompt}{suffix}: ").strip()
     except (EOFError, KeyboardInterrupt):
-        print()
+        _out()
         raise SystemExit("\nSetup cancelled. Run `deckscope setup` any time to resume.")
     return val or (default or "")
 
@@ -91,22 +92,22 @@ def ask_yes(prompt: str, default: bool = True) -> bool:
             return True
         if val in ("n", "no"):
             return False
-        print(dim("    Please answer y or n."))
+        _out(dim("    Please answer y or n."))
 
 
 def choose(prompt: str, options: List[Tuple[str, str, str]],
            default: int = 1) -> str:
     """options: (value, label, description). Returns the chosen value."""
-    print()
-    print(f"  {bold(prompt)}")
-    print()
+    _out()
+    _out(f"  {bold(prompt)}")
+    _out()
     for i, (_, label, desc) in enumerate(options, 1):
         mark = green("→") if i == default else " "
-        print(f"   {mark} {bold(str(i) + '.')} {label}")
+        _out(f"   {mark} {bold(str(i) + '.')} {label}")
         if desc:
             for line in textwrap.wrap(desc, WIDTH - 10):
-                print(f"        {dim(line)}")
-    print()
+                _out(f"        {dim(line)}")
+    _out()
     while True:
         raw = ask(f"Pick 1-{len(options)}", str(default))
         try:
@@ -115,7 +116,7 @@ def choose(prompt: str, options: List[Tuple[str, str, str]],
                 return options[idx - 1][0]
         except ValueError:
             pass
-        print(dim(f"    Enter a number between 1 and {len(options)}."))
+        _out(dim(f"    Enter a number between 1 and {len(options)}."))
 
 
 def ask_secret(prompt: str) -> str:
@@ -129,7 +130,7 @@ def ask_secret(prompt: str) -> str:
 
 
 def spinner_done(ok: bool, message: str) -> None:
-    print(f"    {green('✓') if ok else red('✗')} {message}")
+    _out(f"    {green('✓') if ok else red('✗')} {message}")
 
 
 # ============================================================== the wizard
@@ -205,7 +206,7 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
         if not ask_yes("Start over and reconfigure?", default=False):
             say("Keeping your existing settings.")
             return existing
-        print()
+        _out()
 
     say("DeckScope reads a pitch deck, researches the market it competes in, and "
         "tells you where the two agree and where they don't.\n\n"
@@ -236,14 +237,14 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
             _collect_key(provider, env)
 
     if provider == "openai_compatible":
-        print()
+        _out()
         say("Point DeckScope at your local server. The default is Ollama's address.")
         base = ask("Server address", "http://localhost:11434/v1")
         cfg["provider"]["base_url"] = base
         cfg["provider"]["model"] = ask("Model name", "llama3.1:8b")
 
     if provider == "cli":
-        print()
+        _out()
         found = [(name, cmd) for name, cmd in
                  (("claude", "claude"), ("ollama", "ollama"),
                   ("codex", "codex"), ("gemini", "gemini"))
@@ -251,7 +252,7 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
         if found:
             say("Found these on your computer:")
             for name, _ in found:
-                print(f"      {green('•')} {name}")
+                _out(f"      {green('•')} {name}")
             preset = choose("Which should DeckScope use?",
                             [(n, n, "") for n, _ in found], default=1)
         else:
@@ -265,7 +266,7 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
             prov_extra["ollama_model"] = ask("Which Ollama model?", "llama3.1:8b")
 
     if provider == "manual":
-        print()
+        _out()
         say("In this mode DeckScope pauses at each step, puts the prompt on your "
             "clipboard, and waits while you paste it into whatever chat AI you use. "
             "You save the reply into a file and press Enter to continue.")
@@ -336,11 +337,11 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
     from .render.registry import DESCRIPTIONS
 
     say("Pick as many as you like — type the numbers separated by commas.")
-    print()
+    _out()
     fmt_options = ["html", "pdf", "docx", "md", "pptx", "xlsx", "json", "txt"]
     for i, f in enumerate(fmt_options, 1):
-        print(f"     {bold(str(i) + '.')} {f.upper():5s} {dim(DESCRIPTIONS.get(f, ''))}")
-    print()
+        _out(f"     {bold(str(i) + '.')} {f.upper():5s} {dim(DESCRIPTIONS.get(f, ''))}")
+    _out()
     while True:
         raw = ask("Which formats?", "1,2")
         picked = []
@@ -351,8 +352,8 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
                 picked.append(part.lower())
         if picked:
             break
-        print(dim("    Enter at least one number, e.g. 1,2"))
-    print()
+        _out(dim("    Enter at least one number, e.g. 1,2"))
+    _out()
     out_dir = ask("Where should reports be saved?", str(settings.default_output_dir()))
     cfg["output"] = {"formats": list(dict.fromkeys(picked)), "out_dir": out_dir,
                      "theme": "slate"}
@@ -385,7 +386,7 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
         "This costs roughly one run per AI, plus a review pass. You can skip it now "
         "and turn it on for any single run later with `deckscope panel`.")
     if ask_yes("Set up a panel now?", default=False):
-        print()
+        _out()
         say("Enter the connections you want on the panel, separated by commas.")
         say(dim("   Examples: anthropic:claude-sonnet-5, openai:gpt-4o, gemini"))
         say(dim("   Each one needs its own key — run `deckscope setup` again to add more."))
@@ -410,28 +411,28 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
     say(f"Settings saved to {path}")
     if settings.env_path().exists():
         say(f"Keys saved to {settings.env_path()} (readable only by you)")
-    print()
+    _out()
     say(bold("What to do next:"))
-    print()
-    print(f"    {green('deckscope app')}              open the drag-and-drop window")
-    print(f"    {green('deckscope demo')}             run a full sample analysis, free")
-    print(f"    {green('deckscope run deck.pdf')}     analyze a real deck")
-    print(f"    {green('deckscope panel deck.pdf --panel A B')}")
-    print(f"    {dim('                              ')} several AIs that review each other")
-    print(f"    {green('deckscope doctor')}           re-check everything is working")
-    print()
+    _out()
+    _out(f"    {green('deckscope app')}              open the drag-and-drop window")
+    _out(f"    {green('deckscope demo')}             run a full sample analysis, free")
+    _out(f"    {green('deckscope run deck.pdf')}     analyze a real deck")
+    _out(f"    {green('deckscope panel deck.pdf --panel A B')}")
+    _out(f"    {dim('                              ')} several AIs that review each other")
+    _out(f"    {green('deckscope doctor')}           re-check everything is working")
+    _out()
     return cfg
 
 
 def _collect_key(service: str, env: str) -> None:
     url = KEY_URLS.get(service, "")
-    print()
+    _out()
     say(f"{bold(service.title())} needs an API key.")
     if url:
         say(f"Get one here: {blue(url)}")
         say(dim("Sign in, create a key, and copy it. It usually starts with a few "
                 "letters and a dash."))
-    print()
+    _out()
     while True:
         key = ask_secret(f"Paste your {service} key (or press Enter to skip)")
         if not key:
@@ -454,7 +455,7 @@ def _test_everything(cfg: Dict[str, Any]) -> bool:
 
     all_ok = True
 
-    print("  Checking the AI connection...")
+    _out("  Checking the AI connection...")
     try:
         pcfg = ProviderConfig(**cfg["provider"])
         provider = get_provider(pcfg)
@@ -475,7 +476,7 @@ def _test_everything(cfg: Dict[str, Any]) -> bool:
         all_ok = False
         spinner_done(False, str(exc)[:200])
 
-    print("  Checking web research...")
+    _out("  Checking web research...")
     try:
         rcfg = ResearchConfig(**cfg["research"])
         researcher = get_researcher(rcfg)
@@ -490,7 +491,7 @@ def _test_everything(cfg: Dict[str, Any]) -> bool:
         all_ok = False
         spinner_done(False, str(exc)[:200])
 
-    print("  Checking output formats...")
+    _out("  Checking output formats...")
     from .render.registry import resolve
     missing = []
     for fmt in cfg["output"]["formats"]:
@@ -510,7 +511,7 @@ def _test_everything(cfg: Dict[str, Any]) -> bool:
     else:
         spinner_done(True, f"{', '.join(f.upper() for f in cfg['output']['formats'])} ready")
 
-    print("  Checking the reports folder...")
+    _out("  Checking the reports folder...")
     try:
         out = Path(cfg["output"]["out_dir"])
         out.mkdir(parents=True, exist_ok=True)
@@ -532,12 +533,18 @@ def doctor() -> int:
     settings.load_env()
     banner("DeckScope health check")
 
-    print(f"  Python           {sys.version.split()[0]}")
-    print(f"  DeckScope        {_version()}")
-    print(f"  Settings file    {settings.config_path()}")
-    print(f"  Key file         {settings.env_path()}"
-          f"{'' if settings.env_path().exists() else dim('  (none yet)')}")
-    print()
+    _out(f"  Python           {sys.version.split()[0]}")
+    _out(f"  DeckScope        {_version()}")
+    _out(f"  Settings file    {settings.config_path()}")
+    key_file = settings.env_path()
+    if key_file.exists():
+        locked = settings.restrict_to_owner(key_file)
+        state = green("owner-only") if locked else yellow(
+            "could NOT be restricted to your account — check its permissions")
+        _out(f"  Key file         {key_file}  [{state}]")
+    else:
+        _out(f"  Key file         {key_file}{dim('  (none yet)')}")
+    _out()
 
     if not settings.is_configured():
         say(yellow("DeckScope has not been set up yet."))
@@ -545,22 +552,22 @@ def doctor() -> int:
         return 1
 
     cfg = settings.load_settings()
-    print(f"  AI provider      {cfg.get('provider', {}).get('name')} "
+    _out(f"  AI provider      {cfg.get('provider', {}).get('name')} "
           f"({cfg.get('provider', {}).get('model') or 'default model'})")
-    print(f"  Research         {cfg.get('research', {}).get('name')}")
-    print(f"  Lenses           {', '.join(cfg.get('lenses', []))}")
-    print(f"  Formats          {', '.join(cfg.get('output', {}).get('formats', []))}")
-    print(f"  Reports folder   {cfg.get('output', {}).get('out_dir')}")
-    print(f"  Security mode    {cfg.get('security', {}).get('mode', 'balanced')}")
+    _out(f"  Research         {cfg.get('research', {}).get('name')}")
+    _out(f"  Lenses           {', '.join(cfg.get('lenses', []))}")
+    _out(f"  Formats          {', '.join(cfg.get('output', {}).get('formats', []))}")
+    _out(f"  Reports folder   {cfg.get('output', {}).get('out_dir')}")
+    _out(f"  Security mode    {cfg.get('security', {}).get('mode', 'balanced')}")
     panel = cfg.get("panel") or {}
     if panel.get("members"):
-        print(f"  Panel            {', '.join(panel['members'])} "
+        _out(f"  Panel            {', '.join(panel['members'])} "
               f"({panel.get('rounds', 1)} review round(s))")
-    print()
+    _out()
     rule()
-    print()
+    _out()
     ok = _test_everything(cfg)
-    print()
+    _out()
     if ok:
         say(green("Everything is working."))
         return 0

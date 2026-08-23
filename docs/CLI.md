@@ -59,6 +59,7 @@ deckscope run DECK [options]
 | `--max-queries` | 8 | Search queries to run |
 | `--no-cache` | off | Ignore cached agent results |
 | `--quiet, -q` | off | Suppress progress output |
+| `--mode` | `pipeline` | `pipeline` (three isolated agents), `baseline` (one prompt), or `both` |
 | `--config` | — | Use a specific config file instead of your settings |
 
 ```bash
@@ -86,7 +87,9 @@ deckscope panel DECK --panel PROVIDER[:MODEL] PROVIDER[:MODEL] ... [options]
 | Option | Default | Meaning |
 |---|---|---|
 | `--panel, -p` | from settings | Two or more connections |
-| `--rounds, -r` | 1 | Cross-review rounds; `0` skips review |
+| `--rounds, -r` | 3 | Maximum cross-review rounds; `0` skips review entirely |
+| `--strategy, -s` | `adaptive` | When to stop: `adaptive` `convergence` `confidence_floor` `fixed` |
+| `--no-vote` | off | Skip the round where panelists rank each other's reports |
 | `--chair` | first panelist | Which connection writes the consensus |
 | `--sequential` | off | Run panelists one at a time instead of in parallel |
 
@@ -98,6 +101,15 @@ deckscope panel deck.pdf --panel anthropic openai gemini --rounds 2 --format htm
 deckscope panel deck.pdf --panel anthropic:claude-opus-5 anthropic:claude-haiku-4-5-20251001 \
                          --chair openai:gpt-4o --lens all
 deckscope panel deck.pdf            # uses the panel saved by `deckscope setup`
+deckscope panel deck.pdf --panel anthropic openai --strategy convergence
+deckscope panel deck.pdf --panel anthropic openai gemini --strategy confidence_floor -r 4
+```
+
+**Comparing the architecture against a single prompt:**
+
+```bash
+deckscope run deck.pdf --mode baseline    # one call per lens, ~a third of the cost
+deckscope run deck.pdf --mode both        # both, plus mode_comparison.json
 ```
 
 ---

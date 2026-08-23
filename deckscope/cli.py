@@ -15,7 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from . import __version__, settings
+from .console import out as _out
+from . import __version__, console, settings
 from .config import ALL_LENSES
 
 
@@ -36,7 +37,9 @@ def build_parser() -> argparse.ArgumentParser:
   deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-4o
   deckscope panel deck.pdf --panel anthropic openai gemini --rounds 2 --format html pdf
 """)
-    p.add_argument("--version", action="version", version=f"DeckScope {__version__}")
+    p.add_argument("--version", action="version",
+                   version=f"DeckScope {__version__} (unreleased — "
+                           f"see the README for what is and is not proven)")
     sub = p.add_subparsers(dest="command")
 
     sub.add_parser("setup", help="Guided setup — start here")
@@ -77,6 +80,10 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--max-queries", type=int, default=None)
     run.add_argument("--no-cache", action="store_true")
     run.add_argument("--quiet", "-q", action="store_true")
+    run.add_argument("--mode", default="pipeline",
+                     choices=["pipeline", "baseline", "both"],
+                     help="pipeline = three isolated agents (default); "
+                          "baseline = one prompt; both = run each and compare")
     run.add_argument("--config", default=None, help="Use a specific config file")
 
     panel = sub.add_parser(
@@ -93,8 +100,14 @@ def build_parser() -> argparse.ArgumentParser:
                        metavar="PROVIDER[:MODEL]",
                        help="Two or more AI connections, e.g. anthropic:claude-sonnet-5 "
                             "openai:gpt-4o gemini")
-    panel.add_argument("--rounds", "-r", type=int, default=1,
-                       help="Cross-review rounds (default 1, 0 skips review)")
+    panel.add_argument("--rounds", "-r", type=int, default=None,
+                       help="Maximum cross-review rounds (0 skips review entirely)")
+    panel.add_argument("--strategy", "-s", default="adaptive",
+                       choices=["adaptive", "convergence", "confidence_floor", "fixed"],
+                       help="When to stop reviewing. adaptive (default) picks a rule "
+                            "from how the panel actually behaves")
+    panel.add_argument("--no-vote", action="store_true",
+                       help="Skip the round where panelists rank each other's reports")
     panel.add_argument("--chair", default=None,
                        help="Which connection writes the consensus (default: the first)")
     panel.add_argument("--lens", "-l", nargs="+", default=None)
@@ -114,6 +127,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Optional[List[str]] = None) -> int:
+    # Make the console safe before anything is written to it.
+    console.enable()
     args = build_parser().parse_args(argv)
     cmd = args.command
 
@@ -159,7 +174,6 @@ def main(argv: Optional[List[str]] = None) -> int:
 # ------------------------------------------------------------------ actions
 
 def _run(args: Any) -> int:
-    from .config import Lens
     from .orchestrator import Pipeline
     from .security.report import SecurityAbort
 
@@ -205,30 +219,124 @@ def _run(args: Any) -> int:
         cfg = load_config(args.config, **overrides)
     else:
         if not settings.is_configured():
-            print("DeckScope isn't set up yet. Run:  deckscope setup\n")
-            print("Or try it with no setup at all:   deckscope demo")
+            _out("DeckScope isn't set up yet. Run:  deckscope setup\n")
+            _out("Or try it with no setup at all:   deckscope demo")
             return 1
         cfg = settings.settings_to_runconfig(overrides)
 
-    pipe = Pipeline(cfg)
+    mode = getattr(args, "mode", "pipeline")
     try:
-        result = pipe.run()
-        files = pipe.render(result)
+        if mode == "baseline":
+            result, files = _run_baseline(cfg)
+        elif mode == "both":
+            return _run_both(cfg)
+        else:
+            pipe = Pipeline(cfg)
+            try:
+                result = pipe.run()
+                files = pipe.render(result)
+            finally:
+                pipe.close()
     except SecurityAbort as exc:
-        print(f"\n{exc}\n")
+        _out(f"\n{exc}\n")
         return 3
     except FileNotFoundError as exc:
-        print(f"\nCouldn't find that file: {exc}\n")
+        _out(f"\nCouldn't find that file: {exc}\n")
         return 2
     except Exception as exc:  # noqa: BLE001
-        print(f"\nAnalysis failed: {exc}\n")
-        print("Run `deckscope doctor` to check your setup.")
+        _out(f"\nAnalysis failed: {exc}\n")
+        _out("Run `deckscope doctor` to check your setup.")
         return 1
-    finally:
-        pipe.close()
 
     _print_summary(result, files)
     return 0
+
+
+def _run_baseline(cfg: Any):
+    """One prompt instead of three agents."""
+    from .baseline import BaselineAnalyst
+    from .render.registry import render as render_fmt
+
+    analyst = BaselineAnalyst(cfg)
+    try:
+        result = analyst.run()
+    finally:
+        analyst.close()
+
+    out_dir = Path(cfg.output.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    base = (cfg.output.basename or _slug(result.company)) + "_baseline"
+    files: List[str] = []
+    formats = list(dict.fromkeys(cfg.output.formats))
+    if cfg.output.include_raw_json and "json" not in formats:
+        formats.append("json")
+    for fmt in formats:
+        try:
+            files.extend(render_fmt(fmt, result, out_dir, base, theme=cfg.output.theme))
+        except Exception as exc:  # noqa: BLE001
+            _out(f"[baseline] could not write {fmt}: {exc}")
+    result.written_files = files
+    return result, files
+
+
+def _run_both(cfg: Any) -> int:
+    """Run the pipeline and the single-prompt baseline, then compare them."""
+    import json as _json
+
+    from .baseline import compare_modes
+    from .orchestrator import Pipeline
+
+    _out("Running BOTH modes on this deck so they can be compared.\n")
+
+    pipe = Pipeline(cfg)
+    try:
+        pipeline_result = pipe.run()
+        pipeline_files = pipe.render(pipeline_result)
+    finally:
+        pipe.close()
+
+    _out("")
+    baseline_result, baseline_files = _run_baseline(cfg)
+
+    comparison = compare_modes(pipeline_result, baseline_result)
+    out_path = Path(cfg.output.out_dir) / "mode_comparison.json"
+    out_path.write_text(_json.dumps(comparison, indent=2, default=str), encoding="utf-8")
+
+    _out("")
+    _out("=" * 68)
+    _out("  Three agents vs. one prompt")
+    _out("=" * 68)
+    for lens, d in comparison["lenses"].items():
+        _out(f"\n  [{lens}]")
+        _out(f"    verdict     pipeline {d['verdict']['pipeline']}  |  "
+             f"baseline {d['verdict']['baseline']}"
+             + ("   (agree)" if d["verdict"]["agree"] else "   (DIFFER)"))
+        _out(f"    score       {d['score']['pipeline']} vs {d['score']['baseline']} "
+             f"({d['score']['difference']} apart)")
+        _out(f"    claims      {d['claims_examined']['pipeline']} vs "
+             f"{d['claims_examined']['baseline']} examined, "
+             f"{d['claims_with_a_citation']['pipeline']} vs "
+             f"{d['claims_with_a_citation']['baseline']} cited")
+        _out(f"    blind spots {d['blind_spots_named']['pipeline']} vs "
+             f"{d['blind_spots_named']['baseline']}")
+        _out(f"    risks       {d['risks_identified']['pipeline']} vs "
+             f"{d['risks_identified']['baseline']}")
+    cost = comparison["cost"]
+    _out(f"\n  cost        {cost['pipeline_tokens']} vs {cost['baseline_tokens']} tokens")
+    _out(f"              {cost['pipeline_seconds']}s vs {cost['baseline_seconds']}s")
+    _out("=" * 68)
+    _out(f"\n  {comparison['caveat']}\n")
+    _out("  Reports written:")
+    for f in pipeline_files + baseline_files + [str(out_path)]:
+        _out(f"    {f}")
+    _out("")
+    return 0
+
+
+def _slug(name: str) -> str:
+    import re
+    s = re.sub(r"[^a-zA-Z0-9]+", "_", str(name)).strip("_").lower()
+    return s or "analysis"
 
 
 def _panel(args: Any) -> int:
@@ -239,11 +347,11 @@ def _panel(args: Any) -> int:
     saved_panel = (settings.load_settings().get("panel") or {})
     members = args.panel or saved_panel.get("members")
     if not members or len(members) < 2:
-        print("\nA panel needs at least two AI connections.\n")
-        print("  deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-4o\n")
-        print("Or save a default panel by running:  deckscope setup\n")
+        _out("\nA panel needs at least two AI connections.\n")
+        _out("  deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-4o\n")
+        _out("Or save a default panel by running:  deckscope setup\n")
         return 2
-    rounds = args.rounds if args.rounds is not None else saved_panel.get("rounds", 1)
+    rounds = args.rounds if args.rounds is not None else saved_panel.get("rounds", 3)
 
     lenses = args.lens
     if lenses and len(lenses) == 1 and lenses[0].lower() == "all":
@@ -281,19 +389,20 @@ def _panel(args: Any) -> int:
     try:
         panelists = [parse_panelist(spec) for spec in members]
         chair = parse_panelist(args.chair) if args.chair else None
-        panel = Panel(cfg, panelists, rounds=rounds, chair=chair,
-                      parallel=not args.sequential)
+        panel = Panel(cfg, panelists, rounds=rounds if rounds is not None else 3,
+                      chair=chair, parallel=not args.sequential,
+                      strategy=args.strategy, vote=not args.no_vote)
         result = panel.run()
         files = panel.render(result)
     except SecurityAbort as exc:
-        print(f"\n{exc}\n")
+        _out(f"\n{exc}\n")
         return 3
     except ValueError as exc:
-        print(f"\n{exc}\n")
+        _out(f"\n{exc}\n")
         return 2
     except Exception as exc:  # noqa: BLE001
-        print(f"\nPanel failed: {exc}\n")
-        print("Run `deckscope doctor` to check your connections.")
+        _out(f"\nPanel failed: {exc}\n")
+        _out("Run `deckscope doctor` to check your connections.")
         return 1
 
     _print_panel_summary(result, files)
@@ -301,42 +410,42 @@ def _panel(args: Any) -> int:
 
 
 def _print_panel_summary(result: Any, files: List[str]) -> None:
-    print()
-    print("═" * 68)
-    print(f"  {result.company} — panel of {len(result.working)}")
-    print("═" * 68)
+    _out()
+    _out("═" * 68)
+    _out(f"  {result.company} — panel of {len(result.working)}")
+    _out("═" * 68)
     for lens in result.lenses:
         cons = result.consensus.get(lens, {})
         m = result.metrics.get(lens, {})
         v = cons.get("consensus_verdict") or {}
-        print(f"\n  [{lens}]  {v.get('call', '—')}  "
+        _out(f"\n  [{lens}]  {v.get('call', '—')}  "
               f"({v.get('agreement', '—')}, {v.get('confidence', '—')} confidence)")
         if cons.get("headline"):
-            print(f"           {cons['headline'][:96]}")
+            _out(f"           {cons['headline'][:96]}")
         for mv in m.get("movement") or []:
             moved = ("→ " + str(mv.get("verdict_after"))
                      if mv.get("verdict_before") != mv.get("verdict_after")
                      else "held")
-            print(f"    {mv.get('panelist'):11s} {str(mv.get('name'))[:26]:28s} "
+            _out(f"    {mv.get('panelist'):11s} {str(mv.get('name'))[:26]:28s} "
                   f"{str(mv.get('verdict_after'))[:20]:22s} "
                   f"{mv.get('score_after')}/100  {moved}")
         score = m.get("score") or {}
-        print(f"    spread {score.get('spread', '—')} pts ({score.get('convergence', '—')})"
+        _out(f"    spread {score.get('spread', '—')} pts ({score.get('convergence', '—')})"
               f" · {m.get('total_position_changes', 0)} position(s) changed after review")
         contested = m.get("contested_claims") or []
         if contested:
-            print(f"    contested claims: {', '.join(contested)}")
+            _out(f"    contested claims: {', '.join(contested)}")
     failed = result.stats.get("panelists_failed") or []
     if failed:
-        print("\n  Failed to run:")
+        _out("\n  Failed to run:")
         for f in failed:
-            print(f"    {f.get('name')}: {str(f.get('error'))[:80]}")
-    print("\n" + "═" * 68)
+            _out(f"    {f.get('name')}: {str(f.get('error'))[:80]}")
+    _out("\n" + "═" * 68)
     if files:
-        print("  Reports written:")
+        _out("  Reports written:")
         for f in files:
-            print(f"    {f}")
-    print()
+            _out(f"    {f}")
+    _out()
 
 
 def _demo(args: Any) -> int:
@@ -361,13 +470,13 @@ def _demo(args: Any) -> int:
             deck_path=str(deck) if deck else None, deck_text=deck_text, lenses=lenses,
             provider=ProviderConfig(name="mock"), research=ResearchConfig(name="none"),
             output=OutputConfig(formats=args.format, out_dir=out_dir), cache_dir=None)
-        print("Running a demo PANEL. Three simulated analysts, no AI, no key, no cost.\n")
+        _out("Running a demo PANEL. Three simulated analysts, no AI, no key, no cost.\n")
         panel = Panel(cfg, [ProviderConfig(name="mock", model=m)
                             for m in ("mock-a", "mock-b", "mock-c")], rounds=1)
         res = panel.run()
         files = panel.render(res)
         _print_panel_summary(res, files)
-        print("That was sample output. To run a real panel:  deckscope setup\n")
+        _out("That was sample output. To run a real panel:  deckscope setup\n")
         return 0
 
     cfg = RunConfig(
@@ -379,64 +488,64 @@ def _demo(args: Any) -> int:
         output=OutputConfig(formats=args.format, out_dir=out_dir),
         cache_dir=None,
     )
-    print("Running a demo analysis. No AI, no API key, no cost — the model's answers "
+    _out("Running a demo analysis. No AI, no API key, no cost — the model's answers "
           "are built in.\n")
     pipe = Pipeline(cfg)
     result = pipe.run()
     files = pipe.render(result)
     _print_summary(result, files)
-    print("That was sample output. To analyze a real deck, run:  deckscope setup\n")
+    _out("That was sample output. To analyze a real deck, run:  deckscope setup\n")
     return 0
 
 
 def _print_summary(result: Any, files: List[str]) -> None:
-    print()
-    print("─" * 66)
-    print(f"  {result.company}")
-    print("─" * 66)
+    _out()
+    _out("─" * 66)
+    _out(f"  {result.company}")
+    _out("─" * 66)
     for lens, comp in result.comparisons.items():
         v = comp.get("verdict") or {}
         score = ((comp.get("_meta") or {}).get("weighted_score") or {}).get("score", "—")
-        print(f"  {lens:9s} {v.get('call', '—')}  ({v.get('confidence', '—')} "
+        _out(f"  {lens:9s} {v.get('call', '—')}  ({v.get('confidence', '—')} "
               f"confidence, {score}/100)")
         if comp.get("headline"):
-            print(f"            {comp['headline'][:100]}")
+            _out(f"            {comp['headline'][:100]}")
     sec = result.security or {}
     if sec:
-        print(f"  security  input screen: {sec.get('overall_risk', 'clean').upper()}")
+        _out(f"  security  input screen: {sec.get('overall_risk', 'clean').upper()}")
     reg = getattr(result, "registry", None)
     if reg:
         st = reg.stats()
-        print(f"  sources   {st['cited']} cited of {st['total']} retrieved"
+        _out(f"  sources   {st['cited']} cited of {st['total']} retrieved"
               + (f", {st['quarantined']} dropped" if st["quarantined"] else ""))
-    print("─" * 66)
+    _out("─" * 66)
     if files:
-        print("  Reports written:")
+        _out("  Reports written:")
         for f in files:
-            print(f"    {f}")
-    print()
+            _out(f"    {f}")
+    _out()
 
 
 def _list_providers() -> int:
     from .providers.registry import catalog, list_providers
 
-    print("\nAI backends:\n")
+    _out("\nAI backends:\n")
     for name in list_providers():
         models = catalog(name)
-        print(f"  {name}")
+        _out(f"  {name}")
         for m, desc in models[:4]:
-            print(f"      {m:44s} {desc}")
-    print("\nSet one with:  deckscope run deck.pdf --provider NAME --model MODEL\n")
+            _out(f"      {m:44s} {desc}")
+    _out("\nSet one with:  deckscope run deck.pdf --provider NAME --model MODEL\n")
     return 0
 
 
 def _list_formats() -> int:
     from .render.registry import DESCRIPTIONS, list_formats
 
-    print("\nOutput formats:\n")
+    _out("\nOutput formats:\n")
     for f in list_formats():
-        print(f"  {f:6s} {DESCRIPTIONS.get(f, '')}")
-    print("\nUse several at once:  deckscope run deck.pdf --format html pdf docx\n")
+        _out(f"  {f:6s} {DESCRIPTIONS.get(f, '')}")
+    _out("\nUse several at once:  deckscope run deck.pdf --format html pdf docx\n")
     return 0
 
 
@@ -444,16 +553,16 @@ def _show_config() -> int:
     import json
 
     if not settings.is_configured():
-        print("Not set up yet. Run:  deckscope setup")
+        _out("Not set up yet. Run:  deckscope setup")
         return 1
-    print(f"\nSettings file: {settings.config_path()}\n")
-    print(json.dumps(settings.load_settings(), indent=2))
+    _out(f"\nSettings file: {settings.config_path()}\n")
+    _out(json.dumps(settings.load_settings(), indent=2))
     keys = settings.load_env(into_environ=False)
     if keys:
-        print(f"\nSaved keys ({settings.env_path()}):")
+        _out(f"\nSaved keys ({settings.env_path()}):")
         for k, v in keys.items():
-            print(f"  {k:28s} {settings.masked(v)}")
-    print()
+            _out(f"  {k:28s} {settings.masked(v)}")
+    _out()
     return 0
 
 

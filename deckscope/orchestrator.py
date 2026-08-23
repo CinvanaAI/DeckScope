@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
+from .console import out as _out
 from .agents import ComparisonSynthesist, DeckAnalyst, MarketAnalyst
 from .config import Lens, RunConfig
 from .ingest.loader import DeckDocument, load_deck
@@ -15,7 +16,7 @@ from .providers.base import LLMProvider
 from .providers.registry import get_provider
 from .research.registry import get_researcher
 from .security.policy import SecurityPolicy
-from .security.report import ScanReport, SecurityAbort
+from .security.report import ScanReport
 from .security.screening import screen_deck
 from .sources import SourceRegistry, resolve_citations
 
@@ -129,8 +130,10 @@ class Pipeline:
 
         comparisons: Dict[str, Dict[str, Any]] = {}
         synth = ComparisonSynthesist(self.provider, **kw)
+        valid_ids = [s.sid for s in (market_agent.registry.sources or [])]
         for lens in cfg.lenses:
-            comparisons[lens.value] = synth.run(deck, market, lens=lens)
+            comparisons[lens.value] = synth.run(deck, market, lens=lens,
+                                                valid_source_ids=valid_ids)
 
         usage = {"input": 0, "output": 0}
         for agent in (deck_agent, market_agent, synth):
@@ -206,7 +209,7 @@ class Pipeline:
     def _log(self, message: str, **data: Any) -> None:
         self.on_event(message, data)
         if self.config.verbose:
-            print(f"[deckscope] {message}", flush=True)
+            _out(f"[deckscope] {message}", flush=True)
 
 
 def analyze(deck: str, *, lens: "str | Lens | List[Any]" = "investor",
@@ -219,8 +222,8 @@ def analyze(deck: str, *, lens: "str | Lens | List[Any]" = "investor",
 
         from deckscope import analyze
         result = analyze("deck.pdf", lens="investor", formats=["md", "html"])
-        print(result.primary["headline"])
-        print(result.security["overall_risk"], len(result.sources), "sources")
+        _out(result.primary["headline"])
+        _out(result.security["overall_risk"], len(result.sources), "sources")
     """
     from .config import OutputConfig, ProviderConfig, ResearchConfig
 

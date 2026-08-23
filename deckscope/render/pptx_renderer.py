@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, List
 
 from .common import ASSESSMENT_WORD, as_list, header_block, score_color, theme as get_theme, txt
 
@@ -11,7 +11,6 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
     try:
         from pptx import Presentation
         from pptx.dml.color import RGBColor
-        from pptx.enum.text import PP_ALIGN
         from pptx.util import Emu, Inches, Pt
     except ImportError:
         raise RuntimeError("Slide output needs python-pptx: pip install python-pptx") from None
@@ -272,8 +271,8 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
         tf = body_box(s)
         bullet(tf, "How this was produced", size=13, bold=True, color=t["muted"], space=6)
         for line in (
-            f"Deck extraction, independent market research, and comparison were run as "
-            f"three separate passes so the market view is not anchored on the deck's claims.",
+            "Deck extraction, independent market research, and comparison were run as "
+            "three separate passes so the market view is not anchored on the deck's claims.",
             f"Model: {h['model']}. Research: {h['research']}.",
             f"Analytical lens: {h['lens']}.",
             f"Generated {h['generated']}.",

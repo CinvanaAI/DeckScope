@@ -36,6 +36,29 @@ namespaces so they cannot share answers.
 
 They do not know the other panelists exist.
 
+**How independent is "independent".** Worth being precise, because the word does a lot of
+work in claims about ensembles. Each panelist uses its own model and issues its own
+search queries. But they all read the same deck, their research agendas are derived from
+the same kind of extraction pass, and they frequently retrieve overlapping sources. If
+the best available source on a market is wrong, every panelist inherits that error and
+their agreement will look like corroboration.
+
+This is **role-separated analysis with model diversity**, not independent market
+discovery. The consensus report's reliability section says so, and names shared blind
+spots where it can identify them.
+
+### Citations across panelists
+
+Each panelist numbers its own sources from S1, so their local IDs are not comparable.
+Before any cross-review happens, DeckScope merges every panelist's bibliography into a
+single global namespace, de-duplicating by URL, and rewrites each panelist's citations to
+the merged IDs.
+
+This matters more than it sounds. Without it — and an earlier version was without it —
+Panelist B's "S1" resolves against Panelist A's bibliography, and a figure gets attributed
+to a document that never contained it. A report that cites confidently and wrongly is
+worse than one that does not cite at all.
+
 ### 2. Cross-review
 
 Each panelist now receives every other panelist's **deck extraction, market analysis and
@@ -72,13 +95,65 @@ separate evidence, and falls when a serious challenge went unresolved.
 
 A panelist that conceded nothing skips this round and its original stands.
 
-### 4. Consensus
+### 4. Vote
+
+Each panelist ranks the others' finished reports — not on whether they agree with it, but
+on whether the conclusions follow from the evidence cited, whether figures are traceable,
+whether it keeps "wrong" apart from "unproven" apart from "unverifiable", and whether its
+confidence matches its evidence. An analysis that reaches a different verdict on better
+reasoning is meant to rank *above* one that agrees on worse reasoning.
+
+Rules that matter:
+
+- **Nobody ranks themselves.** Enforced in the `Ballot` type, not just at tally time.
+- **Borda count, not first-past-the-post.** With three or four panelists a plurality
+  winner can be almost everyone's last choice.
+- **A preference cycle is named, not broken.** If A > B > C > A, no ordering satisfies the
+  panel and the report says so. That is a real finding: the panelists disagree about which
+  *analysis* is strongest, not merely about the company.
+- **A reason is required** with each ranking, so the vote is auditable.
+
+Turn it off with `--no-vote`.
+
+### 5. Consensus
 
 A chair — by default the first panelist's backend, overridable with `--chair` — receives
 every final analysis, every revision log, and the **measured** agreement numbers, and
 produces the consensus report.
 
+The chair's synthesis is the headline, but it is a committee document, and a committee
+document can smooth away the disagreement that is the most useful thing here. So each
+panelist's own report is kept intact and listed in the panel report, ordered by how the
+rest of the panel ranked it. You get both: the synthesis, and the single-author versions
+with the panel's own assessment of which is strongest.
+
 ---
+
+## When does the panel stop?
+
+There is no one right answer, so this is a strategy rather than a constant.
+
+| `--strategy` | Behaviour | Use when |
+|---|---|---|
+| `adaptive` *(default)* | Looks at how the panel actually behaved after round 1, then delegates to one of the others. Records which it chose and why. | You don't want to think about it |
+| `convergence` | Stops once positions stop changing and scores are stable. **Can skip review entirely** when the panel already agreed independently. | Cost matters and most decks are straightforward |
+| `confidence_floor` | Keeps going while any panelist is low-confidence or claims are contested. When it hits the cap anyway, says so explicitly rather than presenting the result as settled. | A real decision rests on this |
+| `fixed` | Exactly N rounds, regardless. | Reproducibility, benchmarking |
+
+```bash
+deckscope panel deck.pdf --panel anthropic openai --strategy convergence
+deckscope panel deck.pdf --panel anthropic openai gemini --strategy confidence_floor --rounds 4
+deckscope panel deck.pdf --panel anthropic openai --rounds 0      # no review at all
+```
+
+Three panelists who independently reached the same verdict with a tight spread do not need
+introducing to each other, and `convergence` will skip straight to the vote — the report
+records that it saved the rounds and why. Conversely, `confidence_floor` will refuse to
+present a low-confidence result as settled just because it ran out of budget.
+
+Every stopping decision is logged, and the panel report contains a collapsed table showing
+the spread, agreement, position changes and contested claims after each round, with the
+reason it continued or stopped. The run explains its own cost.
 
 ## Agreement is measured, not estimated
 
@@ -94,7 +169,8 @@ Python and gives the numbers to the chair as input:
 | `score.convergence` | tight (≤5) / moderate (≤15) / wide |
 | `dimensions[d].spread` | per-scorecard-dimension disagreement; ≥3 marks it contested |
 | `claims[].assessments` | the full claim × panelist agreement matrix |
-| `contested_claims` | claim IDs where panelists reached different assessments |
+| `contested_claims` | cluster keys where panelists reached different assessments |
+| `single_panelist_claims` | claims only one panelist raised — silence, not disagreement |
 | `movement` | per panelist: verdict and score before and after, positions changed and held |
 | `total_position_changes` | how much the panel actually moved |
 
@@ -200,6 +276,27 @@ corroborated. It does not quietly present a one-model result as a panel finding.
 
 ---
 
+## Is any of this better than one good prompt?
+
+Unknown, and DeckScope now ships the control so you can find out on your own decks:
+
+```bash
+deckscope run deck.pdf --mode baseline    # one prompt, one call per lens
+deckscope run deck.pdf --mode both        # run each, then compare
+```
+
+`--mode both` writes both reports plus `mode_comparison.json`, and prints the differences:
+verdict agreement, score gap, how many claims each examined, how many carried a citation,
+how many blind spots each named, and what each cost in tokens and seconds.
+
+It deliberately **does not declare a winner**. Whether the extra passes bought anything is
+a judgement about reasoning quality that a count of claims cannot make. The comparison
+tells you where to look.
+
+The baseline is a real mode, not benchmark scaffolding — scaffolding rots when nobody runs
+it, and roughly a third of the cost is genuinely the right trade on a deck you already
+understand.
+
 ## From Python
 
 ```python
@@ -225,9 +322,29 @@ from deckscope.ensemble import Panel
 
 panel = Panel(config, [ProviderConfig(name="anthropic", model="claude-sonnet-5"),
                        ProviderConfig(name="openai", model="gpt-4o")],
-              rounds=2, chair=ProviderConfig(name="anthropic"))
+              rounds=4,
+              strategy="confidence_floor",     # or a RoundStrategy instance
+              vote=True,
+              chair=ProviderConfig(name="anthropic"))
 result = panel.run()
 panel.render(result)
+
+print(result.stats["stopped_because"])
+print(result.votes["investor"].order, result.votes["investor"].winner)
+for entry in result.round_log:
+    print(entry["after_round"], entry["reason"])
+```
+
+Strategies are pluggable — subclass `RoundStrategy`, implement `_decide`, and pass an
+instance. See `deckscope/panel/strategies.py`.
+
+```python
+from deckscope.baseline import BaselineAnalyst, compare_modes
+
+analyst = BaselineAnalyst(config)
+baseline = analyst.run()
+analyst.close()
+print(compare_modes(pipeline_result, baseline))
 ```
 
 ---

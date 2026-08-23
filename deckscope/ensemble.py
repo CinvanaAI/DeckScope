@@ -27,19 +27,23 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional
 
+from .console import out as _out
+from .claim_align import align_claims
 from .config import Lens, ProviderConfig, RunConfig
 from .orchestrator import AnalysisResult, Pipeline
 from .prompts.lenses import lens_block
+from .panel.strategies import Decision, RoundState, RoundStrategy, get_strategy
+from .panel.voting import Ballot, VoteResult, ballot_from_json, tally
 from .prompts.templates import (CONSENSUS_SYSTEM, CONSENSUS_USER, REVIEW_SYSTEM,
-                                REVIEW_USER, REVISE_SYSTEM, REVISE_USER)
+                                REVIEW_USER, REVISE_SYSTEM, REVISE_USER,
+                                VOTE_SYSTEM, VOTE_USER)
 from .providers.registry import get_provider
 from .schemas import (COMPARISON_SCHEMA, CONSENSUS_SCHEMA, REVIEW_SCHEMA, coerce,
                       schema_block, scorecard_total)
 from .security.sanitizer import fence
-from .security.text_scanner import scan_text
-from .sources import SourceRegistry
+from .sources import SourceRegistry, merge_registries, rewrite_citations
 
 #: Anonymous labels. A panelist judging "Panelist B" cannot favour a brand.
 LABELS = [f"Panelist {c}" for c in "ABCDEFGH"]
@@ -57,6 +61,9 @@ class Panelist:
     revised: Dict[str, Any] = field(default_factory=dict)   # lens -> comparison
     error: Optional[str] = None
     elapsed: float = 0.0
+    #: Where the other panelists ranked this report, and how they scored it.
+    rank: Optional[int] = None
+    vote_score: Optional[float] = None
 
     @property
     def ok(self) -> bool:
@@ -71,6 +78,7 @@ class Panelist:
     def to_dict(self) -> Dict[str, Any]:
         return {"label": self.label, "name": self.name, "ok": self.ok,
                 "error": self.error, "elapsed_seconds": round(self.elapsed, 1),
+                "rank": self.rank, "vote_score": self.vote_score,
                 "review": self.review,
                 "final": {lens: self.final(lens) for lens in (self.revised or
                           (self.result.comparisons if self.result else {}))}}
@@ -85,6 +93,10 @@ class PanelResult:
     security: Dict[str, Any] = field(default_factory=dict)
     stats: Dict[str, Any] = field(default_factory=dict)
     written_files: List[str] = field(default_factory=list)
+    #: lens -> how the panel ranked each other's reports
+    votes: Dict[str, VoteResult] = field(default_factory=dict)
+    #: Every stopping decision, so the report can explain its own cost.
+    round_log: List[Dict[str, Any]] = field(default_factory=list)
 
     @property
     def working(self) -> List[Panelist]:
@@ -110,6 +122,8 @@ class PanelResult:
         return {"company": self.company,
                 "panelists": [p.to_dict() for p in self.panelists],
                 "consensus": self.consensus, "metrics": self.metrics,
+                "votes": {k: v.to_dict() for k, v in self.votes.items()},
+                "round_log": self.round_log,
                 "security": self.security, "stats": self.stats,
                 "references": self.registry.to_dict() if self.registry else {}}
 
@@ -121,7 +135,8 @@ class Panel:
 
     def __init__(self, config: RunConfig, panel: List[ProviderConfig],
                  *, rounds: int = 1, chair: Optional[ProviderConfig] = None,
-                 parallel: bool = True,
+                 parallel: bool = True, strategy: Any = "adaptive",
+                 vote: bool = True,
                  on_event: Optional[Callable[[str, Dict[str, Any]], None]] = None) -> None:
         if len(panel) < 2:
             raise ValueError(
@@ -132,6 +147,13 @@ class Panel:
         self.config = config
         self.rounds = max(0, rounds)
         self.parallel = parallel
+        #: When to stop reviewing. See deckscope/panel/strategies.py — there is no
+        #: single right answer, so this is a choice rather than a constant.
+        self.strategy: RoundStrategy = (
+            strategy if isinstance(strategy, RoundStrategy)
+            else get_strategy(strategy, max_rounds=self.rounds))
+        #: Whether panelists rank each other's finished reports.
+        self.vote = vote
         self.on_event = on_event or (lambda *_: None)
         self.panelists = [
             Panelist(label=LABELS[i], name=_pname(pc), provider=pc)
@@ -143,7 +165,7 @@ class Panel:
     def _log(self, message: str, **data: Any) -> None:
         self.on_event(message, data)
         if self.config.verbose:
-            print(f"[panel] {message}", flush=True)
+            _out(f"[panel] {message}", flush=True)
 
     # ---------------------------------------------------------- round one
     def run(self) -> PanelResult:
@@ -163,22 +185,42 @@ class Panel:
 
         result = PanelResult(panelists=self.panelists)
         primary = working[0].result
-        result.registry = primary.registry if primary else None
         result.security = primary.security if primary else {}
-
         lenses = list(primary.comparisons) if primary else []
 
-        if len(working) >= 2 and self.rounds > 0:
-            for round_no in range(1, self.rounds + 1):
-                self._log(f"Cross-review round {round_no} of {self.rounds}")
-                self._round_review(working, lenses)
-                self._round_revise(working, lenses)
+        # ---- Unify the bibliography before anything is cross-read.
+        #
+        # Each panelist numbered its own sources from S1, so the same ID means a
+        # different document to each of them. Merging first means every later
+        # round — review, revision, consensus, rendering — speaks one namespace,
+        # and a citation can never resolve to another panelist's source.
+        result.registry, remap = merge_registries(
+            {p.label: (p.result.registry if p.result else None) for p in working})
+        for p in working:
+            local = remap.get(p.label, {})
+            if not local or not p.result:
+                continue
+            rewrite_citations(p.result.deck, local)
+            rewrite_citations(p.result.market, local)
+            for lens in p.result.comparisons:
+                rewrite_citations(p.result.comparisons[lens], local)
+            p.result.registry = result.registry
+        self._log(f"Merged {len(working)} bibliographies into "
+                  f"{len(result.registry.sources)} unique source(s)")
+
+        # ---- Rounds 2-3, repeated until the strategy says stop.
+        if len(working) >= 2:
+            self._run_rounds(result, working, lenses)
 
         for lens in lenses:
             result.metrics[lens] = measure_agreement(working, lens)
             self._log(f"[{lens}] verdict agreement: "
                       f"{result.metrics[lens]['verdict']['agreement']}; "
                       f"score spread {result.metrics[lens]['score']['spread']}")
+
+        # ---- Panelists rank each other's finished reports.
+        if self.vote and len(working) >= 2:
+            self._round_vote(result, working, lenses)
 
         if len(working) >= 2:
             self._round_consensus(result, working, lenses)
@@ -193,7 +235,11 @@ class Panel:
             "panelists_ok": [p.name for p in working],
             "panelists_failed": [{"name": p.name, "error": p.error}
                                  for p in self.panelists if not p.ok],
-            "rounds": self.rounds,
+            "rounds_configured": self.rounds,
+            "rounds_run": sum(1 for e in result.round_log if e.get("ran")),
+            "strategy": self.strategy.name,
+            "stopped_because": (result.round_log[-1]["reason"]
+                                if result.round_log else "no review rounds"),
             "chair": _pname(self.chair_config),
             "research_backend": (primary.stats or {}).get("research_backend") if primary else None,
             "sources_found": (primary.stats or {}).get("sources_found", 0) if primary else 0,
@@ -242,9 +288,118 @@ class Panel:
                           + (f"done in {p.elapsed:.0f}s — {_verdict_line(p)}"
                              if p.ok else f"FAILED — {p.error}"))
 
-    def _round_review(self, working: List[Panelist], lenses: List[str]) -> None:
+    def _snapshot(self, working: List[Panelist], lenses: List[str],
+                  round_number: int, previous_spread: Optional[float]) -> RoundState:
+        """What the strategy sees. Uses the first lens as the reference view."""
+        lens = lenses[0] if lenses else "investor"
+        metrics = measure_agreement(working, lens)
+        return RoundState(
+            round_number=round_number,
+            max_rounds=self.strategy.max_rounds,
+            scores={p.label: _score_of(p.final(lens)) for p in working},
+            verdicts={p.label: (p.final(lens).get("verdict") or {}).get("call", "")
+                      for p in working},
+            confidences={p.label: (p.final(lens).get("verdict") or {}).get(
+                "confidence", "low") for p in working},
+            changes={p.label: len((p.review or {}).get("position_changes") or [])
+                     for p in working},
+            previous_spread=previous_spread,
+            contested_claims=len(metrics.get("contested_claims") or []),
+        )
+
+    def _run_rounds(self, result: PanelResult, working: List[Panelist],
+                    lenses: List[str]) -> None:
+        """Review and revise until the configured strategy says to stop."""
+        self._log(f"Stopping rule: {self.strategy.describe()}")
+        previous_spread: Optional[float] = None
+        round_number = 0
+
+        while True:
+            state = self._snapshot(working, lenses, round_number, previous_spread)
+            decision: Decision = self.strategy.should_continue(state)
+            result.round_log.append({
+                "after_round": round_number,
+                "spread": state.spread,
+                "verdict_agreement": state.verdict_agreement,
+                "position_changes": state.total_changes,
+                "contested_claims": state.contested_claims,
+                "weakest_confidence": state.weakest_confidence,
+                "proceed": decision.proceed,
+                "reason": decision.reason,
+                "ran": False,
+                **decision.detail,
+            })
+            if not decision.proceed:
+                self._log(f"Stopping after {round_number} review round(s): "
+                          f"{decision.reason}")
+                return
+
+            round_number += 1
+            self._log(f"Cross-review round {round_number} — {decision.reason}")
+            result.round_log[-1]["ran"] = True
+            previous_spread = state.spread
+            self._round_review(working, lenses, result.registry)
+            self._round_revise(working, lenses, result.registry)
+
+    def _round_vote(self, result: PanelResult, working: List[Panelist],
+                    lenses: List[str]) -> None:
+        """Each panelist ranks the others' finished reports.
+
+        The chair still writes the headline synthesis. This runs alongside it so a
+        reader can also see each panelist's own coherent report, ordered by which
+        one the rest of the panel found most defensible — a synthesis can smooth
+        away disagreement, and the ranking is evidence the synthesis cannot carry.
+        """
+        self._log("Round 4: panelists rank each other's reports")
+        labels = [p.label for p in working]
+        sources = _sources_block(working, result.registry)
+
+        for lens in lenses:
+            ballots: List[Ballot] = []
+
+            def one(me: Panelist, _lens: str = lens) -> None:
+                others = [o for o in working if o is not me]
+                if not others:
+                    return
+                provider = get_provider(me.provider)
+                try:
+                    reports = "\n\n".join(
+                        f"### {o.label}\n"
+                        + json.dumps(_strip(o.final(_lens)), indent=2)[:40_000]
+                        for o in others)
+                    payload = provider.complete_json(
+                        VOTE_SYSTEM.format(lens_block=lens_block(Lens.parse(_lens))),
+                        VOTE_USER.format(
+                            me=me.label,
+                            reports=fence(reports, "PEER ANALYSES"),
+                            sources=fence(sources, "SHARED BIBLIOGRAPHY")),
+                        temperature=0.2)
+                    ballot = ballot_from_json(me.label, payload,
+                                              [o.label for o in others])
+                    if ballot:
+                        ballots.append(ballot)
+                except Exception as exc:  # noqa: BLE001 - a lost ballot is survivable
+                    self._log(f"  {me.name}: ballot failed — {exc}")
+                finally:
+                    try:
+                        provider.close()
+                    except Exception:  # noqa: BLE001
+                        pass
+
+            _fanout(one, working, self.parallel)
+            vote = tally(ballots, labels)
+            result.votes[lens] = vote
+            for i, label in enumerate(vote.order, 1):
+                panelist = next((p for p in working if p.label == label), None)
+                if panelist and lens == lenses[0]:
+                    panelist.rank = i
+                    panelist.vote_score = vote.scores.get(label)
+            self._log(f"  [{lens}] {vote.note}")
+
+    def _round_review(self, working: List[Panelist], lenses: List[str],
+                      registry: Optional[SourceRegistry] = None) -> None:
         self._log("Round 2: each panelist reviews the others")
-        sources = _sources_block(working)
+        sources = _sources_block(working, registry)
 
         def one(me: Panelist) -> None:
             others = [p for p in working if p is not me]
@@ -283,9 +438,10 @@ class Panel:
                 self._log(f"  {p.name}: found {n_errors} error(s) in peers, "
                           f"changing {n_changes} of its own position(s)")
 
-    def _round_revise(self, working: List[Panelist], lenses: List[str]) -> None:
+    def _round_revise(self, working: List[Panelist], lenses: List[str],
+                      registry: Optional[SourceRegistry] = None) -> None:
         self._log("Round 3: each panelist revises its own analysis")
-        sources = _sources_block(working)
+        sources = _sources_block(working, registry)
 
         def one(me: Panelist) -> None:
             if me.review.get("error"):
@@ -339,7 +495,7 @@ class Panel:
                          lenses: List[str]) -> None:
         self._log(f"Round 4: {_pname(self.chair_config)} chairs the consensus")
         provider = get_provider(self.chair_config)
-        sources = _sources_block(working)
+        sources = _sources_block(working, result.registry)
         composition = "\n".join(
             f"- {p.label} = {p.name}" + ("" if p.ok else f" (FAILED: {p.error})")
             for p in self.panelists)
@@ -439,26 +595,14 @@ def measure_agreement(working: List[Panelist], lens: str) -> Dict[str, Any]:
             "contested": (max(v) - min(v)) >= 3}
         for d, v in dims.items() if v}
 
-    # per-claim assessment agreement
-    claims: Dict[str, Dict[str, str]] = {}
-    claim_text: Dict[str, str] = {}
-    for lbl, _, c in finals:
-        for row in c.get("claim_audit") or []:
-            cid = str(row.get("id") or "")
-            if not cid:
-                continue
-            claims.setdefault(cid, {})[lbl] = str(row.get("assessment") or "—")
-            claim_text.setdefault(cid, str(row.get("claim") or ""))
-    claim_stats = []
-    for cid, per in claims.items():
-        vals = list(per.values())
-        uniq = set(vals)
-        claim_stats.append({
-            "id": cid, "claim": claim_text.get(cid, ""),
-            "assessments": per,
-            "unanimous": len(uniq) == 1 and len(vals) == len(finals),
-            "distinct_positions": len(uniq),
-            "contested": len(uniq) > 1})
+    # Per-claim agreement, matched on CONTENT rather than on each panelist's own
+    # numbering. Grouping by raw C-IDs compared unrelated propositions, because
+    # nothing makes A's C1 and B's C1 the same claim.
+    clusters = align_claims({lbl: (c.get("claim_audit") or [])
+                             for lbl, _, c in finals})
+    claim_stats = [cl.to_dict(len(finals)) for cl in clusters]
+    for i, row in enumerate(claim_stats, 1):
+        row["id"] = f"K{i}"          # panel-level key, distinct from local C-IDs
 
     changed = [{"panelist": p.label, "name": p.name,
                 "changes": len(p.review.get("position_changes") or []),
@@ -483,6 +627,15 @@ def measure_agreement(working: List[Panelist], lens: str) -> Dict[str, Any]:
         "dimensions": dim_stats,
         "claims": claim_stats,
         "contested_claims": [c["id"] for c in claim_stats if c["contested"]],
+        "single_panelist_claims": [c["id"] for c in claim_stats
+                                   if c.get("single_panelist")],
+        "claim_alignment": {
+            "method": "content-based (salient numbers + significant word overlap)",
+            "clusters": len(claim_stats),
+            "raised_by_all": sum(1 for c in claim_stats
+                                 if c["raised_by"] == len(finals)),
+            "raised_by_one": sum(1 for c in claim_stats if c["raised_by"] == 1),
+        },
         "movement": changed,
         "total_position_changes": sum(c["changes"] for c in changed),
     }
@@ -510,7 +663,15 @@ def _packet(p: Panelist, lenses: List[str], include_annexes: bool = False) -> st
     return f"### {p.label}\n" + json.dumps(payload, indent=2, default=str)[:55_000]
 
 
-def _sources_block(working: List[Panelist]) -> str:
+def _sources_block(working: List[Panelist],
+                   registry: Optional[SourceRegistry] = None) -> str:
+    """The one bibliography every panelist cites from.
+
+    Passing the merged registry is what makes cross-panelist citation coherent:
+    when B says S7, A and the chair are looking at the same document.
+    """
+    if registry is not None and registry.sources:
+        return registry.prompt_block(char_budget=45_000)
     for p in working:
         if p.result and p.result.registry:
             return p.result.registry.prompt_block(char_budget=45_000)
@@ -606,7 +767,7 @@ def analyze_with_panel(deck: str, panel: List[str], *, lens: Any = "investor",
         result = analyze_with_panel("deck.pdf",
                                     ["anthropic:claude-sonnet-5", "openai:gpt-4o"],
                                     formats=["html", "pdf"])
-        print(result.consensus["investor"]["headline"])
+        _out(result.consensus["investor"]["headline"])
 
     Each panel entry is "provider" or "provider:model".
     """

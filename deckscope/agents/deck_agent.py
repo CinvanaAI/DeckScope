@@ -1,7 +1,6 @@
 """Agent 1 — reads the deck, extracts claims, sets the research agenda."""
 from __future__ import annotations
 
-import json
 from typing import Any, Dict
 
 from ..ingest.loader import DeckDocument
@@ -38,8 +37,8 @@ class DeckAnalyst(Agent):
             self.emit(f"warning: {w}")
 
         result = self.cached_json(
-            f"deck::{self.provider.name}:{self.provider.model}:{hash(text)}",
-            lambda: self.provider.complete_json(DECK_SYSTEM, user),
+            self.cache_key(deck=text, hint=company_hint, queries=max_queries),
+            lambda: self.complete_json(DECK_SYSTEM, user),
         )
         result = coerce(result, DECK_SCHEMA)
         result["_meta"] = {

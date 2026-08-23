@@ -38,7 +38,7 @@ def main(deck_dir: str, out_dir: str) -> int:
                              out_dir=str(Path(out_dir) / deck.stem),
                              security="balanced", verbose=False)
         except SecurityAbort as exc:
-            print(f"    BLOCKED by the security screen")
+            print("    BLOCKED by the security screen")
             rows.append({"deck": deck.name, "company": "—", "verdict": "BLOCKED",
                          "confidence": "—", "score": None, "security": "critical",
                          "sources_cited": 0, "sources_total": 0, "contested": "",

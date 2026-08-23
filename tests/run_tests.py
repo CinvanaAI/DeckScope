@@ -17,7 +17,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent))
 
-MODULES = ["test_security", "test_pipeline", "test_providers", "test_panel"]
+# The runner is part of the advertised install check, so it must survive a
+# default Windows console just like the CLI does.
+from deckscope import console  # noqa: E402
+console.enable()
+
+MODULES = ["test_security", "test_pipeline", "test_providers", "test_panel",
+           "test_audit_regressions", "test_panel_mechanics"]
 
 
 def main() -> int:
@@ -28,7 +34,7 @@ def main() -> int:
         mod = __import__(modname)
         tests = [(n, f) for n, f in vars(mod).items()
                  if n.startswith("test_") and callable(f)]
-        print(f"\n{modname}  ({len(tests)} tests)")
+        console.out(f"\n{modname}  ({len(tests)} tests)")
         for name, fn in tests:
             try:
                 if "tmp_path" in inspect.signature(fn).parameters:
@@ -39,15 +45,15 @@ def main() -> int:
             except Exception:  # noqa: BLE001
                 failed += 1
                 failures.append((modname, name, traceback.format_exc()))
-                print(f"  FAIL  {name}")
+                console.out(f"  FAIL  {name}")
             else:
                 passed += 1
-                print(f"  ok    {name}")
+                console.out(f"  ok    {name}")
 
-    print("\n" + "─" * 60)
+    console.out("\n" + "-" * 60)
     for modname, name, tb in failures:
-        print(f"\n{modname}::{name}\n{tb}")
-    print(f"{passed} passed, {failed} failed")
+        console.out(f"\n{modname}::{name}\n{tb}")
+    console.out(f"{passed} passed, {failed} failed")
     return 1 if failed else 0
 
 

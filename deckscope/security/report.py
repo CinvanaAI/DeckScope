@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, asdict
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 
 from .policy import SEVERITY_ORDER
 
@@ -15,6 +15,10 @@ class Finding:
     detail: str        # what was found, in plain language
     excerpt: str = ""  # a short, defanged sample of the offending content
     action: str = "flagged"  # flagged | redacted | quarantined | stripped
+    #: Character range in the scanned text, when known. The sanitizer removes
+    #: exactly these spans, so what gets detected is what gets neutralized —
+    #: an earlier version re-derived the spans and silently missed some.
+    span: Optional[Tuple[int, int]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

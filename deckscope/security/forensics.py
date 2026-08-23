@@ -87,6 +87,8 @@ def scan_pdf(path: Path, policy: SecurityPolicy) -> ScanReport:
 
             page_bg = _page_background(page)
             buckets: Dict[str, List[Any]] = {"invisible": [], "tiny": [], "offpage": []}
+            rotated = 0
+            saw_no_render_mode = False
 
             for ch in chars:
                 size = float(ch.get("size") or 0)
@@ -99,15 +101,40 @@ def scan_pdf(path: Path, policy: SecurityPolicy) -> ScanReport:
                         if abs(_luminance(rgb) - page_bg) < policy.contrast_threshold:
                             buckets["invisible"].append(ch)
                             continue
-                # render mode 3 = "invisible" (used legitimately by OCR layers, but
-                # also the simplest way to hide a payload)
-                if ch.get("render_mode") == 3 or ch.get("upright") is False:
+                # PDF render mode 3 means "draw nothing" — legitimately used for
+                # the text layer under a scan, and also the simplest way to hide a
+                # payload. pdfplumber only exposes this on some versions, so its
+                # absence is recorded once rather than silently treated as clean.
+                mode = ch.get("render_mode")
+                if mode is None:
+                    saw_no_render_mode = True
+                elif mode == 3:
                     buckets["invisible"].append(ch)
                     continue
+                # Rotated text was previously counted as invisible. It is not:
+                # sidebars, watermarks and vertical axis labels are all rotated
+                # and perfectly readable. Counted separately, reported as info.
+                if ch.get("upright") is False:
+                    rotated += 1
                 x0, top = float(ch.get("x0", 0)), float(ch.get("top", 0))
                 if x0 < -5 or top < -5 or x0 > float(page.width) + 5 or \
                         top > float(page.height) + 5:
                     buckets["offpage"].append(ch)
+
+            if saw_no_render_mode:
+                rep.add(Finding(
+                    "forensics_partial", "low", f"page {pageno}",
+                    "This build of pdfplumber does not report PDF render mode, so "
+                    "text drawn in the invisible mode could not be detected on this "
+                    "page. Colour, size and position checks still ran. Upgrade "
+                    "pdfplumber for full coverage.", action="flagged"))
+            if rotated >= 12:
+                rep.add(Finding(
+                    "rotated_text", "info", f"page {pageno}",
+                    f"{rotated} rotated characters (a sidebar, watermark or axis "
+                    f"label). Noted for completeness — rotated text is normally "
+                    f"perfectly visible and is not treated as concealment.",
+                    action="flagged"))
 
             for kind, label, sev in (
                 ("invisible", "text whose colour matches the background", "high"),
@@ -160,7 +187,6 @@ def scan_pptx(path: Path, policy: SecurityPolicy) -> ScanReport:
     rep = ScanReport(target=f"deck forensics ({path.name})")
     try:
         from pptx import Presentation
-        from pptx.util import Emu
     except ImportError:
         rep.add(Finding("forensics_unavailable", "low", path.name,
                         "python-pptx is not installed, so hidden-text forensics were "

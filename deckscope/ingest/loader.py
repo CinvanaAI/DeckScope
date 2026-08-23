@@ -11,7 +11,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 SUPPORTED_EXTENSIONS = {".pptx", ".ppt", ".pdf", ".docx", ".txt", ".md",
                         ".markdown", ".html", ".htm", ".json"}
@@ -192,19 +192,45 @@ def _from_json(p: Path) -> DeckDocument:
 
 
 def _from_url(url: str) -> DeckDocument:
-    from ..providers._http import get_json  # noqa: F401  (kept for parity)
-    import urllib.request
+    """Fetch and read a deck from a URL, with SSRF and size guards.
 
-    req = urllib.request.Request(url, headers={"User-Agent": "DeckScope/1.0"})
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        raw = resp.read()
-    if raw[:4] == b"%PDF":
-        tmp = Path(os.getenv("TEMP", "/tmp")) / "deckscope_download.pdf"
-        tmp.write_bytes(raw)
-        doc = _from_pdf(tmp)
-        doc.source = url
+    Every safety decision lives in ingest/fetch.py; this function only turns the
+    fetched bytes into a document. Binary formats are written to a uniquely named
+    temporary file — the earlier fixed filename meant two concurrent panel runs
+    could overwrite each other's download mid-read.
+    """
+    import tempfile
+
+    from .fetch import FetchError, fetch_url
+
+    try:
+        got = fetch_url(url)
+    except FetchError as exc:
+        raise DeckLoadError(str(exc)) from None
+
+    if got.suffix in (".pdf", ".pptx", ".docx"):
+        fd, tmp_name = tempfile.mkstemp(prefix="deckscope_", suffix=got.suffix)
+        tmp = Path(tmp_name)
+        try:
+            with os.fdopen(fd, "wb") as fh:
+                fh.write(got.content)
+            reader = {".pdf": _from_pdf, ".pptx": _from_pptx, ".docx": _from_docx}
+            doc = reader[got.suffix](tmp)
+        finally:
+            try:
+                tmp.unlink()
+            except OSError:
+                pass
+        doc.source = got.final_url
+        doc.metadata["fetched_from"] = url
         return doc
-    return _from_text(_strip_html(raw.decode("utf-8", "replace")), url, "html")
+
+    text = got.content.decode("utf-8", "replace")
+    if got.suffix == ".html":
+        text = _strip_html(text)
+    doc = _from_text(text, got.final_url, got.suffix.lstrip(".") or "text")
+    doc.metadata["fetched_from"] = url
+    return doc
 
 
 def _strip_html(raw: str) -> str:

@@ -172,19 +172,25 @@ class NoResearcher(Researcher):
     needs_key = False
     blurb = "Skip web search. Fastest, free, but the market view can be out of date."
 
+    #: Told to the model in place of a bibliography. It is an instruction about
+    #: the run, not a source — an earlier version returned it AS a SearchResult,
+    #: which meant the report claimed one source consulted and one cited, both of
+    #: them this notice. A bibliography that cites its own absence is worse than
+    #: an empty one.
+    NOTICE = ("NO WEB RESEARCH WAS PERFORMED FOR THIS RUN.\n\n"
+              "No search backend was configured, so there is no external evidence "
+              "below. Everything you conclude about the market must come from your "
+              "training knowledge, which has a cutoff date and cannot see recent "
+              "funding rounds, pricing changes, or new entrants.\n\n"
+              "Therefore: set sizing_confidence to 'low', cite no source IDs at all "
+              "(there are none — do not invent any), and state this limitation "
+              "prominently in research_gaps.")
+
     def search(self, query: str, max_results: int = 8) -> List[SearchResult]:
         return []
 
     def search_many(self, queries, max_results: int = 8) -> List[SearchResult]:
-        return [SearchResult(
-            title="NO WEB RESEARCH WAS PERFORMED",
-            url="",
-            snippet=("This run had no search backend configured. The market analysis "
-                     "below comes only from the model's training knowledge, which has a "
-                     "cutoff date and cannot see recent funding, pricing, or entrants. "
-                     "Treat every figure as approximate, set sizing_confidence to low, "
-                     "and list this limitation in research_gaps."),
-            source_query="n/a")]
+        return []
 
     def health_check(self):
         return {"ok": True, "backend": self.name, "results": 0}

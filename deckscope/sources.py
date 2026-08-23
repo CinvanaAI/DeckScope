@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field, asdict
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 CITE_RX = re.compile(r"\bS(\d{1,3})\b")
 
@@ -192,6 +192,90 @@ class SourceRegistry:
             reg.sources.append(src)
             reg._by_url[(src.url or f"__title__{src.title}").lower()] = src
         return reg
+
+
+def merge_registries(registries: Dict[str, "SourceRegistry"]
+                     ) -> Tuple["SourceRegistry", Dict[str, Dict[str, str]]]:
+    """Fold per-panelist registries into one namespace.
+
+    Each panelist researches independently and numbers its own sources from S1.
+    Panelist A's S1 and Panelist B's S1 are therefore different documents. If the
+    panel then keeps only one registry — as an earlier version did — a citation
+    written by B resolves against A's bibliography and silently attributes a
+    figure to a source that never contained it.
+
+    This assigns every distinct source one global ID, de-duplicating by URL so a
+    document several panelists found keeps a single entry that records all of
+    them. It returns the merged registry and, per panelist, a map from their
+    local ID to the global one, so their reports can be rewritten.
+    """
+    merged = SourceRegistry()
+    remap: Dict[str, Dict[str, str]] = {}
+
+    for label, reg in registries.items():
+        local_map: Dict[str, str] = {}
+        for src in (reg.sources if reg else []):
+            key = (src.url or f"__title__{src.title}").strip().lower()
+            existing = merged._by_url.get(key)
+            if existing is None:
+                new = Source(
+                    sid=f"S{len(merged.sources) + 1}",
+                    title=src.title, url=src.url, snippet=src.snippet,
+                    published=src.published, query=src.query, backend=src.backend,
+                    reliability=src.reliability, status=src.status, note=src.note,
+                    cited_by=[f"{label}: {c}" for c in src.cited_by])
+                merged.sources.append(new)
+                merged._by_url[key] = new
+                existing = new
+            else:
+                # Same document, found by more than one panelist. Keep the richer
+                # metadata and record every panelist that used it.
+                if not existing.published and src.published:
+                    existing.published = src.published
+                if existing.reliability == "unknown" and src.reliability != "unknown":
+                    existing.reliability = src.reliability
+                if src.status == "quarantined":
+                    existing.status = "quarantined"
+                    existing.note = existing.note or src.note
+                for c in src.cited_by:
+                    tag = f"{label}: {c}"
+                    if tag not in existing.cited_by:
+                        existing.cited_by.append(tag)
+            local_map[src.sid] = existing.sid
+        remap[label] = local_map
+    return merged, remap
+
+
+def rewrite_citations(obj: Any, local_map: Dict[str, str]) -> Any:
+    """Rewrite a panelist's local S-IDs to global ones, in place, recursively.
+
+    Applies to `source_ids` arrays and to inline [S3] references in prose, so a
+    merged report's citations resolve to the document the panelist actually read.
+    """
+    if not local_map:
+        return obj
+
+    def swap_token(tok: str) -> str:
+        return local_map.get(tok.strip(), tok.strip())
+
+    def swap_prose(text: str) -> str:
+        return CITE_RX.sub(lambda m: local_map.get(f"S{m.group(1)}", m.group(0)), text)
+
+    if isinstance(obj, dict):
+        for k, v in list(obj.items()):
+            if k == "source_ids" and isinstance(v, list):
+                obj[k] = [swap_token(str(x)) for x in v]
+            elif isinstance(v, str):
+                obj[k] = swap_prose(v)
+            else:
+                rewrite_citations(v, local_map)
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            if isinstance(v, str):
+                obj[i] = swap_prose(v)
+            else:
+                rewrite_citations(v, local_map)
+    return obj
 
 
 def resolve_citations(result: Any) -> SourceRegistry:

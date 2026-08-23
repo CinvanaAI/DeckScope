@@ -3,6 +3,26 @@
 **An agentic framework that reads a pitch deck, researches the market it competes in,
 and tells you where the two agree — and where they don't.**
 
+> ### Status: unreleased, and honest about it
+>
+> DeckScope has an architecture that works end to end and a test suite that runs
+> offline. It has **not** been shown to produce better analysis than a simpler tool,
+> and several of its guarantees are newer than its ideas.
+>
+> **Reasonable to use it for:** exploring a deck you already have context on,
+> generating questions to ask, structuring your own diligence, screening a deck for
+> hidden instructions.
+>
+> **Not yet reasonable:** unattended analysis, decks from strangers treated as
+> trusted input, or any figure relied on without opening the source it cites.
+>
+> An external audit in August 2026 found a remote-code-execution path in the local
+> web server, several places where the security layer detected more than it enforced,
+> a panel citation-collision bug, and a broken Windows console path. Those are fixed
+> and covered by tests. What has **not** been done is the evaluation that would show
+> the three-agent design beats a single good prompt. Until that exists, treat the
+> architecture as a well-tested hypothesis. See [Limitations](#limitations).
+
 Most deck-analysis tools ask one model to read a deck and give an opinion. That opinion
 inherits the deck's own framing: if the deck says the market is $47B, the model reasons
 about a $47B market. DeckScope is built to avoid that. It runs three agents in sequence,
@@ -54,8 +74,13 @@ chat app you use. One interface, nine backends, and adding a tenth is about thir
 **It screens its inputs for prompt injection.** Both of DeckScope's inputs are written
 by other people. A founder can put white text on a white slide. Anyone can publish a web
 page hoping a research agent retrieves it. DeckScope re-opens the original file to
-recover what rendering hid, screens every web source, neutralizes what it finds, and
-reports all of it. [Details below.](#the-security-layer)
+recover what rendering hid, screens every retrieved snippet, drops sources that behave
+like an attack, neutralizes the exact spans it detected, and reports all of it.
+
+It screens **the text it is given**, which for most search backends is a snippet rather
+than the whole page — DeckScope does not fetch and scan every source document. An
+injection placed below the fold of a page whose snippet looks clean would not be seen.
+[Details and limits.](#the-security-layer)
 
 **Every source is listed, cited or not.** A report that cites four URLs out of forty
 consulted is not auditable. DeckScope assigns every retrieved source a stable ID, has the
@@ -259,8 +284,14 @@ already thrown away what makes hidden text hidden — and looks for:
 - Cyrillic and Greek homoglyphs mixed into Latin words to dodge keyword filters
 - base64 blobs that decode to instructions
 
-**In every web source**, the same text screening, plus URL checks: punycode domains,
-embedded credentials, `data:` and `javascript:` schemes, shorteners, unusual TLDs.
+**In every retrieved snippet**, the same text screening, plus URL checks: punycode
+domains, embedded credentials, `data:` and `javascript:` schemes, shorteners, unusual
+TLDs. A source that trips any of these is dropped rather than cleaned, and the drop is
+recorded in the bibliography with its reason.
+
+What this does *not* cover: the full page behind a search result. Tavily and Exa return
+substantial page content, so those are screened in depth; Serper and Brave return short
+snippets, and DeckScope screens what it receives rather than fetching the page itself.
 
 **On top of that**, DeckScope looks for *intent*: text ordering the model to ignore its
 instructions, reassign its role, dictate a score or verdict, conceal something from you,
@@ -320,7 +351,7 @@ deckscope panel deck.pdf --panel anthropic openai --rounds 2 --format html pdf
 deckscope demo --panel                       # see it work, free
 ```
 
-Four rounds:
+Five rounds:
 
 1. **Independent.** Each panelist runs the full three-agent pipeline alone, in parallel,
    with no knowledge of the others.
@@ -331,8 +362,19 @@ Four rounds:
 3. **Revise.** Each rewrites its own analysis to reflect what it conceded. A panelist
    that was right and challenged badly should barely change; the prompt explicitly
    forbids averaging toward the group.
-4. **Consensus.** A chair reports where the panel agreed, where it split, what changed,
-   and how much the agreement is worth.
+4. **Vote.** Each panelist ranks the others' finished reports — on whether the reasoning
+   holds, not on whether they agree. Nobody ranks themselves. A preference cycle
+   (A > B > C > A) is reported as a cycle rather than broken arbitrarily.
+5. **Consensus.** A chair reports where the panel agreed, where it split, what changed,
+   and how much the agreement is worth — and each panelist's own report is kept intact
+   beside it, ordered by the vote, because a synthesis can smooth away the disagreement
+   that is the point.
+
+**When it stops is a choice, not a constant.** `--strategy convergence` skips review
+entirely when the panel already agreed independently; `--strategy confidence_floor` keeps
+going while anyone is low-confidence and says so plainly if it hits the cap anyway;
+`adaptive` picks from how the panel actually behaved. Every stopping decision is logged in
+the report, so the run explains its own cost.
 
 Agreement is **measured in code, not asked of a model**: verdict distribution, score
 spread and standard deviation, per-dimension contestedness, a claim-by-claim agreement
@@ -363,6 +405,10 @@ deckscope app
 ```
 
 **2. The command line** — see `deckscope --help`, or **[docs/CLI.md](docs/CLI.md)**.
+
+```bash
+deckscope run deck.pdf --mode both     # three agents vs. one prompt, compared
+```
 
 **3. The Python API:**
 
@@ -502,8 +548,25 @@ Worth reading before you trust anything it produces.
 - **Market sizing is genuinely hard.** Where credible estimates diverge, DeckScope reports
   the range and the reason rather than inventing a midpoint. Sometimes the honest answer
   is "confidence: low".
-- **The security screen is heuristic.** It catches the known families of injection well.
-  A novel technique may pass. Treat it as defence in depth, not a guarantee.
+- **The security screen is heuristic.** It catches the known families of injection well,
+  and there are tests for each. A novel technique may pass. Treat it as defence in
+  depth, not a guarantee.
+- **It screens snippets, not whole pages.** For search backends that return short
+  snippets, an injection further down the page is not seen.
+- **It cannot see injections inside images.** Text rendered into a picture is never
+  extracted, so it is never scanned.
+- **The three-agent design is still unproven.** But the control now ships: `--mode both`
+  runs the pipeline and a single-prompt baseline on the same deck with the same sources,
+  and reports the differences — claims examined, citations carried, blind spots named,
+  tokens spent. It deliberately declines to declare a winner, because that is a judgement
+  about reasoning quality a count cannot make. Run it on your own decks.
+- **The panel is not fully independent.** Panelists use separate models and separate
+  research calls, but the research agenda is derived from one deck-extraction pass and
+  they often retrieve overlapping sources. It is role-separated analysis with model
+  diversity, not independent market discovery.
+- **Citation resolution is not entailment checking.** DeckScope verifies that a cited
+  source exists and was supplied. It does not verify that the source actually contains
+  the figure attributed to it.
 - **Panel agreement is not proof.** Models with overlapping training data reading the same
   sources will share blind spots.
 - **Not investment advice.** It is a research tool that helps you ask better questions.

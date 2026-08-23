@@ -107,12 +107,44 @@ def save_key(name: str, value: str) -> Path:
             "# Delete a line to remove that key.\n"
             + "".join(f"{k}={v}\n" for k, v in existing.items()))
     p.write_text(body, encoding="utf-8")
-    try:
-        os.chmod(p, stat.S_IRUSR | stat.S_IWUSR)  # 0600; no-op semantics on Windows
-    except Exception:  # noqa: BLE001
-        pass
+    restrict_to_owner(p)
     os.environ[name] = value
     return p
+
+
+def restrict_to_owner(path: Path) -> bool:
+    """Make a file readable only by its owner. Returns True if that was achieved.
+
+    `os.chmod(0600)` is close to a no-op on Windows — the mode bits map onto the
+    read-only attribute, not onto an ACL — so a key file there stayed readable by
+    other accounts on the machine while the docs claimed otherwise. On Windows we
+    ask icacls to strip inheritance and grant the current user alone.
+    """
+    try:
+        os.chmod(path, stat.S_IRUSR | stat.S_IWUSR)
+    except Exception:  # noqa: BLE001
+        pass
+
+    if os.name != "nt":
+        try:
+            return (path.stat().st_mode & 0o077) == 0
+        except OSError:
+            return False
+
+    user = os.environ.get("USERNAME") or os.environ.get("USER")
+    if not user:
+        return False
+    try:
+        import subprocess
+
+        # /inheritance:r drops inherited ACEs; /grant:r replaces any existing
+        # grant for this user rather than adding to it.
+        res = subprocess.run(
+            ["icacls", str(path), "/inheritance:r", "/grant:r", f"{user}:F"],
+            capture_output=True, text=True, timeout=15)
+        return res.returncode == 0
+    except Exception:  # noqa: BLE001
+        return False
 
 
 def forget_key(name: str) -> None:

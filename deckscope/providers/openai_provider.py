@@ -30,6 +30,12 @@ class OpenAIProvider(LLMProvider):
                 f"No API key found for {self.name}. Set {env}, or run `deckscope setup`."
             )
         self.base_url = (self.config.base_url or self.default_base).rstrip("/")
+        retired = getattr(self, "retired_models", {})
+        if self.model in retired:
+            raise ProviderError(
+                f"{self.name}: '{self.model}' has been retired by the provider and no "
+                f"longer answers. Use '{retired[self.model]}' instead, or pick a current "
+                f"model from {getattr(self, 'catalog_url', 'the provider docs')}.")
 
     def complete(self, system, messages, *, max_tokens=None, temperature=None,
                  tools=None) -> Completion:
@@ -104,11 +110,25 @@ class GeminiProvider(OpenAIProvider):
     """Google Gemini through its OpenAI-compatible endpoint."""
 
     name = "gemini"
-    default_model = "gemini-2.0-flash"
+    #: gemini-2.0-flash was the default here until it reached its shutdown date,
+    #: at which point DeckScope's out-of-the-box Gemini configuration stopped
+    #: working. Google retires model IDs on a published schedule, so treat any
+    #: name in this file as perishable and check `catalog_url` when one fails.
+    default_model = "gemini-flash-latest"
     default_base = "https://generativelanguage.googleapis.com/v1beta/openai"
     key_env = "GEMINI_API_KEY"
     key_required = True
     catalog = [
-        ("gemini-2.0-flash", "Fast, large context — recommended"),
-        ("gemini-2.5-pro", "Deeper analysis"),
+        ("gemini-flash-latest", "Fast and cheap, always the current Flash — recommended"),
+        ("gemini-pro-latest", "Deeper analysis, always the current Pro"),
+        ("gemini-2.5-flash", "Pinned version, if you need reproducibility"),
     ]
+    catalog_url = "https://ai.google.dev/gemini-api/docs/models"
+
+    #: Names Google has retired. Naming them beats a raw 404 from the API.
+    retired_models = {
+        "gemini-2.0-flash": "gemini-flash-latest",
+        "gemini-2.0-flash-001": "gemini-flash-latest",
+        "gemini-1.5-flash": "gemini-flash-latest",
+        "gemini-1.5-pro": "gemini-pro-latest",
+    }

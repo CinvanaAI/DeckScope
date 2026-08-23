@@ -55,6 +55,28 @@ def txt(value: Any, dash: str = "—") -> str:
     return str(value)
 
 
+SAFE_URL_SCHEMES = ("http://", "https://", "mailto:")
+
+
+def safe_url(value: Any) -> str:
+    """Return a URL only if it is safe to put in an href, else "".
+
+    HTML-escaping a `javascript:` URL does not make it safe — the escape protects
+    the surrounding markup, not the navigation. Sources carrying such URLs are
+    quarantined upstream, but renderers also read model-supplied URLs, so this is
+    the second line: anything that is not plain http(s)/mailto is dropped and the
+    link is rendered as inert text.
+    """
+    if not value:
+        return ""
+    url = str(value).strip().replace("\x00", "")
+    if any(ch in url for ch in "\r\n\t"):
+        return ""
+    if url.lower().startswith(SAFE_URL_SCHEMES):
+        return url
+    return ""
+
+
 def lens_title(lens: str) -> str:
     return {"investor": "Investor / diligence view",
             "founder": "Founder / self-critique view",
