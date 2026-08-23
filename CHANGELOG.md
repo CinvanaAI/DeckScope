@@ -6,6 +6,54 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ## [Unreleased]
 
+### Changed — the report now leads with findings, not a verdict
+
+Prompted by an outside product review, and confirmed by reading the actual output
+rather than the description of it. Every report opened with this:
+
+    | Verdict         | LEAN NO      |
+    | Weighted score  | 45.7 / 100   |
+
+An oracle's answer, at the top of a tool whose architecture exists to avoid being
+an oracle — isolated agents, an opportunity module that refuses to forecast,
+calibration scored as a first-class dimension — and whose README warns against
+relying on any figure without opening the source it cites. The machinery argued
+"don't let eloquence outrun evidence"; the cover page did exactly that with its
+own output. `Questions this raises` was section 8 of 11.
+
+- **New `deckscope/findings.py`** composes the report's opening from the
+  structured output, in Python, from counts. No model writes the headline — the
+  same rule the evaluation scorer follows, for the same reason: a generated
+  summary can overclaim and a computed one cannot.
+- **Contested and unverified are now separated.** The claim audit conflated "the
+  deck says X and sourced evidence says otherwise" with "nothing was found either
+  way". The first is a finding; the second is a research task. Rendering them as
+  rows in one table let an analysis quietly convert its own ignorance into a
+  signal against the company. Unverifiable claims now appear under *What could not
+  be checked* and flow into next steps, explicitly not as marks against the deck.
+- **A contradiction with no citation is no longer described as sourced.**
+  `evidence_quality` is the model's opinion of its own evidence; `source_ids` is
+  checkable. When they disagree the checkable field wins, so a model cannot assert
+  "strong" evidence, cite nothing, and have the report dress its unsupported
+  disagreement up as a finding.
+- **The headline never claims evidence it does not have.** Two distinct thin-evidence
+  states are reported differently: no sources retrieved, versus sources retrieved
+  but never cited. Announcing "no external evidence was retrieved" when three
+  sources came back would itself be a false statement in the line meant to prevent
+  them.
+- **The composite score is gone from the report.** A weighted average of seven
+  subjective 1–10 scores, shown to three significant figures, was the one number in
+  the report that could not be traced to a source, and putting it above the fold
+  invited exactly the use this tool should not support — thresholding decks by it.
+  The per-dimension scorecard stays, each row with its reasoning. `scorecard_total`
+  remains internally, because the panel ranks reports by it.
+- **The verdict is demoted**, under "What this adds up to, for this lens", framed as
+  one reading rather than the answer.
+- **Questions and actions are no longer printed twice.** They are consolidated and
+  ranked once, at the top; only the owner/priority table survives further down.
+- All three renderers — markdown, HTML and DOCX — lead identically, from one shared
+  `findings_for()` so they cannot drift.
+
 ### Fixed (third audit)
 
 The theme of this audit was **gates that could not fail**. Four separate checks

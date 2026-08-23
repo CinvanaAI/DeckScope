@@ -1,7 +1,21 @@
 # DeckScope
 
-**An agentic framework that reads a pitch deck, researches the market it competes in,
-and tells you where the two agree — and where they don't.**
+**The adversarial second opinion for a pitch deck. It separates persuasion from
+evidence, finds what the deck leaves out, and gives you the questions worth asking
+next.**
+
+Not an AI that tells you whether to invest. Every report answers four questions, in
+this order:
+
+1. **What did the deck claim that the evidence does not support?**
+2. **What did the deck leave out?**
+3. **What could not be established either way?**
+4. **What should you go and find out next?**
+
+The headline is assembled in Python from those counts, not written by a model, so it
+cannot claim more than the evidence holds. A run that retrieved no sources says so in
+its first line rather than listing confident findings. See
+[deckscope/findings.py](deckscope/findings.py).
 
 > ### Status: unreleased, and honest about it
 >

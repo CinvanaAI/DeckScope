@@ -209,7 +209,17 @@ COMPARE_USER = """Produce the comparison.
 
 --- MARKET ANALYSIS (what the evidence shows) ---
 {market_json}
+
+--- BIBLIOGRAPHY (the only sources you may cite) ---
+{sources}
 """
+# The bibliography is supplied here because this agent writes the claim audit —
+# the part of the report where citations carry the most weight — and it was
+# previously asked to populate `source_ids` while never being shown what the
+# source IDs referred to. The best it could do was echo whichever markers
+# happened to appear inline in the market JSON, so citations clustered on one or
+# two sources regardless of which source actually spoke to the claim. Validation
+# then checked those IDs against a list the agent had never seen.
 
 
 # ===================================================================== panel

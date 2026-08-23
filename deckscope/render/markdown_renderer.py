@@ -4,7 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, List
 
-from .common import ASSESSMENT_WORD, as_list, header_block, safe_url, txt
+from .common import (ASSESSMENT_WORD, SEVERITY_WORD, as_list, findings_for,
+                     header_block, safe_url, txt)
 
 
 def build_markdown(result, lens: str) -> str:
@@ -14,25 +15,66 @@ def build_markdown(result, lens: str) -> str:
     L: List[str] = []
     add = L.append
 
+    found = findings_for(result, lens)
+
     add(f"# {h['company']} — Deck vs. Market Analysis")
     add("")
     add(f"**{h['lens']}**")
     add("")
-    if h["headline"]:
-        add(f"> {h['headline']}")
-        add("")
-    add("| | |")
-    add("|---|---|")
-    add(f"| **Verdict** | {h['verdict']} |")
-    add(f"| **Confidence** | {h['confidence']} |")
-    add(f"| **Weighted score** | {h['score']} / 100 |")
-    add(f"| **Analyzed** | {h['generated']} |")
-    add(f"| **Model** | {h['model']} |")
-    add(f"| **Research** | {h['research']} |")
+
+    # ------------------------------------------------------- the findings
+    # This report used to open with a verdict and a weighted score. It now opens
+    # with what the reader is actually trying to learn: which claims did not
+    # survive contact with evidence, what the deck left out, and what to go and
+    # ask. The verdict still exists, further down, framed as one reading rather
+    # than the answer. See deckscope/findings.py for why.
+    add(f"> **{found.headline}**")
     add("")
-    rationale = (comp.get("verdict") or {}).get("confidence_rationale")
-    if rationale:
-        add(f"*Confidence basis: {rationale}*")
+    add(f"*{found.evidence_state}*")
+    add("")
+    if comp.get("integrity_note"):
+        add(f"> **Integrity note.** {comp['integrity_note']}")
+        add("")
+
+    if found.contested:
+        add("## What the evidence contests")
+        add("")
+        add("Claims the deck makes that retrieved evidence pushes back on. "
+            "Sourced items link to the bibliography; unsourced ones are readings, "
+            "not findings.")
+        add("")
+        for f in found.contested:
+            cites = (" ".join(f"[{s}]" for s in f.source_ids)
+                     if f.source_ids else "_no source_")
+            add(f"- **{txt(f.text)}** — {SEVERITY_WORD.get(f.severity, f.severity)}. "
+                f"{txt(f.delta or f.why)} {cites}")
+        add("")
+
+    if found.omissions:
+        add("## What the deck leaves out")
+        add("")
+        add("Present in the market evidence, absent from the deck.")
+        add("")
+        for f in found.omissions:
+            add(f"- **{txt(f.text)}**")
+        add("")
+
+    if found.unverified:
+        add("## What could not be checked")
+        add("")
+        add("Neither confirmed nor refuted by the evidence retrieved. These are "
+            "research tasks, **not** marks against the company — an analysis must "
+            "not convert its own gaps into a negative signal.")
+        add("")
+        for f in found.unverified:
+            add(f"- {txt(f.text)}")
+        add("")
+
+    if found.next_steps:
+        add("## What to do next")
+        add("")
+        for i, step in enumerate(found.next_steps, 1):
+            add(f"{i}. {txt(step)}")
         add("")
 
     # ---------------------------------------------------------- summary
@@ -40,14 +82,29 @@ def build_markdown(result, lens: str) -> str:
     add("")
     add(comp.get("summary") or "_No summary produced._")
     add("")
-    if comp.get("integrity_note"):
-        add(f"> **Integrity note.** {comp['integrity_note']}")
+
+    # ------------------------------------------------- verdict, demoted
+    add("## What this adds up to, for this lens")
+    add("")
+    add(f"**{h['verdict']}** · confidence: {h['confidence']}")
+    add("")
+    rationale = (comp.get("verdict") or {}).get("confidence_rationale")
+    if rationale:
+        add(f"*Confidence basis: {rationale}*")
         add("")
+    add("A verdict is one reader's reading of the findings above, through one "
+        "lens. The findings are the durable part; this line is not.")
+    add("")
 
     # -------------------------------------------------------- scorecard
     rows = comp.get("scorecard") or []
     if rows:
         add("## Scorecard")
+        add("")
+        add("Per-dimension, each with the reasoning behind it. There is "
+            "deliberately no headline total: a weighted average of seven "
+            "subjective scores is the one figure in this report that cannot be "
+            "traced to a source.")
         add("")
         add("| Dimension | Score | Weight | Why |")
         add("|---|:--:|:--:|---|")
@@ -115,18 +172,13 @@ def build_markdown(result, lens: str) -> str:
                 f"{txt(r.get('likelihood'))} | {txt(r.get('mitigation_or_test'))} |")
         add("")
 
-    # -------------------------------------------------------- questions
-    qs = as_list(comp.get("questions"))
-    if qs:
-        add("## Questions this raises")
-        add("")
-        for q in qs:
-            add(f"- {q}")
-        add("")
-
+    # Questions and actions are not repeated here: both were consolidated into
+    # "What to do next" at the top, and printing them twice was how the reader
+    # ended up assembling the report themselves. The owner/priority detail that
+    # only the actions table carried is kept below.
     acts = comp.get("actions") or []
     if acts:
-        add("## Recommended actions")
+        add("## Who does what")
         add("")
         add("| Priority | Action | Owner |")
         add("|:--:|---|---|")

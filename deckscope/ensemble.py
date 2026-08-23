@@ -192,12 +192,20 @@ class Panel:
             _out(f"[panel] {message}", flush=True)
 
     # ---------------------------------------------------------- round one
-    def run(self) -> PanelResult:
+    def run(self, corpus: Optional[Any] = None) -> PanelResult:
+        """Convene the panel.
+
+        `corpus` freezes the evidence every panelist reads. Without it each
+        panelist researches independently, and any disagreement between them
+        confounds two different things: reading the same evidence differently,
+        and having been handed different evidence. Passing one corpus isolates
+        the first, which is the only one the panel is trying to measure.
+        """
         started = time.time()
         self._log(f"Convening a panel of {len(self.panelists)}: "
                   f"{', '.join(p.name for p in self.panelists)}")
 
-        self._round_independent()
+        self._round_independent(corpus=corpus)
         working = [p for p in self.panelists if p.ok]
         if not working:
             raise RuntimeError(
@@ -277,7 +285,7 @@ class Panel:
         return result
 
     # ------------------------------------------------------------- rounds
-    def _round_independent(self) -> None:
+    def _round_independent(self, corpus: Optional[Any] = None) -> None:
         self._log("Round 1: each panelist analyzes the deck independently")
 
         def one(p: Panelist) -> Panelist:
@@ -287,7 +295,7 @@ class Panel:
             pipe = Pipeline(cfg, on_event=lambda m, d, _p=p: self.on_event(
                 f"[{_p.name}] {m}", d))
             try:
-                p.result = pipe.run()
+                p.result = pipe.run(corpus=corpus)
             except Exception as exc:  # noqa: BLE001 - one panelist failing is survivable
                 p.error = f"{type(exc).__name__}: {exc}"
             finally:

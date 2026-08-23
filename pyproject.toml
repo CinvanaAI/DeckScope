@@ -59,6 +59,7 @@ deckscope = [
     # `--injected` is how the security screen is demonstrated. Both read these,
     # so they are runtime data rather than documentation.
     "examples/*.md",
+    "examples/*.json",
 ]
 
 [tool.ruff]

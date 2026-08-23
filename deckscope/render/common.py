@@ -38,6 +38,14 @@ ASSESSMENT_WORD = {
     "contradicted": "Contradicted", "unverifiable": "Unverifiable",
 }
 
+#: How hard a contested finding lands. Phrased as what the evidence does rather
+#: than as a grade, so the reader is pointed at the evidence and not at a label.
+SEVERITY_WORD = {
+    "high": "contradicted by sourced evidence",
+    "medium": "partly contradicted",
+    "low": "disputed, but thinly evidenced",
+}
+
 
 def as_list(value: Any) -> List[Any]:
     if value is None:
@@ -92,6 +100,12 @@ def header_block(result, lens: str) -> Dict[str, str]:
         "lens": lens_title(lens),
         "verdict": (comp.get("verdict") or {}).get("call", "—"),
         "confidence": (comp.get("verdict") or {}).get("confidence", "—"),
+        # Still computed, because the panel ranks reports by it. It is no longer
+        # printed at the top of a report: a weighted average of seven subjective
+        # 1-10 scores, shown to three significant figures, is the one number here
+        # that cannot be traced back to a source — and putting it above the fold
+        # invited exactly the use this tool should not support, which is
+        # thresholding decks by it.
         "score": str((meta.get("weighted_score") or {}).get("score", "—")),
         "headline": comp.get("headline") or "",
         "generated": stats.get("generated_at", ""),
@@ -99,3 +113,15 @@ def header_block(result, lens: str) -> Dict[str, str]:
         "research": f"{stats.get('research_backend', '?')} "
                     f"({stats.get('sources_found', 0)} sources)",
     }
+
+
+def findings_for(result, lens: str):
+    """The consolidated findings for a lens, shared by every renderer.
+
+    Computed once here rather than per renderer, so markdown, HTML and DOCX
+    cannot drift into telling the reader different things.
+    """
+    from ..findings import collect
+
+    return collect(result.comparisons.get(lens, {}),
+                   getattr(result, "registry", None))

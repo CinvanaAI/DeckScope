@@ -4,7 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, List
 
-from .common import ASSESSMENT_WORD, as_list, header_block, txt
+from .common import (ASSESSMENT_WORD, SEVERITY_WORD, as_list, findings_for,
+                     header_block, txt)
 
 
 def _hex(color: str) -> Any:
@@ -36,15 +37,30 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
         r = p.add_run(h["lens"].upper())
         r.font.size, r.font.bold, r.font.color.rgb = Pt(8.5), True, _hex(t["muted"])
         doc.add_heading(f"{result.company} — Deck vs. Market Analysis", level=0)
-        if h["headline"]:
+
+        # Same hierarchy as markdown and HTML: findings first, verdict demoted,
+        # no composite score above the fold. See deckscope/findings.py.
+        found = findings_for(result, lens)
+
+        p = doc.add_paragraph()
+        r = p.add_run(found.headline)
+        r.font.size, r.font.bold, r.font.color.rgb = Pt(12), True, _hex(t["accent"])
+        p = doc.add_paragraph()
+        r = p.add_run(found.evidence_state)
+        r.font.size, r.font.italic, r.font.color.rgb = Pt(9), True, _hex(t["muted"])
+
+        if comp.get("integrity_note"):
             p = doc.add_paragraph()
-            r = p.add_run(h["headline"])
-            r.font.size, r.font.italic, r.font.color.rgb = Pt(12), True, _hex(t["accent"])
+            r = p.add_run(f"Integrity note. {comp['integrity_note']}")
+            r.font.bold, r.font.color.rgb = True, _hex(t["bad"])
 
         tbl = doc.add_table(rows=0, cols=2)
         tbl.style = "Light Grid Accent 1"
-        for k, v in (("Verdict", h["verdict"]), ("Confidence", h["confidence"]),
-                     ("Weighted score", f"{h['score']} / 100"),
+        for k, v in (("Claims examined", str(found.counts.get("claims_examined", 0))),
+                     ("Contested", str(found.counts.get("contested", 0))),
+                     ("Omissions", str(found.counts.get("omissions", 0))),
+                     ("Could not be checked",
+                      str(found.counts.get("unverified", 0))),
                      ("Security screen",
                       (result.security or {}).get("overall_risk", "not run").upper()),
                      ("Sources", h["research"]), ("Model", h["model"]),
@@ -53,20 +69,71 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
             row[0].text, row[1].text = str(k), str(v)
             row[0].paragraphs[0].runs[0].font.bold = True
 
+        if found.contested:
+            doc.add_heading("What the evidence contests", level=1)
+            doc.add_paragraph(
+                "Claims the deck makes that retrieved evidence pushes back on. "
+                "Unsourced items are readings, not findings.")
+            for f in found.contested:
+                cites = (" ".join(f"[{s}]" for s in f.source_ids)
+                         if f.source_ids else "(no source)")
+                doc.add_paragraph(
+                    f"{f.text} — {SEVERITY_WORD.get(f.severity, f.severity)}. "
+                    f"{f.delta or f.why} {cites}", style="List Bullet")
+
+        if found.omissions:
+            doc.add_heading("What the deck leaves out", level=1)
+            doc.add_paragraph(
+                "Present in the market evidence, absent from the deck.")
+            for f in found.omissions:
+                doc.add_paragraph(f.text, style="List Bullet")
+
+        if found.unverified:
+            doc.add_heading("What could not be checked", level=1)
+            doc.add_paragraph(
+                "Neither confirmed nor refuted by the evidence retrieved. These "
+                "are research tasks, not marks against the company.")
+            for f in found.unverified:
+                doc.add_paragraph(f.text, style="List Bullet")
+
+        if found.next_steps:
+            doc.add_heading("What to do next", level=1)
+            for step in found.next_steps:
+                doc.add_paragraph(step, style="List Number")
+
         # Summary
         doc.add_heading("Summary", level=1)
         for para in (comp.get("summary") or "").split("\n"):
             if para.strip():
                 doc.add_paragraph(para.strip())
-        if comp.get("integrity_note"):
+
+        # Verdict, demoted
+        doc.add_heading("What this adds up to, for this lens", level=1)
+        p = doc.add_paragraph()
+        r = p.add_run(f"{h['verdict']} · confidence: {h['confidence']}")
+        r.font.bold = True
+        rationale = (comp.get("verdict") or {}).get("confidence_rationale")
+        if rationale:
             p = doc.add_paragraph()
-            r = p.add_run(f"Integrity note. {comp['integrity_note']}")
-            r.font.bold, r.font.color.rgb = True, _hex(t["bad"])
+            r = p.add_run(f"Confidence basis: {rationale}")
+            r.font.italic, r.font.size = True, Pt(9)
+        p = doc.add_paragraph()
+        r = p.add_run("A verdict is one reader's reading of the findings above, "
+                      "through one lens. The findings are the durable part; this "
+                      "line is not.")
+        r.font.italic, r.font.size, r.font.color.rgb = True, Pt(9), _hex(t["muted"])
 
         # Scorecard
         rows = comp.get("scorecard") or []
         if rows:
             doc.add_heading("Scorecard", level=1)
+            p = doc.add_paragraph()
+            r = p.add_run(
+                "Per-dimension, each with its reasoning. There is deliberately no "
+                "headline total: a weighted average of seven subjective scores is "
+                "the one figure here that cannot be traced to a source.")
+            r.font.italic, r.font.size, r.font.color.rgb = (
+                True, Pt(9), _hex(t["muted"]))
             tb = doc.add_table(rows=1, cols=4)
             tb.style = "Light Grid Accent 1"
             for i, head in enumerate(("Dimension", "Score", "Weight", "Why")):
@@ -136,19 +203,23 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
                 c[2].text = txt(r_.get("likelihood"))
                 c[3].text = txt(r_.get("mitigation_or_test"))
 
-        # Questions and actions
-        qs = as_list(comp.get("questions"))
-        if qs:
-            doc.add_heading("Questions this raises", level=1)
-            for q in qs:
-                doc.add_paragraph(str(q), style="List Bullet")
+        # Questions and actions already appear, consolidated and ranked, under
+        # "What to do next" near the top. Only the owner/priority detail that
+        # the actions table alone carried is repeated here.
         acts = comp.get("actions") or []
         if acts:
-            doc.add_heading("Recommended actions", level=1)
-            for a in acts:
-                doc.add_paragraph(
-                    f"[{txt(a.get('priority'))}] {txt(a.get('action'))} — {txt(a.get('owner'))}",
-                    style="List Bullet")
+            doc.add_heading("Who does what", level=1)
+            tb = doc.add_table(rows=1, cols=3)
+            tb.style = "Light Grid Accent 1"
+            for i, head in enumerate(("Priority", "Action", "Owner")):
+                cell = tb.rows[0].cells[i]
+                cell.text = head
+                cell.paragraphs[0].runs[0].font.bold = True
+            for a in sorted(acts, key=lambda x: str(x.get("priority", "P9"))):
+                c = tb.add_row().cells
+                c[0].text = txt(a.get("priority"))
+                c[1].text = txt(a.get("action"))
+                c[2].text = txt(a.get("owner"))
 
         # ---- The analysis sections added after the original report design.
         # Word is the format people circulate, so it carries the decision-relevant

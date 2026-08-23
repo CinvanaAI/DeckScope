@@ -29,7 +29,8 @@ class ComparisonSynthesist(Agent):
 
     def run(self, deck: Dict[str, Any], market: Dict[str, Any], *,
             lens: Lens = Lens.INVESTOR,
-            valid_source_ids: Any = ()) -> Dict[str, Any]:
+            valid_source_ids: Any = (),
+            sources_block: str = "") -> Dict[str, Any]:
         self.label = f"3/3 Comparison ({lens.value})"
         self.emit("comparing deck claims against market evidence")
 
@@ -38,9 +39,14 @@ class ComparisonSynthesist(Agent):
             schema=schema_block(COMPARISON_SCHEMA, "Comparison"),
             deck_json=json.dumps(_slim(deck), indent=2)[:70_000],
             market_json=json.dumps(_slim(market), indent=2)[:70_000],
+            sources=sources_block or "(no sources were retrieved for this run)",
         )
         result = self.cached_json(
-            self.cache_key(lens=lens.value, deck=_slim(deck), market=_slim(market)),
+            # The bibliography is part of the input, so it belongs in the cache
+            # key. Without it, a run against different evidence would replay a
+            # cached answer computed from the old sources.
+            self.cache_key(lens=lens.value, deck=_slim(deck), market=_slim(market),
+                           sources=sources_block),
             lambda: self.complete_json(system, user, temperature=0.3),
         )
         result = coerce(result, COMPARISON_SCHEMA)
@@ -54,7 +60,16 @@ class ComparisonSynthesist(Agent):
             "weighted_score": scorecard_total(result.get("scorecard") or []),
             "validation": validation.to_dict(),
         }
-        verdict = (result.get("verdict") or {}).get("call", "—")
-        self.emit(f"verdict: {verdict} "
-                  f"({result['_meta']['weighted_score']['score']}/100)")
+        # Report what was found, not the composite score. The score is still
+        # computed above for the panel's ranking, but announcing it here — after
+        # it was removed from every report for being untraceable — would put the
+        # number back in front of the only person who reads the terminal.
+        audit = result.get("claim_audit") or []
+        contested = sum(1 for row in audit if isinstance(row, dict)
+                        and str(row.get("assessment", "")).lower()
+                        in ("contradicted", "partially-supported"))
+        cited = sum(1 for row in audit if isinstance(row, dict)
+                    and (row.get("source_ids") or []))
+        self.emit(f"{len(audit)} claim(s) examined, {contested} contested, "
+                  f"{cited} citing a source")
         return result

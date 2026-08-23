@@ -565,6 +565,31 @@ def _print_panel_summary(result: Any, files: List[str]) -> None:
     _out()
 
 
+def _demo_corpus(package_dir: Path) -> Any:
+    """The frozen evidence the demo analyses against.
+
+    Without it the demo ran with `research=none`, so every finding came back
+    uncited and the report — correctly, and to its credit — said so on every
+    line. That is honest and it is also a terrible advertisement: the one thing a
+    new user sees was an analysis with no evidence in it, which argues against
+    the product rather than for it.
+
+    The corpus is fictional and says so in its own `_readme`. It is authored
+    alongside the sample deck so the demo has known-correct answers, the same
+    trick the evaluation suite uses. Missing or corrupt, the demo still runs —
+    it simply falls back to the uncited behaviour rather than failing.
+    """
+    from .corpus import EvidenceCorpus
+
+    path = package_dir / "examples" / "sample_corpus.json"
+    if not path.exists():
+        return None
+    try:
+        return EvidenceCorpus.load(str(path))
+    except Exception:  # noqa: BLE001 - a broken fixture must not break the demo
+        return None
+
+
 def _demo(args: Any) -> int:
     from .config import OutputConfig, ProviderConfig, ResearchConfig, RunConfig
     from .orchestrator import Pipeline
@@ -598,6 +623,7 @@ def _demo(args: Any) -> int:
 
     lenses = ALL_LENSES if args.lens == ["all"] else args.lens
     out_dir = args.out or str(Path.cwd() / "deckscope_demo_output")
+    demo_corpus = _demo_corpus(here)
 
     if getattr(args, "cold_discovery", False) and not getattr(args, "panel", False):
         cfg = RunConfig(
@@ -609,7 +635,7 @@ def _demo(args: Any) -> int:
              "only the category name — never a claim — so what it finds and the\n"
              "claim-directed pass missed is a blind spot no prompt could produce.\n")
         pipe = Pipeline(cfg)
-        res = pipe.run()
+        res = pipe.run(corpus=demo_corpus)
         files = pipe.render(res)
         pipe.close()
         _print_summary(res, files)
@@ -664,7 +690,7 @@ def _demo(args: Any) -> int:
         _out("Running a demo PANEL. Three simulated analysts, no AI, no key, no cost.\n")
         panel = Panel(cfg, [ProviderConfig(name="mock", model=m)
                             for m in ("mock-a", "mock-b", "mock-c")], rounds=1)
-        res = panel.run()
+        res = panel.run(corpus=demo_corpus)
         files = panel.render(res)
         _print_panel_summary(res, files)
         _out("That was sample output. To run a real panel:  deckscope setup\n")
@@ -682,39 +708,87 @@ def _demo(args: Any) -> int:
     _out("Running a demo analysis. No AI, no API key, no cost — the model's answers "
           "are built in.\n")
     pipe = Pipeline(cfg)
-    result = pipe.run()
+    result = pipe.run(corpus=demo_corpus)
     files = pipe.render(result)
     _print_summary(result, files)
     _out("That was sample output. To analyze a real deck, run:  deckscope setup\n")
     return _format_exit_code(result)
 
 
+def _wrap_indented(text: str, width: int = 62, indent: str = "  ") -> List[str]:
+    """Wrap for the summary block. Named apart from the plain `_wrap`
+    defined further down, which takes no indent and was being shadowed."""
+    import textwrap
+
+    return textwrap.wrap(str(text), width=width,
+                         initial_indent=indent,
+                         subsequent_indent=indent) or [indent]
+
+
 def _print_summary(result: Any, files: List[str]) -> None:
+    """What the terminal says when a run finishes.
+
+    Leads with the findings, for the same reason the report does. This used to
+    print the verdict and a weighted score on the first line — the one number in
+    the whole system that cannot be traced to a source — which meant the summary
+    a user actually reads contradicted the report it was summarising.
+    """
+    from .findings import collect
+
+    reg = getattr(result, "registry", None)
     _out()
-    _out("─" * 66)
+    _out("─" * 68)
     _out(f"  {result.company}")
-    _out("─" * 66)
+    _out("─" * 68)
+
     for lens, comp in result.comparisons.items():
-        v = comp.get("verdict") or {}
-        score = ((comp.get("_meta") or {}).get("weighted_score") or {}).get("score", "—")
-        _out(f"  {lens:9s} {v.get('call', '—')}  ({v.get('confidence', '—')} "
-              f"confidence, {score}/100)")
-        if comp.get("headline"):
-            _out(f"            {comp['headline'][:100]}")
+        found = collect(comp, reg)
+        _out()
+        _out(f"  {_lens_label(lens)}")
+        _out()
+        for line in _wrap_indented(found.headline, indent="  "):
+            _out(line)
+        _out()
+
+        counts = found.counts
+        grounded = counts.get("contested_with_evidence", 0)
+        _out(f"    contested   {counts.get('contested', 0):<3}"
+             + (f"({grounded} with a source you can open)" if counts.get("contested")
+                else ""))
+        _out(f"    omissions   {counts.get('omissions', 0)}")
+        _out(f"    unresolved  {counts.get('unverified', 0)}")
+
+        if found.next_steps:
+            _out()
+            _out("    Next:")
+            for i, step in enumerate(found.next_steps[:3], 1):
+                lines = _wrap_indented(step, width=54, indent="")
+                _out(f"    {i}. {lines[0].strip()}")
+                for line in lines[1:]:
+                    _out(f"       {line.strip()}")
+            if len(found.next_steps) > 3:
+                _out(f"    …  {len(found.next_steps) - 3} more in the report")
+
+    _out()
     sec = result.security or {}
     if sec:
-        _out(f"  security  input screen: {sec.get('overall_risk', 'clean').upper()}")
-    reg = getattr(result, "registry", None)
+        _out(f"  input screen  {sec.get('overall_risk', 'clean').upper()}")
     if reg:
         st = reg.stats()
-        _out(f"  sources   {st['cited']} cited of {st['total']} retrieved"
-              + (f", {st['quarantined']} dropped" if st["quarantined"] else ""))
-    _out("─" * 66)
+        _out(f"  sources       {st['cited']} cited of {st['total']} retrieved"
+             + (f", {st['quarantined']} dropped" if st["quarantined"] else ""))
+    _out("─" * 68)
     if files:
         _out("  Reports written:")
         for f in files:
             _out(f"    {f}")
     _out()
+
+
+def _lens_label(lens: str) -> str:
+    return {"investor": "INVESTOR / DILIGENCE",
+            "founder": "FOUNDER / SELF-CRITIQUE",
+            "neutral": "NEUTRAL ANALYST"}.get(lens, lens.upper())
 
 
 def _eval(args: Any) -> int:

@@ -218,10 +218,14 @@ class Pipeline:
         # Only sources that actually reached the model. A quarantined source is in
         # the registry for reporting, but was never shown, so citing it is a
         # fabrication like any other.
+        # Build the block first: rendering it marks those sources as admitted,
+        # and `citable_ids` is defined as what actually reached a prompt.
+        sources_block = market_agent.registry.prompt_block()
         valid_ids = market_agent.registry.citable_ids
         for lens in cfg.lenses:
             comparisons[lens.value] = synth.run(deck, market, lens=lens,
-                                                valid_source_ids=valid_ids)
+                                                valid_source_ids=valid_ids,
+                                                sources_block=sources_block)
 
         usage = {"input": 0, "output": 0}
         for agent in (deck_agent, market_agent, synth):

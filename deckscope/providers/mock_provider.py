@@ -953,7 +953,9 @@ def _claim_audit_for(prompt: str) -> list:
     claims = _claims_from_extraction(prompt) or _extract_claims(prompt)
     if not claims:
         return []
-    evidence = _research_block(prompt).lower()
+    raw_evidence = _research_block(prompt)
+    evidence = raw_evidence.lower()
+    sources = _sources_in_prompt(raw_evidence)
     audit = []
     for i, text in enumerate(claims, 1):
         numbers = re.findall(r"\d[\d,.]*", text)
@@ -968,19 +970,100 @@ def _claim_audit_for(prompt: str) -> list:
             assessment, quality = "contradicted", "moderate"
         else:
             assessment, quality = "unverifiable", "none"
+
+        # Cite the source that actually discusses this claim, not always S1.
+        # A fixture that cites the same ID for everything makes the citation
+        # machinery look decorative; matching on shared vocabulary exercises the
+        # real path and makes the demo legible.
+        matched = _best_source_for(text, sources)
+        cited = [matched["sid"]] if (matched and assessment != "unverifiable") else []
+        if cited:
+            quality = "strong" if assessment == "contradicted" else quality
+
         audit.append({
             "id": f"C{i}", "claim": text,
-            "market_evidence": ("The supplied research addresses this figure."
-                                if echoed else
-                                "The supplied research does not support this figure."
-                                if evidence else
+            "market_evidence": (matched["snippet"][:400] if matched else
                                 "No external evidence was supplied for this run."),
             "assessment": assessment,
             "delta": "" if assessment == "supported" else
-                     "The evidence points elsewhere.",
-            "so_what": "Check this against the cited source before relying on it.",
-            "source_ids": ["S1"] if evidence else [],
-            "evidence_quality": quality,
-            "sources": [],
+                     (_delta_line(text, matched) if matched else
+                      "No evidence was retrieved that speaks to this figure."),
+            "so_what": ("Worth resolving before the number is repeated to anyone "
+                        "who will check it." if assessment == "contradicted" else
+                        "Ask the founder directly; nothing retrieved settles it."
+                        if assessment == "unverifiable" else
+                        "Consistent with the evidence retrieved."),
+            "source_ids": cited,
+            "evidence_quality": quality if cited else "none",
+            "sources": [matched["url"]] if matched and cited else [],
         })
     return audit
+
+
+def _sources_in_prompt(evidence: str) -> list:
+    """Parse the bibliography block back into records the fixture can match on."""
+    out = []
+    for block in re.split(r"\n(?=\[S\d{1,3}\])", evidence or ""):
+        m = re.match(r"\[(S\d{1,3})\]\s*(.*)", block.strip())
+        if not m:
+            continue
+        url = re.search(r"url:\s*(\S+)", block)
+        content = re.search(r"content:\s*(.*)", block, re.S)
+        out.append({"sid": m.group(1), "title": m.group(2).strip(),
+                    "url": url.group(1) if url else "",
+                    "snippet": " ".join((content.group(1) if content else "").split())})
+    return out
+
+
+_STOPWORDS = {"the", "a", "an", "of", "and", "or", "is", "are", "to", "in", "for",
+              "at", "on", "with", "our", "we", "per", "that", "this", "it", "its",
+              "from", "by", "as", "be", "was", "were", "than", "not"}
+
+
+def _tokens(text: str) -> set:
+    return {w for w in re.findall(r"[a-z]{3,}", str(text).lower())
+            if w not in _STOPWORDS}
+
+
+def _best_source_for(claim: str, sources: list) -> dict:
+    """The source with the most vocabulary in common with the claim.
+
+    Crude on purpose — it is a fixture, not a retrieval system — but it means a
+    pricing claim cites the pricing source and a margin claim cites the margin
+    source, which is what makes the demo readable.
+    """
+    if not sources:
+        return {}
+    claim_tokens = _tokens(claim)
+    numbers = {n for n in re.findall(r"\d[\d,.]*", claim) if len(n) > 1}
+    best, best_score = {}, 0
+    for src in sources:
+        text = f"{src.get('title', '')} {src.get('snippet', '')}"
+        score = len(claim_tokens & _tokens(text))
+        # A shared figure is a much stronger signal than a shared word.
+        score += 4 * sum(1 for n in numbers if n in text)
+        if score > best_score:
+            best, best_score = src, score
+    return best if best_score >= 2 else {}
+
+
+#: A figure as a deck writes one: $47B, 78%, $28,000, 23% CAGR. The unit suffix
+#: is part of the number — clipping "$6B" to "$6" turns a market size into pocket
+#: change and made the headline read as nonsense.
+_FIGURE_RX = re.compile(r"\$?\d[\d,.]*\s*(?:[BMKT]\b|bn\b|%)?", re.I)
+
+
+def _delta_line(claim: str, source: dict) -> str:
+    """A concrete "deck says X; evidence says Y" line for the headline to use."""
+    figure = next((m.group(0).strip() for m in _FIGURE_RX.finditer(claim)
+                   if len(m.group(0).strip()) > 1), "")
+    counter = ""
+    for sentence in re.split(r"(?<=[.;])\s+", source.get("snippet", "")):
+        if re.search(r"\d", sentence):
+            counter = " ".join(sentence.split())
+            if len(counter) > 150:
+                counter = counter[:150].rsplit(" ", 1)[0] + "…"
+            break
+    if figure and counter:
+        return f"deck states {figure}; {counter}"
+    return counter or "The retrieved evidence points elsewhere."

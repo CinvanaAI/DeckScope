@@ -5,8 +5,9 @@ import html
 from pathlib import Path
 from typing import Any, Dict, List
 
-from .common import (ASSESSMENT_WORD, as_list, header_block, safe_url,
-                     score_color, theme, txt)
+from .common import (ASSESSMENT_WORD, SEVERITY_WORD, THEMES, as_list,
+                     findings_for, header_block, safe_url, score_color,
+                     theme, txt)
 
 
 def _e(v: Any) -> str:
@@ -36,6 +37,55 @@ def _bar(score: Any, weight: Any, t: Dict[str, str]) -> str:
             f'background:{score_color(score, t)}"></span></div>')
 
 
+def _cite_chip(sid: str, result) -> str:
+    """A citation that goes somewhere.
+
+    An ID printed as plain text asks the reader to scroll to the bibliography and
+    find it by eye, which in practice means nobody checks anything. Linking it to
+    the entry — and putting the source title in the tooltip — is the difference
+    between provenance that exists and provenance that is used.
+    """
+    registry = getattr(result, "registry", None)
+    title = ""
+    if registry is not None:
+        try:
+            src = registry.find(sid)
+            title = (src.title or src.url or "") if src else ""
+        except Exception:  # noqa: BLE001
+            title = ""
+    tip = f' title="{html.escape(title)}"' if title else ""
+    return f'<a class="cite" href="#{html.escape(sid)}"{tip}>{_e(sid)}</a>'
+
+
+def _finding_card(f, result) -> str:
+    """One finding, drawn according to whether it can be checked.
+
+    The class list is the whole point: `sourced` versus `unsourced` drives a
+    solid or dashed edge, so a reader scanning the page sees which claims rest on
+    something before reading a word. Severity only colours the edge when there is
+    a source behind it — colouring an unsourced disagreement red would lend it
+    exactly the authority it has not earned.
+    """
+    solid = "sourced" if f.source_ids else "unsourced"
+    body = [f'<div class="find {solid} sev-{_e(f.severity)}">',
+            f'<div class="claim-text">{_e(f.text)}</div>']
+    why = (f.delta or f.why or "").strip()
+    if why:
+        body.append(f'<div class="why">{_e(why)}</div>')
+    body.append('<div class="foot">')
+    if f.kind == "contested":
+        level = f.severity if f.severity in ("high", "medium") else ""
+        body.append(f'<span class="badge {level}">'
+                    f'{_e(SEVERITY_WORD.get(f.severity, f.severity))}</span>')
+    if f.source_ids:
+        body.extend(_cite_chip(s, result) for s in f.source_ids)
+    elif f.kind == "contested":
+        body.append('<span class="badge nosource">no source — a reading, '
+                    'not a finding</span>')
+    body.append("</div></div>")
+    return "".join(body)
+
+
 def build_html(result, lens: str, theme_name: str = "slate") -> str:
     t = theme(theme_name)
     comp = result.comparisons.get(lens, {})
@@ -44,87 +94,239 @@ def build_html(result, lens: str, theme_name: str = "slate") -> str:
     P: List[str] = []
     add = P.append
 
+    dark = THEMES["midnight"]
+    # Only the default theme follows the reader's system setting. An explicit
+    # --theme is a choice and gets honoured exactly as asked.
+    # Built as its own f-string and then substituted, so braces are escaped ONCE
+    # here, not twice. A substituted value is inserted verbatim — the outer
+    # f-string does not re-process it — and double-escaping leaked literal `{{`
+    # into the stylesheet, which silently killed the dark-mode block.
+    adaptive = f"""
+@media(prefers-color-scheme:dark){{:root{{
+--accent:{dark['accent']};--ink:{dark['ink']};--muted:{dark['muted']};--bg:{dark['bg']};
+--panel:{dark['panel']};--line:{dark['line']};--good:{dark['good']};
+--warn:{dark['warn']};--bad:{dark['bad']}}}}}""" if theme_name == "slate" else ""
+
     add(f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{_e(h['company'])} — Deck vs. Market</title><style>
 :root{{--accent:{t['accent']};--ink:{t['ink']};--muted:{t['muted']};--bg:{t['bg']};
---panel:{t['panel']};--line:{t['line']};--good:{t['good']};--warn:{t['warn']};--bad:{t['bad']}}}
+--panel:{t['panel']};--line:{t['line']};--good:{t['good']};--warn:{t['warn']};--bad:{t['bad']};
+--radius:10px}}{adaptive}
 *{{box-sizing:border-box}}
+html{{scroll-behavior:smooth}}
 body{{margin:0;background:var(--bg);color:var(--ink);
-font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}}
-.wrap{{max-width:940px;margin:0 auto;padding:48px 24px 96px}}
-header{{border-bottom:3px solid var(--accent);padding-bottom:24px;margin-bottom:32px}}
-.eyebrow{{text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--muted);font-weight:600}}
-h1{{font-size:34px;line-height:1.2;margin:8px 0 4px;letter-spacing:-.02em}}
-h2{{font-size:22px;margin:48px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}}
-h3{{font-size:17px;margin:26px 0 8px}}
-.headline{{font-size:19px;line-height:1.5;color:var(--ink);background:var(--panel);
-border-left:4px solid var(--accent);padding:16px 20px;border-radius:0 6px 6px 0;margin:20px 0}}
-.grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}}
-.stat{{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}}
-.stat .k{{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}}
-.stat .v{{font-size:19px;font-weight:650;margin-top:4px;line-height:1.25}}
+font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}}
+.wrap{{max-width:1180px;margin:0 auto;padding:44px 28px 96px;
+display:grid;grid-template-columns:210px minmax(0,1fr);gap:52px;align-items:start}}
+.main{{min-width:0}}
+header{{grid-column:1/-1;border-bottom:3px solid var(--accent);padding-bottom:22px;margin-bottom:8px}}
+.eyebrow{{text-transform:uppercase;letter-spacing:.14em;font-size:11.5px;color:var(--muted);font-weight:700}}
+h1{{font-size:37px;line-height:1.12;margin:10px 0 4px;letter-spacing:-.025em;font-weight:700}}
+h2{{font-size:21px;margin:46px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line);
+letter-spacing:-.01em;scroll-margin-top:20px}}
+h3{{font-size:16.5px;margin:26px 0 8px}}
+p{{margin:10px 0}}
+.lede{{color:var(--muted);font-size:14.5px}}
+
+/* --- table of contents ------------------------------------------------ */
+nav.toc{{position:sticky;top:28px;font-size:13.5px;line-height:1.5}}
+nav.toc .t{{text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;
+color:var(--muted);font-weight:700;margin-bottom:10px}}
+nav.toc a{{display:block;padding:5px 0 5px 12px;color:var(--muted);text-decoration:none;
+border-left:2px solid var(--line);transition:color .15s,border-color .15s}}
+nav.toc a:hover{{color:var(--accent);border-left-color:var(--accent)}}
+
+/* --- the headline ----------------------------------------------------- */
+.headline{{font-size:20.5px;line-height:1.48;background:var(--panel);
+border-left:4px solid var(--accent);padding:20px 24px;border-radius:0 var(--radius) var(--radius) 0;
+margin:26px 0 10px;font-weight:520;letter-spacing:-.005em}}
+.evidence-state{{color:var(--muted);font-size:13.5px;margin:0 0 22px;padding-left:2px}}
+.evidence-state.thin{{color:var(--warn);font-weight:600}}
+
+/* --- at a glance ------------------------------------------------------ */
+.grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;margin:20px 0 8px}}
+.stat{{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:13px 15px}}
+.stat .k{{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}}
+.stat .v{{font-size:23px;font-weight:700;margin-top:3px;line-height:1.1;letter-spacing:-.02em}}
+
+/* --- findings: provenance is the visual language ----------------------
+   A finding backed by a source you can open looks solid: full-weight border in
+   the severity colour. A finding with nothing behind it is drawn provisionally
+   — dashed, muted, and labelled — because that is exactly what it is. The
+   design carries the epistemics rather than decorating them. */
+.find{{border:1px solid var(--line);border-left:4px solid var(--muted);
+border-radius:0 var(--radius) var(--radius) 0;padding:15px 18px;margin:11px 0;
+background:var(--panel);transition:border-color .15s}}
+.find.sourced.sev-high{{border-left-color:var(--bad)}}
+.find.sourced.sev-medium{{border-left-color:var(--warn)}}
+.find.sourced.sev-low{{border-left-color:var(--muted)}}
+.find.unsourced{{border-style:dashed;border-left-style:dashed;
+border-left-color:var(--line);background:transparent}}
+.find .claim-text{{font-weight:650;font-size:15.5px;letter-spacing:-.005em}}
+.find .why{{color:var(--muted);font-size:14px;margin-top:5px}}
+.find .foot{{margin-top:9px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}}
+.badge{{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;
+text-transform:uppercase;padding:3px 9px;border-radius:20px;
+border:1px solid var(--line);color:var(--muted)}}
+.badge.high{{color:var(--bad);border-color:var(--bad)}}
+.badge.medium{{color:var(--warn);border-color:var(--warn)}}
+.badge.nosource{{color:var(--muted);border-style:dashed}}
+a.cite{{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;
+border-radius:20px;background:var(--accent);color:var(--bg);text-decoration:none;
+letter-spacing:.02em;transition:opacity .15s}}
+a.cite:hover{{opacity:.78}}
+
+/* --- next steps ------------------------------------------------------- */
+ol.steps{{counter-reset:s;list-style:none;padding:0;margin:14px 0}}
+ol.steps li{{counter-increment:s;position:relative;padding:9px 0 9px 42px;
+border-bottom:1px solid var(--line)}}
+ol.steps li:last-child{{border-bottom:0}}
+ol.steps li::before{{content:counter(s);position:absolute;left:0;top:9px;
+width:25px;height:25px;border-radius:50%;background:var(--accent);color:var(--bg);
+font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}}
+
 table{{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px}}
 th,td{{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}}
-th{{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:650}}
+th{{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}}
+tbody tr:hover{{background:var(--panel)}}
 .tw{{overflow-x:auto}}
-.bar{{height:7px;background:var(--line);border-radius:4px;overflow:hidden;min-width:80px;margin-top:6px}}
+.bar{{height:6px;background:var(--line);border-radius:4px;overflow:hidden;min-width:80px;margin-top:6px}}
 .bar span{{display:block;height:100%;border-radius:4px}}
-.claim{{border:1px solid var(--line);border-radius:9px;padding:18px 20px;margin:14px 0;background:var(--panel)}}
-.claim h4{{margin:0 0 10px;font-size:16px}}
-.tag{{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;
+.claim{{border:1px solid var(--line);border-radius:var(--radius);padding:17px 19px;
+margin:13px 0;background:var(--panel)}}
+.claim h4{{margin:0 0 10px;font-size:15.5px}}
+.tag{{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;
 text-transform:uppercase;padding:3px 9px;border-radius:20px;color:#fff}}
 .t-supported{{background:var(--good)}}.t-partially-supported{{background:var(--warn)}}
 .t-contradicted{{background:var(--bad)}}.t-unverifiable{{background:var(--muted)}}
-.kv{{margin:8px 0}}.kv b{{color:var(--muted);font-weight:650;font-size:13px;
-text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px}}
+.kv{{margin:8px 0}}.kv b{{color:var(--muted);font-weight:700;font-size:12px;
+text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px}}
 ul{{padding-left:20px}}li{{margin:5px 0}}
 .cols{{display:grid;grid-template-columns:1fr 1fr;gap:24px}}
-@media(max-width:720px){{.cols{{grid-template-columns:1fr}}}}
-.panel{{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:16px 20px}}
+.panel{{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px}}
 .sev-high{{color:var(--bad);font-weight:650}}.sev-medium{{color:var(--warn);font-weight:650}}
 .sev-low{{color:var(--good);font-weight:650}}
-footer{{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);
+/* A clicked citation lands on its source row and says so — otherwise the
+   reader arrives at a table and has to hunt for the line they asked for. */
+tr[id]{{scroll-margin-top:70px}}
+tr:target{{background:var(--panel);outline:2px solid var(--accent);outline-offset:-2px}}
+tr:target td:first-child{{font-weight:800}}
+footer{{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);
 font-size:12.5px;color:var(--muted)}}
 details{{margin:14px 0}}summary{{cursor:pointer;color:var(--accent);font-weight:600}}
 a{{color:var(--accent)}}
-@media print{{.wrap{{max-width:none;padding:0}}h2{{page-break-after:avoid}}
-.claim{{page-break-inside:avoid}}}}
+@media(max-width:940px){{
+.wrap{{grid-template-columns:1fr;gap:0;padding:32px 20px 72px}}
+nav.toc{{display:none}}h1{{font-size:30px}}.headline{{font-size:18px;padding:16px 18px}}
+.cols{{grid-template-columns:1fr}}}}
+@media print{{
+.wrap{{max-width:none;padding:0;display:block}}nav.toc{{display:none}}
+h2{{page-break-after:avoid}}.claim,.find{{page-break-inside:avoid}}
+a.cite{{background:none;color:var(--ink);border:1px solid var(--line)}}
+.find.unsourced{{border-style:solid}}}}
 </style></head><body><div class="wrap">""")
 
     add(f"""<header>
 <div class="eyebrow">{_e(h['lens'])}</div>
 <h1>{_e(h['company'])}</h1>
-<div style="color:var(--muted)">Pitch deck claims measured against market evidence</div>
+<div class="lede">Pitch deck claims measured against market evidence</div>
 </header>""")
 
-    if h["headline"]:
-        add(f'<div class="headline">{_e(h["headline"])}</div>')
+    # Same hierarchy as the markdown report: findings first, verdict demoted, no
+    # composite score above the fold. See deckscope/findings.py.
+    found = findings_for(result, lens)
 
-    add('<div class="grid">')
-    for k, v in (("Verdict", h["verdict"]), ("Confidence", h["confidence"]),
-                 ("Weighted score", f"{h['score']}/100"),
-                 ("Sources reviewed", str(result.stats.get("sources_found", 0)))):
-        add(f'<div class="stat"><div class="k">{_e(k)}</div><div class="v">{_e(v)}</div></div>')
-    add("</div>")
+    # The table of contents is built from what this report actually contains, so
+    # it never advertises a section that is not there.
+    toc = [("contests", "What the evidence contests", bool(found.contested)),
+           ("omits", "What the deck leaves out", bool(found.omissions)),
+           ("unchecked", "What could not be checked", bool(found.unverified)),
+           ("next", "What to do next", bool(found.next_steps)),
+           ("summary", "Summary", True),
+           ("verdict", "This lens's read", True),
+           ("scorecard", "Scorecard", bool(comp.get("scorecard"))),
+           ("audit", "Claim-by-claim", bool(comp.get("claim_audit"))),
+           ("risks", "Risks", bool(comp.get("risks"))),
+           ("market", "Market evidence", True),
+           ("refs", "References", True)]
+    add('<nav class="toc"><div class="t">On this page</div>')
+    for anchor, label, present in toc:
+        if present:
+            add(f'<a href="#{anchor}">{_e(label)}</a>')
+    add("</nav>")
+    add('<div class="main">')
 
-    rationale = (comp.get("verdict") or {}).get("confidence_rationale")
-    if rationale:
-        add(f'<p style="color:var(--muted);font-size:14px">'
-            f'<b>Confidence basis:</b> {_e(rationale)}</p>')
+    add(f'<div class="headline">{_e(found.headline)}</div>')
+    thin = " thin" if found.evidence_too_thin else ""
+    add(f'<p class="evidence-state{thin}">{_e(found.evidence_state)}</p>')
 
     if comp.get("integrity_note"):
         add(f'<div class="headline" style="border-left-color:var(--bad)">'
             f'<b>Integrity note.</b> {_e(comp["integrity_note"])}</div>')
 
-    add("<h2>Summary</h2>")
+    add('<div class="grid">')
+    for k, v in (("Claims examined", str(found.counts.get("claims_examined", 0))),
+                 ("Contested", str(found.counts.get("contested", 0))),
+                 ("Omissions", str(found.counts.get("omissions", 0))),
+                 ("Unresolved", str(found.counts.get("unverified", 0))),
+                 ("Sources", str(result.stats.get("sources_found", 0)))):
+        add(f'<div class="stat"><div class="k">{_e(k)}</div>'
+            f'<div class="v">{_e(v)}</div></div>')
+    add("</div>")
+
+    if found.contested:
+        add('<h2 id="contests">What the evidence contests</h2>')
+        add('<p class="lede">Claims the deck makes that retrieved evidence pushes '
+            'back on. A solid left edge means a source you can open; a dashed one '
+            'means the analysis disagrees but cannot show you why.</p>')
+        for f in found.contested:
+            add(_finding_card(f, result))
+
+    if found.omissions:
+        add('<h2 id="omits">What the deck leaves out</h2>')
+        add('<p class="lede">Present in the market evidence, absent from the deck.</p>')
+        for f in found.omissions:
+            add(_finding_card(f, result))
+
+    if found.unverified:
+        add('<h2 id="unchecked">What could not be checked</h2>')
+        add('<p class="lede">Neither confirmed nor refuted by the evidence '
+            'retrieved. These are research tasks, <b>not</b> marks against the '
+            'company — an analysis must not turn its own gaps into a verdict.</p>')
+        for f in found.unverified:
+            add(_finding_card(f, result))
+
+    if found.next_steps:
+        add('<h2 id="next">What to do next</h2><ol class="steps">')
+        for step in found.next_steps:
+            add(f"<li>{_e(step)}</li>")
+        add("</ol>")
+
+    add('<h2 id="summary">Summary</h2>')
     for para in (comp.get("summary") or "").split("\n"):
         if para.strip():
             add(f"<p>{_e(para.strip())}</p>")
 
+    add('<h2 id="verdict">What this adds up to, for this lens</h2>')
+    add(f'<p><b>{_e(h["verdict"])}</b> · confidence: {_e(h["confidence"])}</p>')
+    rationale = (comp.get("verdict") or {}).get("confidence_rationale")
+    if rationale:
+        add(f'<p style="color:var(--muted);font-size:14px">'
+            f'<b>Confidence basis:</b> {_e(rationale)}</p>')
+    add("<p style='color:var(--muted);font-size:14px'>A verdict is one reader's "
+        "reading of the findings above, through one lens. The findings are the "
+        "durable part; this line is not.</p>")
+
     rows = comp.get("scorecard") or []
     if rows:
-        add("<h2>Scorecard</h2><div class='tw'><table><tr><th>Dimension</th>"
+        add('<h2 id="scorecard">Scorecard</h2>')
+        add("<p style='color:var(--muted);font-size:14px'>Per-dimension, each "
+            "with its reasoning. There is deliberately no headline total: a "
+            "weighted average of seven subjective scores is the one figure here "
+            "that cannot be traced to a source.</p>")
+        add("<div class='tw'><table><tr><th>Dimension</th>"
             "<th style='width:120px'>Score</th><th>Weight</th><th>Why</th></tr>")
         for r in rows:
             add(f"<tr><td><b>{_e(r.get('dimension'))}</b></td>"
@@ -134,7 +336,7 @@ a{{color:var(--accent)}}
 
     audit = comp.get("claim_audit") or []
     if audit:
-        add("<h2>Claim-by-claim audit</h2>")
+        add('<h2 id="audit">Claim-by-claim audit</h2>')
         for c in audit:
             a = (c.get("assessment") or "unverifiable").lower()
             add(f'<div class="claim"><h4>{_e(c.get("id"))} · {_e(c.get("claim"))} '
@@ -165,7 +367,7 @@ a{{color:var(--accent)}}
 
     risks = comp.get("risks") or []
     if risks:
-        add("<h2>Risks</h2><div class='tw'><table><tr><th>Risk</th><th>Severity</th>"
+        add('<h2 id="risks">Risks</h2>'); add("<div class='tw'><table><tr><th>Risk</th><th>Severity</th>"
             "<th>Likelihood</th><th>Test or mitigation</th></tr>")
         for r in risks:
             sev = (r.get("severity") or "").lower()
@@ -175,22 +377,22 @@ a{{color:var(--accent)}}
                 f"<td>{_e(r.get('mitigation_or_test'))}</td></tr>")
         add("</table></div>")
 
-    qs = as_list(comp.get("questions"))
+    # Questions and actions already appear, consolidated and ranked, under
+    # "What to do next" at the top. Repeating them here produced a second
+    # heading with the same name and left the reader to reconcile two lists.
+    # Only the owner/priority detail unique to the actions table survives.
     acts = comp.get("actions") or []
-    if qs or acts:
-        add("<h2>What to do next</h2><div class='cols'>")
-        if qs:
-            add('<div class="panel"><h3 style="margin-top:0">Questions this raises</h3><ul>'
-                + "".join(f"<li>{_e(q)}</li>" for q in qs) + "</ul></div>")
-        if acts:
-            add('<div class="panel"><h3 style="margin-top:0">Recommended actions</h3><ul>'
-                + "".join(f"<li><b>{_e(a.get('priority'))}</b> — {_e(a.get('action'))}"
-                          f" <span style='color:var(--muted)'>({_e(a.get('owner'))})</span></li>"
-                          for a in acts) + "</ul></div>")
-        add("</div>")
+    if acts:
+        add("<h2>Who does what</h2><div class='tw'><table>"
+            "<tr><th style='width:80px'>Priority</th><th>Action</th>"
+            "<th style='width:160px'>Owner</th></tr>")
+        for a in sorted(acts, key=lambda x: str(x.get("priority", "P9"))):
+            add(f"<tr><td><b>{_e(a.get('priority'))}</b></td>"
+                f"<td>{_e(a.get('action'))}</td><td>{_e(a.get('owner'))}</td></tr>")
+        add("</table></div>")
 
     # ---- market annex
-    add("<h2>Annex A — What the market evidence shows</h2>")
+    add('<h2 id="market">Annex A — What the market evidence shows</h2>')
     sizing = market.get("sizing") or {}
     add('<div class="grid">')
     for k, v in (("Consensus sizing", sizing.get("consensus_view")),
@@ -255,7 +457,7 @@ a{{color:var(--accent)}}
     add(f"""<footer>Generated by DeckScope
 on {_e(h['generated'])} · model {_e(h['model'])} · research {_e(h['research'])}.<br>
 AI-generated analysis. Verify every figure before relying on it. Not investment advice.
-</footer></div></body></html>""")
+</footer></div></div></body></html>""")
     return "\n".join(P)
 
 
@@ -553,10 +755,10 @@ def _opportunity_html(result) -> str:
 
 def _references_html(result) -> str:
     reg = getattr(result, "registry", None)
-    P = ["<h2>References</h2>"]
+    P = ['<h2 id="refs">References</h2>']
     if not reg or not reg.sources:
         backend = _e((result.stats or {}).get("research_backend", "none"))
-        return ("<h2>References</h2><div class='panel'>No external sources were retrieved "
+        return ('<h2 id="refs">References</h2>' "<div class='panel'>No external sources were retrieved "
                 f"(research backend: <code>{backend}</code>). Every statement above rests "
                 "on the model's training knowledge and on the deck itself, and is "
                 "therefore unverified.</div>")
