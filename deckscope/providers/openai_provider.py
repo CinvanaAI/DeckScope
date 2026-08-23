@@ -26,16 +26,35 @@ class OpenAIProvider(LLMProvider):
     catalog = [
         ("gpt-4o", "Strong general analysis — recommended"),
         ("gpt-4o-mini", "Fast and cheap"),
-        ("o3-mini", "Reasoning-heavy, slower"),
+        ("o4-mini", "Reasoning-heavy, slower"),
     ]
     #: Model-name prefixes that reject temperature/top_p. The reasoning families
     #: run their own sampling policy and return an error if one is supplied.
-    no_sampling_prefixes: tuple = ("o1", "o3", "o4")
+    no_sampling_prefixes: tuple = ("o1", "o3", "o4", "gpt-5")
+    #: Prefixes for the reasoning families, which differ from the chat models in
+    #: two ways that both produce hard 400s rather than degraded output: they
+    #: count budget as `max_completion_tokens` (`max_tokens` is rejected), and
+    #: they take instructions in a `developer` message rather than a `system`
+    #: one. Sending the chat shape to them fails every request.
+    reasoning_prefixes: tuple = ("o1", "o3", "o4", "gpt-5")
+    #: Names OpenAI has withdrawn. Saying so beats a raw 404 from the API, and
+    #: `o3-mini` in particular was in this catalogue and in the docs long after
+    #: it stopped answering.
+    retired_models = {
+        "o3-mini": "o4-mini",
+        "o1-mini": "o4-mini",
+        "o1-preview": "o4-mini",
+        "gpt-4-vision-preview": "gpt-4o",
+    }
     catalog_url = "https://platform.openai.com/docs/models"
 
     def accepts_sampling(self) -> bool:
         model = (self.model or "").lower()
         return not any(model.startswith(p) for p in self.no_sampling_prefixes)
+
+    def is_reasoning_model(self) -> bool:
+        model = (self.model or "").lower()
+        return any(model.startswith(p) for p in self.reasoning_prefixes)
 
     def __init__(self, config: Optional[ProviderConfig] = None) -> None:
         super().__init__(config)
@@ -55,12 +74,18 @@ class OpenAIProvider(LLMProvider):
 
     def complete(self, system, messages, *, max_tokens=None, temperature=None,
                  tools=None) -> Completion:
+        reasoning = self.is_reasoning_model()
         payload: Dict[str, Any] = {
             "model": self.model,
-            "messages": [{"role": "system", "content": system}]
+            "messages": [{"role": "developer" if reasoning else "system",
+                          "content": system}]
             + [{"role": m.role, "content": m.content} for m in messages],
-            "max_tokens": max_tokens or self.config.max_tokens,
         }
+        # The reasoning models bill hidden reasoning tokens against the same
+        # budget and expose it under a different name; `max_tokens` is not
+        # accepted and the request 400s.
+        budget = max_tokens or self.config.max_tokens
+        payload["max_completion_tokens" if reasoning else "max_tokens"] = budget
         # Sending temperature to a model that rejects it fails the request
         # outright — omitting the field is the supported way to get default
         # behaviour, not passing the default value.

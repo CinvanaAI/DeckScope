@@ -145,13 +145,30 @@ def run_suite(*, suite_dir: Optional[str] = None, modes: Optional[List[str]] = N
         if on_event:
             on_event(message)
 
+    # Every way this run could check nothing is an error, not a pass. The
+    # evaluator reports success when no check fails, so "no checks" used to read
+    # as "all good" — including from an installed wheel with no fixtures, from
+    # `--trials 0`, and from a misspelled `--only`.
+    if trials < 1:
+        raise ValueError(
+            f"trials must be at least 1, got {trials}. A zero-trial run executes "
+            f"no cases and would report success without checking anything.")
+
     root = Path(suite_dir) if suite_dir else default_suite_dir()
     suite_root = root.parent
     cases = load_suite(str(root))
     if only:
         wanted = set(only)
-        cases = [c for c in cases
-                 if c.id in wanted or wanted & set(c.tags)]
+        selected = [c for c in cases
+                    if c.id in wanted or wanted & set(c.tags)]
+        if not selected:
+            known_ids = ", ".join(sorted(c.id for c in cases))
+            known_tags = ", ".join(sorted({t for c in cases for t in c.tags}))
+            raise ValueError(
+                f"--only {sorted(wanted)} matched no cases. "
+                f"Known ids: {known_ids or '(none)'}. "
+                f"Known tags: {known_tags or '(none)'}.")
+        cases = selected
     modes = modes or ["pipeline"]
 
     result = SuiteResult(

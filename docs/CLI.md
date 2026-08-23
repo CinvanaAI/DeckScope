@@ -69,7 +69,7 @@ deckscope run DECK [options]
 deckscope run deck.pdf
 deckscope run deck.pdf --lens founder --format html pdf
 deckscope run deck.pdf --lens all --research tavily --security strict
-deckscope run deck.pptx --provider gemini --model gemini-2.0-flash --theme midnight
+deckscope run deck.pptx --provider gemini --model gemini-flash-latest --theme midnight
 deckscope run https://example.com/deck.pdf --company "Acme Flow" --out ./reports
 ```
 

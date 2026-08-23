@@ -1,0 +1,88 @@
+name: Release artifacts
+
+# Produces the things a release needs and a repository cannot honestly commit by
+# hand: a hash-pinned lockfile, a bill of materials for what actually got
+# installed, and proof that a clean install works for someone who has never run
+# DeckScope before.
+#
+# Runs on a tag, and on demand so the artifacts can be inspected before tagging
+# anything.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  artifacts:
+    name: Lockfile, SBOM, and a clean-install acceptance run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build the wheel and sdist
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build --outdir dist/
+          ls -la dist/
+
+      # A lockfile is generated, never hand-written: it has to record what the
+      # resolver actually chose on a real index, including transitive packages
+      # nothing in pyproject.toml names. Hashes make the install verifiable —
+      # `--require-hashes` refuses anything that does not match.
+      - name: Generate a hash-pinned lockfile
+        run: |
+          pip install pip-tools
+          pip-compile --generate-hashes --all-extras \
+            --output-file requirements.lock pyproject.toml
+          echo "--- first 20 lines ---"
+          head -20 requirements.lock
+
+      # Installed into a clean environment from the lockfile, so the SBOM
+      # describes the release rather than the CI runner's accumulated packages.
+      - name: Install the release into a clean environment
+        run: |
+          python -m venv /tmp/release
+          /tmp/release/bin/pip install --upgrade pip
+          /tmp/release/bin/pip install -r requirements.lock
+          /tmp/release/bin/pip install --no-deps "$(ls dist/*.whl)"
+
+      - name: Generate the SBOM from what was actually installed
+        run: |
+          /tmp/release/bin/python scripts/generate_sbom.py --out sbom.json
+          python - <<'PY'
+          import json, sys
+          bom = json.load(open("sbom.json"))
+          assert bom["bomFormat"] == "CycloneDX", "not a CycloneDX document"
+          names = {c["name"].lower() for c in bom["components"]}
+          # The SBOM is worthless if it missed the things DeckScope imports.
+          for required in ("pyyaml", "pdfplumber", "python-pptx", "openpyxl"):
+              if required not in names:
+                  print(f"SBOM is missing {required}")
+                  sys.exit(1)
+          print(f"SBOM lists {len(bom['components'])} component(s)")
+          PY
+
+      # The acceptance test proper: a person who has just installed DeckScope,
+      # in a directory with no source checkout, running the commands the README
+      # tells them to run first. Every other job in CI runs from the repository,
+      # where this could not fail.
+      - name: Clean-install acceptance test
+        run: |
+          mkdir -p /tmp/newuser && cd /tmp/newuser
+          bash "$GITHUB_WORKSPACE/scripts/acceptance.sh" /tmp/release/bin/python
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: |
+            dist/*
+            requirements.lock
+            sbom.json
+          if-no-files-found: error

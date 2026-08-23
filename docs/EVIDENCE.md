@@ -1,4 +1,4 @@
-# Evidence: frozen corpora and deck-blind discovery
+# Evidence: frozen corpora and claim-blind discovery
 
 Two design changes that between them make the architecture testable rather than
 merely plausible.

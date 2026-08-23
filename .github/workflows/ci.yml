@@ -70,7 +70,12 @@ jobs:
       # tuning the fixture, which would make the suite prove nothing.
       - name: Structural dimensions must not regress
         run: |
-          python -m deckscope eval --mode pipeline --save eval.json --out ./_eval
+          # The evaluator exits 1 whenever any check fails, and claim_accuracy is
+          # expected to fail under the mock. Under `set -e` that ended the step
+          # before the gate below ever ran, so this job could not fail for the
+          # reason it exists. Exit 2 (misconfigured suite) is still fatal.
+          python -m deckscope eval --mode pipeline --save eval.json --out ./_eval \
+            || [ $? -eq 1 ]
           python - <<'PY'
           import json, sys
           data = json.load(open("eval.json"))
@@ -98,6 +103,74 @@ jobs:
               print("Frozen evidence must give identical results across trials.")
               sys.exit(1)
           PY
+
+  wheel:
+    name: Clean-wheel install (the gate must ship with the package)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install build
+
+      # Everything above this job runs from an editable checkout, where files that
+      # are NOT in the wheel are still on disk and importable. That hid a real
+      # defect: the evaluation fixtures lived beside the package instead of inside
+      # it, so an installed DeckScope loaded zero cases and — because the evaluator
+      # reported success when nothing failed — passed by checking nothing.
+      #
+      # This job installs the built artifact into a clean environment and runs it
+      # from a directory that contains no source, so nothing can be picked up off
+      # the checkout.
+      - name: Build and install the wheel into a clean environment
+        run: |
+          python -m build --wheel --outdir dist/
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install "$(ls dist/*.whl)"
+
+      - name: The installed evaluator must find its cases and actually run them
+        run: |
+          mkdir -p /tmp/elsewhere && cd /tmp/elsewhere
+          /tmp/clean/bin/python -m deckscope eval --provider mock \
+            --save /tmp/wheel-eval.json --out /tmp/_weval || [ $? -eq 1 ]
+          python - <<'PY'
+          import json, sys
+          data = json.load(open("/tmp/wheel-eval.json"))
+          ran = len(data["scores"])
+          print(f"  cases scored from the installed wheel: {ran}")
+          if ran == 0:
+              print("The installed package ran no cases. The gate is not in the "
+                    "artifact it is supposed to gate.")
+              sys.exit(1)
+          PY
+
+      - name: A run that checks nothing must fail, not pass
+        run: |
+          cd /tmp/elsewhere
+          for bad in "--trials 0" "--only definitely-not-a-case"; do
+            if /tmp/clean/bin/python -m deckscope eval --provider mock $bad \
+                 --out /tmp/_wbad; then
+              echo "FAIL: 'deckscope eval $bad' exited 0 while checking nothing"
+              exit 1
+            fi
+            echo "  ok: 'deckscope eval $bad' refused to run"
+          done
+
+      # The full first-run acceptance run, from a directory with no source. This
+      # is what caught `demo --injected` silently falling back to a clean deck
+      # once the sample decks were absent from the wheel — a passing security
+      # demo that proved nothing.
+      - name: Clean-install acceptance test
+        run: |
+          mkdir -p /tmp/newuser && cd /tmp/newuser
+          bash "$GITHUB_WORKSPACE/scripts/acceptance.sh" /tmp/clean/bin/python
+
+      - name: The SBOM generator runs against the installed environment
+        run: |
+          /tmp/clean/bin/python "$GITHUB_WORKSPACE/scripts/generate_sbom.py" \
+            --out /tmp/sbom.json
+          python -c "import json;b=json.load(open('/tmp/sbom.json'));assert b['components']"
 
   minimal:
     name: Core install only (no optional extras)
@@ -138,7 +211,7 @@ jobs:
           printf '%s\n' \
             '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' \
             '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
-            '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"scan_deck_security","arguments":{"deck_path":"examples/sample_deck_with_injection.md"}}}' \
+            '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"scan_deck_security","arguments":{"deck_path":"deckscope/examples/sample_deck_with_injection.md"}}}' \
           | python -m deckscope.mcp_server | tee out.jsonl
           grep -q '"analyze_deck_panel"' out.jsonl
           grep -q 'CRITICAL' out.jsonl

@@ -46,9 +46,17 @@ PRESETS = {
                "--strict-mcp-config", "--mcp-config", "{}",
                "--disallowedTools", "Bash,Edit,Write,Read,WebFetch,WebSearch,"
                                     "NotebookEdit,Glob,Grep"],
-    # read-only sandbox, never prompt for approval
-    "codex":  ["codex", "exec", "--sandbox", "read-only",
-               "--ask-for-approval", "never", "-"],
+    # read-only sandbox, never prompt for approval.
+    #
+    # Flag order matters here: `--sandbox` and `--ask-for-approval` are global
+    # options and have to precede the `exec` subcommand. Placed after it they are
+    # parsed as arguments to `exec`, which rejects them — so the preset that was
+    # supposed to confine Codex to a read-only sandbox did not run at all.
+    # `--skip-git-repo-check` is needed because `exec` otherwise refuses to start
+    # outside a git repository, and a user analyzing a deck in ~/Documents is not
+    # in one.
+    "codex":  ["codex", "--sandbox", "read-only", "--ask-for-approval", "never",
+               "exec", "--skip-git-repo-check", "-"],
     "gemini": ["gemini", "-p"],
     "ollama": ["ollama", "run"],
 }

@@ -30,6 +30,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .cases import EvalCase
 
+#: Bare [S3] / S3 citations written into prose rather than a source_ids list.
+#: Same shape as deckscope.sources.CITE_RX; kept local so the scorer does not
+#: depend on the module it is grading.
+INLINE_CITE_RX = re.compile(r"\bS(\d{1,3})\b")
+
 CONFIDENCE_ORDER = {"low": 1, "medium": 2, "high": 3}
 
 
@@ -162,13 +167,38 @@ def score_case(case: EvalCase, result: Any, *, mode: str, lens: str = "investor"
             got=invented if present else ""))
 
     # ---- citation integrity: every cited ID must exist in the bibliography
+    #
+    # Checked recursively over the whole report, not just `comparison.claim_audit`.
+    # Scanning one field meant a fabricated citation anywhere else — in the
+    # scorecard, the market structure, the opportunity section, a blind spot, or
+    # inline in prose — scored as clean, and the dimension read as 100% while the
+    # report contained invented sources. Every `source_ids` list at any depth is
+    # collected, plus bare [S#] references written into prose.
     registry = getattr(result, "registry", None)
     known = {s.sid.upper() for s in registry.sources} if registry else set()
+
+    def _walk_source_ids(node: Any) -> List[str]:
+        found: List[str] = []
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if key == "source_ids" and isinstance(value, list):
+                    found.extend(str(v) for v in value)
+                else:
+                    found.extend(_walk_source_ids(value))
+        elif isinstance(node, list):
+            for item in node:
+                found.extend(_walk_source_ids(item))
+        elif isinstance(node, str):
+            found.extend(f"S{n}" for n in INLINE_CITE_RX.findall(node))
+        return found
+
+    cited_anywhere = _walk_source_ids(getattr(result, "comparisons", None)
+                                      or {"claim_audit": audit})
+    cited_anywhere.extend(_walk_source_ids(getattr(result, "market", None) or {}))
     dangling: List[str] = []
-    for row in audit:
-        for sid in (row.get("source_ids") or []):
-            if str(sid).strip().upper() not in known:
-                dangling.append(str(sid))
+    for sid in cited_anywhere:
+        if str(sid).strip().upper() not in known:
+            dangling.append(str(sid))
     score.add(Check(
         "citation_integrity", not dangling,
         (f"cited {', '.join(sorted(set(dangling)))}, which do not exist"

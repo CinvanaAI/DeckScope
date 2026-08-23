@@ -1,7 +1,6 @@
 """The two screening entry points the pipeline calls, plus web-source checks."""
 from __future__ import annotations
 
-import re
 import urllib.parse
 from typing import Any, List, Tuple
 

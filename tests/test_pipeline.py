@@ -11,7 +11,7 @@ from deckscope.research.base import Researcher, SearchResult
 from deckscope.research.registry import register_researcher
 from deckscope.schemas import scorecard_total
 
-DECK = Path(__file__).resolve().parent.parent / "examples" / "sample_deck.md"
+DECK = Path(__file__).resolve().parent.parent / "deckscope" / "examples" / "sample_deck.md"
 
 
 class StubSearch(Researcher):
@@ -105,7 +105,7 @@ def test_references_are_tracked(tmp_path):
 
 
 def test_injected_deck_is_neutralized(tmp_path):
-    bad = Path(__file__).resolve().parent.parent / "examples" / "sample_deck_with_injection.md"
+    bad = Path(__file__).resolve().parent.parent / "deckscope" / "examples" / "sample_deck_with_injection.md"
     cfg = _cfg(tmp_path, ["md"])
     cfg.deck_path = str(bad)
     pipe = Pipeline(cfg)

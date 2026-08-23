@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional
 
 from ..config import ProviderConfig
 from ._http import post_json
-from .base import Completion, LLMProvider, Message, ProviderError
+from .base import Completion, LLMProvider, ProviderError
 
 API_URL = "https://api.anthropic.com/v1/messages"
 API_VERSION = "2023-06-01"

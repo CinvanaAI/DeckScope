@@ -21,13 +21,16 @@ So a fetch here:
 """
 from __future__ import annotations
 
+import http.client
 import ipaddress
 import socket
+import ssl
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 MAX_BYTES = 64 * 1024 * 1024        # 64 MB: far above any real deck
 MAX_REDIRECTS = 5
@@ -94,54 +97,89 @@ def resolve_public(host: str) -> List[str]:
     return addrs
 
 
-class _PinnedConnectionMixin:
-    """Force the socket to the IP we already checked, keeping the Host header.
+class _PinnedHTTPConnection(http.client.HTTPConnection):
+    """An HTTP connection whose socket goes to a pre-validated IP.
 
-    Without this, `resolve_public()` validates one answer and `urlopen` asks DNS
-    again — so a name that answers 93.184.216.34 for the check and 127.0.0.1 for
-    the connection sails straight through.
+    `self.host` stays the hostname so the Host header is right; the socket is
+    opened against `pinned_ip` instead. Overriding `connect()` is the only place
+    this can be done correctly, because that is where the address is resolved.
     """
 
-    def _pinned_connect(self, http_class, req, **kw):
-        import http.client
+    def __init__(self, host, pinned_ip, **kw):
+        super().__init__(host, **kw)
+        self.pinned_ip = pinned_ip
 
-        host = req.host.split(":")[0]
-        port = None
-        if ":" in req.host:
-            try:
-                port = int(req.host.rsplit(":", 1)[1])
-            except ValueError:
-                port = None
-        addresses = resolve_public(host)
-        conn = http_class(addresses[0], port=port, **kw)
-        # Preserve the original name for TLS SNI, certificate validation and the
-        # Host header — only the socket target is pinned.
-        conn._pinned_host = host  # type: ignore[attr-defined]
-        return conn
+    def connect(self) -> None:  # noqa: D102
+        self.sock = self._create_connection(
+            (self.pinned_ip, self.port), self.timeout, self.source_address)
+        if getattr(self, "_tunnel_host", None):
+            self._tunnel()
 
 
-class _PinnedHTTPHandler(_PinnedConnectionMixin, urllib.request.HTTPHandler):
+class _PinnedHTTPSConnection(http.client.HTTPSConnection):
+    """The same, with TLS still verified against the *name*, not the IP.
+
+    The previous implementation built the connection with the IP as `host` and
+    then set `conn.host` back to the hostname before handing it over. That looked
+    like it preserved the Host header while keeping the pin, but
+    `HTTPSConnection.connect()` resolves `self.host` itself — so restoring the
+    name handed DNS a second chance to answer, which is precisely the
+    time-of-check-to-time-of-use gap the pin exists to close. A name that
+    answered a public address during `resolve_public()` and 127.0.0.1 a moment
+    later connected to 127.0.0.1.
+
+    Here the socket is opened against the checked IP and TLS is wrapped with
+    `server_hostname` set to the original name, so certificate validation and SNI
+    both still apply to the host the caller asked for. The pin cannot be undone
+    by a later DNS answer because DNS is never consulted again.
+    """
+
+    def __init__(self, host, pinned_ip, *, context=None, **kw):
+        super().__init__(host, context=context, **kw)
+        self.pinned_ip = pinned_ip
+
+    def connect(self) -> None:  # noqa: D102
+        sock = self._create_connection(
+            (self.pinned_ip, self.port), self.timeout, self.source_address)
+        if getattr(self, "_tunnel_host", None):
+            self.sock = sock
+            self._tunnel()
+            sock = self.sock
+        server_hostname = self._tunnel_host or self.host
+        self.sock = self._context.wrap_socket(sock, server_hostname=server_hostname)
+
+
+def _pin_target(req) -> Tuple[str, Optional[int], str]:
+    """(hostname, port, validated ip) for a request, or raise."""
+    host = req.host.split(":")[0]
+    port = None
+    if ":" in req.host:
+        try:
+            port = int(req.host.rsplit(":", 1)[1])
+        except ValueError:
+            port = None
+    return host, port, resolve_public(host)[0]
+
+
+class _PinnedHTTPHandler(urllib.request.HTTPHandler):
     def http_open(self, req):  # noqa: D102
-        import http.client
+        host, port, ip = _pin_target(req)
 
-        return self.do_open(
-            lambda addr, **kw: self._pinned_connect(http.client.HTTPConnection, req, **kw),
-            req)
+        def factory(addr, **kw):
+            kw.pop("context", None)
+            return _PinnedHTTPConnection(host, ip, port=port, **kw)
+
+        return self.do_open(factory, req)
 
 
-class _PinnedHTTPSHandler(_PinnedConnectionMixin, urllib.request.HTTPSHandler):
+class _PinnedHTTPSHandler(urllib.request.HTTPSHandler):
     def https_open(self, req):  # noqa: D102
-        import http.client
-        import ssl
-
+        host, port, ip = _pin_target(req)
         context = ssl.create_default_context()
 
         def factory(addr, **kw):
             kw.pop("context", None)
-            conn = self._pinned_connect(http.client.HTTPSConnection, req,
-                                        context=context, **kw)
-            conn.host = getattr(conn, "_pinned_host", conn.host)
-            return conn
+            return _PinnedHTTPSConnection(host, ip, context=context, port=port, **kw)
 
         return self.do_open(factory, req)
 

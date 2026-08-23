@@ -26,7 +26,21 @@ from typing import Any, Dict, List, Optional
 from ..config import ProviderConfig
 from .base import Completion, LLMProvider, ProviderError
 
-PROTOCOL_VERSION = "2024-11-05"
+#: Protocol revisions this client speaks, newest first. Kept in step with
+#: deckscope.mcp_server — see the note there on the modern/legacy split.
+MODERN_VERSIONS = ("2026-07-28",)
+LEGACY_VERSIONS = ("2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05")
+SUPPORTED_VERSIONS = MODERN_VERSIONS + LEGACY_VERSIONS
+PREFERRED_VERSION = MODERN_VERSIONS[0]
+
+META_VERSION_KEY = "io.modelcontextprotocol/protocolVersion"
+META_CLIENT_INFO_KEY = "io.modelcontextprotocol/clientInfo"
+META_CLIENT_CAPS_KEY = "io.modelcontextprotocol/clientCapabilities"
+
+UNSUPPORTED_PROTOCOL_VERSION = -32022
+
+# Retained so anything importing the old name keeps working.
+PROTOCOL_VERSION = LEGACY_VERSIONS[-1]
 
 
 def _client_version() -> str:
@@ -57,6 +71,11 @@ class MCPStdioClient:
         import queue
 
         self.timeout = timeout
+        #: Set by `initialize()`. "legacy" until the modern probe succeeds, so a
+        #: legacy server never sees per-request `_meta` it does not understand.
+        self.era = "legacy"
+        self.protocol_version = LEGACY_VERSIONS[0]
+        self.server_info: Dict[str, Any] = {}
         self._id = 0
         self._lock = threading.Lock()
         self._inbox: "queue.Queue" = queue.Queue()
@@ -134,10 +153,18 @@ class MCPStdioClient:
                 self._pending[mid] = msg
 
     def _rpc(self, method: str, params: Optional[Dict[str, Any]] = None,
-             notify: bool = False) -> Any:
+             notify: bool = False, raw: bool = False) -> Any:
+        params = dict(params or {})
+        # Modern revisions carry the protocol version on every request rather
+        # than establishing it once in a handshake. Only stamp it once we know
+        # the server is modern, or a legacy server sees an unexpected `_meta`.
+        if not notify and self.era == "modern":
+            meta = dict(params.get("_meta") or {})
+            meta.setdefault(META_VERSION_KEY, self.protocol_version)
+            params["_meta"] = meta
         with self._lock:
             msg: Dict[str, Any] = {"jsonrpc": "2.0", "method": method,
-                                   "params": params or {}}
+                                   "params": params}
             if not notify:
                 self._id += 1
                 msg["id"] = self._id
@@ -147,16 +174,84 @@ class MCPStdioClient:
             if notify:
                 return None
         resp = self._await(msg["id"])
+        if raw:
+            return resp
         if "error" in resp:
             raise ProviderError(f"MCP error: {resp['error']}")
         return resp.get("result")
 
+    def _pick_version(self, offered: Any) -> Optional[str]:
+        """The newest version both sides speak, or None if there is no overlap."""
+        if not isinstance(offered, list):
+            return None
+        for candidate in SUPPORTED_VERSIONS:
+            if candidate in offered:
+                return candidate
+        return None
+
     def initialize(self) -> Dict[str, Any]:
+        """Establish what this server speaks, newest era first.
+
+        The spec's stdio backward-compatibility probe: send `server/discover`,
+        which modern servers must implement. A `DiscoverResult` or a recognized
+        modern error (`UnsupportedProtocolVersionError`) both identify a modern
+        server; anything else means legacy, and we fall back to the `initialize`
+        handshake.
+
+        This replaces asking every server for one hardcoded version, which meant
+        the client claimed `2024-11-05` forever and could never use anything a
+        newer server offered.
+        """
+        probe = self._rpc("server/discover", {
+            "_meta": {
+                META_VERSION_KEY: PREFERRED_VERSION,
+                META_CLIENT_INFO_KEY: {"name": "deckscope",
+                                       "version": _client_version()},
+                META_CLIENT_CAPS_KEY: {"sampling": {}},
+            }}, raw=True)
+
+        error = probe.get("error") if isinstance(probe, dict) else None
+        if error and error.get("code") == UNSUPPORTED_PROTOCOL_VERSION:
+            # A modern server that does not speak our preferred version but told
+            # us what it does speak.
+            chosen = self._pick_version((error.get("data") or {}).get("supported"))
+            if not chosen:
+                raise ProviderError(
+                    f"No mutually supported MCP protocol version. Server offers "
+                    f"{(error.get('data') or {}).get('supported')}, DeckScope speaks "
+                    f"{list(SUPPORTED_VERSIONS)}.")
+            self.era, self.protocol_version = "modern", chosen
+            return {}
+
+        result = probe.get("result") if isinstance(probe, dict) else None
+        if isinstance(result, dict) and "supportedVersions" in result:
+            chosen = self._pick_version(result.get("supportedVersions"))
+            if not chosen:
+                raise ProviderError(
+                    f"No mutually supported MCP protocol version. Server offers "
+                    f"{result.get('supportedVersions')}, DeckScope speaks "
+                    f"{list(SUPPORTED_VERSIONS)}.")
+            self.era, self.protocol_version = "modern", chosen
+            self.server_info = (result.get("_meta") or {}).get(
+                "io.modelcontextprotocol/serverInfo") or {}
+            return result
+
+        # Anything else — unknown method, malformed reply — is a legacy server.
+        return self._legacy_initialize()
+
+    def _legacy_initialize(self) -> Dict[str, Any]:
+        self.era = "legacy"
         result = self._rpc("initialize", {
-            "protocolVersion": PROTOCOL_VERSION,
+            "protocolVersion": LEGACY_VERSIONS[0],
             "capabilities": {"sampling": {}},
             "clientInfo": {"name": "deckscope", "version": _client_version()},
         })
+        agreed = (result or {}).get("protocolVersion")
+        # The server names the revision it will actually speak; believe it over
+        # what we asked for.
+        self.protocol_version = (agreed if agreed in SUPPORTED_VERSIONS
+                                 else LEGACY_VERSIONS[0])
+        self.server_info = (result or {}).get("serverInfo") or {}
         self._rpc("notifications/initialized", notify=True)
         return result or {}
 

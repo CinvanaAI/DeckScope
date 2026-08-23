@@ -237,7 +237,7 @@ closer.
 deckscope panel deck.pdf --panel anthropic:claude-opus-5 openai:gpt-4o gemini:gemini-2.5-pro --rounds 2
 
 # a cheap panel
-deckscope panel deck.pdf --panel anthropic:claude-haiku-4-5-20251001 gemini:gemini-2.0-flash
+deckscope panel deck.pdf --panel anthropic:claude-haiku-4-5-20251001 gemini:gemini-flash-latest
 
 # a local panel, entirely offline
 deckscope panel deck.pdf --panel openai_compatible:llama3.1:8b openai_compatible:qwen2.5:14b --research none

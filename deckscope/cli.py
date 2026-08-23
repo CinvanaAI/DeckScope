@@ -569,14 +569,32 @@ def _demo(args: Any) -> int:
     from .config import OutputConfig, ProviderConfig, ResearchConfig, RunConfig
     from .orchestrator import Pipeline
 
-    here = Path(__file__).resolve().parent.parent
+    # Inside the package, not beside it. These decks are runtime data — `demo` is
+    # the first thing the README tells a new user to run — and a file that sits
+    # next to the package is not installed with it. When they lived in a
+    # top-level `examples/`, an installed DeckScope fell through to the embedded
+    # deck, which contains no injection: `demo --injected` then printed a clean
+    # report and said nothing, so the one command whose entire purpose is to
+    # demonstrate the security screen quietly demonstrated the opposite.
+    here = Path(__file__).resolve().parent
     name = "sample_deck_with_injection.md" if args.injected else "sample_deck.md"
     deck = here / "examples" / name
-    if not deck.exists():
+    if deck.exists():
+        deck_text = None
+    elif args.injected:
+        # Never silently substitute a clean deck for the injected one. If the
+        # fixture is missing the install is broken, and saying so is the only
+        # honest option.
+        _out("")
+        _out(f"  The sample deck containing the planted injection is missing from "
+             f"this install (expected at {deck}).")
+        _out("  Refusing to run the injection demo against a clean deck — it would "
+             "show a passing security screen that proves nothing.")
+        _out("  Reinstall DeckScope, or run `deckscope demo` without --injected.")
+        return 2
+    else:
         deck_text = _EMBEDDED_DEMO_DECK
         deck = None
-    else:
-        deck_text = None
 
     lenses = ALL_LENSES if args.lens == ["all"] else args.lens
     out_dir = args.out or str(Path.cwd() / "deckscope_demo_output")
@@ -700,16 +718,24 @@ def _print_summary(result: Any, files: List[str]) -> None:
 
 
 def _eval(args: Any) -> int:
-    from .evaluation import DIMENSIONS, run_suite, save
+    from .evaluation import DIMENSIONS, EmptySuiteError, run_suite, save
 
     settings.load_env()
     _out("Scoring DeckScope against decks with planted, known-correct answers.")
     _out("Evidence is frozen, so a change in score reflects a change in DeckScope.\n")
 
-    result = run_suite(
-        suite_dir=args.suite, modes=args.mode, trials=args.trials,
-        provider=args.provider, model=args.model, lens=args.lens,
-        out_dir=args.out, only=args.only, on_event=_out)
+    # A misconfigured suite is a failed evaluation, not a crash report. Exit 2
+    # (configuration) so CI can tell it apart from exit 1 (checks failed).
+    try:
+        result = run_suite(
+            suite_dir=args.suite, modes=args.mode, trials=args.trials,
+            provider=args.provider, model=args.model, lens=args.lens,
+            out_dir=args.out, only=args.only, on_event=_out)
+    except (EmptySuiteError, ValueError) as exc:
+        _out("")
+        _out(f"  Evaluation could not run: {exc}")
+        _out("  Refusing to report success for a run that checked nothing.")
+        return 2
 
     _out("")
     _out("=" * 74)

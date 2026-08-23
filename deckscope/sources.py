@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field, asdict
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
 CITE_RX = re.compile(r"\bS(\d{1,3})\b")
 
@@ -53,6 +53,9 @@ class SourceRegistry:
 
     def __init__(self) -> None:
         self.sources: List[Source] = []
+        #: IDs that have actually been rendered into a prompt block.
+        #: Empty means no prompt has been built yet, not that none qualify.
+        self._admitted: Set[str] = set()
         self._by_url: Dict[str, Source] = {}
 
     # ------------------------------------------------------------ building
@@ -146,6 +149,7 @@ class SourceRegistry:
             "",
         ]
         used = sum(len(line) for line in lines)
+        omitted = 0
         for s in self.sources:
             if s.status == "quarantined":
                 continue
@@ -155,27 +159,64 @@ class SourceRegistry:
                      f"      found via query: {s.query or 'n/a'}\n"
                      f"      content: {s.snippet[:2500]}\n")
             if used + len(block) > char_budget:
-                lines.append(f"[... {len(self.sources)} sources total; remainder omitted "
-                             f"for length ...]")
-                break
+                omitted += 1
+                continue
             lines.append(block)
             used += len(block)
+            # Record what was actually put in front of a model. Validation asks
+            # this set — not the registry — whether a citation could be genuine.
+            self._admitted.add(s.sid)
+        if omitted:
+            lines.append(f"[... {omitted} further source(s) omitted for length. They "
+                         f"are not listed above, so do not cite them ...]")
         return "\n".join(lines)
 
     @property
-    def citable(self) -> List[Source]:
-        """Sources that actually entered the evidence prompt.
+    def admitted_ids(self) -> Set[str]:
+        """Every source ID that has appeared in some prompt block.
 
-        Quarantined sources are in the registry so the report can say they were
-        dropped and why — but they were excluded from `prompt_block`, so the model
-        never saw them and a citation to one cannot be genuine. Validation must
-        use this, not `sources`.
+        A union across calls rather than the last call's set, because a source
+        shown to the market agent was genuinely available to cite even if a later,
+        differently budgeted block left it out.
         """
-        return [s for s in self.sources if s.status != "quarantined"]
+        return set(self._admitted)
+
+    @property
+    def citable(self) -> List[Source]:
+        """Sources the model actually saw, and could therefore honestly cite.
+
+        Two things remove a source from this set. Quarantined sources are in the
+        registry so the report can say they were dropped and why, but they were
+        never rendered into a prompt. Sources past the prompt's character budget
+        were also never rendered — and this is the case that used to slip through:
+        `citable` returned everything unquarantined, so a citation to source 200
+        of 200 validated cleanly even though the block stopped at source 40 and no
+        model ever laid eyes on it. Truncation is silent by nature, which is
+        exactly why it needed to be tracked rather than assumed away.
+
+        Before any prompt has been built there is nothing to be wrong about, so
+        the unquarantined set stands in.
+        """
+        alive = [s for s in self.sources if s.status != "quarantined"]
+        if not self._admitted:
+            return alive
+        return [s for s in alive if s.sid in self._admitted]
 
     @property
     def citable_ids(self) -> List[str]:
         return [s.sid for s in self.citable]
+
+    @property
+    def omitted_for_length(self) -> List[Source]:
+        """Unquarantined sources that never fitted into a prompt.
+
+        Reported rather than hidden: if research found evidence the model was
+        never shown, the reader should know the analysis did not consider it.
+        """
+        if not self._admitted:
+            return []
+        return [s for s in self.sources
+                if s.status != "quarantined" and s.sid not in self._admitted]
 
     @property
     def cited(self) -> List[Source]:
@@ -192,7 +233,11 @@ class SourceRegistry:
     def stats(self) -> Dict[str, int]:
         return {"total": len(self.sources), "cited": len(self.cited),
                 "consulted_uncited": len(self.consulted),
-                "quarantined": len(self.quarantined)}
+                "quarantined": len(self.quarantined),
+                # Reported rather than hidden: evidence that never reached a
+                # prompt was not considered, and a reader deserves to know the
+                # analysis was working from a subset.
+                "omitted_for_length": len(self.omitted_for_length)}
 
     def to_dict(self) -> Dict[str, Any]:
         return {"stats": self.stats(),

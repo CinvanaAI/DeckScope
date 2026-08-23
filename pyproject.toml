@@ -47,7 +47,19 @@ Issues = "https://github.com/CinvanaAI/DeckScope/issues"
 include = ["deckscope*"]
 
 [tool.setuptools.package-data]
-deckscope = ["py.typed"]
+deckscope = [
+    "py.typed",
+    # The evaluation fixtures are shipped with the package on purpose. They are
+    # the release gate, and a gate that is absent from the artifact it gates
+    # passes vacuously. See deckscope/evaluation/cases.py:default_suite_dir.
+    "evaluation/suite/cases/*.json",
+    "evaluation/suite/corpora/*.json",
+    "evaluation/suite/decks/*.md",
+    # `deckscope demo` is the first command the README gives a new user, and
+    # `--injected` is how the security screen is demonstrated. Both read these,
+    # so they are runtime data rather than documentation.
+    "examples/*.md",
+]
 
 [tool.ruff]
 line-length = 92

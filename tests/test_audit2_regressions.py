@@ -172,7 +172,7 @@ def test_gemini_does_not_send_sampling_parameters():
     assert OpenAIProvider(
         ProviderConfig(name="openai", model="gpt-4o")).accepts_sampling() is True
     assert OpenAIProvider(
-        ProviderConfig(name="openai", model="o3-mini")).accepts_sampling() is False
+        ProviderConfig(name="openai", model="o4-mini")).accepts_sampling() is False
 
 
 # =========================================================== source policy
@@ -214,7 +214,7 @@ def test_each_lens_gets_its_own_stopping_decision(tmp_path):
                                   RunConfig)
     from deckscope.ensemble import Panel
 
-    deck = Path(__file__).resolve().parent.parent / "examples" / "sample_deck.md"
+    deck = Path(__file__).resolve().parent.parent / "deckscope" / "examples" / "sample_deck.md"
     cfg = RunConfig(deck_path=str(deck), lenses=["investor", "founder"],
                     provider=ProviderConfig(name="mock"),
                     research=ResearchConfig(name="none"),
@@ -234,7 +234,7 @@ def test_revisions_are_validated(tmp_path):
                                   RunConfig)
     from deckscope.ensemble import Panel
 
-    deck = Path(__file__).resolve().parent.parent / "examples" / "sample_deck.md"
+    deck = Path(__file__).resolve().parent.parent / "deckscope" / "examples" / "sample_deck.md"
     cfg = RunConfig(deck_path=str(deck), provider=ProviderConfig(name="mock"),
                     research=ResearchConfig(name="none"),
                     output=OutputConfig(formats=["md"], out_dir=str(tmp_path)),
@@ -281,7 +281,7 @@ def test_failed_formats_are_recorded_for_the_exit_code():
                                   RunConfig)
     from deckscope.orchestrator import Pipeline
 
-    deck = Path(__file__).resolve().parent.parent / "examples" / "sample_deck.md"
+    deck = Path(__file__).resolve().parent.parent / "deckscope" / "examples" / "sample_deck.md"
     with tempfile.TemporaryDirectory() as td:
         cfg = RunConfig(deck_path=str(deck), provider=ProviderConfig(name="mock"),
                         research=ResearchConfig(name="none"),

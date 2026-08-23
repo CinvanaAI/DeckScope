@@ -20,13 +20,49 @@ from __future__ import annotations
 import json
 import sys
 import traceback
-from pathlib import Path
 from typing import Any, Dict, List
 
 from . import __version__, console, settings
 from .config import ALL_LENSES
 
-PROTOCOL_VERSION = "2024-11-05"
+#: Protocol revisions this server speaks, newest first.
+#:
+#: `2026-07-28` is the current spec and is a much larger change than a version
+#: bump: it drops the `initialize` handshake entirely in favour of a stateless
+#: core where every request declares its own version in `_meta`, and it makes
+#: `server/discover` mandatory. Revisions from `2025-11-25` back are the older
+#: handshake style.
+#:
+#: This server is **dual-era**: it answers modern per-request traffic and still
+#: completes a legacy `initialize`, because pinning a single hardcoded version
+#: (it was stuck on `2024-11-05`) is what made it silently wrong as the spec
+#: moved. The tool handlers were already stateless, so serving the modern era
+#: costs nothing but the dispatch below.
+MODERN_VERSIONS = ("2026-07-28",)
+LEGACY_VERSIONS = ("2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05")
+SUPPORTED_VERSIONS = MODERN_VERSIONS + LEGACY_VERSIONS
+
+#: What we answer with when a legacy client asks for something we do not know.
+LATEST_LEGACY_VERSION = LEGACY_VERSIONS[0]
+LATEST_VERSION = MODERN_VERSIONS[0]
+
+#: Reverse-DNS `_meta` keys defined by the modern spec.
+META_VERSION_KEY = "io.modelcontextprotocol/protocolVersion"
+META_SERVER_INFO_KEY = "io.modelcontextprotocol/serverInfo"
+
+#: JSON-RPC error code for UnsupportedProtocolVersionError.
+UNSUPPORTED_PROTOCOL_VERSION = -32022
+
+SERVER_INSTRUCTIONS = (
+    "Analyze a pitch deck against independently researched market evidence. "
+    "Every deck and every retrieved source is screened for hidden prompt "
+    "injection before analysis, and every claim in the output carries the source "
+    "IDs it rests on. Prefer analyze_deck for a single opinion, analyze_deck_panel "
+    "when you want several models to review each other, and scan_deck_security "
+    "when you only need to know whether a file is safe to read.")
+
+# Retained for backward compatibility with anything importing the old name.
+PROTOCOL_VERSION = LATEST_LEGACY_VERSION
 
 TOOLS: List[Dict[str, Any]] = [
     {
@@ -313,8 +349,47 @@ def _result(req_id: Any, payload: Dict[str, Any]) -> None:
     _write({"jsonrpc": "2.0", "id": req_id, "result": payload})
 
 
-def _error(req_id: Any, code: int, message: str) -> None:
-    _write({"jsonrpc": "2.0", "id": req_id, "error": {"code": code, "message": message}})
+def _error(req_id: Any, code: int, message: str,
+           data: Any = None) -> None:
+    err: Dict[str, Any] = {"code": code, "message": message}
+    if data is not None:
+        err["data"] = data
+    _write({"jsonrpc": "2.0", "id": req_id, "error": err})
+
+
+def _requested_version(params: Dict[str, Any]) -> Any:
+    """The protocol version a modern request declares, or None if it declares none."""
+    meta = params.get("_meta")
+    if isinstance(meta, dict):
+        return meta.get(META_VERSION_KEY)
+    return None
+
+
+def _version_refused(req_id: Any, requested: Any) -> bool:
+    """Reject a request that names a version we do not speak.
+
+    Returns True when the request was answered with an error and the caller
+    should stop. A request that names no version is not refused: legacy clients
+    do not send one, and this server serves both eras.
+    """
+    if requested is None or requested in SUPPORTED_VERSIONS:
+        return False
+    _error(req_id, UNSUPPORTED_PROTOCOL_VERSION, "Unsupported protocol version",
+           {"supported": list(SUPPORTED_VERSIONS), "requested": requested})
+    return True
+
+
+def _negotiate_legacy(requested: Any) -> str:
+    """Pick the version to answer a legacy `initialize` with.
+
+    The old code echoed one hardcoded constant no matter what the client asked
+    for, which is how it stayed on `2024-11-05` while the spec moved four
+    revisions. If the client names a version we speak, agree to it; otherwise
+    name our own newest handshake-era version so the client can decide.
+    """
+    if isinstance(requested, str) and requested in SUPPORTED_VERSIONS:
+        return requested
+    return LATEST_LEGACY_VERSION
 
 
 def main() -> int:
@@ -332,9 +407,26 @@ def main() -> int:
         method, req_id = msg.get("method"), msg.get("id")
         params = msg.get("params") or {}
 
-        if method == "initialize":
+        # Modern requests declare their version per request. Refuse one we do
+        # not speak before doing any work, and tell the client what we do speak
+        # so it can retry rather than guess.
+        if _version_refused(req_id, _requested_version(params)):
+            continue
+
+        if method == "server/discover":
+            # Mandatory in the modern spec, and the probe a dual-era client uses
+            # on stdio to tell a modern server from a legacy one.
             _result(req_id, {
-                "protocolVersion": PROTOCOL_VERSION,
+                "resultType": "complete",
+                "supportedVersions": list(SUPPORTED_VERSIONS),
+                "capabilities": {"tools": {}},
+                "instructions": SERVER_INSTRUCTIONS,
+                "_meta": {META_SERVER_INFO_KEY: {"name": "deckscope",
+                                                 "version": __version__}},
+            })
+        elif method == "initialize":
+            _result(req_id, {
+                "protocolVersion": _negotiate_legacy(params.get("protocolVersion")),
                 "capabilities": {"tools": {}},
                 "serverInfo": {"name": "deckscope", "version": __version__},
             })

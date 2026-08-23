@@ -22,7 +22,7 @@ from deckscope.research.base import Researcher, SearchResult
 from deckscope.research.registry import register_researcher
 from deckscope.security.policy import SecurityPolicy
 
-DECK = Path(__file__).resolve().parent.parent / "examples" / "sample_deck.md"
+DECK = Path(__file__).resolve().parent.parent / "deckscope" / "examples" / "sample_deck.md"
 
 
 class _Stub(Researcher):

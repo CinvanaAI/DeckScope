@@ -344,7 +344,7 @@ def test_token_usage_is_recorded():
     with tempfile.TemporaryDirectory() as td:
         cfg = RunConfig(
             deck_path=str(Path(__file__).resolve().parent.parent
-                          / "examples" / "sample_deck.md"),
+                          / "deckscope" / "examples" / "sample_deck.md"),
             provider=ProviderConfig(name="mock"),
             research=ResearchConfig(name="none"),
             output=OutputConfig(formats=["md"], out_dir=td),
@@ -366,7 +366,7 @@ def test_no_research_does_not_fabricate_a_source():
     with tempfile.TemporaryDirectory() as td:
         cfg = RunConfig(
             deck_path=str(Path(__file__).resolve().parent.parent
-                          / "examples" / "sample_deck.md"),
+                          / "deckscope" / "examples" / "sample_deck.md"),
             provider=ProviderConfig(name="mock"),
             research=ResearchConfig(name="none"),
             output=OutputConfig(formats=["md"], out_dir=td),
@@ -377,8 +377,10 @@ def test_no_research_does_not_fabricate_a_source():
         pipe.close()
 
         stats = result.registry.stats()
-        assert stats == {"total": 0, "cited": 0, "consulted_uncited": 0,
-                         "quarantined": 0}, stats
+        assert {k: stats[k] for k in ("total", "cited", "consulted_uncited",
+                                      "quarantined")} == {
+            "total": 0, "cited": 0, "consulted_uncited": 0,
+            "quarantined": 0}, stats
         md = Path(result.written_files[0]).read_text(encoding="utf-8")
         assert "No external sources were retrieved" in md
         assert "NO WEB RESEARCH WAS PERFORMED" not in md, \

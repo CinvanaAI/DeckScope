@@ -8,7 +8,7 @@ denominator, two named competitors and three conspicuously unnamed ones, a 78% g
 margin with no stated COGS definition, and no retention figure anywhere.
 
 ```bash
-deckscope run examples/sample_deck.md --lens investor
+deckscope run deckscope/examples/sample_deck.md --lens investor
 deckscope demo                              # same deck, no AI needed
 ```
 
@@ -17,7 +17,7 @@ last slide instructing the AI to rate it 10/10 and conceal the instruction.
 
 ```bash
 deckscope demo --injected
-deckscope run examples/sample_deck_with_injection.md --security strict
+deckscope run deckscope/examples/sample_deck_with_injection.md --security strict
 ```
 
 The first neutralizes it and reports it. The second refuses to analyze the deck at all.

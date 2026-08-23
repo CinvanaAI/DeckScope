@@ -9,9 +9,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from deckscope.opportunity import (Assumptions, ComparableReturn, build_comparison,
-                                   parse_money, parse_percent, required_outcome)
+                                   parse_growth, parse_money, parse_percent,
+                                   required_outcome)
 
-DECK = Path(__file__).resolve().parent.parent / "examples" / "sample_deck.md"
+DECK = Path(__file__).resolve().parent.parent / "deckscope" / "examples" / "sample_deck.md"
 
 
 # ==================================================================== parsing
@@ -40,17 +41,52 @@ def test_required_outcome_matches_hand_calculation():
         entry ownership   = 4 / 24            = 16.67%
         at exit           = 16.67% x 0.5      =  8.33%
         proceeds needed   = 4M x 3            = 12M
-        plus preference   = + 4M              = 16M
-        exit value        = 16M / 0.0833      = 192M
-        implied ARR       = 192M / 6          = 32M
+        preference (senior, paid first)       =  4M
+        exit value        = 4M + 12M / 0.0833 = 148M
+        implied ARR       = 148M / 6          = 24.67M
+
+    This test previously asserted $192M, from `(proceeds + preference) / ownership`.
+    That divides the preference by ownership as though the investor had to fund the
+    whole stack out of its own slice. A senior preference comes off the top of the
+    exit and the residual is then split, so it adds its face value, not its face
+    value grossed up 12x. The old expectation was wrong in the same direction as
+    the old code, which is how it survived.
     """
     r = required_outcome(ask=4_000_000, post_money=24_000_000, target_multiple=3.0,
                          assumptions=Assumptions(), current_arr=340_000)
     assert round(r.entry_ownership, 4) == 0.1667
     assert round(r.ownership_at_exit, 4) == 0.0833
-    assert abs(r.exit_value_required - 192_000_000) < 100_000
-    assert abs(r.implied_arr_required - 32_000_000) < 20_000
-    assert r.growth_multiple_required == round(32_000_000 / 340_000, 1)
+    assert abs(r.exit_value_required - 148_000_000) < 100_000
+    assert abs(r.implied_arr_required - 24_666_667) < 20_000
+    assert r.growth_multiple_required == round(24_666_667 / 340_000, 1)
+
+
+def test_the_waterfall_actually_returns_the_proceeds_it_promises():
+    """The inverse check: ownership x (exit - preference) must equal proceeds.
+
+    This is the property the formula exists to satisfy, and stating it directly
+    means no future refactor can reintroduce a plausible-looking variant that
+    happens not to balance.
+    """
+    ask, target = 4_000_000.0, 3.0
+    a = Assumptions()
+    r = required_outcome(ask=ask, post_money=24_000_000, target_multiple=target,
+                         assumptions=a)
+    residual = r.exit_value_required - r.preference_stack_value
+    investor_proceeds = r.ownership_at_exit * residual
+    assert abs(investor_proceeds - ask * target) < 20_000, (
+        f"investor receives ${investor_proceeds:,.0f} but needed ${ask * target:,.0f}")
+
+
+def test_a_bigger_preference_stack_adds_its_face_value_not_a_multiple_of_it():
+    """Doubling a 1x stack to 2x on a $4M round adds $4M to the required exit."""
+    one = required_outcome(ask=4e6, post_money=24e6, target_multiple=3.0,
+                           assumptions=Assumptions(preference_stack=1.0))
+    two = required_outcome(ask=4e6, post_money=24e6, target_multiple=3.0,
+                           assumptions=Assumptions(preference_stack=2.0))
+    delta = two.exit_value_required - one.exit_value_required
+    assert abs(delta - 4_000_000) < 1_000, (
+        f"an extra $4M of senior preference moved the required exit by ${delta:,.0f}")
 
 
 def test_higher_dilution_demands_a_bigger_exit():
@@ -82,7 +118,7 @@ def test_growth_extrapolation_is_explicitly_caveated():
     """A monthly rate extrapolated for five years is not a schedule."""
     r = required_outcome(ask=4e6, post_money=24e6, target_multiple=3.0,
                          assumptions=Assumptions(), current_arr=340_000,
-                         current_growth_monthly=0.18)
+                         current_growth=parse_growth("18% MoM"))
     assert r.years_at_current_growth is not None
     assert "never does" in r.note and "not a timetable" in r.note
 
@@ -101,7 +137,7 @@ def _comps():
 
 def test_comparison_benchmarks_against_each_listed_competitor():
     c = build_comparison(company="Acme", ask=4e6, post_money=24e6,
-                         current_arr=340_000, current_growth_monthly=0.18,
+                         current_arr=340_000, current_growth=parse_growth("18% MoM"),
                          comparables=_comps())
     assert any("Microsoft" in k for k in c.requirements)
     assert any("UiPath" in k for k in c.requirements)
@@ -114,13 +150,13 @@ def test_comparison_benchmarks_against_each_listed_competitor():
 
 def test_private_competitors_are_not_treated_as_benchmarks():
     c = build_comparison(company="Acme", ask=4e6, post_money=24e6, current_arr=None,
-                         current_growth_monthly=None, comparables=_comps())
+                         current_growth=None, comparables=_comps())
     assert not any("Zapier" in k for k in c.requirements)
 
 
 def test_no_listed_competitors_says_so_rather_than_going_quiet():
     c = build_comparison(company="Acme", ask=4e6, post_money=24e6, current_arr=None,
-                         current_growth_monthly=None,
+                         current_growth=None,
                          comparables=[ComparableReturn(name="Zapier")])
     assert c.unavailable
     assert "None of the named competitors appear to be publicly traded" \
@@ -129,7 +165,7 @@ def test_no_listed_competitors_says_so_rather_than_going_quiet():
 
 def test_the_output_never_claims_to_be_a_forecast():
     c = build_comparison(company="Acme", ask=4e6, post_money=24e6, current_arr=340_000,
-                         current_growth_monthly=None, comparables=_comps())
+                         current_growth=None, comparables=_comps())
     payload = c.to_dict()
     assert "not a forecast" in payload["disclaimer"]
     assert "Not investment advice" in payload["disclaimer"]

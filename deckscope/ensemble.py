@@ -60,6 +60,12 @@ class Panelist:
     result: Optional[AnalysisResult] = None
     review: Dict[str, Any] = field(default_factory=dict)
     revised: Dict[str, Any] = field(default_factory=dict)   # lens -> comparison
+    #: lens -> every revision this panelist has made, oldest first. The panel's
+    #: whole claim is that positions move under review, so the record of how they
+    #: moved is a result, not debug output: a panelist that revised in round one
+    #: and held firm in round two has said something different from one that never
+    #: revised at all, and only the history distinguishes them.
+    revision_history: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)
     error: Optional[str] = None
     elapsed: float = 0.0
     #: Where the other panelists ranked this report, and how they scored it.
@@ -70,19 +76,36 @@ class Panelist:
     def ok(self) -> bool:
         return self.result is not None and self.error is None
 
+    def lenses(self) -> List[str]:
+        """Every lens this panelist has a position on, revised or original."""
+        keys = list(self.result.comparisons if self.result else {})
+        for lens in self.revised:
+            if lens not in keys:
+                keys.append(lens)
+        return keys
+
     def final(self, lens: str) -> Dict[str, Any]:
         """The revised comparison if there is one, else the original."""
         if self.revised.get(lens):
             return self.revised[lens]
         return (self.result.comparisons.get(lens, {}) if self.result else {})
 
+    def record_revision(self, lens: str, comparison: Dict[str, Any]) -> None:
+        """Adopt a revision and keep the one it replaced."""
+        self.revised[lens] = comparison
+        self.revision_history.setdefault(lens, []).append(comparison)
+
     def to_dict(self) -> Dict[str, Any]:
         return {"label": self.label, "name": self.name, "ok": self.ok,
                 "error": self.error, "elapsed_seconds": round(self.elapsed, 1),
                 "rank": self.rank, "vote_score": self.vote_score,
                 "review": self.review,
-                "final": {lens: self.final(lens) for lens in (self.revised or
-                          (self.result.comparisons if self.result else {}))}}
+                "revisions_per_lens": {lens: len(v)
+                                       for lens, v in self.revision_history.items()},
+                # Every lens, not just the revised ones. Keying off `revised`
+                # dropped any lens the panelist never changed its mind about,
+                # which silently removed unrevised positions from the output.
+                "final": {lens: self.final(lens) for lens in self.lenses()}}
 
 
 @dataclass
@@ -495,7 +518,11 @@ class Panel:
                 return
             changes = me.review.get("position_changes") or []
             if not changes and str(me.review.get("will_revise")).lower() in ("false", "no"):
-                me.revised = {}
+                # Declining to revise *this* round means the current position
+                # stands — it does not retract earlier rounds. Clearing the dict
+                # here threw away every revision made so far, so a panelist that
+                # improved in round one and was satisfied in round two was scored
+                # and voted on using its round-zero analysis.
                 return
             provider = get_provider(me.provider)
             try:
@@ -525,7 +552,7 @@ class Panel:
                         "revision_log": revised.get("revision_log") or [],
                         "validation": validation.to_dict(),
                     }
-                    me.revised[lens] = revised
+                    me.record_revision(lens, revised)
             except Exception as exc:  # noqa: BLE001
                 me.review.setdefault("revision_error", f"{type(exc).__name__}: {exc}")
             finally:

@@ -22,13 +22,31 @@ sys.path.insert(0, str(ROOT.parent))
 from deckscope import console  # noqa: E402
 console.enable()
 
-MODULES = ["test_security", "test_pipeline", "test_providers", "test_panel",
-           "test_audit_regressions", "test_panel_mechanics",
-           "test_opportunity",
-           "test_bundling",
-           "test_audit2_regressions",
-           "test_evidence_design",
-           "test_evaluation"]
+#: Modules whose order matters, run first. Everything else is discovered.
+#:
+#: This used to be the complete list, hand-maintained — which meant a new test
+#: file was not run until someone remembered to add it here, and nothing failed
+#: if they forgot. Adding tests that silently never execute is the same class of
+#: defect as an evaluator that reports success while checking nothing, so the
+#: list is now a hint about ordering rather than the source of truth.
+PREFERRED_ORDER = ["test_security", "test_pipeline", "test_providers", "test_panel",
+                   "test_audit_regressions", "test_panel_mechanics",
+                   "test_opportunity",
+                   "test_bundling",
+                   "test_audit2_regressions",
+                   "test_evidence_design",
+                   "test_evaluation"]
+
+
+def discover() -> list:
+    """Every test_*.py beside this runner, preferred ones first."""
+    found = sorted(p.stem for p in ROOT.glob("test_*.py"))
+    ordered = [m for m in PREFERRED_ORDER if m in found]
+    ordered += [m for m in found if m not in PREFERRED_ORDER]
+    return ordered
+
+
+MODULES = discover()
 
 
 def main() -> int:

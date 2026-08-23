@@ -71,6 +71,75 @@ def parse_percent(text: Any) -> Optional[float]:
         return None
 
 
+@dataclass
+class GrowthRate:
+    """A growth figure together with the period it was quoted over.
+
+    The period is the whole point. "23%" compounds to 1,000% a year if it is
+    monthly and to 23% a year if it is annual, and a deck that says "23% CAGR"
+    means the second. Reading the number without the period — which is what
+    happens when a parser returns a bare float — silently turned every stated
+    growth rate into a monthly one, so an annual figure was compounded twelve
+    times before being compared against the growth an exit would require.
+
+    `period` is None when the deck states a rate but not its basis. That is not
+    the same as monthly, and nothing extrapolates from it.
+    """
+
+    rate: float
+    #: "monthly", "quarterly", "annual", or None when the deck did not say.
+    period: Optional[str] = None
+    #: The text this came from, so a report can quote the deck rather than a gloss.
+    source_text: str = ""
+
+    @property
+    def annualized(self) -> Optional[float]:
+        """The equivalent annual rate, or None if the basis is unknown."""
+        if self.period == "monthly":
+            return (1.0 + self.rate) ** 12 - 1.0
+        if self.period == "quarterly":
+            return (1.0 + self.rate) ** 4 - 1.0
+        if self.period == "annual":
+            return self.rate
+        return None
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {"rate": self.rate, "period": self.period,
+                "annualized": self.annualized, "source_text": self.source_text}
+
+
+#: Ordered longest-first so "month over month" is not matched by "month" alone in
+#: a way that leaves the wrong basis. Each maps a phrase to a compounding period.
+_PERIOD_PATTERNS: List[tuple] = [
+    (r"\bmo\s*m\b|\bmom\b|month[\s-]*over[\s-]*month|per\s+month|monthly|/\s*mo\b"
+     r"|\ba\s+month\b|\beach\s+month\b", "monthly"),
+    (r"\bqo\s*q\b|\bqoq\b|quarter[\s-]*over[\s-]*quarter|per\s+quarter|quarterly"
+     r"|\ba\s+quarter\b", "quarterly"),
+    (r"\bcagr\b|\byo\s*y\b|\byoy\b|year[\s-]*over[\s-]*year|per\s+year|annual"
+     r"|annually|\ba\s+year\b|/\s*yr\b|\bper\s+annum\b", "annual"),
+]
+
+
+def parse_growth(text: Any) -> Optional[GrowthRate]:
+    """Parse a growth figure *and its period* out of whatever the deck said.
+
+    Returns None when there is no rate at all, and a GrowthRate with
+    `period=None` when there is a rate but no stated basis — a distinction the
+    caller must respect, because an unlabelled rate cannot be compounded.
+    """
+    rate = parse_percent(text)
+    if rate is None:
+        return None
+    raw = str(text)
+    low = raw.lower()
+    period = None
+    for pattern, name in _PERIOD_PATTERNS:
+        if re.search(pattern, low):
+            period = name
+            break
+    return GrowthRate(rate=rate, period=period, source_text=raw.strip())
+
+
 def _fmt_money(value: Optional[float]) -> str:
     if value is None:
         return "—"
@@ -121,6 +190,10 @@ class RequiredOutcome:
     implied_annual_growth: Optional[float] = None
     achievable_at_current_growth: Optional[bool] = None
     years_at_current_growth: Optional[float] = None
+    #: The senior preference in dollars, paid off the top before the split.
+    preference_stack_value: Optional[float] = None
+    #: The deck's growth figure with its period, or None if it stated none.
+    stated_growth: Optional[Dict[str, Any]] = None
     note: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
@@ -133,15 +206,19 @@ class RequiredOutcome:
 def required_outcome(*, ask: Optional[float], post_money: Optional[float],
                      target_multiple: float, assumptions: Assumptions,
                      current_arr: Optional[float] = None,
-                     current_growth_monthly: Optional[float] = None
+                     current_growth: Optional[GrowthRate] = None
                      ) -> RequiredOutcome:
     """Work backwards from a target multiple to the exit it demands.
 
     All of this is arithmetic:
         ownership at entry   = ask / post-money
         ownership at exit    = entry x (1 - future dilution)
-        exit value required  = (ask x target multiple + preference stack) / ownership
+        exit value required  = preference stack + (ask x target multiple) / ownership
         implied ARR required = exit value / category revenue multiple
+
+    The preference is added, not divided: it comes off the top of the exit before
+    the residual is split, so it shifts the required exit by its own face value
+    rather than by face value scaled up by the inverse of ownership.
     """
     out = RequiredOutcome(target_multiple=target_multiple, current_arr=current_arr)
 
@@ -158,10 +235,23 @@ def required_outcome(*, ask: Optional[float], post_money: Optional[float],
         out.note = "Dilution assumption leaves no ownership at exit."
         return out
 
+    # The waterfall, in order. A senior preference is paid off the top of the exit
+    # value; the common holders then split what is left. So if the investor holds
+    # fraction `o` of the residual and needs proceeds `P`:
+    #
+    #     o x (E - S) = P    ->    E = S + P/o
+    #
+    # The earlier form, E = (P + S)/o, divided the preference by ownership as
+    # though the investor had to fund the whole stack out of its own slice. That
+    # inflated the required exit — on the sample deck, $192M instead of $148M, a
+    # 30% overstatement — and, worse, it overstated in the direction that makes a
+    # company look harder to back than the arithmetic actually says. Verified by
+    # the inverse: o x (E - S) must return exactly P.
     proceeds_needed = ask * target_multiple
     stack = ask * max(0.0, assumptions.preference_stack)
-    exit_value = (proceeds_needed + stack) / at_exit
+    exit_value = stack + proceeds_needed / at_exit
     out.exit_value_required = exit_value
+    out.preference_stack_value = stack
 
     if assumptions.exit_revenue_multiple > 0:
         arr = exit_value / assumptions.exit_revenue_multiple
@@ -170,24 +260,41 @@ def required_outcome(*, ask: Optional[float], post_money: Optional[float],
             out.growth_multiple_required = round(arr / current_arr, 1)
             years = max(1, assumptions.horizon_years)
             out.implied_annual_growth = round((arr / current_arr) ** (1 / years) - 1, 3)
-            if current_growth_monthly and current_growth_monthly > 0:
-                annual = (1 + current_growth_monthly) ** 12 - 1
-                out.achievable_at_current_growth = annual >= out.implied_annual_growth
-                try:
-                    out.years_at_current_growth = round(
-                        math.log(arr / current_arr) / math.log(1 + annual), 1)
-                except (ValueError, ZeroDivisionError):
-                    out.years_at_current_growth = None
-                # This extrapolation assumes the current monthly rate holds. It
-                # does not: growth decays as the base grows, and a rate sustained
-                # for four months says very little about the fifth year. The
-                # figure is a floor on the difficulty, not a schedule.
-                out.note = (
-                    f"'{current_growth_monthly:.0%} per month' compounds to "
-                    f"{annual:.0%} a year, and the figure above assumes that rate "
-                    f"holds for the whole period. It essentially never does — growth "
-                    f"decays as the base grows. Read this as the minimum difficulty, "
-                    f"not a timetable.")
+            growth = current_growth
+            if growth and growth.rate > 0:
+                out.stated_growth = growth.to_dict()
+                annual = growth.annualized
+                if annual is None:
+                    # A rate with no stated basis cannot be compounded. Say so and
+                    # extrapolate nothing — the alternative is to guess a period,
+                    # and guessing "monthly" turns 23% CAGR into 1,000% a year.
+                    out.note = (
+                        f"The deck states growth of '{growth.source_text}' but does "
+                        f"not say over what period. A rate means nothing without its "
+                        f"basis — {growth.rate:.0%} monthly and {growth.rate:.0%} "
+                        f"annual differ by more than a hundredfold over a year — so "
+                        f"no projection is made from it. Ask what period this covers.")
+                else:
+                    out.achievable_at_current_growth = (
+                        annual >= out.implied_annual_growth)
+                    try:
+                        out.years_at_current_growth = round(
+                            math.log(arr / current_arr) / math.log(1 + annual), 1)
+                    except (ValueError, ZeroDivisionError):
+                        out.years_at_current_growth = None
+                    # This extrapolation assumes the stated rate holds. It does not:
+                    # growth decays as the base grows, and a rate sustained for four
+                    # months says very little about the fifth year. The figure is a
+                    # floor on the difficulty, not a schedule.
+                    basis = {"monthly": "per month", "quarterly": "per quarter",
+                             "annual": "per year"}[growth.period or "annual"]
+                    compounds = (f" compounds to {annual:.0%} a year, and the"
+                                 if growth.period != "annual" else ", and the")
+                    out.note = (
+                        f"'{growth.rate:.0%} {basis}'{compounds} figure above assumes "
+                        f"that rate holds for the whole period. It essentially never "
+                        f"does — growth decays as the base grows. Read this as the "
+                        f"minimum difficulty, not a timetable.")
     return out
 
 
@@ -256,7 +363,8 @@ DISCLAIMER = (
 
 
 def build_comparison(*, company: str, ask: Optional[float], post_money: Optional[float],
-                     current_arr: Optional[float], current_growth_monthly: Optional[float],
+                     current_arr: Optional[float],
+                     current_growth: Optional[GrowthRate] = None,
                      comparables: List[ComparableReturn],
                      assumptions: Optional[Assumptions] = None,
                      base_rates: Optional[List[Dict[str, Any]]] = None
@@ -271,7 +379,7 @@ def build_comparison(*, company: str, ask: Optional[float], post_money: Optional
     # comparable is listed.
     out.requirements["3x (a common venture threshold)"] = required_outcome(
         ask=ask, post_money=post_money, target_multiple=3.0, assumptions=a,
-        current_arr=current_arr, current_growth_monthly=current_growth_monthly)
+        current_arr=current_arr, current_growth=current_growth)
 
     investable = [c for c in comparables if c.investable and c.total_return_5y]
     for comp in investable:
@@ -279,7 +387,7 @@ def build_comparison(*, company: str, ask: Optional[float], post_money: Optional
         out.requirements[label] = required_outcome(
             ask=ask, post_money=post_money, target_multiple=comp.total_return_5y,
             assumptions=a, current_arr=current_arr,
-            current_growth_monthly=current_growth_monthly)
+            current_growth=current_growth)
 
     if not investable:
         listed = [c for c in comparables if c.investable]

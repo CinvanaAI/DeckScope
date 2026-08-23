@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional
 
 from ..market_data.base import Listing, MarketDataProvider
 from ..opportunity import (Assumptions, ComparableReturn, build_comparison,
-                           parse_money, parse_percent)
+                           parse_money, parse_growth)
 from ..prompts.templates import BASERATE_SYSTEM, BASERATE_USER
 from ..security.sanitizer import fence
 from .base import Agent
@@ -59,7 +59,9 @@ class OpportunityAnalyst(Agent):
             ask=parse_money(ask.get("amount")),
             post_money=parse_money(ask.get("valuation")),
             current_arr=parse_money(traction.get("revenue")),
-            current_growth_monthly=parse_percent(traction.get("growth")),
+            # parse_growth, not parse_percent: the period is load-bearing.
+            # A bare float made "23% CAGR" compound as though it were monthly.
+            current_growth=parse_growth(traction.get("growth")),
             comparables=[_to_comparable(x) for x in listings],
             assumptions=self.assumptions,
             base_rates=base_rates,

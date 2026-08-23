@@ -52,7 +52,20 @@ look for.
 
 Which is why `--cold-discovery` exists. It adds a second pass that receives only the
 category and a company name — never a claim, enforced by a whitelist and a test that
-asserts on the payload rather than the prompt — and reports what researching the market
+asserts on the payload rather than the prompt.
+
+**It is claim-blind, not deck-blind, and the distinction matters.** The category it
+researches is itself read out of the deck. If a deck frames itself as "workflow
+automation" when a fairer framing is "RPA", the cold pass inherits the wrong framing and
+researches the wrong market — thoroughly and without ever citing the deck. Isolation
+removes the deck's *arguments* from this pass; it does not remove the deck's *framing*,
+and no amount of prompt hygiene can, because the pass has to be pointed somewhere. Read
+its output as "what an analyst who was told only the category would find", which is a
+real and useful counterweight, rather than as an independent check on whether the
+category is the right one. Naming it deck-blind overstated it; the flag keeps its name
+for compatibility, but this is what it does.
+
+The pass reports what researching the market
 from scratch found that the claim-directed pass never looked for. On the sample deck the
 two routes overlap on 29% of the competitors they name.
 [How it works.](docs/EVIDENCE.md)
@@ -251,7 +264,7 @@ More in **[docs/OUTPUTS.md](docs/OUTPUTS.md)**.
 
 ```bash
 deckscope providers                                   # list with models
-deckscope run deck.pdf --provider gemini --model gemini-2.0-flash
+deckscope run deck.pdf --provider gemini --model gemini-flash-latest
 deckscope run deck.pdf --provider openai_compatible   # your own Ollama
 ```
 
@@ -660,7 +673,7 @@ The same pattern works for research backends and output formats. See
 | [docs/SECURITY.md](docs/SECURITY.md) | Threat model, detections, limits |
 | [docs/PANEL.md](docs/PANEL.md) | The multi-model panel in depth |
 | [docs/OPPORTUNITY.md](docs/OPPORTUNITY.md) | Opportunity cost, absorption risk, and why there are no forecasts |
-| [docs/EVIDENCE.md](docs/EVIDENCE.md) | Frozen corpora, deck-blind discovery, and comparing two modes fairly |
+| [docs/EVIDENCE.md](docs/EVIDENCE.md) | Frozen corpora, claim-blind discovery, and comparing two modes fairly |
 | [docs/EVALUATION.md](docs/EVALUATION.md) | Scoring DeckScope against decks with planted, known-correct answers |
 | [docs/CITATIONS.md](docs/CITATIONS.md) | How sources are tracked and resolved |
 | [docs/PROMPTS.md](docs/PROMPTS.md) | Every prompt, and the reasoning behind it |

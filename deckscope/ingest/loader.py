@@ -67,6 +67,51 @@ def load_deck(path_or_text: str, *, is_text: bool = False) -> DeckDocument:
 
 # ---------------------------------------------------------------- formats
 
+#: Caps on what an Office file may expand to. A .pptx and a .docx are both zip
+#: archives, and a zip archive can be a few kilobytes on disk that expands to
+#: gigabytes in memory. python-pptx and python-docx expand what they are given
+#: without asking, so the check has to happen before they are handed the file —
+#: at which point a malicious deck is a memory-exhaustion primitive rather than
+#: a document. The limits are far above any real deck: a heavily illustrated
+#: 200-slide deck is tens of megabytes uncompressed.
+MAX_OFFICE_UNCOMPRESSED = 512 * 1024 * 1024   # 512 MB across all members
+MAX_OFFICE_RATIO = 200                        # expanded : on-disk
+MAX_OFFICE_MEMBERS = 10_000
+
+
+def _check_office_archive(p: Path) -> None:
+    """Refuse an Office file that expands out of proportion to its size.
+
+    Reads only the zip central directory, so this costs nothing on a real deck
+    and never expands the payload it is judging.
+    """
+    import zipfile
+
+    try:
+        with zipfile.ZipFile(p) as zf:
+            infos = zf.infolist()
+            if len(infos) > MAX_OFFICE_MEMBERS:
+                raise DeckLoadError(
+                    f"This file contains {len(infos):,} internal parts, far more than "
+                    f"a real presentation or document. Refusing to open it.")
+            total = sum(i.file_size for i in infos)
+            if total > MAX_OFFICE_UNCOMPRESSED:
+                raise DeckLoadError(
+                    f"This file expands to {total / 1e6:,.0f} MB, past the "
+                    f"{MAX_OFFICE_UNCOMPRESSED / 1e6:,.0f} MB limit. Refusing to open "
+                    f"it. If the deck is genuinely this large, export it to PDF.")
+            on_disk = p.stat().st_size or 1
+            if total / on_disk > MAX_OFFICE_RATIO and total > 32 * 1024 * 1024:
+                raise DeckLoadError(
+                    f"This file is {on_disk / 1e6:.1f} MB on disk but expands to "
+                    f"{total / 1e6:,.0f} MB — a {total / on_disk:,.0f}x ratio that no "
+                    f"ordinary deck produces. Refusing to open it.")
+    except zipfile.BadZipFile:
+        raise DeckLoadError(
+            f"{p.name} is not a readable Office file — the archive is damaged or it "
+            f"is not really a .pptx/.docx. Try re-exporting it.") from None
+
+
 SLIDE_MARKER = re.compile(r"^\s*-{2,}\s*(?:slide|page)\s*(\d+)\s*-{2,}\s*$",
                           re.I | re.M)
 
@@ -90,6 +135,8 @@ def _from_pptx(p: Path) -> DeckDocument:
         raise DeckLoadError("Reading .pptx needs python-pptx: pip install python-pptx") from None
     if p.suffix.lower() == ".ppt":
         raise DeckLoadError("Legacy .ppt isn't supported. Save as .pptx or export to PDF.")
+    # Before python-pptx expands anything.
+    _check_office_archive(p)
     prs = Presentation(str(p))
     out, warnings, images = [], [], 0
     for i, slide in enumerate(prs.slides, 1):
@@ -169,6 +216,8 @@ def _from_docx(p: Path) -> DeckDocument:
         import docx
     except ImportError:
         raise DeckLoadError("Reading .docx needs python-docx: pip install python-docx") from None
+    # Before python-docx expands anything.
+    _check_office_archive(p)
     d = docx.Document(str(p))
     parts = [para.text for para in d.paragraphs if para.text.strip()]
     for table in d.tables:

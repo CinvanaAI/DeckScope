@@ -110,10 +110,32 @@ def load_case(path: str) -> EvalCase:
     return EvalCase(expect=expectations, **raw)
 
 
+class EmptySuiteError(RuntimeError):
+    """Raised when a suite directory yields no cases.
+
+    Separate from ValueError so callers can distinguish "your fixtures are
+    missing" from "your fixtures are malformed" — the first is almost always a
+    packaging fault and the message says so.
+    """
+
+
 def load_suite(directory: str) -> List[EvalCase]:
-    """Every case in a directory, ordered by id for stable reporting."""
+    """Every case in a directory, ordered by id for stable reporting.
+
+    Raises `EmptySuiteError` rather than returning `[]`. Returning an empty list
+    let a broken install report a clean bill of health.
+    """
     root = Path(directory)
+    if not root.is_dir():
+        raise EmptySuiteError(
+            f"No evaluation suite at {root}. If DeckScope was installed from a "
+            f"wheel, the fixtures are missing from the package — reinstall from a "
+            f"release built after the fixtures moved under deckscope/evaluation/suite/.")
     cases = [load_case(str(p)) for p in sorted(root.glob("*.json"))]
+    if not cases:
+        raise EmptySuiteError(
+            f"The evaluation suite at {root} contains no cases. Refusing to report "
+            f"success for a run that checked nothing.")
     seen = set()
     for case in cases:
         if case.id in seen:
@@ -123,5 +145,13 @@ def load_suite(directory: str) -> List[EvalCase]:
 
 
 def default_suite_dir() -> Path:
-    """The suite that ships with DeckScope."""
-    return Path(__file__).resolve().parent.parent.parent / "evals" / "cases"
+    """The suite that ships with DeckScope.
+
+    This lives *inside* the package rather than in a top-level `evals/` directory
+    because a directory beside the package is not installed with it. When the
+    fixtures sat outside, an installed wheel had no cases to load, and the
+    evaluator — which reports "every check passed" when nothing fails — passed by
+    running nothing. A release gate that cannot fail is worse than no gate, so the
+    fixtures are package data and `load_suite` refuses an empty suite.
+    """
+    return Path(__file__).resolve().parent / "suite" / "cases"

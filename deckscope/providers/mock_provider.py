@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Optional
+from typing import Any, Optional
 
 from ..config import ProviderConfig
 from .base import Completion, LLMProvider
@@ -33,6 +33,38 @@ class MockProvider(LLMProvider):
         """
         chars_in = len(system) + sum(len(m.content) for m in messages)
         return {"input": max(1, chars_in // 4), "output": max(1, len(out) // 4)}
+
+    @staticmethod
+    def _available_sids(prompt: str) -> set:
+        """The S-IDs actually offered in this prompt's bibliography."""
+        return {f"S{n}" for n in re.findall(r"^\[S(\d{1,3})\]", prompt, re.M)}
+
+    @classmethod
+    def _clamp_citations(cls, node: Any, allowed: set) -> Any:
+        """Drop any citation to a source this prompt did not offer.
+
+        The mock's fixtures are written against a three-source bibliography, but
+        a case can supply fewer — the thin-evidence case supplies exactly one.
+        Emitting S2 and S3 anyway made the mock fabricate citations, which is a
+        real defect and was scored as one the moment citation checking stopped
+        looking only at `claim_audit`. A competent analyst does not cite what it
+        was not given, and the mock has to clear the structural bar it exists to
+        measure. Prose references are rewritten too, so the text cannot disagree
+        with the structured field beside it.
+        """
+        if isinstance(node, dict):
+            return {k: (sorted({s for s in v if str(s).upper() in allowed},
+                               key=lambda s: int(str(s)[1:]))
+                        if k == "source_ids" and isinstance(v, list)
+                        else cls._clamp_citations(v, allowed))
+                    for k, v in node.items()}
+        if isinstance(node, list):
+            return [cls._clamp_citations(v, allowed) for v in node]
+        if isinstance(node, str):
+            return re.sub(r"\[S(\d{1,3})\]",
+                          lambda m: m.group(0) if f"S{m.group(1)}" in allowed else "",
+                          node)
+        return node
 
     def complete(self, system, messages, *, max_tokens=None, temperature=None,
                  tools=None) -> Completion:
@@ -63,7 +95,8 @@ class MockProvider(LLMProvider):
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "Market Analyst" in system:
-            body = json.dumps(_market_analysis(joined))
+            allowed = self._available_sids(joined)
+            body = json.dumps(self._clamp_citations(_market_analysis(joined), allowed))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "evaluating a pitch deck against its market" in system:
@@ -75,11 +108,13 @@ class MockProvider(LLMProvider):
             thin["claim_audit"] = thin["claim_audit"][:2]
             thin["alignment"]["blind_spots"] = thin["alignment"]["blind_spots"][:1]
             thin["risks"] = thin["risks"][:1]
-            body = json.dumps(thin)
+            body = json.dumps(self._clamp_citations(
+                thin, self._available_sids(joined)))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "Comparison Synthesist" in system:
-            body = json.dumps(self._compare(joined))
+            body = json.dumps(self._clamp_citations(
+                self._compare(joined), self._available_sids(joined)))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "one member of a panel" in system:
@@ -95,7 +130,8 @@ class MockProvider(LLMProvider):
                 "reason": "A peer cited a source on incumbent bundling that I had missed.",
                 "prompted_by": "Panelist A"}]
             revised["scorecard"][1]["score"] = min(10, revised["scorecard"][1]["score"] + 1)
-            body = json.dumps(revised)
+            body = json.dumps(self._clamp_citations(
+                revised, self._available_sids(joined)))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "extract listing facts" in system:

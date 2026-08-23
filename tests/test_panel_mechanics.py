@@ -9,7 +9,7 @@ from deckscope.config import (Lens, OutputConfig, ProviderConfig, ResearchConfig
 from deckscope.panel.strategies import (RoundState, get_strategy, list_strategies)
 from deckscope.panel.voting import Ballot, ballot_from_json, tally
 
-DECK = Path(__file__).resolve().parent.parent / "examples" / "sample_deck.md"
+DECK = Path(__file__).resolve().parent.parent / "deckscope" / "examples" / "sample_deck.md"
 
 
 def _state(**kw):

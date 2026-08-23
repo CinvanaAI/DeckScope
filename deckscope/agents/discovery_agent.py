@@ -36,6 +36,17 @@ from .base import Agent
 #:
 #: Deliberately minimal, and deliberately a whitelist rather than a blacklist: a
 #: blacklist grows a hole every time the deck schema gains a field.
+#:
+#: **This makes the pass claim-blind, not deck-blind**, and the docs used to
+#: call it the latter. Every field here still originates in the deck: the
+#: category is the deck's own framing of what market it is in. So a deck that
+#: describes itself as "workflow automation" when the honest framing is "RPA"
+#: sends this pass to research the wrong market — competently, with citations,
+#: and without ever quoting the deck. The isolation removes the deck's
+#: *arguments*; it cannot remove the deck's *framing*, because the pass must be
+#: aimed at some category to research anything at all. Treat the output as an
+#: independent read of the named category, not as a check on whether that
+#: category is the right one.
 ALLOWED_IDENTITY_FIELDS = ("category", "sub_category", "geography")
 
 

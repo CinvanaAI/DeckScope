@@ -146,7 +146,7 @@ def test_the_assessment_reaches_the_report(tmp_path):
                                   RunConfig)
     from deckscope.orchestrator import Pipeline
 
-    deck = Path(__file__).resolve().parent.parent / "examples" / "sample_deck.md"
+    deck = Path(__file__).resolve().parent.parent / "deckscope" / "examples" / "sample_deck.md"
     cfg = RunConfig(deck_path=str(deck), provider=ProviderConfig(name="mock"),
                     research=ResearchConfig(name="none"),
                     output=OutputConfig(formats=["md"], out_dir=str(tmp_path)),

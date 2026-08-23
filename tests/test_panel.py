@@ -9,7 +9,7 @@ from deckscope.ensemble import Panel, measure_agreement, parse_panelist
 from deckscope.research.base import Researcher, SearchResult
 from deckscope.research.registry import register_researcher
 
-DECK = Path(__file__).resolve().parent.parent / "examples" / "sample_deck.md"
+DECK = Path(__file__).resolve().parent.parent / "deckscope" / "examples" / "sample_deck.md"
 
 
 class PanelStubSearch(Researcher):

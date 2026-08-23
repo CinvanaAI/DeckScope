@@ -6,6 +6,129 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ## [Unreleased]
 
+### Fixed (third audit)
+
+The theme of this audit was **gates that could not fail**. Four separate checks
+reported success because nothing had actually been examined, which is worse than
+having no check at all, because a green result gets trusted.
+
+- **The evaluation suite was absent from the wheel, so the release gate passed
+  vacuously.** The fixtures lived in a top-level `evals/` directory beside the
+  package rather than inside it, so `pip install` did not carry them. An installed
+  DeckScope loaded zero cases, and because the evaluator reports success when no
+  check fails, it printed `0 run(s)` / `every check passed` and exited 0. The
+  fixtures now live in `deckscope/evaluation/suite/` and are declared as package
+  data; `load_suite` raises `EmptySuiteError` instead of returning `[]`;
+  `--trials 0` and a `--only` filter matching no cases are both refused; and the
+  CLI exits **2** for "this run was never valid" so CI can tell it apart from
+  exit 1, "checks ran and failed". A new CI job builds the wheel, installs it into
+  a clean environment, and runs it from a directory containing no source — the
+  only configuration in which this class of defect is visible.
+- **The liquidation-preference arithmetic was wrong, and overstated by 30%.** The
+  required exit was computed as `(proceeds + preference) / ownership`, which
+  divides the preference by ownership as though the investor had to fund the whole
+  senior stack out of its own slice. A senior preference is paid off the top and
+  the residual is then split, so the correct form is `preference + proceeds /
+  ownership`. On the sample deck this was $192M rather than $148M. The unit test
+  asserted the wrong figure too, which is how it survived; there is now a test of
+  the defining property — after the stack is paid, the investor's share of what
+  remains must equal exactly the proceeds it needed.
+- **Every growth rate was treated as monthly.** The parser returned a bare float,
+  discarding the period, so "23% CAGR" was compounded twelve times into a ~1,000%
+  annual rate. Growth is now parsed into a `GrowthRate` carrying rate, period and
+  the deck's own wording; an unlabelled rate extrapolates nothing and says why.
+- **Citations to sources no model ever saw validated as genuine.** `citable`
+  promised "sources that entered the evidence prompt" but returned everything
+  unquarantined — while `prompt_block` silently truncated at a character budget.
+  A citation to source 200 of 200 passed even though the block stopped at 40. The
+  registry now records what it actually rendered, the prompt tells the model which
+  sources were dropped, and the omission is reported in the run stats.
+- **Citation integrity was only checked in one field.** The scorer looked at
+  `comparison.claim_audit[].source_ids`, so a fabricated citation in the
+  scorecard, a blind spot, the opportunity section or inline prose scored as
+  clean. It is now collected recursively across the whole report, including bare
+  `[S#]` references in text. This immediately caught the mock provider citing S2
+  and S3 against a one-source corpus, which was a real defect and is also fixed.
+- **HTTPS DNS pinning did not pin.** The connection was built with the validated
+  IP and then had `conn.host` set back to the hostname to preserve the Host
+  header — but `HTTPSConnection.connect()` resolves `self.host` itself, handing
+  DNS a second chance to answer and reopening the exact time-of-check-to-time-of-use
+  window the pin exists to close. The socket now connects to the checked IP and
+  TLS is wrapped with `server_hostname` set to the original name, so certificate
+  validation and vhost routing both still apply and DNS is never consulted twice.
+- **A negative `Content-Length` bypassed the request size cap** on the local web
+  server and turned `rfile.read(-1)` into an unbounded read.
+- **Office files had no expansion limit**, so a few hundred KB of `.pptx` could
+  expand to gigabytes inside python-pptx. Member count, total uncompressed size
+  and compression ratio are now checked from the zip directory before any parser
+  touches the file.
+- **The Codex CLI preset never applied its sandbox.** `--sandbox` and
+  `--ask-for-approval` are global flags and must precede the `exec` subcommand;
+  placed after it they were parsed as arguments to `exec` and rejected.
+  `--skip-git-repo-check` was also needed, since `exec` refuses to start outside a
+  git repository and a user analyzing a deck in their Documents folder is not in
+  one.
+- **OpenAI reasoning models were sent the chat request shape**, which they reject:
+  they require `max_completion_tokens` rather than `max_tokens` and a `developer`
+  rather than `system` role. Retired names (`o3-mini`, `o1-mini`, `o1-preview`)
+  now give an actionable error naming a working replacement, and the docs no
+  longer recommend models the code itself refuses — `gemini-2.0-flash` appeared in
+  the README while the provider raised on it as retired.
+- **A panelist that declined to revise erased its earlier revisions.**
+  `me.revised = {}` cleared every lens, so a panelist that improved in round one
+  and was satisfied in round two was scored and voted on using its round-zero
+  analysis. Revisions are now durable and a per-lens history is kept. Separately,
+  `to_dict` keyed off `revised`, dropping any lens the panelist never changed its
+  mind about from the output entirely.
+- **The zero-dependency test runner had a hand-maintained module list**, so a new
+  test file did not run until someone remembered to add it — the same class of
+  defect as the evaluator. It now discovers `test_*.py` automatically.
+- **"Deck-blind discovery" was an overstatement.** The cold pass is claim-blind:
+  it never sees the deck's arguments, but the category it researches is the deck's
+  own framing. A deck that calls itself "workflow automation" when the honest
+  framing is "RPA" sends the pass to research the wrong market thoroughly and with
+  citations. Documented accurately in the README, `docs/EVIDENCE.md` and the agent
+  itself.
+
+### Release readiness
+
+- **The MCP integration was pinned to `2024-11-05`**, four revisions behind, on
+  both the server and the client — and because it echoed one hardcoded constant
+  rather than negotiating, nothing ever failed to reveal it. The current spec
+  (`2026-07-28`) is a much larger change than a version bump: it replaces the
+  `initialize` handshake with a stateless core where every request declares its
+  own version in `_meta`, and makes `server/discover` mandatory. DeckScope is now
+  **dual-era** on both sides. The server answers modern per-request traffic,
+  implements `server/discover`, returns `UnsupportedProtocolVersionError`
+  (`-32022`) listing what it does support, and still completes a legacy
+  `initialize` — agreeing to the version the client asked for instead of
+  announcing its own. The client probes `server/discover` first, treats a
+  recognized modern error as a modern server and retries at a shared version,
+  falls back to the handshake on anything else, and never stamps `_meta` on a
+  legacy server that would not understand it.
+- **A hash-pinned lockfile and a CycloneDX SBOM** are now generated on release
+  (`.github/workflows/release.yml`, `scripts/generate_sbom.py`). Both are
+  generated rather than committed by hand, because a lockfile has to record what
+  a resolver actually chose against a real index, and an SBOM has to describe
+  what was installed rather than what was requested. The generator is pure
+  standard library — a bill of materials that needs its own dependencies adds to
+  the surface it is meant to describe.
+- **A clean-install acceptance test** (`scripts/acceptance.sh`) runs the commands
+  a first-time user runs, from a directory with no source checkout, against the
+  built artifact. It refuses to run inside the repository, where it would prove
+  nothing.
+
+  It immediately found another instance of the packaging defect above: **the
+  sample decks were outside the package too**, so on an installed copy
+  `demo --injected` fell through to the embedded deck, which contains no
+  injection. The one command whose entire purpose is to show the security screen
+  catching something printed a clean report and said nothing — a silently wrong
+  answer, and worse than a crash because it reads as a pass. The decks now ship
+  inside the package, and the injected demo refuses to run rather than
+  substituting a clean deck if its fixture is ever missing again.
+
+Test count 182 → 234, with a regression test for every finding above.
+
 ### Security — fixed (second audit)
 
 - **The sanitizer could preserve, and in one case manufacture, an injection.**

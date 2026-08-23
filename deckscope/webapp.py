@@ -160,7 +160,18 @@ class Handler(BaseHTTPRequestHandler):
         if not self._origin_ok():
             return self._json({"error": "cross-site request refused"}, 403)
 
-        length = int(self.headers.get("Content-Length") or 0)
+        # A header is attacker-controlled text, not an integer. `int()` happily
+        # returns a negative number, and a negative length slipped past the size
+        # check above and then made `rfile.read(-1)` read until EOF — the exact
+        # unbounded read the cap exists to prevent. A non-numeric value raised
+        # ValueError out of the handler instead of answering 400.
+        raw = self.headers.get("Content-Length")
+        try:
+            length = int(raw) if raw not in (None, "") else 0
+        except (TypeError, ValueError):
+            return self._json({"error": "bad request"}, 400)
+        if length < 0:
+            return self._json({"error": "bad request"}, 400)
         if length > MAX_BODY_BYTES:
             return self._json({"error": "request too large"}, 413)
         try:

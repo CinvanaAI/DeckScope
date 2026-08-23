@@ -68,7 +68,7 @@ provider:
 
 Key: [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 
-`gpt-4o` for balance, `gpt-4o-mini` for cost, `o3-mini` for reasoning-heavy work at the
+`gpt-4o` for balance, `gpt-4o-mini` for cost, `o4-mini` for reasoning-heavy work at the
 cost of speed.
 
 ---
@@ -80,7 +80,7 @@ Speaks OpenAI's shape through Google's compatible endpoint.
 ```yaml
 provider:
   name: gemini
-  model: gemini-2.0-flash
+  model: gemini-flash-latest
   api_key_env: GEMINI_API_KEY
 ```
 
@@ -108,7 +108,7 @@ The simplest way to assemble a diverse panel without collecting several accounts
 deckscope panel deck.pdf --panel \
   openrouter:anthropic/claude-sonnet-4.5 \
   openrouter:openai/gpt-4o \
-  openrouter:google/gemini-2.0-flash-001
+  openrouter:google/gemini-flash-latest
 ```
 
 ---
