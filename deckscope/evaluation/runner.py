@@ -12,6 +12,7 @@ than a matter of opinion.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import statistics
 import time
@@ -90,6 +91,68 @@ class SuiteResult:
             "runs": len(runs),
         }
 
+    def discrimination(self) -> Dict[str, Any]:
+        """Did the modes actually produce different analyses?
+
+        This exists because of a real and embarrassing result. Running
+        `--mode pipeline baseline` under the mock returned a delta of +0.000 on
+        every dimension, and that was reported as though it were a measurement:
+        "the three-agent pipeline performs identically to a single prompt."
+
+        It was not a measurement. The two modes had emitted *byte-identical
+        analyses*, because the provider driving them returns the same fixture
+        either way. A comparison between two things that were never
+        distinguished cannot tell you they perform the same — it can only tell
+        you the comparison did not happen. Reporting +0.000 as a finding is the
+        same class of error as an evaluator reporting "every check passed" over
+        zero cases: a gate that cannot fail, quoted as though it had passed.
+
+        So: fingerprint what each mode produced, and say plainly whether the
+        comparison was capable of showing a difference at all.
+        """
+        if len(self.modes) < 2:
+            return {"comparable": False,
+                    "reason": "only one mode was run, so nothing was compared"}
+
+        by_case: Dict[str, Dict[str, str]] = {}
+        for score in self.scores:
+            if score.error or not score.output_fingerprint:
+                continue
+            by_case.setdefault(score.case_id, {})[score.mode] = \
+                score.output_fingerprint
+
+        compared = identical = 0
+        identical_cases: List[str] = []
+        for case_id, prints in by_case.items():
+            present = [prints[m] for m in self.modes if m in prints]
+            if len(present) < 2:
+                continue
+            compared += 1
+            if len(set(present)) == 1:
+                identical += 1
+                identical_cases.append(case_id)
+
+        if not compared:
+            return {"comparable": False,
+                    "reason": "no case ran in more than one mode"}
+
+        rate = identical / compared
+        informative = rate < 1.0
+        return {
+            "comparable": informative,
+            "cases_compared": compared,
+            "cases_with_identical_output": identical,
+            "identical_rate": round(rate, 3),
+            "identical_cases": sorted(identical_cases),
+            "reason": ("" if informative else
+                       f"all {compared} case(s) produced byte-identical analyses in "
+                       f"every mode, so this provider does not distinguish them. Any "
+                       f"score difference between modes would be zero by "
+                       f"construction; this comparison measures nothing about the "
+                       f"architectures. Re-run against a real model to make it "
+                       f"informative."),
+        }
+
     def failures(self, mode: str) -> List[Dict[str, Any]]:
         out = []
         for score in self.for_mode(mode):
@@ -117,6 +180,7 @@ class SuiteResult:
                     "failures": self.failures(mode),
                 } for mode in self.modes},
             "errors": self.errors(),
+            "discrimination": self.discrimination(),
             "scores": [s.to_dict() for s in self.scores],
             "caveat": CAVEAT,
         }
@@ -135,9 +199,15 @@ CAVEAT = (
 def run_suite(*, suite_dir: Optional[str] = None, modes: Optional[List[str]] = None,
               trials: int = 1, provider: str = "mock", model: Optional[str] = None,
               lens: str = "investor", out_dir: Optional[str] = None,
-              only: Optional[List[str]] = None,
+              only: Optional[List[str]] = None, panel_size: int = 3,
               on_event: Optional[Callable[[str], None]] = None) -> SuiteResult:
-    """Run every case, in every mode, `trials` times."""
+    """Run every case, in every mode, `trials` times.
+
+    `panel_size` is how many panelists the `panel` mode convenes. It is a real
+    cost multiplier — a panel of three costs roughly three times a pipeline run
+    plus the review rounds — which is precisely why the mode needed to be
+    measurable rather than assumed to help.
+    """
     from ..baseline import BaselineAnalyst
     from ..orchestrator import Pipeline
 
@@ -205,6 +275,8 @@ def run_suite(*, suite_dir: Optional[str] = None, modes: Optional[List[str]] = N
                             analysis = analyst.run(corpus=corpus)
                         finally:
                             analyst.close()
+                    elif mode == "panel":
+                        analysis = _run_panel(cfg, corpus, provider, model, panel_size)
                     else:
                         pipe = Pipeline(cfg)
                         try:
@@ -218,12 +290,97 @@ def run_suite(*, suite_dir: Optional[str] = None, modes: Optional[List[str]] = N
                     continue
 
                 score = score_case(case, analysis, mode=mode, lens=lens, trial=trial)
+                # Fingerprint what this mode actually produced. Two modes that
+                # emit the same analysis have not "performed equally" — they have
+                # not been distinguished at all, and the difference matters.
+                score.output_fingerprint = _fingerprint_analysis(analysis, lens)
                 result.scores.append(score)
                 fails = len(score.failures)
                 log(f"    {'all checks passed' if not fails else f'{fails} check(s) failed'}")
 
     result.elapsed = time.time() - started
     return result
+
+
+def _run_panel(cfg, corpus, provider: str, model: Optional[str], size: int):
+    """Run the panel and return its winning report shaped like a single analysis.
+
+    The panel exists to be compared against the cheaper modes, so it has to be
+    scoreable by the same scorer. The consensus report is the panel's actual
+    output — the thing a user reads — so that is what gets scored, carrying the
+    merged registry so citation checks resolve against the unified bibliography.
+    """
+    from ..ensemble import Panel
+    from ..config import ProviderConfig
+
+    # Distinct model names so the mock panelists diverge; a panel that agrees by
+    # construction would measure nothing about the panel.
+    members = [ProviderConfig(name=provider, model=model or f"panel-{i}")
+               for i in range(size)]
+    panel = Panel(cfg, members, rounds=1)
+    result = panel.run(corpus=corpus)
+
+    primary = result.primary_result()
+    if primary is None:
+        raise RuntimeError("every panelist failed")
+
+    # Score the panel's *winning comparison*, not the chair's consensus.
+    #
+    # The consensus follows CONSENSUS_SCHEMA — headline, agreement level,
+    # contested topics — and has no `claim_audit` or `verdict.call` at all.
+    # Scoring it gave the panel 0.000 on claim accuracy and verdict, which looked
+    # like a devastating result for the panel and was actually a category error:
+    # the scorer was reading a document that does not contain the fields it
+    # checks. The comparable artifact is the report the panel voted highest,
+    # which is what a user is told to read as the panel's answer.
+    ranked = sorted(result.working,
+                    key=lambda p: (p.rank if p.rank is not None else 99))
+    winner = ranked[0] if ranked else None
+    if winner is not None:
+        primary.comparisons = {lens: winner.final(lens)
+                               for lens in winner.lenses()}
+    primary.registry = result.registry or primary.registry
+
+    # Report what the panel actually cost, not what one panelist cost.
+    #
+    # `primary` is a single panelist's result, so its token counts describe one
+    # member. Left alone, a three-member panel reported the same cost as a single
+    # pipeline run — which would make a cost/benefit comparison between modes
+    # worse than useless, since the expensive option would look free.
+    total = {"input": 0, "output": 0}
+    for member in result.working:
+        usage = ((member.result.stats or {}).get("token_usage") or {}
+                 if member.result else {})
+        total["input"] += int(usage.get("input") or 0)
+        total["output"] += int(usage.get("output") or 0)
+    stats = dict(primary.stats or {})
+    stats["token_usage"] = total
+    stats["panelists"] = len(result.working)
+    stats["elapsed_seconds"] = (result.stats or {}).get(
+        "elapsed_seconds", stats.get("elapsed_seconds"))
+    primary.stats = stats
+    return primary
+
+
+def _fingerprint_analysis(analysis, lens: str) -> str:
+    """A stable hash of the comparison this mode produced.
+
+    Deliberately over the *content* a reader would see — claims, assessments,
+    citations, verdict — and not over metadata like timings or model names,
+    which differ between modes for uninteresting reasons.
+    """
+    comp = (getattr(analysis, "comparisons", {}) or {}).get(lens, {})
+    payload = {
+        "claims": [{"claim": r.get("claim"), "assessment": r.get("assessment"),
+                    "source_ids": sorted(str(s) for s in (r.get("source_ids") or []))}
+                   for r in (comp.get("claim_audit") or []) if isinstance(r, dict)],
+        "blind_spots": sorted(str(b) for b in
+                              ((comp.get("alignment") or {}).get("blind_spots") or [])),
+        "verdict": (comp.get("verdict") or {}).get("call"),
+        "confidence": (comp.get("verdict") or {}).get("confidence"),
+    }
+    blob = json.dumps(payload, sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16]
 
 
 def save(result: SuiteResult, path: str) -> str:

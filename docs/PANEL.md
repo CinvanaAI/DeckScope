@@ -278,7 +278,39 @@ corroborated. It does not quietly present a one-model result as a panel finding.
 
 ## Is any of this better than one good prompt?
 
-Unknown, and DeckScope now ships the control so you can find out on your own decks:
+Now measurable, and the first numbers are worth reading carefully.
+
+```bash
+deckscope eval --mode pipeline baseline panel
+```
+
+On the five shipped evaluation cases, under the built-in mock provider:
+
+| | claim accuracy | relative input cost |
+|---|:--:|:--:|
+| baseline (one prompt) | 0.421 | 0.2× |
+| pipeline (three agents) | 0.421 | 1.0× |
+| panel (three panelists) | 0.579 | 3.0× |
+
+The panel does score higher. It also costs three times the pipeline and fifteen times
+the baseline, and **this is the mock** — a deterministic fixture written for offline
+testing. It tells you the harness works end to end and that the panel machinery
+produces a materially different analysis. It tells you nothing about whether three
+real models reviewing each other beats one good model, because no real model was
+involved.
+
+What it does establish is that a tie means something. The suite separates the panel
+from the pipeline by 15 points, so it is not blind to architectural differences — and
+every multi-mode run reports whether the modes actually produced different analyses.
+A delta of zero between two modes therefore means they agreed, not that the comparison
+never happened. That distinction had to be built, because it is otherwise impossible
+to tell the two apart from the numbers alone.
+
+Note also that the pipeline ties the baseline exactly. The panel's advantage here is
+not evidence for the three-agent design; if anything it suggests whatever helps comes
+from *disagreement between analysts*, not from splitting one analyst into three roles.
+
+You can also run the control on your own decks:
 
 ```bash
 deckscope run deck.pdf --mode baseline    # one prompt, one call per lens

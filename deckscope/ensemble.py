@@ -46,8 +46,70 @@ from .validate import ValidationReport, _check_ids, validate_comparison
 from .security.sanitizer import fence
 from .sources import SourceRegistry, merge_registries, rewrite_citations
 
-#: Anonymous labels. A panelist judging "Panelist B" cannot favour a brand.
-LABELS = [f"Panelist {c}" for c in "ABCDEFGH"]
+#: A panel needs at least two analysts, because one cannot cross-review itself.
+#: Selecting a single model is a perfectly reasonable thing to want; it is just
+#: not a panel, and callers should route it to a normal single-model run rather
+#: than refuse it. See `deckscope.cli._panel`.
+MIN_PANELISTS = 2
+
+#: Panel sizes past this get a warning, not a refusal. It is the user's money and
+#: the user's decision — the job here is to make the cost legible beforehand, not
+#: to pick a ceiling on their behalf.
+LARGE_PANEL_ADVISORY = 8
+
+
+def panel_labels(count: int) -> List[str]:
+    """Anonymous labels: A-Z, then AA, AB, … for as many as are asked for.
+
+    A panelist judging "Panelist B" cannot favour a brand, which is the whole
+    point of labelling. This used to be a hardcoded string of eight letters, so
+    the panel silently capped at 8 — a limit that came from running out of
+    letters rather than from anything real about panels.
+    """
+    out: List[str] = []
+    i = 0
+    while len(out) < count:
+        name, n = "", i
+        while True:
+            name = chr(ord("A") + n % 26) + name
+            n = n // 26 - 1
+            if n < 0:
+                break
+        out.append(f"Panelist {name}")
+        i += 1
+    return out
+
+
+#: Retained for anything importing the old name; A-Z as before.
+LABELS = panel_labels(26)
+
+
+def panel_cost_note(size: int) -> str:
+    """What a panel of this size costs, in units a user can act on.
+
+    Two different things scale differently and conflating them is misleading:
+
+      * **API calls scale linearly** — roughly six per panelist (deck, market,
+        comparison, review, revision, ballot). A 46-model panel is about 280
+        calls, not thousands.
+      * **Tokens scale quadratically in the review rounds**, because each
+        panelist's single review call carries every *other* panelist's full
+        analysis inside it. N panelists means N x (N-1) analyses of text moved,
+        spread across only N calls.
+
+    So a big panel is not call-throttled, it is token-expensive, and the surprise
+    is in the bill rather than the wall clock.
+    """
+    calls = size * 6
+    readings = size * (size - 1)
+    note = (f"{size} panelists: about {calls} API calls (~6 each), and {readings} "
+            f"peer readings carried inside the {size} review calls. Call count "
+            f"grows with the panel; token cost grows with its square.")
+    if size > LARGE_PANEL_ADVISORY:
+        note += (f" At this size the review rounds dominate the bill — worth "
+                 f"running once with `--rounds 0` first to see the independent "
+                 f"analyses before paying for cross-review.")
+    return note
 
 
 @dataclass
@@ -162,12 +224,15 @@ class Panel:
                  parallel: bool = True, strategy: Any = "adaptive",
                  vote: bool = True,
                  on_event: Optional[Callable[[str, Dict[str, Any]], None]] = None) -> None:
-        if len(panel) < 2:
+        if len(panel) < MIN_PANELISTS:
             raise ValueError(
-                "A panel needs at least two AI connections. Give it two providers, or "
-                "the same provider with two different models.")
-        if len(panel) > len(LABELS):
-            raise ValueError(f"At most {len(LABELS)} panelists.")
+                "A panel needs at least two AI connections — one analyst cannot "
+                "cross-review itself. Use `deckscope run` for a single model; it "
+                "is the same analysis without the review rounds.")
+        # No upper limit. A large panel is expensive, not invalid, and how much
+        # someone wants to spend on their own analysis is their call. The cost is
+        # made legible before the run instead — see `panel_cost_note`.
+        labels = panel_labels(len(panel))
         self.config = config
         self.rounds = max(0, rounds)
         self.parallel = parallel
@@ -180,7 +245,7 @@ class Panel:
         self.vote = vote
         self.on_event = on_event or (lambda *_: None)
         self.panelists = [
-            Panelist(label=LABELS[i], name=_pname(pc), provider=pc)
+            Panelist(label=labels[i], name=_pname(pc), provider=pc)
             for i, pc in enumerate(panel)]
         #: The chair writes the consensus. Defaults to the first panelist's backend.
         self.chair_config = chair or panel[0]

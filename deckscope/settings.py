@@ -9,7 +9,7 @@ from __future__ import annotations
 import os
 import stat
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 
 
 def app_dir() -> Path:
@@ -114,6 +114,30 @@ def save_settings(data: Dict[str, Any]) -> Path:
         import json
         p.write_text(json.dumps(data, indent=2), encoding="utf-8")
     return p
+
+
+def load_panel() -> Dict[str, Any]:
+    """The saved panel selection, if any.
+
+    Selection persists so nobody re-picks their models on every run. Stored
+    alongside everything else in the config file, so `deckscope config` shows it
+    and a user can edit it by hand.
+    """
+    panel = (load_settings().get("panel") or {})
+    return {"members": list(panel.get("members") or []),
+            "rounds": panel.get("rounds", 1)}
+
+
+def save_panel(members: List[str], rounds: Optional[int] = None) -> Path:
+    """Remember which models to use. Changeable at any time, by design."""
+    data = load_settings()
+    panel = dict(data.get("panel") or {})
+    panel["members"] = [str(m) for m in members]
+    if rounds is not None:
+        panel["rounds"] = int(rounds)
+    panel.setdefault("rounds", 1)
+    data["panel"] = panel
+    return save_settings(data)
 
 
 def is_configured() -> bool:

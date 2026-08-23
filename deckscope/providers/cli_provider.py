@@ -42,8 +42,13 @@ from .base import Completion, LLMProvider, ProviderError
 PRESETS = {
     # --strict-mcp-config with an empty config loads no MCP servers;
     # --disallowedTools blocks the built-in filesystem and shell tools.
+    # `--mcp-config {}` is rejected: the CLI validates the document and wants an
+    # `mcpServers` record, so a bare empty object fails with "expected record,
+    # received undefined" and every call dies before it starts. An empty
+    # `mcpServers` map is the way to say "load no servers". Found by
+    # `deckscope models --check`, which is the entire reason that command exists.
     "claude": ["claude", "-p", "--output-format", "text",
-               "--strict-mcp-config", "--mcp-config", "{}",
+               "--strict-mcp-config", "--mcp-config", '{"mcpServers":{}}',
                "--disallowedTools", "Bash,Edit,Write,Read,WebFetch,WebSearch,"
                                     "NotebookEdit,Glob,Grep"],
     # read-only sandbox, never prompt for approval.

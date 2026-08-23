@@ -122,7 +122,14 @@ class MockProvider(LLMProvider):
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "final version of your analysis" in system:
-            revised = self._compare()
+            # `joined`, not nothing. Called with no prompt, `_compare` fell back
+            # to the canned Acme Flow fixture, so a panelist revising its
+            # analysis of some other deck silently returned claims about a
+            # different company. Invisible in the demo, where the deck *is* Acme
+            # Flow — and it scored the panel at 0.000 on claim accuracy in the
+            # evaluation, which looked like a damning result for the panel and
+            # was a defect in the fixture driving it.
+            revised = self._compare(joined)
             revised["revision_log"] = [{
                 "field": "scorecard: Competitive position",
                 "from": str(revised["scorecard"][1]["score"]),

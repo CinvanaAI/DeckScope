@@ -140,6 +140,28 @@ class Handler(BaseHTTPRequestHandler):
                 "all_lenses": ALL_LENSES,
             })
 
+        if path == "/api/models":
+            # Structural checks only — instant and free, so the picker renders
+            # immediately. A live probe is a separate, explicit action.
+            from . import availability as av
+
+            settings.load_env()
+            probes = av.load_probes()
+            caps = av.survey(probes, include_unusable=True)
+            saved = settings.load_panel()
+            return self._json({
+                "models": [c.to_dict() for c in caps],
+                "selected": saved.get("members") or [],
+                "diversity": av.diversity(saved.get("members") or []),
+                "states": {
+                    "ready": "Verified working",
+                    "unverified": "Set up, but never actually tried",
+                    "needs_setup": "Something is missing",
+                    "failed": "Tried and it did not work",
+                    "retired": "Withdrawn by the provider",
+                },
+            })
+
         if path.startswith("/api/job/"):
             _reap_jobs()
             with JOBS_LOCK:
@@ -185,7 +207,45 @@ class Handler(BaseHTTPRequestHandler):
             return self._open(payload)
         if route.path == "/api/run":
             return self._run(payload)
+        if route.path == "/api/models/select":
+            return self._select_models(payload)
+        if route.path == "/api/models/check":
+            return self._check_model(payload)
         return self._send(404, b"Not found")
+
+    def _select_models(self, payload: Dict[str, Any]) -> None:
+        """Persist the chosen panel. Changeable at any time, which is the point."""
+        from . import availability as av
+
+        members = payload.get("members")
+        if not isinstance(members, list) or not all(isinstance(m, str) for m in members):
+            return self._json({"error": "members must be a list of strings"}, 400)
+        # Bound the write so a malformed request cannot fill the config file.
+        if len(members) > 200:
+            return self._json({"error": "too many models"}, 400)
+        settings.save_panel(members)
+        return self._json({"saved": members,
+                           "diversity": av.diversity(members)})
+
+    def _check_model(self, payload: Dict[str, Any]) -> None:
+        """Probe one connection for real, on request.
+
+        One at a time and only when asked: a picker that live-probed everything
+        on load would spend the user's money to render a list.
+        """
+        from . import availability as av
+
+        provider = str(payload.get("provider") or "")
+        model = str(payload.get("model") or "")
+        if not provider:
+            return self._json({"error": "provider is required"}, 400)
+        settings.load_env()
+        record = av.probe(provider, model)
+        av.save_probe(record)
+        cap = av.inspect(provider, model, av.load_probes())
+        return self._json({"record": {k: v for k, v in record.items()
+                                      if k != "fingerprint"},
+                           "capability": cap.to_dict()})
 
     # ---- actions
     def _open(self, payload: Dict[str, Any]) -> None:
@@ -449,6 +509,40 @@ font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .hidden{display:none}.spin{display:inline-block;animation:s 1s linear infinite}
 @keyframes s{to{transform:rotate(360deg)}}
+/* ---- model picker ------------------------------------------------------
+   The list has to answer "what can I actually use right now", which is a
+   different question from "what does DeckScope support". So state is shown per
+   row rather than implied by presence in the list: a green dot means something
+   confirmed it works, a hollow one means it is configured but unproven, and
+   anything needing setup says what is missing instead of being silently absent. */
+.picker{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 4px}
+.pickhead{display:flex;align-items:center;justify-content:space-between;gap:12px;
+padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+.provgroup{padding:4px 0}
+.provname{font-size:11px;text-transform:uppercase;letter-spacing:.09em;
+color:var(--muted);font-weight:700;padding:9px 14px 3px}
+.mrow{display:flex;align-items:center;gap:11px;padding:8px 14px;cursor:pointer;
+border-top:1px solid transparent}
+.mrow:hover{background:var(--panel)}
+.mrow.disabled{cursor:default;opacity:.62}
+.mrow.disabled:hover{background:none}
+.mrow input{margin:0;flex:none;width:16px;height:16px;accent-color:var(--accent)}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.dot.ready{background:var(--good)}
+.dot.unverified{background:none;border:1.5px solid var(--muted)}
+.dot.needs_setup{background:none;border:1.5px dashed var(--warn)}
+.dot.failed{background:var(--bad)}
+.dot.retired{background:var(--muted);opacity:.5}
+.mname{font-weight:600;font-size:14px}
+.mwhy{font-size:12px;color:var(--muted)}
+.mfix{font-size:12px;color:var(--accent)}
+.mtest{margin-left:auto;font-size:11.5px;padding:3px 9px;border-radius:20px;
+border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer}
+.mtest:hover{border-color:var(--accent);color:var(--accent)}
+.pickfoot{padding:11px 14px;border-top:1px solid var(--line);background:var(--panel)}
+.note{font-size:13px;line-height:1.5}
+.note.warn{color:var(--warn)}
+button.small{padding:5px 10px;font-size:12px}
 </style></head><body><div class="wrap">
 <h1>DeckScope</h1>
 <div class="sub">Drop a pitch deck below. DeckScope reads it, researches the market it
@@ -476,6 +570,22 @@ competes in, and tells you where the two agree — and where they don't.</div>
 
   <label>Company name <span style="text-transform:none;letter-spacing:0">(optional — helps if the deck doesn't say)</span></label>
   <input id="company" type="text" placeholder="Acme Flow">
+
+  <label>Which AIs should analyze it
+    <span style="text-transform:none;letter-spacing:0">— pick one, or several to have them review each other</span>
+  </label>
+  <div id="modelpicker" class="picker">
+    <div class="pickhead">
+      <span id="picksummary" class="hint">Loading connections…</span>
+      <button type="button" class="ghost small" onclick="toggleUnavailable()"
+              id="showall">Show ones that need setup</button>
+    </div>
+    <div id="modellist"></div>
+    <div id="pickfoot" class="pickfoot hidden">
+      <div id="diversity" class="note"></div>
+      <div id="pickcost" class="hint"></div>
+    </div>
+  </div>
 
   <label>Point of view</label>
   <div class="chips" id="lenses"></div>
@@ -522,6 +632,162 @@ const api = (path, opts = {}) => fetch(path, Object.assign({}, opts, {
   headers: Object.assign({'X-DeckScope-Token': TOKEN}, opts.headers || {})
 }));
 
+// ---- model picker --------------------------------------------------------
+// Renders instantly from structural checks, because a picker that live-probed
+// every provider on load would spend money to draw a list. Probing is a per-row
+// action the user asks for.
+let MODELS = [], CHOSEN = [], SHOW_ALL = false;
+
+function loadModels(){
+  api('/api/models').then(r=>r.json()).then(d => {
+    MODELS = d.models || [];
+    CHOSEN = d.selected || [];
+    renderModels();
+  }).catch(() => { $('#picksummary').textContent = 'Could not read connections.'; });
+}
+
+function renderModels(){
+  const list = $('#modellist');
+  list.innerHTML = '';
+  const usable = MODELS.filter(m => m.usable);
+  const shown = SHOW_ALL ? MODELS : usable;
+  const hidden = MODELS.length - usable.length;
+
+  const groups = {};
+  shown.forEach(m => { (groups[m.provider] = groups[m.provider] || []).push(m); });
+
+  Object.keys(groups).sort().forEach(provider => {
+    const wrap = document.createElement('div');
+    wrap.className = 'provgroup';
+    const head = document.createElement('div');
+    head.className = 'provname';
+    head.textContent = provider;
+    wrap.appendChild(head);
+
+    groups[provider].forEach(m => {
+      const row = document.createElement('label');
+      row.className = 'mrow' + (m.usable ? '' : ' disabled');
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+      box.checked = CHOSEN.includes(m.key);
+      box.disabled = !m.usable;
+      box.onchange = () => {
+        const i = CHOSEN.indexOf(m.key);
+        if(box.checked && i < 0) CHOSEN.push(m.key);
+        if(!box.checked && i >= 0) CHOSEN.splice(i,1);
+        saveModels();
+      };
+      row.appendChild(box);
+
+      const dot = document.createElement('span');
+      dot.className = 'dot ' + m.state;
+      dot.title = m.state.replace('_',' ');
+      row.appendChild(dot);
+
+      const text = document.createElement('div');
+      const name = document.createElement('div');
+      name.className = 'mname';
+      name.textContent = m.model || '(default)';
+      text.appendChild(name);
+      if(m.description){
+        const why = document.createElement('div');
+        why.className = 'mwhy'; why.textContent = m.description;
+        text.appendChild(why);
+      }
+      if(m.state !== 'ready' && m.reasons && m.reasons.length){
+        const why = document.createElement('div');
+        why.className = 'mwhy'; why.textContent = m.reasons[0];
+        text.appendChild(why);
+      }
+      if(!m.usable && m.fix){
+        const fix = document.createElement('div');
+        fix.className = 'mfix'; fix.textContent = m.fix;
+        text.appendChild(fix);
+      }
+      row.appendChild(text);
+
+      if(m.usable && m.state !== 'ready'){
+        const test = document.createElement('button');
+        test.type = 'button'; test.className = 'mtest'; test.textContent = 'test';
+        test.onclick = (e) => { e.preventDefault(); checkOne(m, test); };
+        row.appendChild(test);
+      }
+      wrap.appendChild(row);
+    });
+    list.appendChild(wrap);
+  });
+
+  $('#showall').textContent = SHOW_ALL
+    ? 'Hide ones that need setup'
+    : (hidden ? 'Show ' + hidden + ' that need setup' : 'Nothing hidden');
+  $('#showall').style.display = hidden ? '' : 'none';
+  updatePickSummary();
+}
+
+function checkOne(m, button){
+  button.textContent = 'testing…'; button.disabled = true;
+  api('/api/models/check', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({provider: m.provider, model: m.model})})
+    .then(r=>r.json()).then(d => {
+      const cap = d.capability || {};
+      Object.assign(m, cap);
+      renderModels();
+    }).catch(() => { button.textContent = 'test failed'; button.disabled = false; });
+}
+
+function updatePickSummary(){
+  const n = CHOSEN.length;
+  const summary = $('#picksummary');
+  const foot = $('#pickfoot');
+  if(n === 0){
+    summary.textContent = 'No AI chosen — pick at least one.';
+    foot.classList.add('hidden');
+    return;
+  }
+  summary.textContent = n === 1
+    ? '1 AI chosen — a single analysis'
+    : n + ' AIs chosen — they will review each other';
+  foot.classList.remove('hidden');
+
+  // Provider diversity is the thing that actually matters for a panel, so it is
+  // stated rather than left for the user to infer from the list.
+  const providers = Array.from(new Set(CHOSEN.map(k => k.split(':')[0])));
+  const div = $('#diversity');
+  if(n === 1){
+    div.className = 'note';
+    div.textContent = 'One model runs the normal analysis — no cross-review, no extra cost.';
+  } else if(providers.length === 1){
+    div.className = 'note warn';
+    div.textContent = 'All ' + n + ' are from ' + providers[0] +
+      '. They share training data and tend to agree for correlated reasons, which is ' +
+      'the failure a panel is meant to catch. One model from a different provider ' +
+      'buys more independence than three more from this one.';
+  } else {
+    div.className = 'note';
+    div.textContent = providers.length + ' providers across ' + n +
+      ' analysts — they can disagree for independent reasons.';
+  }
+
+  // Cost, before committing rather than after.
+  if(n > 1){
+    $('#pickcost').textContent = 'About ' + (n * 6) + ' API calls (~6 each). ' +
+      'Each review call also carries the other ' + (n - 1) +
+      ' analyses inside it, so token cost grows faster than the panel does.';
+  } else {
+    $('#pickcost').textContent = 'About 6 API calls.';
+  }
+}
+
+function toggleUnavailable(){ SHOW_ALL = !SHOW_ALL; renderModels(); }
+
+function saveModels(){
+  api('/api/models/select', {method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({members: CHOSEN})}).catch(()=>{});
+  updatePickSummary();
+}
+
 function chips(el, items, key, multi){
   el.innerHTML = '';
   items.forEach(([val,label]) => {
@@ -538,6 +804,8 @@ function chips(el, items, key, multi){
     el.appendChild(d);
   });
 }
+
+loadModels();
 
 api('/api/state').then(r=>r.json()).then(s => {
   STATE = s;

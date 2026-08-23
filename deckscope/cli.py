@@ -5,6 +5,7 @@
     deckscope run deck.pdf              analyze a deck
     deckscope panel deck.pdf            analyze with several AIs that review each other
     deckscope demo                      full sample run, no AI or key needed
+    deckscope models                    see which AIs work, and pick your panel
     deckscope doctor                    check the install
     deckscope providers | formats       list what's available
 """
@@ -29,6 +30,8 @@ def build_parser() -> argparse.ArgumentParser:
   deckscope setup                        set everything up, step by step
   deckscope app                          open the drag-and-drop window
   deckscope demo                         see a full sample report, free
+  deckscope models                       which AIs work, and choose your panel
+  deckscope models --check               actually test each connection
   deckscope run deck.pdf                 analyze with your saved settings
   deckscope run deck.pdf --lens founder --format html pdf
   deckscope run deck.pdf --lens all --research tavily --security strict
@@ -41,6 +44,26 @@ def build_parser() -> argparse.ArgumentParser:
                    version=f"DeckScope {__version__} (unreleased — "
                            f"see the README for what is and is not proven)")
     sub = p.add_subparsers(dest="command")
+
+    md = sub.add_parser(
+        "models",
+        help="See which AI connections actually work, and choose your panel",
+        description=(
+            "Lists every model DeckScope knows, with what is genuinely usable "
+            "right now — key present, binary on PATH, daemon running, model not "
+            "withdrawn. Structural checks are instant and free; --check does a "
+            "real round-trip and remembers the answer."))
+    md.add_argument("--check", action="store_true",
+                    help="Actually call each usable connection to confirm it works. "
+                         "Costs a token or two per provider; the result is cached.")
+    md.add_argument("--select", nargs="+", default=None, metavar="PROVIDER:MODEL",
+                    help="Save these as your panel, e.g. "
+                         "--select anthropic:claude-sonnet-5 openai:gpt-4o")
+    md.add_argument("--clear", action="store_true",
+                    help="Forget the saved panel selection")
+    md.add_argument("--all", action="store_true",
+                    help="Include connections that are not set up")
+    md.add_argument("--json", action="store_true", help="Machine-readable output")
 
     sub.add_parser("setup", help="Guided setup — start here")
     sub.add_parser("doctor", help="Check that everything is working")
@@ -58,8 +81,12 @@ def build_parser() -> argparse.ArgumentParser:
             "calibration and injection detection — each computed in Python, never "
             "asked of a model."))
     ev.add_argument("--mode", nargs="+", default=["pipeline"],
-                    choices=["pipeline", "baseline"],
-                    help="Which mode(s) to score. Give both to compare them.")
+                    choices=["pipeline", "baseline", "panel"],
+                    help="Which mode(s) to score. Give more than one to compare "
+                         "them — the report says whether the comparison was "
+                         "actually able to tell them apart.")
+    ev.add_argument("--panel-size", type=int, default=3,
+                    help="Panelists convened by --mode panel (default 3)")
     ev.add_argument("--trials", "-t", type=int, default=1,
                     help="Runs per case, to measure stability (default 1)")
     ev.add_argument("--provider", default="mock",
@@ -202,6 +229,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     if cmd == "config":
         return _show_config()
 
+    if cmd == "models":
+        return _models(args)
     if cmd == "eval":
         return _eval(args)
 
@@ -451,6 +480,135 @@ def _slug(name: str) -> str:
     return s or "analysis"
 
 
+#: How each state reads at a glance. Words, not colours — this has to survive a
+#: pipe, a log file and a Windows console that cannot render a green dot.
+_STATE_MARK = {
+    "ready": ("[ok]     ", "verified working"),
+    "unverified": ("[  ?  ]  ", "set up, never tried"),
+    "needs_setup": ("[setup]  ", "something is missing"),
+    "failed": ("[FAILED] ", "tried and did not work"),
+    "retired": ("[gone]   ", "withdrawn by the provider"),
+}
+
+
+def _models(args: Any) -> int:
+    """Show what actually works, and remember what the user picks."""
+    from . import availability as av
+
+    settings.load_env()
+
+    if args.clear:
+        settings.save_panel([])
+        _out("\nPanel selection cleared. `deckscope panel` will ask again.\n")
+        return 0
+
+    if args.select:
+        caps = {c.key: c for c in av.survey()}
+        unusable = [s for s in args.select
+                    if s in caps and not caps[s].usable]
+        unknown = [s for s in args.select if s not in caps]
+        for spec in unknown:
+            _out(f"  note: {spec} is not in the catalogue — saving it anyway, "
+                 f"since a custom endpoint or a new model may be valid.")
+        for spec in unusable:
+            cap = caps[spec]
+            _out(f"  warning: {spec} is {cap.state} — {'; '.join(cap.reasons)}")
+            if cap.fix:
+                _out(f"           {cap.fix}")
+        settings.save_panel(list(args.select))
+        _out(f"\nSaved {len(args.select)} model(s) as your panel.")
+        div = av.diversity(list(args.select))
+        _out(f"  {div['note']}")
+        if len(args.select) >= 2:
+            from .ensemble import panel_cost_note
+            _out(f"  {panel_cost_note(len(args.select))}")
+        _out("\nChange it any time with `deckscope models --select …`, or clear it "
+             "with `--clear`.\n")
+        return 0
+
+    probes = av.load_probes()
+
+    if args.check:
+        _out("\nChecking each connection for real. This makes one tiny call per "
+             "provider.\n")
+        for cap in av.survey(probes):
+            if cap.state not in ("unverified", "failed") or cap.provider == "mock":
+                continue
+            _out(f"  probing {cap.key} …")
+            record = av.probe(cap.provider, cap.model)
+            av.save_probe(record)
+            _out(f"    {'ok' if record.get('ok') else 'FAILED: ' + record.get('error', '')}")
+        probes = av.load_probes()
+        _out("")
+
+    caps = av.survey(probes, include_unusable=args.all)
+
+    if args.json:
+        _out(av.as_json(caps))
+        return 0
+
+    saved = set(settings.load_panel().get("members") or [])
+    _out("")
+    _out("  AI connections")
+    _out("  " + "─" * 72)
+    current = None
+    for cap in sorted(caps, key=lambda c: (c.provider, c.model)):
+        if cap.provider != current:
+            current = cap.provider
+            _out(f"\n  {cap.provider}")
+        mark, _ = _STATE_MARK.get(cap.state, ("[ ? ]    ", ""))
+        chosen = " ←chosen" if cap.key in saved else ""
+        _out(f"    {mark}{cap.model or '(default)':<34}{chosen}")
+        if cap.state != "ready" and cap.reasons:
+            _out(f"             {cap.reasons[0]}")
+            if cap.fix:
+                _out(f"             → {cap.fix}")
+
+    _out("")
+    _out("  " + "─" * 72)
+    for state, (mark, meaning) in _STATE_MARK.items():
+        if any(c.state == state for c in caps):
+            _out(f"    {mark}{meaning}")
+    if not args.all:
+        hidden = len(av.survey(probes, include_unusable=True)) - len(caps)
+        if hidden:
+            _out(f"\n  {hidden} connection(s) not set up — see them with `--all`.")
+
+    if saved:
+        _out(f"\n  Your panel: {', '.join(sorted(saved))}")
+        _out(f"  {av.diversity(sorted(saved))['note']}")
+    else:
+        _out("\n  No panel saved. Choose one with:")
+        _out("    deckscope models --select anthropic:claude-sonnet-5 openai:gpt-4o")
+    _out("")
+    return 0
+
+
+def _as_run_args(args: Any, member: str) -> Any:
+    """Re-shape `panel` arguments into what `run` expects.
+
+    The two subcommands do not take the same flags — `run` has a dozen that
+    `panel` has no reason to (`--opportunity`, `--corpus`, `--dilution` and so
+    on). Delegating without filling those in raises AttributeError on the first
+    one it touches, so start from `run`'s own defaults and layer the shared
+    values on top. Reading the defaults from the parser rather than hardcoding
+    them means a new `run` flag cannot silently break this path.
+    """
+    import argparse
+
+    defaults = vars(build_parser().parse_args(["run", str(args.deck)]))
+    merged = argparse.Namespace(**defaults)
+    for key, value in vars(args).items():
+        if key in defaults and value is not None:
+            setattr(merged, key, value)
+
+    provider, _, model = member.partition(":")
+    merged.provider = provider or None
+    merged.model = model or None
+    merged.command = "run"
+    return merged
+
+
 def _panel(args: Any) -> int:
     from .ensemble import Panel, parse_panelist
     from .security.report import SecurityAbort
@@ -458,11 +616,21 @@ def _panel(args: Any) -> int:
     settings.load_env()
     saved_panel = (settings.load_settings().get("panel") or {})
     members = args.panel or saved_panel.get("members")
-    if not members or len(members) < 2:
-        _out("\nA panel needs at least two AI connections.\n")
+    if not members:
+        _out("\nNo panel selected, and none saved.\n")
         _out("  deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-4o\n")
         _out("Or save a default panel by running:  deckscope setup\n")
         return 2
+
+    # One model is a perfectly reasonable choice — it is simply not a panel, and
+    # refusing it would be pedantry dressed as validation. Run the analysis the
+    # user actually asked for and say what happened, rather than making them
+    # retype the command with a different verb.
+    if len(members) == 1:
+        _out(f"\nOne model selected ({members[0]}), so there is nobody to "
+             f"cross-review. Running a single analysis instead — same pipeline, "
+             f"no review rounds.\n")
+        return _run(_as_run_args(args, str(members[0])))
     rounds = args.rounds if args.rounds is not None else saved_panel.get("rounds", 3)
 
     lenses = args.lens
@@ -804,7 +972,8 @@ def _eval(args: Any) -> int:
         result = run_suite(
             suite_dir=args.suite, modes=args.mode, trials=args.trials,
             provider=args.provider, model=args.model, lens=args.lens,
-            out_dir=args.out, only=args.only, on_event=_out)
+            out_dir=args.out, only=args.only,
+            panel_size=getattr(args, "panel_size", 3), on_event=_out)
     except (EmptySuiteError, ValueError) as exc:
         _out("")
         _out(f"  Evaluation could not run: {exc}")
@@ -831,6 +1000,30 @@ def _eval(args: Any) -> int:
                          else f"{rate:.0%}".rjust(12))
         if any(c.strip() != "—" for c in cells):
             _out("  " + dimension.ljust(width) + "".join(cells))
+
+    # Say whether a multi-mode comparison was capable of showing a difference.
+    # Identical scores mean one of two very different things — the modes really
+    # perform alike, or the provider never distinguished them — and presenting
+    # the first when it is the second turns a non-measurement into a finding.
+    if len(result.modes) > 1:
+        disc = result.discrimination()
+        _out("")
+        if not disc.get("comparable"):
+            _out("  ⚠ This comparison is not informative.")
+            for line in _wrap_indented(disc.get("reason", ""), width=64,
+                                       indent="    "):
+                _out(line)
+        else:
+            _out(f"  Modes produced different analyses on "
+                 f"{disc['cases_compared'] - disc['cases_with_identical_output']}"
+                 f"/{disc['cases_compared']} case(s), so a score difference here "
+                 f"is a real difference.")
+            base = result.cost(result.modes[0]).get("input_tokens") or 0
+            if base:
+                ratios = " · ".join(
+                    f"{m} {(result.cost(m).get('input_tokens') or 0) / base:.1f}x"
+                    for m in result.modes)
+                _out(f"  Relative input cost — {ratios}")
 
     for mode in result.modes:
         stability = result.stability(mode)

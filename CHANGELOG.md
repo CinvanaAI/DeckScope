@@ -6,6 +6,94 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ## [Unreleased]
 
+### Added — choose your models, and see which ones actually work
+
+`deckscope providers` lists the catalogue: everything DeckScope knows how to
+drive. That is a different question from what will work when you press go, and
+the gap between them was most of the friction — a key never set, a CLI installed
+but not signed in, an Ollama binary with no daemon, a model the vendor withdrew.
+
+- **`deckscope models`** shows what is genuinely usable right now, grouped by
+  provider, worst-first so anything needing attention is at the top rather than
+  buried under working options. `--select` saves a panel, `--clear` forgets it,
+  `--check` does a real round-trip and remembers the answer, `--json` for scripts.
+- **A picker in `deckscope app`** with the same data: checkboxes, a status dot
+  per row, per-row "test" buttons, and a footer that updates as you select.
+- **Selections persist.** Chosen once, reused every run, changeable at any time.
+
+**Availability is a ladder, not a boolean**, because "available" means something
+different for every connection type. An API key is an env var. A CLI needs its
+binary *and* a signed-in session. Ollama needs a binary, a running daemon, and
+the specific model pulled — three independent conditions. Bedrock needs
+credentials *and* per-account, per-model access granted in the AWS console, which
+no local check can see. So the states are `ready` (a live probe confirmed it),
+`unverified` (configured, never actually tried), `needs_setup` (something named
+is missing), `failed` (probed, with the reason) and `retired`. Structural checks
+are free and run every time; live probes cost money, run on demand, and are
+cached against a **fingerprint of the credential**, so rotating a key invalidates
+the pass it earned rather than vouching for the new one. Nothing unverified is
+ever shown as ready.
+
+**Panel size is now the user's call.** The old cap was eight, which came from a
+hardcoded string of letters running out at "Panelist H" rather than from
+anything true. Labels now continue A–Z, AA, AB, … and there is no ceiling; the
+cost is made legible instead. A correction to something stated earlier in this
+changelog's development: **API calls scale linearly** at roughly six per
+panelist — a 46-model panel is about 280 calls, not thousands. It is *tokens*
+that grow quadratically, because each panelist's single review call carries every
+peer's full analysis inside it.
+
+**One model runs a normal analysis instead of erroring.** Selecting a single
+model is reasonable; it is simply not a panel, since one analyst cannot
+cross-review itself. `deckscope panel` now says so and runs the single-model
+pipeline rather than making the user retype the command with a different verb.
+
+**Provider diversity is surfaced, never enforced.** Several models from one
+vendor share training data and tend to agree for correlated reasons — the exact
+failure a panel exists to catch. The picker says so plainly and then does as it
+is told, because comparing models within a family is a legitimate thing to want.
+
+Found by the new tooling on its first run: the **Claude CLI preset was passing
+`--mcp-config {}`**, which the CLI rejects because it validates for an
+`mcpServers` record. Every call through that preset failed before it started.
+
+### Added — the panel can finally be measured, and the first result is unflattering
+
+Not prompted by an audit. The panel is the most expensive thing DeckScope does —
+three panelists plus review rounds — and `--mode` accepted only `pipeline` and
+`baseline`, so the costliest feature was the only one nobody could evaluate.
+
+- **`deckscope eval --mode panel`** runs the panel through the same suite as the
+  other architectures and scores its vote-winning report.
+- **Mode comparisons now say whether they were capable of showing a difference.**
+  Identical scores across modes mean one of two very different things: the modes
+  really perform alike, or the provider never produced different analyses for them
+  and the delta is zero by construction. The runner fingerprints each mode's
+  actual output and reports which it was. Presenting the second as the first turns
+  a non-measurement into a finding — the same family of error as an evaluator
+  reporting "every check passed" over zero cases.
+- **Panel cost now counts every panelist.** It was reporting one member's tokens,
+  which made a three-member panel look exactly as cheap as a single pipeline run.
+  Any cost/benefit comparison built on that would have been worse than none.
+
+The result, on five cases under the mock: baseline `0.421`, pipeline `0.421`,
+panel `0.579` at 3.0× the pipeline's input tokens. **The three-agent pipeline ties
+the single-prompt baseline exactly**, at five times the cost. That is the mock, not
+a model, so it is not a verdict — but the suite separates the panel by 15 points on
+the same cases, so it is demonstrably not blind to architecture. A tie here means
+the modes agreed. README and `docs/PANEL.md` now carry the table rather than
+"unproven".
+
+Two defects surfaced while building this, both of which had made the panel look
+worse than it is:
+
+- The runner initially scored the chair's **consensus**, which follows a different
+  schema and has no `claim_audit` or `verdict.call`. The panel scored `0.000` on
+  both — a category error, not a result.
+- The mock's revision path called `_compare()` with no prompt, so a panelist
+  revising its analysis of one deck returned **claims about a different company**.
+  Invisible in the demo, where the deck happens to be that company.
+
 ### Changed — the report now leads with findings, not a verdict
 
 Prompted by an outside product review, and confirmed by reading the actual output

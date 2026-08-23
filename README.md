@@ -720,12 +720,33 @@ Worth reading before you trust anything it produces.
   snippets, an injection further down the page is not seen.
 - **It cannot see injections inside images.** Text rendered into a picture is never
   extracted, so it is never scanned.
-- **The three-agent design is measurable now, and still unproven.** `deckscope eval`
-  scores it against decks whose correct answers are known, because the decks and their
-  evidence were authored together. But five constructed cases is a smoke test, not a
-  benchmark: a high score means "does not fail in the ways we know how to check", which
-  is a floor. The planted answers are also one author's judgement, so a second
-  contributor would improve the suite more than a hundred more cases from the same one.
+- **The three-agent design is measurable now, and the first measurement does not
+  favour it.** `deckscope eval --mode pipeline baseline panel` scores all three
+  architectures against decks whose correct answers are known, because the decks and
+  their evidence were authored together. On the five shipped cases, driven by the
+  built-in mock:
+
+  | | claim accuracy | relative input cost |
+  |---|:--:|:--:|
+  | baseline (one prompt) | 0.421 | 0.2× |
+  | pipeline (three agents) | 0.421 | 1.0× |
+  | panel (three panelists) | 0.579 | 3.0× |
+
+  **The pipeline ties the single-prompt baseline exactly.** The three-agent
+  architecture — the thing this README leads with — buys nothing measurable here
+  while costing five times the tokens.
+
+  Two things stop that from being a verdict. It is the *mock* provider, a fixture
+  shipped for offline testing, so these are properties of that fixture and not of any
+  real model. And five constructed cases is a smoke test rather than a benchmark. But
+  the tie is not an artifact of a blind instrument: the same suite separates the panel
+  by 15 points, and the run reports whether the modes produced genuinely different
+  analyses, so a delta of zero means the modes agreed rather than that nothing was
+  compared. Run it against your own provider before believing any of it — and if the
+  pipeline still ties, the honest conclusion is that the architecture is unearned.
+
+  The planted answers are also one author's judgement, so a second contributor would
+  improve the suite more than a hundred more cases from the same one.
 - **The panel is not fully independent.** Panelists use separate models and separate
   research calls, but the research agenda is derived from one deck-extraction pass and
   they often retrieve overlapping sources. It is role-separated analysis with model

@@ -65,6 +65,10 @@ class CaseScore:
     weighted_score: Optional[float] = None
     elapsed_seconds: Optional[float] = None
     tokens: Dict[str, int] = field(default_factory=dict)
+    #: Hash of the analysis this mode produced. Two modes sharing a fingerprint
+    #: were never actually distinguished, which is different from them scoring
+    #: the same — see SuiteResult.discrimination().
+    output_fingerprint: Optional[str] = None
 
     def add(self, check: Check) -> None:
         self.checks.append(check)
@@ -91,6 +95,7 @@ class CaseScore:
                 "error": self.error, "verdict": self.verdict,
                 "weighted_score": self.weighted_score,
                 "elapsed_seconds": self.elapsed_seconds, "tokens": self.tokens,
+                "output_fingerprint": self.output_fingerprint,
                 "rates": {d: self.rate(d) for d in self.by_dimension()},
                 "checks": [c.to_dict() for c in self.checks]}
 

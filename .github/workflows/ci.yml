@@ -91,6 +91,47 @@ jobs:
           print("structural dimensions all at 100%")
           PY
 
+      # The panel is the most expensive mode and went unmeasured for its whole
+      # existence, because `--mode` did not accept it. This keeps it measured:
+      # it must run, it must be scored on the same dimensions as everything
+      # else, and its reported cost must reflect every panelist rather than one.
+      - name: The panel must stay evaluable
+        run: |
+          python -m deckscope eval --mode pipeline baseline panel \
+            --save modes.json --out ./_modes || [ $? -eq 1 ]
+          python - <<'PY'
+          import json, sys
+          d = json.load(open("modes.json"))
+          problems = []
+          for mode in ("pipeline", "baseline", "panel"):
+              if not d["by_mode"].get(mode, {}).get("cost", {}).get("runs"):
+                  problems.append(f"{mode} produced no runs")
+              rate = d["by_mode"].get(mode, {}).get("dimensions", {}).get(
+                  "claim_accuracy")
+              print(f"  {mode:<9} claim_accuracy={rate}")
+              if rate is None:
+                  problems.append(f"{mode} was not scored on claim_accuracy")
+
+          # A 3-panelist panel that reports one panelist's tokens makes the
+          # expensive mode look free, which is worse than not reporting cost.
+          pipe = d["by_mode"]["pipeline"]["cost"]["input_tokens"]
+          panel = d["by_mode"]["panel"]["cost"]["input_tokens"]
+          print(f"  panel/pipeline input-token ratio: {panel / max(pipe, 1):.1f}x")
+          if panel <= pipe * 2:
+              problems.append("panel cost does not account for every panelist")
+
+          # And the comparison must know whether it could show a difference.
+          disc = d.get("discrimination") or {}
+          print(f"  comparison informative: {disc.get('comparable')}")
+          if "comparable" not in disc:
+              problems.append("no discrimination report on a multi-mode run")
+
+          if problems:
+              print("FAILED: " + "; ".join(problems))
+              sys.exit(1)
+          print("the panel is measurable, scored, and honestly costed")
+          PY
+
       - name: The suite must be reproducible
         run: |
           python -m deckscope eval --trials 2 --save stability.json --out ./_eval2 || true
