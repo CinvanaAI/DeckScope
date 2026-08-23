@@ -1,0 +1,89 @@
+# DeckScope configuration — every setting, with its default.
+#
+# Copy this, edit it, and use it with:   deckscope run deck.pdf --config this-file.yaml
+# Or let `deckscope setup` write one for you at ~/.deckscope/config.yaml
+#
+# API keys are NEVER stored here. They live in a sibling .env with owner-only
+# permissions, so this file is safe to share or commit.
+
+# ------------------------------------------------------------------- the AI
+provider:
+  name: anthropic                # anthropic | openai | gemini | openrouter | groq |
+                                 # bedrock | openai_compatible | cli | mcp | manual | mock
+  model: claude-sonnet-5         # omit for the provider's default
+  api_key_env: ANTHROPIC_API_KEY
+  # base_url: http://localhost:11434/v1    # self-hosted, proxies, Ollama, LM Studio
+  temperature: 0.2
+  max_tokens: 8000
+  timeout: 180
+  extra: {}
+
+# Optional: a cheap model for extraction (the longest prompt), the good one for
+# reasoning. Usually cuts cost meaningfully with little quality loss.
+# extract_provider:
+#   name: anthropic
+#   model: claude-haiku-4-5-20251001
+
+# --------------------------------------------------------------- web research
+# This is what makes the market half of the report worth reading. Without it the
+# analysis rests on training data, and DeckScope says so throughout.
+research:
+  name: auto                     # auto | tavily | serper | brave | exa |
+                                 # provider_native | mcp | none
+  max_results: 8                 # results per query
+  max_queries: 8                 # queries per analysis
+  api_key_env: TAVILY_API_KEY
+  recency_days: 540              # bias toward recent sources; null for no limit
+  extra: {}
+
+# ---------------------------------------------------------------- the lens
+# investor — is this worth funding?
+# founder  — where will this deck lose the room, and how do I fix it?
+# neutral  — where do claims and evidence diverge? (no recommendation)
+lenses:
+  - investor
+
+# ------------------------------------------------------------------ output
+output:
+  formats: [html, pdf]           # md html pdf docx pptx xlsx json txt
+  out_dir: ~/Documents/DeckScope Reports
+  basename: null                 # defaults to a slug of the company name
+  include_raw_json: true
+  theme: slate                   # slate | midnight | paper
+
+# ---------------------------------------------------------------- security
+# Decks and web pages are written by other people, and both can carry text meant
+# to steer the AI rather than inform you. DeckScope screens both.
+security:
+  mode: balanced                 # strict     — refuse to analyze hostile content
+                                 # balanced   — neutralize, continue, report (default)
+                                 # permissive — report only, change nothing
+                                 # off        — no screening (not recommended)
+  scan_deck_forensics: true      # re-open the file to find hidden-by-rendering text
+  min_font_pt: 4.0               # below this is not meant for a human reader
+  contrast_threshold: 0.12       # luminance gap counted as invisible
+  scan_speaker_notes: true       # a classic hiding place
+  scan_metadata: true            # invisible in every normal viewer
+  scan_web_sources: true
+  max_source_chars: 6000
+  block_untrusted_domains: []
+  strip_invisible_chars: true
+  normalize_homoglyphs: true
+  redact_on: high
+  abort_on: critical
+
+# ------------------------------------------------------------------- panel
+# Several AI connections analyze independently, review each other, and revise.
+# Diversity of provider matters more than number — three Claude variants agree
+# with each other for correlated reasons.
+# panel:
+#   members:
+#     - anthropic:claude-sonnet-5
+#     - openai:gpt-4o
+#     - gemini
+#   rounds: 1
+
+# -------------------------------------------------------------------- misc
+cache_dir: .deckscope_cache      # null disables. Re-running with a new lens reuses
+                                 # the deck extraction and market research.
+verbose: true

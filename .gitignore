@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.deckscope_cache/
+deckscope_output/
+deckscope_demo_output/
+deckscope_exchange/
+.env
+*.log
+.DS_Store
+.pytest_cache/
+.ruff_cache/
+
+# Build leftovers
+pptx_renderer_stub.txt
+
+# Local-only helper files, not part of the project
+PUBLISHING.md
+publish-to-github.bat

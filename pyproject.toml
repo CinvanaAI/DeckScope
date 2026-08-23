@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deckscope"
+version = "1.0.0"
+description = "An agentic framework that analyzes a pitch deck, researches its market, and compares the two."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "CinvanaAI" }]
+keywords = ["pitch deck", "venture capital", "market research", "agents", "llm",
+            "due diligence", "prompt injection", "mcp"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Financial and Insurance Industry",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Office/Business :: Financial :: Investment",
+  "Topic :: Text Processing :: Markup",
+]
+
+# Deliberately tiny. Every provider and every output format is optional; the core
+# runs on the standard library plus PyYAML.
+dependencies = ["PyYAML>=5.4"]
+
+[project.optional-dependencies]
+docs   = ["pdfplumber>=0.10", "python-pptx>=0.6.21", "python-docx>=1.0"]
+office = ["openpyxl>=3.1", "reportlab>=3.6"]
+sdk    = ["anthropic>=0.40"]
+aws    = ["boto3>=1.34"]
+# Everything a normal desktop install wants:
+all    = ["pdfplumber>=0.10", "python-pptx>=0.6.21", "python-docx>=1.0",
+          "openpyxl>=3.1", "reportlab>=3.6"]
+dev    = ["pytest>=7", "ruff>=0.4"]
+
+[project.scripts]
+deckscope = "deckscope.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/CinvanaAI/DeckScope"
+Documentation = "https://github.com/CinvanaAI/DeckScope/tree/main/docs"
+Issues = "https://github.com/CinvanaAI/DeckScope/issues"
+
+[tool.setuptools.packages.find]
+include = ["deckscope*"]
+
+[tool.setuptools.package-data]
+deckscope = ["py.typed"]
+
+[tool.ruff]
+line-length = 92
+target-version = "py39"

@@ -1,0 +1,168 @@
+"""The panel: independent runs, cross-review, revision, consensus, metrics."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from deckscope.config import Lens, OutputConfig, ProviderConfig, ResearchConfig, RunConfig
+from deckscope.ensemble import Panel, measure_agreement, parse_panelist
+from deckscope.research.base import Researcher, SearchResult
+from deckscope.research.registry import register_researcher
+
+DECK = Path(__file__).resolve().parent.parent / "examples" / "sample_deck.md"
+
+
+class PanelStubSearch(Researcher):
+    name = "panel_stub"
+
+    def search(self, query, max_results=8):
+        return [SearchResult("Analyst note", "https://research.example.org/1",
+                             "Serviceable slice $3-5B; category $18-24B.", "2026-03",
+                             query)]
+
+
+register_researcher(PanelStubSearch)
+
+
+def _panel(tmp_path, models=("mock-a", "mock-b", "mock-c"), rounds=1, lenses=("investor",)):
+    cfg = RunConfig(
+        deck_path=str(DECK), lenses=[Lens.parse(l) for l in lenses],
+        provider=ProviderConfig(name="mock"),
+        research=ResearchConfig(name="panel_stub", max_queries=2),
+        output=OutputConfig(formats=["md", "html"], out_dir=str(tmp_path)),
+        cache_dir=None, verbose=False)
+    return Panel(cfg, [ProviderConfig(name="mock", model=m) for m in models],
+                 rounds=rounds)
+
+
+def test_panel_needs_two_members(tmp_path):
+    cfg = RunConfig(deck_path=str(DECK), provider=ProviderConfig(name="mock"),
+                    output=OutputConfig(out_dir=str(tmp_path)), verbose=False)
+    try:
+        Panel(cfg, [ProviderConfig(name="mock")])
+    except ValueError as exc:
+        assert "at least two" in str(exc)
+    else:
+        raise AssertionError("a one-member panel should be rejected")
+
+
+def test_panel_runs_and_disagrees(tmp_path):
+    result = _panel(tmp_path).run()
+    assert len(result.working) == 3
+    m = result.metrics["investor"]
+    assert m["panelists"] == 3
+    assert m["verdict"]["agreement"] in ("unanimous", "majority", "split")
+    assert m["score"]["spread"] > 0, "the stub panel should not be unanimous"
+    assert m["contested_claims"], "at least one claim should be contested"
+
+
+def test_cross_review_produces_revisions(tmp_path):
+    result = _panel(tmp_path).run()
+    for p in result.working:
+        assert p.review, "each panelist should produce a review"
+        assert p.review.get("peer_reviews")
+        assert p.revised, "each panelist should revise after conceding"
+        log = (p.revised["investor"].get("_meta") or {}).get("revision_log")
+        assert log, "a revision should be logged"
+    assert result.metrics["investor"]["total_position_changes"] == 3
+
+
+def test_revision_actually_moves_the_score(tmp_path):
+    result = _panel(tmp_path).run()
+    moved = [m for m in result.metrics["investor"]["movement"]
+             if m["score_before"] != m["score_after"]]
+    assert moved, "conceding a position should change the score"
+
+
+def test_consensus_report_produced(tmp_path):
+    result = _panel(tmp_path).run()
+    cons = result.consensus["investor"]
+    assert cons.get("consensus_verdict", {}).get("call")
+    assert cons.get("where_all_agree")
+    assert cons.get("contested")
+    assert cons.get("reliability", {}).get("shared_blind_spots") is not None
+
+
+def test_rounds_zero_skips_review(tmp_path):
+    result = _panel(tmp_path, rounds=0).run()
+    assert all(not p.review for p in result.working)
+    assert result.metrics["investor"]["total_position_changes"] == 0
+
+
+def test_failing_panelist_degrades_gracefully(tmp_path):
+    cfg = RunConfig(
+        deck_path=str(DECK), provider=ProviderConfig(name="mock"),
+        research=ResearchConfig(name="panel_stub", max_queries=1),
+        output=OutputConfig(formats=["md"], out_dir=str(tmp_path)),
+        cache_dir=None, verbose=False)
+    panel = Panel(cfg, [ProviderConfig(name="mock", model="mock-a"),
+                        ProviderConfig(name="does_not_exist")], rounds=1)
+    result = panel.run()
+    assert len(result.working) == 1
+    assert result.stats["panelists_failed"], "the broken panelist should be reported"
+    # A one-panelist panel must say so rather than pretending to be corroborated.
+    assert "single panelist" in \
+        result.consensus["investor"]["consensus_verdict"]["agreement"]
+
+
+def test_panel_renders_all_reports(tmp_path):
+    panel = _panel(tmp_path)
+    result = panel.run()
+    files = panel.render(result)
+    names = [Path(f).name for f in files]
+    assert any("_panel_investor.md" in n for n in names)
+    assert any("_panel_investor.html" in n for n in names)
+    assert any("_panel_full.json" in n for n in names)
+    # every panelist's own final report too
+    assert sum(1 for n in names if "mock_mock_" in n) >= 3
+    for f in files:
+        assert Path(f).stat().st_size > 400, f
+
+    md = Path(next(f for f in files if f.endswith("_panel_investor.md"))).read_text("utf-8")
+    for section in ("Where the panel landed", "Where the panel split",
+                    "What changed when the panelists read each other",
+                    "How much this agreement is worth", "References",
+                    "Input integrity screen"):
+        assert section in md, f"missing section: {section}"
+
+
+def test_multiple_lenses(tmp_path):
+    panel = _panel(tmp_path, lenses=("investor", "founder"))
+    result = panel.run()
+    assert set(result.consensus) == {"investor", "founder"}
+    assert set(result.metrics) == {"investor", "founder"}
+
+
+def test_parse_panelist_spec():
+    assert parse_panelist("anthropic").name == "anthropic"
+    pc = parse_panelist("anthropic:claude-sonnet-5")
+    assert (pc.name, pc.model) == ("anthropic", "claude-sonnet-5")
+
+
+def test_measure_agreement_math():
+    class FakeResult:
+        comparisons = {"investor": {"verdict": {"call": "PASS"},
+                                    "scorecard": [{"dimension": "Market", "score": 4,
+                                                   "weight": 5}]}}
+
+    class FakePanelist:
+        def __init__(self, label, call, score):
+            self.label, self.name = label, label
+            self.review = {}
+            self._c = {"verdict": {"call": call},
+                       "scorecard": [{"dimension": "Market", "score": score, "weight": 5}],
+                       "claim_audit": [{"id": "C1", "claim": "x",
+                                        "assessment": "supported" if score > 5
+                                        else "contradicted"}]}
+            self.result = FakeResult()
+
+        def final(self, lens):
+            return self._c
+
+    panel = [FakePanelist("A", "PASS", 3), FakePanelist("B", "PASS", 9)]
+    m = measure_agreement(panel, "investor")
+    assert m["verdict"]["agreement"] == "unanimous"
+    assert m["score"]["spread"] == 60.0
+    assert m["score"]["convergence"] == "wide"
+    assert m["dimensions"]["Market"]["contested"] is True
+    assert m["contested_claims"] == ["C1"]

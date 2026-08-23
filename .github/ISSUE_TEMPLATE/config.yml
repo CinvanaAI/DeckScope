@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/CinvanaAI/DeckScope/security/advisories/new
+    about: Injection bypasses and anything exploitable — please report privately.
+  - name: Questions and troubleshooting
+    url: https://github.com/CinvanaAI/DeckScope/blob/main/docs/TROUBLESHOOTING.md
+    about: Most problems are covered here, and `deckscope doctor` diagnoses the rest.

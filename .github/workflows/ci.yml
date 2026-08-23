@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: Test · Python ${{ matrix.python }} · ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.9", "3.11", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[all,dev]"
+
+      # No API key is needed: the mock provider drives the whole pipeline,
+      # including a panel that disagrees with itself.
+      - name: Test
+        run: pytest tests/ -q
+
+      - name: Test without pytest
+        run: python tests/run_tests.py
+
+      - name: Smoke-test the CLI
+        run: |
+          python -m deckscope --version
+          python -m deckscope providers
+          python -m deckscope formats
+          python -m deckscope demo --format md json --out ./_demo
+          python -m deckscope demo --panel --format md --out ./_panel
+          python -m deckscope demo --injected --format md --out ./_injected
+
+      - name: Verify the injection demo actually caught the injection
+        shell: bash
+        run: |
+          grep -q "Input integrity screen" ./_injected/*.md
+          grep -q "CRITICAL" ./_injected/*.md
+
+  minimal:
+    name: Core install only (no optional extras)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      # The core must work with nothing but PyYAML — a missing optional package
+      # should remove one capability, never break the run.
+      - run: pip install -e .
+      - run: python -m deckscope demo --format md json --out ./_demo
+      - run: python -m deckscope providers
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install ruff
+      - run: ruff check .
+
+  mcp:
+    name: MCP server handshake
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[all]"
+      - name: initialize / tools/list / scan
+        run: |
+          printf '%s\n' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' \
+            '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
+            '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"scan_deck_security","arguments":{"deck_path":"examples/sample_deck_with_injection.md"}}}' \
+          | python -m deckscope.mcp_server | tee out.jsonl
+          grep -q '"analyze_deck_panel"' out.jsonl
+          grep -q 'CRITICAL' out.jsonl

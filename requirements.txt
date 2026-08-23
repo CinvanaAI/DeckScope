@@ -1,0 +1,19 @@
+# Core — required
+PyYAML>=5.4
+
+# Reading decks (PDF / PowerPoint / Word). Strongly recommended: without these,
+# DeckScope can only read .md and .txt, and the hidden-text forensics are skipped.
+pdfplumber>=0.10
+python-pptx>=0.6.21
+python-docx>=1.0
+
+# Writing reports in Excel and PDF
+openpyxl>=3.1
+reportlab>=3.6
+
+# Optional: the official Anthropic SDK. DeckScope talks to the API over plain HTTP
+# without it, so this only adds nicer retries and streaming.
+# anthropic>=0.40
+
+# Optional: AWS Bedrock
+# boto3>=1.34

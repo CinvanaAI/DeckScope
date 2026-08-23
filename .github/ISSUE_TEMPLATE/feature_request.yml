@@ -1,0 +1,55 @@
+name: Feature request
+description: Suggest something new
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve
+      description: >
+        Describe the situation you're in, not the solution you have in mind. The best
+        feature requests start with a real analysis that went badly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you'd like it to do
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part
+      options:
+        - A new AI provider
+        - A new research backend
+        - A new output format
+        - A new lens
+        - The security layer
+        - The panel
+        - Prompts and analysis quality
+        - Setup, installer, or the app window
+        - Documentation
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you've tried instead
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      description: >
+        A few things are deliberately out of scope — see CONTRIBUTING.md.
+      options:
+        - label: >
+            This isn't hosting/SaaS, storing keys in the config file, averaging panel
+            results into one score, or presenting an unresearched analysis as verified.
+          required: true

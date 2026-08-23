@@ -1,0 +1,40 @@
+name: Injection detection gap (non-exploitable)
+description: A deck or page pattern the security screen mishandles, where nothing is exploitable
+labels: [security, detection]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **If this is an actual bypass that gets instructions to the model, stop and open a
+        private security advisory instead.**
+
+        Use this template only for detection-quality issues: a false positive on an
+        ordinary deck, or a pattern that *should* be flagged but isn't and isn't itself
+        exploitable.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Which kind
+      options:
+        - False positive — a clean deck was flagged
+        - False negative — something suspicious wasn't flagged
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: The text or file pattern
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: What the screen reported
+      description: The Input integrity screen section, or the `scan_deck_security` output.
+      render: shell
+    validations:
+      required: true

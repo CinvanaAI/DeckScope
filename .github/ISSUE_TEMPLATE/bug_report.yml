@@ -1,0 +1,75 @@
+name: Bug report
+description: Something doesn't work
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing, please run `deckscope doctor` — it diagnoses most problems and
+        names the fix.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you expected, and what you got instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: The exact command you ran
+      render: shell
+      placeholder: deckscope run deck.pdf --lens investor --format html
+    validations:
+      required: true
+
+  - type: textarea
+    id: error
+    attributes:
+      label: The full error
+      description: The whole traceback, not just the last line.
+      render: shell
+
+  - type: textarea
+    id: doctor
+    attributes:
+      label: "`deckscope doctor` output"
+      render: shell
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: DeckScope version
+      placeholder: "1.0.0 — from `deckscope --version`"
+    validations:
+      required: true
+
+  - type: input
+    id: env
+    attributes:
+      label: OS and Python version
+      placeholder: "Windows 11, Python 3.12.1"
+    validations:
+      required: true
+
+  - type: textarea
+    id: deck
+    attributes:
+      label: A deck that reproduces it, if you can share one
+      description: >
+        Redact whatever you need to. A small file that reproduces the problem is the
+        single most useful thing you can attach.
+
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Security
+      options:
+        - label: >
+            This is not a security vulnerability. (If it is — especially an injection
+            bypass — please close this and open a private security advisory instead.)
+          required: true
