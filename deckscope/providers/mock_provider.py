@@ -6,6 +6,7 @@ whole pipeline end to end before they have configured any AI at all.
 from __future__ import annotations
 
 import json
+import re
 from typing import Optional
 
 from ..config import ProviderConfig
@@ -46,17 +47,31 @@ class MockProvider(LLMProvider):
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "Deck Analyst" in system:
-            body = json.dumps(_DECK)
+            body = json.dumps(_deck_extraction(joined))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
+        if "mapping a market from scratch" in system:
+            body = json.dumps(_COLD_MARKET)
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
+        if "You write search queries to map a market" in system:
+            body = json.dumps([
+                "workflow automation who actually sells to mid-market ops teams",
+                "workflow automation projects that failed and why",
+                "where do mid-market ops budgets actually go",
+            ])
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "Market Analyst" in system:
-            return Completion(text=json.dumps(_MARKET))
+            body = json.dumps(_market_analysis(joined))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "evaluating a pitch deck against its market" in system:
             # A deliberately thinner answer than the pipeline's: fewer claims
             # examined and fewer blind spots, so the comparison has something to
             # show. Real models may of course do better or worse.
             import copy
-            thin = copy.deepcopy(self._compare())
+            thin = copy.deepcopy(self._compare(joined))
             thin["claim_audit"] = thin["claim_audit"][:2]
             thin["alignment"]["blind_spots"] = thin["alignment"]["blind_spots"][:1]
             thin["risks"] = thin["risks"][:1]
@@ -64,7 +79,7 @@ class MockProvider(LLMProvider):
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "Comparison Synthesist" in system:
-            body = json.dumps(self._compare())
+            body = json.dumps(self._compare(joined))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "one member of a panel" in system:
@@ -83,6 +98,14 @@ class MockProvider(LLMProvider):
             body = json.dumps(revised)
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
+        if "extract listing facts" in system:
+            body = json.dumps(_LISTING_FOR(joined))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
+        if "published base rates" in system:
+            body = json.dumps(_BASE_RATES)
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "ranking the other panelists" in system:
             body = json.dumps(self._ballot(joined))
             return Completion(text=body, model=self.model,
@@ -95,25 +118,33 @@ class MockProvider(LLMProvider):
         return Completion(text=body, model=self.model,
                           usage=self._usage(system, messages, body))
 
-    def _compare(self) -> dict:
+    def _compare(self, prompt: str = "") -> dict:
         """A copy of the base comparison, nudged so panelists actually differ."""
         import copy
 
         out = copy.deepcopy(_COMPARE)
+        audit = _claim_audit_for(prompt)
+        if audit:
+            out["claim_audit"] = audit
         if self.seed == 0:
             return out
         delta = -2 if self.seed == 1 else 1
         for row in out["scorecard"]:
             row["score"] = max(1, min(10, int(row["score"]) + delta))
+        # Guard the indexes: a sparse deck can yield fewer claims than the canned
+        # fixture had, and a demo fixture must never crash a real run.
+        audit = out.get("claim_audit") or []
         if self.seed == 1:
             out["verdict"]["call"] = "LEAN NO"
             out["verdict"]["confidence"] = "low"
             out["headline"] = ("Traction is real, but the incumbent bundling risk is "
                                "unaddressed and the market framing is inflated.")
-            out["claim_audit"][1]["assessment"] = "contradicted"
+            if len(audit) > 1:
+                audit[1]["assessment"] = "contradicted"
         else:
             out["verdict"]["confidence"] = "high"
-            out["claim_audit"][0]["assessment"] = "contradicted"
+            if audit:
+                audit[0]["assessment"] = "contradicted"
         return out
 
     def _ballot(self, prompt: str) -> dict:
@@ -253,7 +284,105 @@ _MARKET = {
                          "funding_or_scale": "Series B", "threat_level": "medium", "url": None}],
         "adjacent_threats": ["Foundation-model vendors shipping native agent runtimes"],
         "concentration": "consolidating",
-        "differentiation_axes": ["Reliability/observability", "Connector depth", "Compliance"]},
+        "differentiation_axes": ["Reliability/observability", "Connector depth", "Compliance"],
+        "saturation": {
+            "funded_competitors_known": 14,
+            "new_entrants_trend": "slowing",
+            "pricing_direction": "compressing",
+            "consolidation_activity": "Two acquisitions of seed-stage tools by iPaaS "
+                                       "incumbents in the last 18 months.",
+            "lifecycle_stage": "maturing",
+            "room_for_a_new_entrant": "a defensible niche remains",
+            "why": "Entrant flow has slowed while acquisitions have picked up, which "
+                   "usually marks the turn from land-grab to consolidation. The "
+                   "compliance-gated mid-market slice is still thinly served."}},
+    "absorption_risk": {
+        "verdict": "contested",
+        "horizon": "3-5 years",
+        "confidence": "medium",
+        "likely_absorbers": [
+            {"name": "Microsoft", "why_them": "Already owns the identity, the desktop "
+                                               "and the E5 licence this buyer pays for.",
+             "mechanism": "bundle into an existing suite",
+             "signals_already_visible": ["Power Automate agent features shipped in the "
+                                          "last two releases",
+                                         "Bundled at no incremental cost in E5"],
+             "source_ids": ["S2"]},
+            {"name": "Foundation-model vendors",
+             "why_them": "A workflow runtime is a thin layer over tool-calling, which "
+                         "they already ship natively.",
+             "mechanism": "model-vendor native feature",
+             "signals_already_visible": ["Native agent runtimes announced by two major "
+                                          "model vendors"],
+             "source_ids": []}],
+        "precedents": [
+            {"category": "Antivirus", "absorbed_by": "Operating system vendors",
+             "how_long_it_took": "roughly a decade",
+             "why_it_is_comparable": "A genuinely useful category that buyers stopped "
+                                      "paying for separately once it shipped by default.",
+             "source_ids": []},
+            {"category": "File sync and share", "absorbed_by": "Microsoft and Google",
+             "how_long_it_took": "about five years",
+             "why_it_is_comparable": "Standalone leaders survived by moving upmarket "
+                                      "into workflow, not by defending the core feature.",
+             "source_ids": []}],
+        "what_would_prevent_it": [
+            "Compliance and audit depth that a bundled feature will not reach",
+            "Connector coverage outside the Microsoft estate",
+            "A buyer who deliberately avoids consolidating on one vendor"],
+        "notes": "The approval-gate wedge is the part least likely to be bundled "
+                  "cheaply, and is therefore where a durable position would have to be."},
+    "open_source_landscape": {
+        "applicable": True,
+        "projects": [
+            {"name": "n8n", "url": "https://n8n.io",
+             "maturity": "production-ready", "adoption_signal": "widely self-hosted; "
+                                                                 "large connector library",
+             "governance": "single-vendor", "commercially_backed_by": "n8n GmbH, which "
+                                                                       "sells cloud hosting",
+             "source_ids": ["S1"]},
+            {"name": "Apache Airflow", "url": None, "maturity": "category-leading",
+             "adoption_signal": "the default for scheduled data workflows",
+             "governance": "foundation", "commercially_backed_by": "Astronomer",
+             "source_ids": []}],
+        "closest_project": "n8n",
+        "capability_gap": "approaching parity",
+        "gap_trend": "narrowing",
+        "evidence_for_the_gap": "n8n ships an agent runtime, a comparable connector "
+                                 "count and human-approval steps. What it does not "
+                                 "ship is audit-grade approval trails or SOC2 "
+                                 "attestation for the hosted product.",
+        "what_commercial_still_provides": [
+            {"capability": "Audit-grade approval trails and attestation",
+             "type": "compliance", "durable": True,
+             "why": "Slow and expensive to reproduce, and the thing this buyer is "
+                    "actually procuring."},
+            {"capability": "Managed hosting and upgrades", "type": "operational",
+             "durable": False,
+             "why": "A platform vendor can fund this indefinitely."},
+            {"capability": "Connector breadth", "type": "integrations", "durable": False,
+             "why": "n8n's community library is closing this quickly."}],
+        "pricing_pressure": "significant",
+        "company_relationship_to_oss": "competes with it",
+        "strip_mining_risk": None,
+        "notes": "The compliance layer is the only thing here a platform vendor would "
+                  "find genuinely slow to reproduce, which makes it the whole "
+                  "defensible position rather than one feature among several."},
+    "adjacent_markets": [
+        {"market": "Enterprise iPaaS", "relationship": "converging with this one",
+         "size_note": "$8-12B", "why_it_matters": "The same buyer, and incumbents are "
+                                                   "extending into agentic execution.",
+         "source_ids": ["S1"]},
+        {"market": "Business process outsourcing",
+         "relationship": "substitute", "size_note": None,
+         "why_it_matters": "Mid-market ops teams often buy people instead of software "
+                            "for exactly these workflows.",
+         "source_ids": []},
+        {"market": "Compliance and audit tooling",
+         "relationship": "expansion opportunity", "size_note": None,
+         "why_it_matters": "The approval-gate feature is a natural bridge, and is a "
+                            "harder thing for a platform to bundle.",
+         "source_ids": []}],
     "economics": {"typical_pricing": "$1-4k/mo platform plus usage",
                   "typical_gross_margin": "65-80% once inference is loaded in",
                   "typical_cac_payback": "14-20 months mid-market", "capital_intensity": "medium"},
@@ -396,3 +525,426 @@ _CONSENSUS = {
                "disagreement. Every panelist independently arrived at the same question, "
                "and none could answer it. That is where diligence should start."
 }
+
+
+#: Deterministic stand-in for a market-data lookup, so the opportunity-cost path
+#: is exercised offline. Two listed, one private, one unknown — the four states
+#: the renderer has to handle.
+_LISTINGS = {
+    "microsoft power automate": {
+        "listed": True, "ticker": "MSFT", "exchange": "NASDAQ",
+        "market_cap_usd": 3.1e12, "revenue_usd": 2.45e11, "revenue_growth_pct": 15.0,
+        "total_return_5y_multiple": 2.4, "total_return_1y_multiple": 1.2,
+        "as_of": "2026-08",
+        "note": "Power Automate is a product line, not separately listed — this is "
+                "Microsoft, its parent."},
+    "uipath": {
+        "listed": True, "ticker": "PATH", "exchange": "NYSE",
+        "market_cap_usd": 6.4e9, "revenue_usd": 1.4e9, "revenue_growth_pct": 9.0,
+        "total_return_5y_multiple": 0.6, "total_return_1y_multiple": 0.9,
+        "as_of": "2026-08", "note": ""},
+    "zapier": {"listed": False, "ticker": None, "note": "privately held"},
+}
+
+
+def _LISTING_FOR(prompt: str) -> dict:
+    low = prompt.lower()
+    for key, payload in _LISTINGS.items():
+        if key in low:
+            return payload
+    return {"listed": None, "ticker": None,
+            "note": "could not determine whether this company is publicly traded"}
+
+
+_BASE_RATES = {
+    "base_rates": [
+        {"statement": "Seed-stage software companies that return at least invested "
+                      "capital", "value": "~35%",
+         "population": "US seed rounds, 2015-2020 vintages",
+         "source": "Illustrative analyst composite", "year": "2026",
+         "source_ids": ["S1"],
+         "caveat": "Survivorship: companies that never raised again are "
+                   "under-represented in most datasets."},
+        {"statement": "Seed-stage companies reaching a $100M+ outcome",
+         "value": "~4%", "population": "US seed, B2B software",
+         "source": "Illustrative analyst composite", "year": "2026",
+         "source_ids": ["S1"],
+         "caveat": "Concentrated in a small number of vintages and categories."},
+        {"statement": "An uncited figure that must be dropped", "value": "90%",
+         "population": "everyone", "source": "common knowledge", "source_ids": []},
+    ],
+    "not_found": ["Typical seed-to-exit dilution for this specific category"],
+}
+
+
+#: What an analyst handed only the CATEGORY finds — deliberately overlapping but
+#: not identical to `_MARKET`, because the point of the cold pass is the things
+#: nobody thought to ask about. ServiceNow, the systems integrators and internal
+#: IT are all real competitors for this budget that a startup deck would never
+#: list, and none of them appear in the claim-directed view.
+_COLD_MARKET = {
+    "market_definition": {
+        "category": "Workflow automation for mid-market operations",
+        "boundary_notes": "In practice this budget is contested by software, by "
+                           "systems integrators and by simply hiring people.",
+        "how_analysts_segment_it": ["iPaaS", "RPA", "workflow/BPM", "services"]},
+    "sizing": {
+        "tam_estimates": [
+            {"value": "$16-21B", "year": "2026", "source": "Cold composite",
+             "methodology": "bottom-up from seat and services spend", "url": None,
+             "source_ids": ["S1"]}],
+        "consensus_view": "Software-only view understates how much of this budget "
+                           "goes to services rather than licences.",
+        "cagr_range": "12-18%", "sizing_confidence": "medium",
+        "why_estimates_diverge": "Whether integrator fees count as market spend."},
+    "demand_signals": {
+        "tailwinds": ["Agent budgets moving from pilot to line item"],
+        "headwinds": [
+            "Most failed deployments fail on process definition, not on tooling — "
+            "a software purchase does not fix an undefined process",
+            "Mid-market ops teams frequently lack anyone to own an automation "
+            "programme after go-live"],
+        "buyer_budget_reality": "Substitution from headcount and integrator spend, "
+                                 "not new budget.",
+        "adoption_stage": "early-majority"},
+    "competitive_landscape": {
+        "incumbents": [
+            {"name": "Microsoft Power Automate", "position": "Bundled with E5",
+             "funding_or_scale": "Public", "threat_level": "high", "url": None,
+             "source_ids": ["S1"]},
+            {"name": "ServiceNow", "position": "Owns the workflow layer in any "
+                                                "company that already runs ITSM",
+             "funding_or_scale": "Public", "threat_level": "high", "url": None,
+             "source_ids": ["S2"]},
+            {"name": "Systems integrators and BPO firms",
+             "position": "Deliver the same outcome as a service, and already hold "
+                          "the relationship",
+             "funding_or_scale": "Fragmented but large", "threat_level": "medium",
+             "url": None, "source_ids": []}],
+        "challengers": [
+            {"name": "n8n", "position": "Open-source, developer-led",
+             "funding_or_scale": "Series B", "threat_level": "medium", "url": None,
+             "source_ids": []},
+            {"name": "Internal platform teams",
+             "position": "Build it in-house on existing cloud primitives",
+             "funding_or_scale": "n/a", "threat_level": "medium", "url": None,
+             "source_ids": []}],
+        "adjacent_threats": ["ERP vendors extending workflow into ops"],
+        "concentration": "consolidating",
+        "differentiation_axes": ["Process expertise", "Reliability", "Compliance"],
+        "saturation": {
+            "funded_competitors_known": 19,
+            "new_entrants_trend": "slowing",
+            "pricing_direction": "compressing",
+            "consolidation_activity": "Several tuck-in acquisitions by ITSM vendors.",
+            "lifecycle_stage": "maturing",
+            "room_for_a_new_entrant": "a defensible niche remains",
+            "why": "Entrant flow has slowed and the services share of spend is "
+                   "growing, which usually marks a maturing category."}},
+    "economics": {"typical_pricing": "$1-4k/mo plus implementation",
+                   "typical_gross_margin": "60-75% once services are included",
+                   "typical_cac_payback": "16-24 months", "capital_intensity": "medium"},
+    "funding_environment": {"recent_rounds": [], "valuation_norms": "Compressed "
+                             "relative to 2021", "exit_comps": [],
+                             "investor_appetite": "cooling",
+                             "notes": "Buyers of these companies are increasingly "
+                                       "ITSM and ERP vendors rather than iPaaS."},
+    "regulatory_and_structural": {"factors": ["Audit requirements in regulated ops"],
+                                   "risk_level": "medium"},
+    "absorption_risk": {
+        "verdict": "contested", "horizon": "3-5 years", "confidence": "medium",
+        "likely_absorbers": [
+            {"name": "Microsoft", "why_them": "Already owns the licence",
+             "mechanism": "bundle into an existing suite",
+             "signals_already_visible": ["Agent features shipped in Power Automate"],
+             "source_ids": []},
+            {"name": "ServiceNow", "why_them": "Already owns the workflow layer and "
+                                                "the ops relationship",
+             "mechanism": "acquisition",
+             "signals_already_visible": ["Tuck-in acquisitions in this category"],
+             "source_ids": ["S2"]}],
+        "precedents": [], "what_would_prevent_it": ["Depth outside the ITSM estate"],
+        "notes": ""},
+    "open_source_landscape": {"applicable": True, "projects": [], "closest_project": "n8n",
+                               "capability_gap": "approaching parity",
+                               "gap_trend": "narrowing",
+                               "what_commercial_still_provides": [], "notes": ""},
+    "adjacent_markets": [
+        {"market": "IT service management", "relationship": "converging with this one",
+         "size_note": None, "why_it_matters": "ServiceNow already sells workflow to "
+                                               "this buyer.", "source_ids": ["S2"]},
+        {"market": "Business process outsourcing", "relationship": "substitute",
+         "size_note": None, "why_it_matters": "The default alternative is to pay "
+                                               "people to do it.", "source_ids": []}],
+    "sources": [], "research_gaps": ["No public data on failure rates by category"],
+    "injection_findings": [],
+}
+
+
+# ---------------------------------------------------------------- deck-aware
+#
+# The mock returns canned analysis, which is the point — it is a stand-in, not an
+# analyst. But a stand-in that ignores its input entirely cannot exercise the
+# evaluation harness, because every scored expectation is about THIS deck.
+#
+# So the mock reads back what it was given: it pulls the quantitative claims out
+# of the deck text and echoes any evidence it was handed. The assessments it
+# produces are mechanical, not intelligent. A score obtained with the mock
+# provider measures whether the harness works, and says nothing at all about
+# analysis quality.
+
+_CLAIM_RX = re.compile(
+    r"[^.\n]*?(?:\$\s?\d[\d,.]*\s*(?:[kKmMbB]|billion|million|thousand)?"
+    r"|\d+(?:\.\d+)?\s*%)[^.\n]*", re.I)
+
+
+def _deck_lines(prompt: str) -> str:
+    """The deck body, as handed to the deck agent inside its fence."""
+    start = prompt.find("BEGIN PITCH DECK CONTENT")
+    if start == -1:
+        start = prompt.find("--- Slide 1 ---")
+    end = prompt.find("<<<END", start if start != -1 else 0)
+    return prompt[max(0, start): end if end != -1 else len(prompt)]
+
+
+def _extract_claims(prompt: str, limit: int = 6) -> list:
+    """Quantitative sentences from the deck, in order of appearance."""
+    body = _deck_lines(prompt)
+    seen, claims = set(), []
+    for match in _CLAIM_RX.finditer(body):
+        text = " ".join(match.group(0).split())
+        text = re.sub(r"^-+\s*Slide \d+\s*-+\s*", "", text).strip(" -")
+        if len(text) < 12 or text.lower() in seen:
+            continue
+        seen.add(text.lower())
+        claims.append(text[:160])
+        if len(claims) >= limit:
+            break
+    return claims
+
+
+def _research_block(prompt: str) -> str:
+    """The evidence supplied to this call, wherever it appears in the prompt."""
+    for marker in ("RESEARCH MATERIAL", "MARKET ANALYSIS (what the evidence shows)",
+                   "SHARED BIBLIOGRAPHY"):
+        idx = prompt.find(marker)
+        if idx != -1:
+            return prompt[idx:]
+    return ""
+
+
+def _market_analysis(prompt: str) -> dict:
+    """A market picture that echoes the evidence actually supplied.
+
+    The canned view was fixed regardless of input, which meant the corpus never
+    reached the comparison stage and every claim scored the same way no matter
+    what the sources said. Echoing the supplied figures back is what lets the
+    evaluation harness exercise the whole path.
+    """
+    import copy
+
+    out = copy.deepcopy(_MARKET)
+    evidence = _research_block(prompt)
+    if not evidence.strip():
+        out["sizing"]["consensus_view"] = ("No external evidence was supplied for "
+                                           "this run.")
+        out["sizing"]["sizing_confidence"] = "low"
+        out["sizing"]["tam_estimates"] = []
+        out["competitive_landscape"]["incumbents"] = []
+        out["competitive_landscape"]["challengers"] = []
+        return out
+
+    # Ranges like "$6-8B" or "$900M-1.3B" are what an analyst would quote.
+    ranges = re.findall(r"\$\s?\d[\d,.]*\s*[-–]\s*\d[\d,.]*\s*"
+                        r"(?:[kKmMbB]|billion|million)?", evidence)
+    singles = re.findall(r"\$\s?\d[\d,.]*\s*(?:[kKmMbB]|billion|million)",
+                         evidence)
+    figures = ranges or singles
+    if figures:
+        out["sizing"]["tam_estimates"] = [
+            {"value": f.strip(), "year": "2026", "source": "Supplied research",
+             "methodology": "as stated in the source", "url": None,
+             "source_ids": ["S1"]}
+            for f in figures[:3]]
+        out["sizing"]["consensus_view"] = (
+            f"The supplied research puts this at {figures[0].strip()}"
+            + (f", with a narrower slice at {figures[1].strip()}"
+               if len(figures) > 1 else "") + " [S1].")
+    growth = re.findall(r"\d+(?:\.\d+)?\s*[-–]\s*\d+(?:\.\d+)?\s*%", evidence)
+    if growth:
+        out["sizing"]["cagr_range"] = growth[0]
+
+    # Capitalised multi-word names in the evidence are the competitors an analyst
+    # would pick out. Crude, but it is what makes blind-spot scoring meaningful.
+    stop = {"The", "This", "That", "Independent", "Growth", "Those", "Both",
+            "Adoption", "Finance", "Net", "Per", "Open", "Customer", "Small",
+            "Standalone", "Their", "There", "Zendesk's", "Its"}
+    # Skip the fence notice, which is deliberately shouty and would otherwise be
+    # read as a list of companies called RESEARCH, MATERIAL and DATA.
+    # Begin at the first numbered source. Everything before it is the trust
+    # notice and the citation instructions, which are shouty and full of
+    # capitalised words that would otherwise be read as company names.
+    body = evidence
+    first_source = re.search(r"\[S\d+\]", body)
+    if first_source:
+        body = body[first_source.start():]
+    names, seen = [], set()
+    for match in re.finditer(r"\b([A-Z][a-z][A-Za-z0-9.]*(?:\.com)?)\b", body):
+        name = match.group(1)
+        if name in stop or len(name) < 3 or name.lower() in seen:
+            continue
+        seen.add(name.lower())
+        names.append(name)
+    out["competitive_landscape"]["incumbents"] = [
+        {"name": n, "position": "Named in the supplied research",
+         "funding_or_scale": None, "threat_level": "medium", "url": None,
+         "source_ids": ["S1"]}
+        for n in names[:6]]
+    out["competitive_landscape"]["challengers"] = []
+    return out
+
+
+def _deck_extraction(prompt: str) -> dict:
+    """A DECK_SCHEMA-shaped extraction of whichever deck was actually supplied.
+
+    Built by copying the canned structure and replacing the parts that depend on
+    the deck: the company name, the market figures and the claim list. Everything
+    else stays generic, because the mock is a fixture and not an analyst.
+    """
+    import copy
+
+    out = copy.deepcopy(_DECK)
+    body = _deck_lines(prompt)
+
+    first = next((ln.strip() for ln in body.splitlines()
+                  if ln.strip() and not ln.strip().startswith("-")
+                  and "PITCH DECK" not in ln), "")
+    if first:
+        out["company"]["name"] = first[:60]
+
+    money = re.findall(r"\$\s?\d[\d,.]*\s*(?:[kKmMbB]|billion|million)?", body)
+    out["market"]["tam_claimed"] = money[0].strip() if money else None
+    growth = re.search(r"(\d+(?:\.\d+)?)\s*%\s*(?:CAGR|a year|annually|growth)",
+                       body, re.I)
+    out["market"]["growth_rate_claimed"] = growth.group(0) if growth else None
+
+    sentences = _extract_claims(prompt)
+    out["claims"] = [
+        {"id": f"C{i}", "claim": text, "type": "market-size" if "$" in text
+         else "traction", "slide": None, "verifiability": "verifiable",
+         "load_bearing": "high" if i <= 2 else "medium"}
+        for i, text in enumerate(sentences, 1)]
+    return out
+
+
+def _claims_from_extraction(prompt: str) -> list:
+    """The claim list the deck agent produced, recovered from the prompt JSON."""
+    marker = '"claims"'
+    idx = prompt.find(marker)
+    if idx == -1:
+        return []
+    start = prompt.find("[", idx)
+    if start == -1:
+        return []
+    depth, end = 0, None
+    for i in range(start, min(len(prompt), start + 40_000)):
+        if prompt[i] == "[":
+            depth += 1
+        elif prompt[i] == "]":
+            depth -= 1
+            if depth == 0:
+                end = i + 1
+                break
+    if end is None:
+        return []
+    try:
+        rows = json.loads(prompt[start:end])
+    except Exception:  # noqa: BLE001
+        return []
+    return [str(r.get("claim")) for r in rows
+            if isinstance(r, dict) and r.get("claim")]
+
+
+def _figure_supported(claim: str, evidence: str) -> bool:
+    """Does a figure in the claim fall inside a range the evidence states?
+
+    A literal substring test would call "$2.8B" contradicted when the evidence
+    says "$2.6-3.0B", which is the opposite of the truth and would make the
+    control case unscoreable. Ranges are what analyst sources actually quote, so
+    the rule has to read them.
+    """
+    def scale(unit: str) -> float:
+        unit = (unit or "").lower()
+        return {"k": 1e3, "m": 1e6, "million": 1e6,
+                "b": 1e9, "bn": 1e9, "billion": 1e9}.get(unit, 1.0)
+
+    claim_values = [float(n.replace(",", "")) * scale(u)
+                    for n, u in re.findall(
+                        r"\$?\s?(\d[\d,]*(?:\.\d+)?)\s*"
+                        r"(k|m|b|bn|million|billion)?", claim, re.I)
+                    if n.replace(",", "").replace(".", "").isdigit()]
+    if not claim_values:
+        return False
+
+    for lo, hi, unit in re.findall(
+            r"\$?\s?(\d[\d,]*(?:\.\d+)?)\s*[-–]\s*(\d[\d,]*(?:\.\d+)?)\s*"
+            r"(k|m|b|bn|million|billion)?", evidence, re.I):
+        try:
+            low = float(lo.replace(",", "")) * scale(unit)
+            high = float(hi.replace(",", "")) * scale(unit)
+        except ValueError:
+            continue
+        for value in claim_values:
+            if low <= value <= high:
+                return True
+    # Percentages are quoted bare, so check those against ranges too.
+    for value in claim_values:
+        for lo, hi in re.findall(r"(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)\s*%",
+                                 evidence):
+            if float(lo) <= value <= float(hi):
+                return True
+    return False
+
+
+def _claim_audit_for(prompt: str) -> list:
+    """A claim audit over the claims the deck agent actually extracted.
+
+    The assessment rule is deliberately crude: a claim whose figures also appear
+    in the supplied evidence is called supported, one that conflicts is called
+    contradicted, and anything hedged is called unverifiable. It is a fixture,
+    not a judgement.
+    """
+    claims = _claims_from_extraction(prompt) or _extract_claims(prompt)
+    if not claims:
+        return []
+    evidence = _research_block(prompt).lower()
+    audit = []
+    for i, text in enumerate(claims, 1):
+        numbers = re.findall(r"\d[\d,.]*", text)
+        echoed = any(n in evidence for n in numbers if len(n) > 1)
+        hedged = any(w in text.lower() for w in
+                     ("believe", "we think", "large and underserved", "only"))
+        if hedged:
+            assessment, quality = "unverifiable", "none"
+        elif echoed:
+            assessment, quality = "supported", "moderate"
+        elif evidence:
+            assessment, quality = "contradicted", "moderate"
+        else:
+            assessment, quality = "unverifiable", "none"
+        audit.append({
+            "id": f"C{i}", "claim": text,
+            "market_evidence": ("The supplied research addresses this figure."
+                                if echoed else
+                                "The supplied research does not support this figure."
+                                if evidence else
+                                "No external evidence was supplied for this run."),
+            "assessment": assessment,
+            "delta": "" if assessment == "supported" else
+                     "The evidence points elsewhere.",
+            "so_what": "Check this against the cited source before relying on it.",
+            "source_ids": ["S1"] if evidence else [],
+            "evidence_quality": quality,
+            "sources": [],
+        })
+    return audit

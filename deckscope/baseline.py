@@ -31,8 +31,8 @@ from .schemas import COMPARISON_SCHEMA, coerce, schema_block, scorecard_total
 from .security.policy import SecurityPolicy
 from .security.report import ScanReport
 from .security.sanitizer import fence
-from .security.screening import screen_deck, screen_sources
-from .sources import SourceRegistry, resolve_citations
+from .security.screening import screen_deck
+from .sources import resolve_citations
 from .validate import validate_comparison
 
 MAX_DECK_CHARS = 120_000
@@ -58,7 +58,8 @@ class BaselineAnalyst:
             from .console import out
             out(f"[baseline] {message}")
 
-    def run(self, deck_path: Optional[str] = None) -> AnalysisResult:
+    def run(self, deck_path: Optional[str] = None,
+            corpus: Any = None) -> AnalysisResult:
         cfg = self.config
         started = time.time()
         source = deck_path or cfg.deck_path
@@ -76,25 +77,27 @@ class BaselineAnalyst:
                                          deck_path=None if cfg.deck_text else source)
             self._log(deck_scan.summary_line())
 
-        registry = SourceRegistry()
-        source_scan = ScanReport(target="web sources")
+        from .corpus import gather
+
+        if corpus is None:
+            queries = self._queries(doc) if self.researcher.name != "none" else []
+            if queries:
+                self._log(f"researching with {self.researcher.name}: "
+                          f"{len(queries)} queries")
+            corpus = gather(self.researcher, queries, policy,
+                            max_results=cfg.research.max_results,
+                            on_event=lambda m, _d=None: self._log(m))
+        else:
+            self._log(f"using frozen corpus {corpus.fingerprint()} "
+                      f"({corpus.kept} source(s)) — identical evidence to the "
+                      f"pipeline run")
+
+        registry = corpus.registry
+        source_scan = corpus.security or ScanReport(target="web sources")
         research_block = ""
-        if self.researcher.name != "none":
-            queries = self._queries(doc)
-            self._log(f"researching with {self.researcher.name}: {len(queries)} queries")
-            results = self.researcher.search_many(
-                queries, max_results=cfg.research.max_results)
-            registry.add_results(results, backend=self.researcher.name)
-            results, source_scan = screen_sources(results, policy)
-            kept = {(getattr(r, "url", "") or getattr(r, "title", "")).lower()
-                    for r in results}
-            for src in registry.sources:
-                if (src.url or src.title).lower() not in kept:
-                    src.status = "quarantined"
-                    src.note = "Dropped by the security screen."
-            research_block = fence(registry.prompt_block(char_budget=60_000),
+        if not corpus.empty:
+            research_block = fence(corpus.prompt_block(char_budget=60_000),
                                    "RESEARCH MATERIAL")
-            self._log(f"{len(registry.sources)} source(s)")
 
         text = doc.text
         if len(text) > MAX_DECK_CHARS:
@@ -122,7 +125,7 @@ class BaselineAnalyst:
                 user, temperature=0.3, on_usage=track)
             result = coerce(result, COMPARISON_SCHEMA)
             validation = validate_comparison(
-                result, valid_source_ids=[s.sid for s in registry.sources])
+                result, valid_source_ids=registry.citable_ids)
             if not validation.ok:
                 self._log(f"validation: {validation.summary()}")
             result["_meta"] = {
@@ -150,6 +153,7 @@ class BaselineAnalyst:
                               "n_results": len(registry.sources),
                               "registry": registry.to_dict()}},
             comparisons=comparisons,
+            corpus=corpus,
             config=cfg.to_dict(),
             security={"overall_risk": combined.risk, "mode": policy.mode.value,
                       "deck": deck_scan.to_dict(),
@@ -161,8 +165,9 @@ class BaselineAnalyst:
                 "elapsed_seconds": round(time.time() - started, 1),
                 "mode": "baseline",
                 "provider": self.provider.name, "model": self.provider.model,
-                "research_backend": self.researcher.name,
-                "sources_found": len(registry.sources),
+                "research_backend": corpus.backend,
+                "sources_found": corpus.kept,
+                "corpus_fingerprint": corpus.fingerprint(),
                 "security_risk": combined.risk,
                 "token_usage": usage,
                 "model_calls": len(cfg.lenses),
@@ -218,53 +223,149 @@ class BaselineAnalyst:
 
 def compare_modes(pipeline_result: AnalysisResult,
                   baseline_result: AnalysisResult) -> Dict[str, Any]:
-    """What the two modes actually produced, side by side.
+    """What the two modes made of the same evidence.
 
-    Reports the differences; deliberately does not declare a winner. Which
-    analysis is better is a judgement about reasoning quality that these numbers
-    cannot make — they tell you where to look.
+    **Metric design matters here more than anywhere else in the project**, because
+    a badly chosen metric will make the architecture look good regardless of
+    whether it is. Counting claims, citations, risks and blind spots — the first
+    version of this function — rewards verbosity: a mode that says more scores
+    higher whether or not it is more correct.
+
+    So the counts are replaced by rates and by matched differences:
+
+      * **citation density** — what fraction of claims carry a source, rather than
+        how many citations appear in total
+      * **uncited assertion rate** — the inverse, stated directly, because an
+        assertion resting on nothing is the failure the bibliography exists to
+        catch
+      * **evidence-quality mix** — how the mode graded its own support
+      * **unique findings** — claims one mode raised and the other did not,
+        matched on content with the same aligner the panel uses, so a rephrasing
+        is not counted as a discovery
+      * **contradictions** — the same claim assessed differently, which is the
+        most interesting output of all
+
+    Even so this measures difference, not correctness. Deciding which analysis is
+    *better* needs labelled decks or a blinded human rubric, and the caveat at the
+    bottom says so rather than letting a reader infer a verdict from a table.
     """
+    from .claim_align import align_claims
+
     out: Dict[str, Any] = {"lenses": {}}
+
+    pipe_corpus = getattr(pipeline_result, "corpus", None)
+    base_corpus = getattr(baseline_result, "corpus", None)
+    pipe_fp = pipe_corpus.fingerprint() if pipe_corpus else None
+    base_fp = base_corpus.fingerprint() if base_corpus else None
+    shared = bool(pipe_fp) and pipe_fp == base_fp
+
+    out["evidence"] = {
+        "pipeline_corpus": pipe_fp,
+        "baseline_corpus": base_fp,
+        "identical": shared,
+        "sources": pipe_corpus.kept if pipe_corpus else 0,
+        "note": ("Both modes read the same frozen sources, so any difference below "
+                 "is attributable to how the evidence was processed."
+                 if shared else
+                 "The two modes did NOT read the same sources, so differences below "
+                 "are confounded by the evidence and cannot be attributed to the "
+                 "architecture. Run with --mode both to share a corpus."),
+    }
+
     for lens, pipe_cmp in (pipeline_result.comparisons or {}).items():
         base_cmp = (baseline_result.comparisons or {}).get(lens)
         if not base_cmp:
             continue
-        pipe_score = ((pipe_cmp.get("_meta") or {}).get("weighted_score") or {}).get("score")
-        base_score = ((base_cmp.get("_meta") or {}).get("weighted_score") or {}).get("score")
-        pipe_claims = pipe_cmp.get("claim_audit") or []
-        base_claims = base_cmp.get("claim_audit") or []
 
-        def cited(rows):
-            return sum(1 for r in rows if r.get("source_ids"))
+        pipe_claims = [c for c in (pipe_cmp.get("claim_audit") or [])
+                       if isinstance(c, dict)]
+        base_claims = [c for c in (base_cmp.get("claim_audit") or [])
+                       if isinstance(c, dict)]
+
+        clusters = align_claims({"pipeline": pipe_claims, "baseline": base_claims})
+        both, only_pipe, only_base, contradictions = [], [], [], []
+        for cluster in clusters:
+            row = cluster.to_dict(2)
+            who = set(row["assessments"])
+            if who == {"pipeline", "baseline"}:
+                both.append(row)
+                if row["distinct_positions"] > 1:
+                    contradictions.append({
+                        "claim": row["claim"],
+                        "pipeline": row["assessments"].get("pipeline"),
+                        "baseline": row["assessments"].get("baseline")})
+            elif who == {"pipeline"}:
+                only_pipe.append(row["claim"])
+            elif who == {"baseline"}:
+                only_base.append(row["claim"])
 
         out["lenses"][lens] = {
-            "verdict": {"pipeline": (pipe_cmp.get("verdict") or {}).get("call"),
-                        "baseline": (base_cmp.get("verdict") or {}).get("call"),
-                        "agree": (pipe_cmp.get("verdict") or {}).get("call")
-                                 == (base_cmp.get("verdict") or {}).get("call")},
-            "confidence": {"pipeline": (pipe_cmp.get("verdict") or {}).get("confidence"),
-                           "baseline": (base_cmp.get("verdict") or {}).get("confidence")},
-            "score": {"pipeline": pipe_score, "baseline": base_score,
-                      "difference": (round(abs((pipe_score or 0) - (base_score or 0)), 1))},
-            "claims_examined": {"pipeline": len(pipe_claims), "baseline": len(base_claims)},
-            "claims_with_a_citation": {"pipeline": cited(pipe_claims),
-                                       "baseline": cited(base_claims)},
-            "blind_spots_named": {
-                "pipeline": len((pipe_cmp.get("alignment") or {}).get("blind_spots") or []),
-                "baseline": len((base_cmp.get("alignment") or {}).get("blind_spots") or [])},
-            "risks_identified": {"pipeline": len(pipe_cmp.get("risks") or []),
-                                 "baseline": len(base_cmp.get("risks") or [])},
+            "verdict": {
+                "pipeline": (pipe_cmp.get("verdict") or {}).get("call"),
+                "baseline": (base_cmp.get("verdict") or {}).get("call"),
+                "agree": ((pipe_cmp.get("verdict") or {}).get("call")
+                          == (base_cmp.get("verdict") or {}).get("call"))},
+            "confidence": {
+                "pipeline": (pipe_cmp.get("verdict") or {}).get("confidence"),
+                "baseline": (base_cmp.get("verdict") or {}).get("confidence")},
+            "score": {
+                "pipeline": _score(pipe_cmp), "baseline": _score(base_cmp),
+                "difference": round(abs(_score(pipe_cmp) - _score(base_cmp)), 1)},
+            # Rates, not counts.
+            "citation_density": {
+                "pipeline": _density(pipe_claims), "baseline": _density(base_claims),
+                "means": "fraction of claims carrying at least one source ID"},
+            "uncited_assertion_rate": {
+                "pipeline": round(1 - _density(pipe_claims), 2),
+                "baseline": round(1 - _density(base_claims), 2),
+                "means": "claims resting on no source at all — lower is better"},
+            "evidence_quality": {
+                "pipeline": _quality_mix(pipe_claims),
+                "baseline": _quality_mix(base_claims)},
+            # Matched differences, not raw volume.
+            "claims": {
+                "raised_by_both": len(both),
+                "only_pipeline": only_pipe,
+                "only_baseline": only_base,
+                "note": ("Matched on content, so a rephrasing counts as the same "
+                         "claim rather than as a new finding.")},
+            "contradictions": contradictions,
         }
+
     out["cost"] = {
         "pipeline_tokens": (pipeline_result.stats or {}).get("token_usage"),
         "baseline_tokens": (baseline_result.stats or {}).get("token_usage"),
+        "pipeline_calls": (pipeline_result.stats or {}).get("model_calls"),
+        "baseline_calls": (baseline_result.stats or {}).get("model_calls"),
         "pipeline_seconds": (pipeline_result.stats or {}).get("elapsed_seconds"),
         "baseline_seconds": (baseline_result.stats or {}).get("elapsed_seconds"),
-        "pipeline_sources": (pipeline_result.stats or {}).get("sources_found"),
-        "baseline_sources": (baseline_result.stats or {}).get("sources_found"),
     }
     out["caveat"] = (
-        "These are differences, not a verdict on which analysis is better. Whether "
-        "the extra passes bought anything is a judgement about reasoning quality — "
-        "read both and decide. Two runs of the same mode will also differ.")
+        "This measures DIFFERENCE, not correctness. Nothing here establishes which "
+        "analysis is better — that needs decks with known answers or a blinded human "
+        "rubric, neither of which DeckScope ships. Two runs of the SAME mode will "
+        "also differ, so treat a single comparison as one observation rather than a "
+        "result. The contradictions are the part worth reading: they mark where the "
+        "same evidence supported two different readings.")
     return out
+
+
+def _score(comparison: Dict[str, Any]) -> float:
+    meta = comparison.get("_meta") or {}
+    return float((meta.get("weighted_score") or {}).get("score") or 0.0)
+
+
+def _density(claims: List[Dict[str, Any]]) -> float:
+    """Fraction of claims carrying at least one citation."""
+    if not claims:
+        return 0.0
+    cited = sum(1 for c in claims if c.get("source_ids"))
+    return round(cited / len(claims), 2)
+
+
+def _quality_mix(claims: List[Dict[str, Any]]) -> Dict[str, int]:
+    mix: Dict[str, int] = {}
+    for c in claims:
+        key = str(c.get("evidence_quality") or "unstated")
+        mix[key] = mix.get(key, 0) + 1
+    return mix

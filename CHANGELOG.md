@@ -6,6 +6,161 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ## [Unreleased]
 
+### Security — fixed (second audit)
+
+- **The sanitizer could preserve, and in one case manufacture, an injection.**
+  It scanned the original text, recorded character offsets, and only then stripped
+  invisible characters and folded homoglyphs — both of which change the string, so
+  the offsets no longer pointed at what they had matched. Two reproducible exploits:
+  padding a document with zero-width characters shifted every later offset, so the
+  redaction landed on an innocent sentence while the injection survived; and an
+  injection written in Cyrillic lookalikes was folded into clean ASCII *after*
+  scanning, producing a perfectly readable "ignore all previous instructions" that
+  the scan had never seen. Order is now normalize → scan → redact → rescan, in one
+  function, with a 300-case fuzz corpus over invisible padding, inline invisibles,
+  homoglyphs and both combined.
+- **Citation validation skipped entirely when no sources existed** — the strongest
+  reason to check, since every citation is then fabricated. It now clears them and
+  downgrades the evidence claim.
+- **Quarantined sources counted as citable.** A source dropped by the screen is in
+  the registry so the report can say it was dropped; it never entered the evidence
+  prompt, so citing it cannot be genuine. Validation now uses `citable_ids`.
+- **URL findings below `critical` did not drop a source**, despite the docs saying
+  embedded credentials and punycode hosts would. Screening now asks one
+  policy question (`quarantine_on`, default `medium`) instead of comparing
+  severities at each call site.
+- **DNS could be resolved twice** — once to validate, once to connect — leaving a
+  rebinding window. Connections are now pinned to the validated address, with SNI
+  and the Host header preserved. The redirect cap is enforced.
+- **CLI providers now disable tools where the CLI supports it** (`--disallowedTools`
+  for Claude, read-only sandbox for Codex) and **refuse to run** for presets
+  DeckScope cannot verifiably restrict, unless `allow_unrestricted_cli` is set.
+  Deck content reaching a tool-capable agent is a different class of problem from a
+  biased report.
+- **The cache moved out of the working directory.** It held cleartext deck
+  extractions in a folder that gets committed, shared or cloud-synced by accident;
+  it now lives in the per-user application directory with an owner-only ACL.
+
+### Panel — fixed (second audit)
+
+- **Revisions read the original comparison, not the previous revision**, so round
+  three refined round zero and silently discarded round two.
+- **Stopping used the first lens as a proxy for the whole panel.** Lenses ask
+  different questions and converge at different rates; each now gets its own state,
+  its own strategy instance and its own logged decision, and the panel continues
+  while any lens is still moving.
+- **Cross-review applied the first lens's stance to every lens** in a multi-lens
+  packet. Each lens now carries its own posture.
+- **Revisions and the chair's consensus were not validated**, so out-of-range
+  scores and invented citations could reach the convergence metrics and the vote.
+
+### Correctness and operations — fixed (second audit)
+
+- **Gemini sent `temperature`** on every request. Its current generation rejects
+  sampling parameters, so the default configuration could not complete a call.
+  Request construction is now model-aware for both Gemini and OpenAI reasoning
+  models.
+- **A requested output format that could not be produced still exited zero.** It
+  now exits 4, naming the formats and the missing packages.
+- Two tests depended on a POSIX shell and passed in CI only because GitHub's
+  Windows runner ships one. They now use the running Python.
+- Lint restored to green: ambiguous `l` identifiers renamed, unused imports removed.
+- `install.sh` and `install.command` carry the executable bit.
+- **Documentation corrected**: `pptx` is a curated summary, not full parity with the
+  other formats; and the local web token stops other *web pages* from driving
+  DeckScope, not other *programs running as you* — the page is served
+  unauthenticated so a browser can load it, and the token is in that page.
+
+### Evidence and evaluation — added
+
+- **`deckscope eval`** — the evaluation harness every audit said was missing. Scores
+  DeckScope against decks whose correct answers are **known, because the deck and its
+  evidence were authored together**: if the deck claims $88B and the frozen corpus says
+  $6-8B, "contradicted" is correct as a matter of fact rather than taste.
+  Five cases ship — inflated sizing, an omitted incumbent, evidence too thin to
+  conclude from, a planted injection, and an honest control whose claims the evidence
+  supports. The control is the important one: a system that calls everything
+  contradicted scores well on the other four.
+  Eight dimensions, all computed in Python and **never averaged**, because a system
+  scores perfectly on fabrication by saying nothing and perfectly on recall by saying
+  everything. `--trials` measures stability against frozen evidence; `--mode pipeline
+  baseline` compares architectures on identical cases; exits non-zero so it can gate a
+  release. The mock provider scores near zero on claim accuracy and 100% on the
+  structural dimensions, which is the honest reading of a crude fixture — tuning it
+  until it passed would have produced a suite that proves nothing.
+
+- **Deck-blind market discovery** (`--cold-discovery`). The market analyst is given
+  the deck's claims — it must be, it is checking them — which shapes its searches and
+  makes it good at finding errors and bad at finding omissions. A second pass now
+  receives **only the category, sub-category, geography and company name**, writes its
+  own queries, and describes the market cold. The diff between the two routes is a
+  blind spot no prompt could have produced.
+  The isolation is **structural, not instructional**: a whitelist function builds the
+  entire payload the agent may see, and tests assert on that payload — that no TAM
+  figure, traction number, ask, competitor name or founder name can reach it, and that
+  a newly added deck field cannot leak by default. On the sample deck the two routes
+  overlap on 29% of the competitors they name; the cold pass alone surfaces ServiceNow,
+  systems integrators and internal platform teams. Finding nothing is reported as a
+  result rather than an empty section.
+- **Frozen evidence corpora.** `--mode both` was not a valid control: each mode ran its
+  own searches, so "the pipeline found more risks" might only have meant "the pipeline
+  retrieved a page about risks". Research now runs once and both modes read identical
+  bytes. The comparison states which case it is in, and says **"NOT SHARED — comparison
+  is confounded"** rather than presenting confounded numbers as meaningful.
+- **Reproducible research** via `--save-corpus` and `--corpus`. Replaying fixed evidence
+  is what turns a prompt change from an anecdote into a measurement.
+- **Comparison metrics no longer reward verbosity.** Counting claims, citations, risks
+  and blind spots meant a mode that said more scored higher regardless of correctness.
+  Replaced by citation density, uncited assertion rate, evidence-quality mix,
+  unique findings **matched on content** so a rephrasing is not a discovery, and
+  outright contradictions — the same claim assessed differently from the same evidence.
+  It still refuses to name a winner, because that needs labelled decks or a blinded
+  rubric and DeckScope ships neither.
+
+### Analysis — added
+
+- **Opportunity cost** (`--opportunity`). Checks which named competitors are publicly
+  traded, pulls their actual historical returns, and computes what this company would
+  have to reach to match holding them instead — ownership after dilution, exit value
+  required, implied revenue, and the multiple of today's ARR that represents.
+  **It does not forecast returns**, deliberately: a projected multiple with a confidence
+  rating would be the least supportable number in a project built around refusing to
+  state what it cannot cite. Every figure is arithmetic you can check by hand or an
+  input that arrived with a citation, and the four assumptions behind it are printed
+  with the result and settable per run.
+- **Base rates**, sourced. How companies at this stage in this category have historically
+  done, so the requirement has a denominator. Uncited rates are dropped rather than
+  reported — a figure everyone quotes is still unsourced.
+- **Absorption risk.** Whether the category survives as a standalone market at all: who
+  could bundle it away, by what mechanism, what signals are *already* visible, and which
+  precedents genuinely match. Antivirus, file sync and screen sharing were real markets
+  with funded companies in them, and the companies were not out-competed so much as made
+  redundant. "Unlikely this decade" is an accepted answer.
+- **Saturation, quantified.** Funded competitor count, new-entrant trend, pricing
+  direction, consolidation activity, lifecycle stage and room for a new entrant —
+  because "concentrated" alone cannot distinguish an open wedge from a played-out
+  category.
+- **Adjacent markets**: what this converges with, what substitutes it, where it could
+  expand.
+- **Open-source landscape as an absorption signal.** Where a category has an
+  open-source dimension it predicts bundling better than size or growth do: while OSS
+  is behind, commercial products compete on capability; once it reaches parity,
+  capability stops differentiating and what remains — packaging, operations,
+  distribution — is exactly what a platform vendor already owns.
+  Parity alone is not the test, though. DeckScope records both how close the closest
+  project is AND what the commercial offering still provides, classifies each remainder
+  by whether a platform could reproduce it cheaply, and derives the risk level in Python
+  so the reasoning is inspectable and stable across runs. It reproduces the cases it was
+  modelled on: Docker at parity with a distribution moat reads *severe*; Snowflake at
+  near-parity with an operational moat reads *moderate*. A narrowing gap raises the
+  reading; disagreement with the market agent's own product-or-feature verdict is
+  surfaced rather than hidden.
+- **Market-data backend registry**, mirroring providers and research. A search-based
+  backend needs no new key; a dedicated API drops in behind the same interface. Rejects
+  tickers that are really prose and returns outside a plausible band, since an
+  unconverted percentage would silently corrupt every downstream figure. Keeps *listed*,
+  *private* and *unknown* distinct.
+
 ### Panel — added
 
 - **Stopping is now a strategy, not a constant.** `adaptive` (default), `convergence`,
@@ -118,8 +273,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ### Testing
 
-- 99 tests, up from 42, including one regression test per audit finding and full
-  coverage of the stopping strategies, voting maths and baseline mode.
+- 163 tests, up from 42: one regression test per audit finding, plus full coverage of
+  the stopping strategies, voting maths, baseline mode, opportunity-cost arithmetic
+  (checked against hand calculations) and the bundling signal (checked against the real
+  cases it models).
 - The suite passes on a minimal install and on a legacy Windows console.
 
 ---

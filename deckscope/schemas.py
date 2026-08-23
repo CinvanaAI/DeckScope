@@ -60,7 +60,104 @@ MARKET_SCHEMA: Dict[str, Any] = {
         "challengers": [{"name": "str", "position": "str", "funding_or_scale": "str|null", "threat_level": "high|medium|low", "url": "str|null", "source_ids": ["S1"]}],
         "adjacent_threats": ["str"],
         "concentration": "fragmented|consolidating|concentrated",
-        "differentiation_axes": ["the dimensions companies actually compete on here"]},
+        "differentiation_axes": ["the dimensions companies actually compete on here"],
+        "saturation": {
+            "funded_competitors_known": "int|null — how many funded players you found",
+            "new_entrants_trend": "accelerating|steady|slowing|stopped|unknown",
+            "pricing_direction": "rising|stable|compressing|collapsing|unknown",
+            "consolidation_activity": "recent acquisitions in this category, or none seen",
+            "lifecycle_stage": "emerging|growth|maturing|mature|declining",
+            "room_for_a_new_entrant": "wide-open|a defensible niche remains|crowded but "
+                                       "differentiable|effectively closed",
+            "why": "the evidence for that read, not an impression"}},
+
+    #: Whether this category survives as a standalone market at all.
+    #:
+    #: The failure mode this exists to catch: a category gets built out by
+    #: startups, becomes obviously useful, and is then bundled into a platform
+    #: that already owns the customer relationship. Antivirus, file sync, VPN,
+    #: screen sharing and password management all went this way. The startups
+    #: were not out-competed; the market stopped existing separately.
+    "absorption_risk": {
+        "verdict": "product|contested|feature — is this a standalone business or "
+                    "something a platform will bundle?",
+        "horizon": "already happening|2-3 years|3-5 years|5-10 years|unlikely this decade",
+        "confidence": "high|medium|low",
+        "likely_absorbers": [{
+            "name": "the platform that could absorb this",
+            "why_them": "what they already own that makes this a natural extension",
+            "mechanism": "bundle into an existing suite|OS or platform feature|"
+                          "acquisition|open-source commoditization|model-vendor native feature",
+            "signals_already_visible": ["shipped features, acquisitions, job postings, "
+                                         "roadmap statements — evidence, not speculation"],
+            "source_ids": ["S1"]}],
+        "precedents": [{
+            "category": "a category that was absorbed this way",
+            "absorbed_by": "str",
+            "how_long_it_took": "str",
+            "why_it_is_comparable": "str",
+            "source_ids": ["S1"]}],
+        "what_would_prevent_it": ["the specific things that keep a category standalone: "
+                                   "regulatory moat, data network effects, workflow depth, "
+                                   "a buyer who will not consolidate"],
+        "notes": "str"},
+
+    #: Open source as a leading indicator of absorption.
+    #:
+    #: The mechanism, which is why this sits next to absorption_risk: while an
+    #: open-source alternative is meaningfully behind, commercial products are
+    #: differentiated on capability and the market is healthy. Once OSS reaches
+    #: rough parity, capability stops being the differentiator and whatever is
+    #: left — packaging, operations, support, distribution — is precisely what a
+    #: platform vendor already has. That is when bundling starts, and it is the
+    #: mid-market that dies, because the giant only has to be "good enough" and
+    #: free.
+    #:
+    #: But parity alone does not decide it. Kubernetes reached parity and Docker
+    #: could not monetize, because the remaining gap was distribution. Credible
+    #: open-source data warehouses existed for years while Snowflake grew, because
+    #: the remaining gap was operational burden at scale. So record BOTH how close
+    #: OSS is AND what specifically is left once it arrives.
+    "open_source_landscape": {
+        "applicable": "true|false — some markets have no meaningful OSS dimension",
+        "projects": [{
+            "name": "str",
+            "url": "str|null",
+            "maturity": "experimental|usable|production-ready|category-leading",
+            "adoption_signal": "stars, downloads, notable users — evidence, not vibes",
+            "governance": "foundation|single-vendor|community|corporate-backed",
+            "commercially_backed_by": "str|null — who funds it, and what they sell",
+            "source_ids": ["S1"]}],
+        "closest_project": "str|null — the one that matters most here",
+        "capability_gap": "far behind|meaningfully behind|approaching parity|"
+                           "at parity|ahead of commercial",
+        "gap_trend": "widening|stable|narrowing|closed",
+        "evidence_for_the_gap": "what the assessment rests on, specifically",
+        #: The judgement that actually decides bundling risk.
+        "what_commercial_still_provides": [{
+            "capability": "str",
+            "type": "operational|distribution|support|compliance|data-network|"
+                     "workflow-depth|integrations|none-left",
+            "durable": "true|false — could a platform vendor replicate this cheaply?",
+            "why": "str"}],
+        "pricing_pressure": "none|mild|significant|severe — a credible free "
+                             "alternative caps what anyone can charge",
+        "company_relationship_to_oss": "builds on it|competes with it|ignores it|"
+                                        "is the open-source company|unclear",
+        "strip_mining_risk": "str|null — for companies built ON open source, whether "
+                              "a cloud vendor can offer the same thing as a managed "
+                              "service",
+        "notes": "str"},
+
+    #: The neighbouring categories this one touches.
+    "adjacent_markets": [{
+        "market": "str",
+        "relationship": "converging with this one|upstream|downstream|substitute|"
+                         "expansion opportunity",
+        "size_note": "str|null",
+        "why_it_matters": "whether this company gets pulled into it, competes with it, "
+                           "or could expand into it",
+        "source_ids": ["S1"]}],
     "economics": {"typical_pricing": "str", "typical_gross_margin": "str",
                    "typical_cac_payback": "str", "capital_intensity": "low|medium|high"},
     "funding_environment": {"recent_rounds": [{"company": "str", "round": "str", "amount": "str", "date": "str", "url": "str|null", "source_ids": ["S1"]}],

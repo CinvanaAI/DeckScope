@@ -150,6 +150,13 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
                     f"[{txt(a.get('priority'))}] {txt(a.get('action'))} — {txt(a.get('owner'))}",
                     style="List Bullet")
 
+        # ---- The analysis sections added after the original report design.
+        # Word is the format people circulate, so it carries the decision-relevant
+        # ones. PPTX deliberately stays a curated summary; that is documented.
+        _docx_discovery(doc, result, t)
+        _docx_market_structure(doc, result.market, t)
+        _docx_opportunity(doc, result, t)
+
         # References — every source, cited or not
         doc.add_page_break()
         doc.add_heading("References", level=1)
@@ -218,6 +225,188 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
         doc.save(str(path))
         paths.append(str(path))
     return paths
+
+
+def _docx_discovery(doc: Any, result: Any, t: Any) -> None:
+    """What the cold pass found that the claim-directed pass never looked for."""
+    delta = getattr(result, "discovery_delta", None) or {}
+    if not delta or not delta.get("ran"):
+        return
+    doc.add_heading("What the deck steered the research away from", level=1)
+    doc.add_paragraph(
+        "The market analysis was given the deck's claims — it has to be, it is "
+        "checking them — so its searches were shaped by what the deck raises. The "
+        "category was therefore also researched cold, by a pass that saw only the "
+        "category name and never a single claim.")
+    if not delta.get("anything_found"):
+        doc.add_paragraph(
+            "Nothing. Researching the category from scratch surfaced no competitor, "
+            "headwind or absorber the claim-directed pass had missed.")
+        return
+    doc.add_paragraph(
+        f"Overlap between the two routes: "
+        f"{float(delta.get('agreement') or 0):.0%} of the competitors named.")
+
+    only_cold = delta.get("competitors_only_cold") or []
+    if only_cold:
+        doc.add_heading("Competitors found only when the deck was out of the room",
+                        level=2)
+        table = doc.add_table(rows=1, cols=3)
+        table.style = "Light Grid Accent 1"
+        for i, head in enumerate(("Competitor", "Position", "Threat")):
+            cell = table.rows[0].cells[i]
+            cell.text = head
+            cell.paragraphs[0].runs[0].font.bold = True
+        for c in only_cold:
+            row = table.add_row().cells
+            row[0].text = txt(c.get("name"))
+            row[1].text = txt(c.get("position"))
+            row[2].text = txt(c.get("threat_level"))
+
+    for key, label in (("absorbers_only_cold", "Potential absorbers not raised"),
+                       ("adjacent_only_cold", "Adjacent markets missed")):
+        items = delta.get(key) or []
+        if items:
+            para = doc.add_paragraph()
+            para.add_run(f"{label}: ").bold = True
+            para.add_run(", ".join(str(x) for x in items))
+
+    for h in (delta.get("headwinds_only_cold") or []):
+        doc.add_paragraph(str(h), style="List Bullet")
+
+
+def _docx_market_structure(doc: Any, market: Any, t: Any) -> None:
+    """Saturation, absorption risk and the open-source signal."""
+    land = (market or {}).get("competitive_landscape") or {}
+    sat = land.get("saturation") or {}
+    ab = (market or {}).get("absorption_risk") or {}
+    assessment = (market or {}).get("bundling_assessment") or {}
+    if not any([any(sat.values()), any(ab.values()), assessment]):
+        return
+
+    doc.add_heading("Market structure", level=1)
+
+    if any(sat.values()):
+        doc.add_heading("Saturation", level=2)
+        table = doc.add_table(rows=0, cols=2)
+        table.style = "Light Grid Accent 1"
+        for label, key in (("Funded competitors", "funded_competitors_known"),
+                           ("New entrants", "new_entrants_trend"),
+                           ("Pricing", "pricing_direction"),
+                           ("Consolidation", "consolidation_activity"),
+                           ("Lifecycle stage", "lifecycle_stage"),
+                           ("Room to enter", "room_for_a_new_entrant")):
+            row = table.add_row().cells
+            row[0].text = label
+            row[1].text = txt(sat.get(key))
+            row[0].paragraphs[0].runs[0].font.bold = True
+        if sat.get("why"):
+            doc.add_paragraph(str(sat["why"]))
+
+    if any(ab.values()):
+        doc.add_heading("Is this a product or a feature?", level=2)
+        para = doc.add_paragraph()
+        run = para.add_run(f"{txt(ab.get('verdict')).upper()} · horizon "
+                           f"{txt(ab.get('horizon'))} · confidence "
+                           f"{txt(ab.get('confidence'))}")
+        run.font.bold = True
+        doc.add_paragraph(
+            "Categories are regularly built out by startups, proven useful, and then "
+            "bundled into a platform that already owns the customer. When that "
+            "happens the market stops existing separately.")
+        for a in (ab.get("likely_absorbers") or []):
+            para = doc.add_paragraph(style="List Bullet")
+            para.add_run(f"{txt(a.get('name'))} — {txt(a.get('mechanism'))}. ").bold = True
+            para.add_run(txt(a.get("why_them")))
+        for x in as_list(ab.get("what_would_prevent_it")):
+            doc.add_paragraph(f"Would prevent it: {x}", style="List Bullet")
+
+    if assessment and assessment.get("applicable") is not False:
+        doc.add_heading("Open source, and what it predicts", level=2)
+        para = doc.add_paragraph()
+        para.add_run(f"Bundling risk from commoditization: "
+                     f"{txt(assessment.get('level')).upper()}").bold = True
+        if assessment.get("reasoning"):
+            doc.add_paragraph(str(assessment["reasoning"]))
+        for c in (assessment.get("caveats") or []):
+            doc.add_paragraph(str(c), style="List Bullet")
+
+
+def _docx_opportunity(doc: Any, result: Any, t: Any) -> None:
+    """What buying the listed alternative would require instead."""
+    from docx.shared import Pt
+
+    opp = getattr(result, "opportunity", None) or {}
+    if not opp or opp.get("error"):
+        return
+
+    doc.add_heading("Compared to what?", level=1)
+    if opp.get("headline"):
+        para = doc.add_paragraph()
+        run = para.add_run(str(opp["headline"]))
+        run.font.italic = True
+        run.font.color.rgb = _hex(t["accent"])
+    doc.add_paragraph(
+        "This is not a forecast. It is the outcome this company would have to reach "
+        "to match each benchmark, under stated assumptions you can change.")
+
+    comps = opp.get("comparables") or []
+    if comps:
+        doc.add_heading("The named competitors, and whether you could buy them instead",
+                        level=2)
+        table = doc.add_table(rows=1, cols=4)
+        table.style = "Light Grid Accent 1"
+        for i, head in enumerate(("Competitor", "Listed", "Market cap",
+                                  "5-year return")):
+            cell = table.rows[0].cells[i]
+            cell.text = head
+            cell.paragraphs[0].runs[0].font.bold = True
+        for c in comps:
+            row = table.add_row().cells
+            row[0].text = txt(c.get("name"))
+            row[1].text = txt(c.get("ticker")) if c.get("ticker") else "private"
+            row[2].text = txt(c.get("market_cap_display"))
+            row[3].text = (f"{c['total_return_5y']}x"
+                           if c.get("total_return_5y") else "—")
+
+    reqs = opp.get("requirements") or {}
+    if reqs:
+        doc.add_heading("What this company would have to reach", level=2)
+        table = doc.add_table(rows=1, cols=4)
+        table.style = "Light Grid Accent 1"
+        for i, head in enumerate(("To match", "Exit value needed", "Implied revenue",
+                                  "Multiple of today")):
+            cell = table.rows[0].cells[i]
+            cell.text = head
+            cell.paragraphs[0].runs[0].font.bold = True
+        for label, r in reqs.items():
+            row = table.add_row().cells
+            row[0].text = str(label)
+            row[1].text = txt(r.get("exit_value_required_display"))
+            row[2].text = txt(r.get("implied_arr_required_display"))
+            row[3].text = f"{txt(r.get('growth_multiple_required'))}x"
+
+    a = opp.get("assumptions") or {}
+    if a:
+        para = doc.add_paragraph()
+        para.add_run("Assumptions: ").bold = True
+        para.add_run(
+            f"{float(a.get('future_dilution') or 0):.0%} future dilution · "
+            f"{txt(a.get('exit_revenue_multiple'))}x exit revenue multiple · "
+            f"{txt(a.get('horizon_years'))} years · "
+            f"{txt(a.get('preference_stack'))}x preference. "
+            f"Change any of these and every figure changes.")
+
+    for r in (opp.get("base_rates") or []):
+        doc.add_paragraph(
+            f"{txt(r.get('statement'))}: {txt(r.get('value'))} "
+            f"({txt(r.get('population'))}) — {txt(r.get('caveat'))}",
+            style="List Bullet")
+
+    para = doc.add_paragraph()
+    run = para.add_run(str(opp.get("disclaimer") or ""))
+    run.font.size, run.font.italic = Pt(8.5), True
+    run.font.color.rgb = _hex(t["muted"])
 
 
 def _cites(claim: Any, result) -> str:

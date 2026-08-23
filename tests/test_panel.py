@@ -26,7 +26,7 @@ register_researcher(PanelStubSearch)
 
 def _panel(tmp_path, models=("mock-a", "mock-b", "mock-c"), rounds=1, lenses=("investor",)):
     cfg = RunConfig(
-        deck_path=str(DECK), lenses=[Lens.parse(l) for l in lenses],
+        deck_path=str(DECK), lenses=[Lens.parse(x) for x in lenses],
         provider=ProviderConfig(name="mock"),
         research=ResearchConfig(name="panel_stub", max_queries=2),
         output=OutputConfig(formats=["md", "html"], out_dir=str(tmp_path)),

@@ -35,6 +35,48 @@ def env_path() -> Path:
     return app_dir() / ".env"
 
 
+def default_cache_dir() -> Path:
+    """Private per-user cache.
+
+    Cache entries hold cleartext deck extractions and model output, so they belong
+    beside the settings rather than in whatever directory the command was run
+    from — which is frequently a repository or a synced folder.
+    """
+    d = app_dir() / "cache"
+    d.mkdir(parents=True, exist_ok=True)
+    try:
+        restrict_dir_to_owner(d)
+    except Exception:  # noqa: BLE001
+        pass
+    return d
+
+
+def restrict_dir_to_owner(path: Path) -> bool:
+    """Owner-only on a directory, with a real ACL on Windows."""
+    import stat as _stat
+
+    try:
+        os.chmod(path, _stat.S_IRWXU)
+    except Exception:  # noqa: BLE001
+        pass
+    if os.name != "nt":
+        try:
+            return (path.stat().st_mode & 0o077) == 0
+        except OSError:
+            return False
+    user = os.environ.get("USERNAME") or os.environ.get("USER")
+    if not user:
+        return False
+    try:
+        import subprocess
+        res = subprocess.run(
+            ["icacls", str(path), "/inheritance:r", "/grant:r", f"{user}:(OI)(CI)F"],
+            capture_output=True, text=True, timeout=15)
+        return res.returncode == 0
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def default_output_dir() -> Path:
     d = Path.home() / "Documents" / "DeckScope Reports"
     try:

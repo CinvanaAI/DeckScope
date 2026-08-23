@@ -82,5 +82,5 @@ def test_config_defaults_and_security():
     assert cfg.security.mode.value == "balanced"
     cfg2 = load_config(None, security="strict", lenses=["founder", "neutral"])
     assert cfg2.security.mode.value == "strict"
-    assert [l.value for l in cfg2.lenses] == ["founder", "neutral"]
+    assert [x.value for x in cfg2.lenses] == ["founder", "neutral"]
     assert cfg2.to_dict()["security"]["mode"] == "strict"

@@ -23,7 +23,12 @@ from deckscope import console  # noqa: E402
 console.enable()
 
 MODULES = ["test_security", "test_pipeline", "test_providers", "test_panel",
-           "test_audit_regressions", "test_panel_mechanics"]
+           "test_audit_regressions", "test_panel_mechanics",
+           "test_opportunity",
+           "test_bundling",
+           "test_audit2_regressions",
+           "test_evidence_design",
+           "test_evaluation"]
 
 
 def main() -> int:

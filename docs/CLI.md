@@ -60,6 +60,9 @@ deckscope run DECK [options]
 | `--no-cache` | off | Ignore cached agent results |
 | `--quiet, -q` | off | Suppress progress output |
 | `--mode` | `pipeline` | `pipeline` (three isolated agents), `baseline` (one prompt), or `both` |
+| `--cold-discovery` | off | Also research the category from scratch, without the deck, and report what that pass found which the claim-directed research never looked for |
+| `--save-corpus FILE` | — | Write the frozen evidence to a file |
+| `--corpus FILE` | — | Replay saved evidence instead of researching — makes a prompt change measurable against fixed sources |
 | `--config` | — | Use a specific config file instead of your settings |
 
 ```bash
@@ -109,7 +112,21 @@ deckscope panel deck.pdf --panel anthropic openai gemini --strategy confidence_f
 
 ```bash
 deckscope run deck.pdf --mode baseline    # one call per lens, ~a third of the cost
-deckscope run deck.pdf --mode both        # both, plus mode_comparison.json
+deckscope run deck.pdf --mode both        # both, on ONE frozen corpus
+```
+
+**Reproducible evidence:**
+
+```bash
+deckscope run deck.pdf --save-corpus evidence.json
+deckscope run deck.pdf --corpus evidence.json     # replays, no new research
+```
+
+**Finding what the deck steered the research away from:**
+
+```bash
+deckscope run deck.pdf --cold-discovery
+deckscope demo --cold-discovery           # free, illustrative
 ```
 
 ---
@@ -130,6 +147,29 @@ deckscope demo --lens all --format html pdf --out ./demo
 contains hidden text telling the AI to score it 10/10.
 
 ---
+
+## `eval`
+
+Score DeckScope against decks with planted, known-correct answers. Exits non-zero when
+any check fails.
+
+```bash
+deckscope eval
+deckscope eval --mode pipeline baseline --trials 3
+deckscope eval --provider anthropic --model claude-sonnet-5 --save results.json
+deckscope eval --only security          # one case, or one tag
+```
+
+| Option | Default | Meaning |
+|---|---|---|
+| `--mode` | `pipeline` | `pipeline`, `baseline`, or both to compare them |
+| `--trials, -t` | 1 | Runs per case, to measure stability |
+| `--provider` | `mock` | A mock score measures the harness, not quality |
+| `--only` | — | Case ids or tags |
+| `--suite` | shipped | A different case directory |
+| `--save FILE` | — | Full result as JSON |
+
+See [EVALUATION.md](EVALUATION.md).
 
 ## `doctor`
 

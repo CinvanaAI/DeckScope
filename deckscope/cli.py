@@ -48,6 +48,31 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("formats", help="List available output formats")
     sub.add_parser("config", help="Show the current settings")
 
+    ev = sub.add_parser(
+        "eval",
+        help="Score DeckScope against decks with planted, known-correct answers",
+        description=(
+            "Runs a suite of constructed decks whose evidence is frozen and whose "
+            "correct answers are known, because both were authored together. Scores "
+            "claim accuracy, blind-spot recall, citation integrity, fabrication, "
+            "calibration and injection detection — each computed in Python, never "
+            "asked of a model."))
+    ev.add_argument("--mode", nargs="+", default=["pipeline"],
+                    choices=["pipeline", "baseline"],
+                    help="Which mode(s) to score. Give both to compare them.")
+    ev.add_argument("--trials", "-t", type=int, default=1,
+                    help="Runs per case, to measure stability (default 1)")
+    ev.add_argument("--provider", default="mock",
+                    help="AI backend. Defaults to mock so the harness runs free.")
+    ev.add_argument("--model", default=None)
+    ev.add_argument("--lens", default="investor")
+    ev.add_argument("--only", nargs="+", default=None, metavar="ID_OR_TAG",
+                    help="Run only these case ids or tags")
+    ev.add_argument("--suite", default=None, help="A different case directory")
+    ev.add_argument("--out", "-o", default="./eval_output")
+    ev.add_argument("--save", default=None, metavar="FILE",
+                    help="Write the full result as JSON")
+
     app = sub.add_parser("app", help="Open the drag-and-drop window in your browser")
     app.add_argument("--port", type=int, default=8765)
     app.add_argument("--no-browser", action="store_true",
@@ -61,6 +86,10 @@ def build_parser() -> argparse.ArgumentParser:
                       help="Use the sample deck that contains a hidden injection")
     demo.add_argument("--panel", action="store_true",
                       help="Demo the multi-model panel instead of a single analysis")
+    demo.add_argument("--opportunity", action="store_true",
+                      help="Demo the opportunity-cost comparison")
+    demo.add_argument("--cold-discovery", action="store_true",
+                      help="Demo the deck-blind market discovery pass")
 
     run = sub.add_parser("run", help="Analyze a pitch deck")
     run.add_argument("deck", help="Path or URL to a .pdf .pptx .docx .md .txt deck")
@@ -80,6 +109,26 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--max-queries", type=int, default=None)
     run.add_argument("--no-cache", action="store_true")
     run.add_argument("--quiet", "-q", action="store_true")
+    run.add_argument("--cold-discovery", action="store_true",
+                     help="Also research the category from scratch, without the deck, "
+                          "and report what that pass found which the claim-directed "
+                          "research never looked for")
+    run.add_argument("--save-corpus", default=None, metavar="FILE",
+                     help="Write the frozen evidence to a file, so a later run can "
+                          "replay the identical sources")
+    run.add_argument("--corpus", default=None, metavar="FILE",
+                     help="Replay a saved corpus instead of researching. Makes a "
+                          "prompt change measurable against fixed evidence.")
+    run.add_argument("--opportunity", action="store_true",
+                     help="Also price the alternative: which named competitors are "
+                          "publicly traded, and what this company would have to reach "
+                          "to match holding them instead")
+    run.add_argument("--dilution", type=float, default=None,
+                     help="Assumed future dilution before exit (default 0.5)")
+    run.add_argument("--exit-multiple", type=float, default=None,
+                     help="Assumed exit revenue multiple (default 6.0)")
+    run.add_argument("--horizon", type=int, default=None,
+                     help="Years for the comparison (default 5)")
     run.add_argument("--mode", default="pipeline",
                      choices=["pipeline", "baseline", "both"],
                      help="pipeline = three isolated agents (default); "
@@ -153,6 +202,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     if cmd == "config":
         return _show_config()
 
+    if cmd == "eval":
+        return _eval(args)
+
     if cmd == "app":
         from .webapp import serve
         serve(port=args.port, open_browser=not args.no_browser)
@@ -190,6 +242,16 @@ def _run(args: Any) -> int:
         overrides["security"] = args.security
     if args.no_cache:
         overrides["cache_dir"] = None
+    if getattr(args, "opportunity", False) or args.dilution or args.exit_multiple \
+            or args.horizon:
+        opp: Dict[str, Any] = {"enabled": True}
+        if args.dilution is not None:
+            opp["future_dilution"] = args.dilution
+        if args.exit_multiple is not None:
+            opp["exit_revenue_multiple"] = args.exit_multiple
+        if args.horizon is not None:
+            opp["horizon_years"] = args.horizon
+        overrides["opportunity"] = opp
     prov: Dict[str, Any] = {}
     if args.provider:
         prov["name"] = args.provider
@@ -225,15 +287,25 @@ def _run(args: Any) -> int:
         cfg = settings.settings_to_runconfig(overrides)
 
     mode = getattr(args, "mode", "pipeline")
+    replay = None
+    if getattr(args, "corpus", None):
+        from .corpus import EvidenceCorpus
+        try:
+            replay = EvidenceCorpus.load(args.corpus)
+            _out(f"Replaying corpus {replay.fingerprint()} from {args.corpus} "
+                 f"({replay.kept} source(s)) — no new research will run.\n")
+        except Exception as exc:  # noqa: BLE001
+            _out(f"Could not read that corpus: {exc}\n")
+            return 2
     try:
         if mode == "baseline":
-            result, files = _run_baseline(cfg)
+            result, files = _run_baseline(cfg, corpus=replay)
         elif mode == "both":
             return _run_both(cfg)
         else:
             pipe = Pipeline(cfg)
             try:
-                result = pipe.run()
+                result = pipe.run(corpus=replay)
                 files = pipe.render(result)
             finally:
                 pipe.close()
@@ -248,18 +320,38 @@ def _run(args: Any) -> int:
         _out("Run `deckscope doctor` to check your setup.")
         return 1
 
+    if getattr(args, "save_corpus", None) and getattr(result, "corpus", None):
+        saved = result.corpus.save(args.save_corpus)
+        _out(f"  Evidence saved to {saved} (fingerprint "
+             f"{result.corpus.fingerprint()}) — replay it with --corpus\n")
+
     _print_summary(result, files)
-    return 0
+    return _format_exit_code(result)
 
 
-def _run_baseline(cfg: Any):
+def _format_exit_code(result: Any) -> int:
+    """Non-zero when a format that was explicitly requested could not be written.
+
+    An automation that asked for a PDF must not be told the run succeeded when no
+    PDF exists. The analysis itself still completed, and the other formats are on
+    disk — this only reports the shortfall.
+    """
+    missing = (getattr(result, "stats", None) or {}).get("formats_failed") or []
+    if not missing:
+        return 0
+    _out(f"  Requested format(s) could not be produced: {', '.join(missing)}")
+    _out("  Install the matching package, or drop them from --format.\n")
+    return 4
+
+
+def _run_baseline(cfg: Any, corpus: Any = None):
     """One prompt instead of three agents."""
     from .baseline import BaselineAnalyst
     from .render.registry import render as render_fmt
 
     analyst = BaselineAnalyst(cfg)
     try:
-        result = analyst.run()
+        result = analyst.run(corpus=corpus)
     finally:
         analyst.close()
 
@@ -286,7 +378,9 @@ def _run_both(cfg: Any) -> int:
     from .baseline import compare_modes
     from .orchestrator import Pipeline
 
-    _out("Running BOTH modes on this deck so they can be compared.\n")
+    _out("Running BOTH modes on this deck, against the SAME frozen evidence, so the")
+    _out("difference between them is attributable to the prompting rather than to")
+    _out("each having read different sources.\n")
 
     pipe = Pipeline(cfg)
     try:
@@ -295,17 +389,27 @@ def _run_both(cfg: Any) -> int:
     finally:
         pipe.close()
 
+    # The baseline replays the pipeline's corpus rather than researching again.
+    # Without this the comparison is confounded: "the pipeline found more risks"
+    # might only mean "the pipeline happened to retrieve a page about risks".
+    shared = getattr(pipeline_result, "corpus", None)
+    if shared is not None:
+        _out(f"\n  Reusing corpus {shared.fingerprint()} "
+             f"({shared.kept} source(s)) for the baseline.")
     _out("")
-    baseline_result, baseline_files = _run_baseline(cfg)
+    baseline_result, baseline_files = _run_baseline(cfg, corpus=shared)
 
     comparison = compare_modes(pipeline_result, baseline_result)
     out_path = Path(cfg.output.out_dir) / "mode_comparison.json"
     out_path.write_text(_json.dumps(comparison, indent=2, default=str), encoding="utf-8")
 
     _out("")
-    _out("=" * 68)
-    _out("  Three agents vs. one prompt")
-    _out("=" * 68)
+    _out("=" * 70)
+    _out("  Three agents vs. one prompt, on identical evidence")
+    _out("=" * 70)
+    ev = comparison["evidence"]
+    _out(f"\n  evidence    corpus {ev['pipeline_corpus']} · {ev['sources']} source(s)")
+    _out(f"              {'IDENTICAL for both modes' if ev['identical'] else 'NOT SHARED — comparison is confounded'}")
     for lens, d in comparison["lenses"].items():
         _out(f"\n  [{lens}]")
         _out(f"    verdict     pipeline {d['verdict']['pipeline']}  |  "
@@ -313,18 +417,26 @@ def _run_both(cfg: Any) -> int:
              + ("   (agree)" if d["verdict"]["agree"] else "   (DIFFER)"))
         _out(f"    score       {d['score']['pipeline']} vs {d['score']['baseline']} "
              f"({d['score']['difference']} apart)")
-        _out(f"    claims      {d['claims_examined']['pipeline']} vs "
-             f"{d['claims_examined']['baseline']} examined, "
-             f"{d['claims_with_a_citation']['pipeline']} vs "
-             f"{d['claims_with_a_citation']['baseline']} cited")
-        _out(f"    blind spots {d['blind_spots_named']['pipeline']} vs "
-             f"{d['blind_spots_named']['baseline']}")
-        _out(f"    risks       {d['risks_identified']['pipeline']} vs "
-             f"{d['risks_identified']['baseline']}")
+        _out(f"    cited       {d['citation_density']['pipeline']:.0%} vs "
+             f"{d['citation_density']['baseline']:.0%} of claims carry a source")
+        c = d["claims"]
+        _out(f"    claims      {c['raised_by_both']} raised by both, "
+             f"{len(c['only_pipeline'])} only by pipeline, "
+             f"{len(c['only_baseline'])} only by baseline")
+        if d["contradictions"]:
+            _out(f"    CONTRADICTIONS ({len(d['contradictions'])}) — same evidence, "
+                 f"different reading:")
+            for row in d["contradictions"][:3]:
+                _out(f"      · {row['claim'][:58]}")
+                _out(f"        pipeline: {row['pipeline']}  |  baseline: {row['baseline']}")
+        for claim in c["only_pipeline"][:2]:
+            _out(f"    only pipeline raised: {claim[:60]}")
+        for claim in c["only_baseline"][:2]:
+            _out(f"    only baseline raised: {claim[:60]}")
     cost = comparison["cost"]
     _out(f"\n  cost        {cost['pipeline_tokens']} vs {cost['baseline_tokens']} tokens")
     _out(f"              {cost['pipeline_seconds']}s vs {cost['baseline_seconds']}s")
-    _out("=" * 68)
+    _out("=" * 70)
     _out(f"\n  {comparison['caveat']}\n")
     _out("  Reports written:")
     for f in pipeline_files + baseline_files + [str(out_path)]:
@@ -365,8 +477,13 @@ def _panel(args: Any) -> int:
         overrides["security"] = args.security
     if args.no_cache:
         overrides["cache_dir"] = None
+    research_over: Dict[str, Any] = {}
     if args.research:
-        overrides["research"] = {"name": args.research}
+        research_over["name"] = args.research
+    if getattr(args, "cold_discovery", False):
+        research_over["cold_discovery"] = True
+    if research_over:
+        overrides["research"] = research_over
     out: Dict[str, Any] = {}
     if args.format:
         out["formats"] = args.format
@@ -464,6 +581,62 @@ def _demo(args: Any) -> int:
     lenses = ALL_LENSES if args.lens == ["all"] else args.lens
     out_dir = args.out or str(Path.cwd() / "deckscope_demo_output")
 
+    if getattr(args, "cold_discovery", False) and not getattr(args, "panel", False):
+        cfg = RunConfig(
+            deck_path=str(deck) if deck else None, deck_text=deck_text, lenses=lenses,
+            provider=ProviderConfig(name="mock"),
+            research=ResearchConfig(name="none", cold_discovery=True),
+            output=OutputConfig(formats=args.format, out_dir=out_dir), cache_dir=None)
+        _out("Running a demo WITH the deck-blind discovery pass. The cold pass sees\n"
+             "only the category name — never a claim — so what it finds and the\n"
+             "claim-directed pass missed is a blind spot no prompt could produce.\n")
+        pipe = Pipeline(cfg)
+        res = pipe.run()
+        files = pipe.render(res)
+        pipe.close()
+        _print_summary(res, files)
+        delta = res.discovery_delta or {}
+        if delta.get("competitors_only_cold"):
+            _out("  Found ONLY by the cold pass:")
+            for c in delta["competitors_only_cold"]:
+                _out(f"    · {c['name']} ({c.get('threat_level')} threat)")
+            _out("")
+        _out("That was sample output. To run it for real:  "
+             "deckscope run deck.pdf --cold-discovery\n")
+        return _format_exit_code(res)
+
+    if getattr(args, "opportunity", False) and not getattr(args, "panel", False):
+        from .config import OpportunityConfig
+        from .research.base import Researcher, SearchResult
+        from .research.registry import register_researcher
+
+        class _DemoResearch(Researcher):
+            name = "demo_research"
+
+            def search(self, query, max_results=8):
+                return [SearchResult(f"Demo source: {query[:44]}",
+                                     f"https://example.org/{abs(hash(query)) % 9999}",
+                                     "Mid-market slice $3-5B in 2026.", "2026-03",
+                                     query)]
+
+        register_researcher(_DemoResearch)
+        cfg = RunConfig(
+            deck_path=str(deck) if deck else None, deck_text=deck_text, lenses=lenses,
+            provider=ProviderConfig(name="mock"),
+            research=ResearchConfig(name="demo_research", max_queries=2),
+            opportunity=OpportunityConfig(enabled=True),
+            output=OutputConfig(formats=args.format, out_dir=out_dir), cache_dir=None)
+        _out("Running a demo WITH the opportunity-cost comparison. All figures are "
+             "illustrative.\n")
+        pipe = Pipeline(cfg)
+        res = pipe.run()
+        files = pipe.render(res)
+        pipe.close()
+        _print_summary(res, files)
+        _out("That was sample output. To run it for real:  "
+             "deckscope run deck.pdf --opportunity\n")
+        return _format_exit_code(res)
+
     if getattr(args, "panel", False):
         from .ensemble import Panel
         cfg = RunConfig(
@@ -495,7 +668,7 @@ def _demo(args: Any) -> int:
     files = pipe.render(result)
     _print_summary(result, files)
     _out("That was sample output. To analyze a real deck, run:  deckscope setup\n")
-    return 0
+    return _format_exit_code(result)
 
 
 def _print_summary(result: Any, files: List[str]) -> None:
@@ -524,6 +697,94 @@ def _print_summary(result: Any, files: List[str]) -> None:
         for f in files:
             _out(f"    {f}")
     _out()
+
+
+def _eval(args: Any) -> int:
+    from .evaluation import DIMENSIONS, run_suite, save
+
+    settings.load_env()
+    _out("Scoring DeckScope against decks with planted, known-correct answers.")
+    _out("Evidence is frozen, so a change in score reflects a change in DeckScope.\n")
+
+    result = run_suite(
+        suite_dir=args.suite, modes=args.mode, trials=args.trials,
+        provider=args.provider, model=args.model, lens=args.lens,
+        out_dir=args.out, only=args.only, on_event=_out)
+
+    _out("")
+    _out("=" * 74)
+    _out(f"  Evaluation · {args.provider}"
+         + (f"/{args.model}" if args.model else "")
+         + f" · {result.trials} trial(s) per case")
+    _out("=" * 74)
+
+    width = max(len(d) for d in DIMENSIONS) + 2
+    header = "  " + "dimension".ljust(width) + "".join(
+        m.rjust(12) for m in result.modes)
+    _out("\n" + header)
+    _out("  " + "-" * (width + 12 * len(result.modes)))
+    for dimension in DIMENSIONS:
+        cells = []
+        for mode in result.modes:
+            rate = result.dimension_rate(mode, dimension)
+            cells.append("—".rjust(12) if rate is None
+                         else f"{rate:.0%}".rjust(12))
+        if any(c.strip() != "—" for c in cells):
+            _out("  " + dimension.ljust(width) + "".join(cells))
+
+    for mode in result.modes:
+        stability = result.stability(mode)
+        cost = result.cost(mode)
+        _out(f"\n  [{mode}]")
+        if stability["cases_measured"]:
+            _out(f"    stability   verdict identical across trials: "
+                 f"{stability['verdict_identical_across_trials']:.0%}"
+                 f" · mean score spread {stability['mean_score_spread']}")
+        _out(f"    cost        {cost['input_tokens']} in / "
+             f"{cost['output_tokens']} out tokens over {cost['runs']} run(s), "
+             f"{cost['seconds']}s")
+        failures = result.failures(mode)
+        if failures:
+            _out(f"    {len(failures)} failed check(s):")
+            for f in failures[:8]:
+                _out(f"      · [{f['case']}] {f['dimension']}: {f['detail'][:90]}")
+                if f["rationale"]:
+                    _out(f"        why it matters: {f['rationale'][:88]}")
+            if len(failures) > 8:
+                _out(f"      … and {len(failures) - 8} more")
+        else:
+            _out("    every check passed")
+
+    if result.errors():
+        _out("\n  Cases that could not run:")
+        for e in result.errors():
+            _out(f"    · {e['case']} [{e['mode']}]: {e['error'][:80]}")
+
+    _out("\n" + "=" * 74)
+    _out("")
+    for line in _wrap(result.to_dict()["caveat"], 72):
+        _out("  " + line)
+    _out("")
+
+    if args.save:
+        _out(f"  Full result: {save(result, args.save)}\n")
+
+    # Non-zero when anything failed, so this can gate a release.
+    return 1 if (result.errors()
+                 or any(result.failures(m) for m in result.modes)) else 0
+
+
+def _wrap(text: str, width: int) -> List[str]:
+    words, lines, current = text.split(), [], ""
+    for word in words:
+        if len(current) + len(word) + 1 > width:
+            lines.append(current)
+            current = word
+        else:
+            current = f"{current} {word}".strip()
+    if current:
+        lines.append(current)
+    return lines
 
 
 def _list_providers() -> int:

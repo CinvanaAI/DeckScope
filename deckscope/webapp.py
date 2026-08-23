@@ -13,6 +13,13 @@ handed to the page in its URL. In addition:
   * State-changing routes are POST only, and their Origin must match this server.
     That blocks the classic <img src="http://127.0.0.1:8765/..."> forgery, which a
     GET route cannot defend against at all.
+
+    What the token does NOT do is authenticate against other processes running as
+    you. The page is served unauthenticated so a browser can load it, and the
+    token is in that page — so anything running under your account can fetch it
+    and drive the API. That is an acceptable boundary because a hostile process
+    with your privileges can already read your files and your keys directly; the
+    token exists to stop *web pages*, not *local programs*.
   * Opening a file is restricted to files this process actually produced. A path
     that DeckScope did not write is refused, so the endpoint cannot be turned into
     "launch an arbitrary executable".
@@ -371,8 +378,9 @@ def serve(port: int = 8765, open_browser: bool = True) -> None:
     url = f"http://127.0.0.1:{port}/?token={SESSION_TOKEN}"
     _out("\n  DeckScope is running at:")
     _out(f"    {url}")
-    _out("\n  That link contains a one-time key for this session. Requests without")
-    _out("  it are refused, so another program on this computer cannot drive it.")
+    _out("\n  That link carries a one-time key for this session. Requests without it")
+    _out("  are refused, which stops other web pages you visit from driving DeckScope.")
+    _out("  It does not defend against other programs running under your own account.")
     _out("  Keep this window open while you use it. Press Ctrl+C to stop.\n")
     if open_browser:
         threading.Timer(0.6, lambda: webbrowser.open(url)).start()

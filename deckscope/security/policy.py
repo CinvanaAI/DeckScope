@@ -55,6 +55,19 @@ class SecurityPolicy:
             return False
         return SEVERITY_ORDER.get(severity, 0) >= SEVERITY_ORDER.get(self.redact_on, 3)
 
+    #: Minimum severity at which a WEB SOURCE is dropped entirely rather than
+    #: cleaned. Separate from `redact_on` because the trade differs: a deck is
+    #: the thing being analyzed and must survive, whereas a suspicious source is
+    #: one of many and dropping it costs almost nothing.
+    quarantine_on: str = "medium"
+
+    def should_quarantine(self, severity: str) -> bool:
+        """Whether a finding at this severity disqualifies a web source."""
+        if self.mode in (Mode.PERMISSIVE, Mode.OFF):
+            return False
+        return (SEVERITY_ORDER.get(severity, 0)
+                >= SEVERITY_ORDER.get(self.quarantine_on, 2))
+
     def should_abort(self, severity: str) -> bool:
         if self.mode is not Mode.STRICT:
             return False

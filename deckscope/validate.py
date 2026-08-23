@@ -87,7 +87,13 @@ def _rows(obj: Any) -> List[Any]:
 
 def validate_comparison(data: Dict[str, Any], *, valid_source_ids: Iterable[str] = (),
                         report: Optional[ValidationReport] = None) -> ValidationReport:
-    """Check and repair a comparison in place. Returns what was changed."""
+    """Check and repair a comparison in place. Returns what was changed.
+
+    `valid_source_ids` must contain only sources that were actually PUT IN FRONT
+    OF THE MODEL — not everything in the registry. A quarantined source is in the
+    registry so the report can say it was dropped, but it never entered the
+    evidence prompt, so a citation to it cannot be genuine.
+    """
     rep = report or ValidationReport()
     valid = {str(s).upper() for s in valid_source_ids}
 
@@ -256,7 +262,17 @@ def _check_ids(row: Dict[str, Any], key: str, valid: Set[str], path: str,
     nothing should say so rather than borrow authority from a plausible number.
     """
     ids = row.get(key)
-    if not isinstance(ids, list) or not valid:
+    if not isinstance(ids, list) or not ids:
+        return
+    # An empty `valid` set is the STRONGEST reason to check, not a reason to skip.
+    # It means no usable source exists, so every citation is fabricated — and an
+    # earlier version returned here, letting "S99" through on a run with an empty
+    # bibliography.
+    if not valid:
+        rep.note(f"{path}.{key}",
+                 f"cites {', '.join(str(x) for x in ids)} on a run with no usable "
+                 f"sources at all", "all citations removed")
+        row[key] = []
         return
     kept, bad = [], []
     for raw in ids:

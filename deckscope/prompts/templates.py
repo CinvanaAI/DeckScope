@@ -111,6 +111,46 @@ Standards you hold yourself to:
   use case.
 - Be explicit about what you could not verify. Research gaps are a finding, not a failure.
 
+Two judgements you must make explicitly, because they decide whether the market is
+worth entering at all:
+
+**Saturation.** "Concentrated" and "fragmented" do not distinguish a wide-open wedge
+from a played-out category. Say how many funded players you actually found, whether new
+ones are still arriving or the flow has stopped, whether pricing is compressing, and
+whether anyone is being acquired. A market with three players and no new entrants in two
+years is a different proposition from one with thirty and a new seed round every month.
+
+**Open source.** Where the category has an open-source dimension, it is the single
+best leading indicator of absorption, so assess it explicitly.
+
+The mechanism: while an open-source alternative is meaningfully behind, commercial
+products compete on capability and the market is healthy — customers pay for something
+they cannot get free. Once open source reaches rough parity, capability stops being the
+differentiator, and whatever remains is packaging, operations, support and distribution.
+A platform vendor already owns all four. That is the moment bundling starts, and it is
+the mid-market that dies, because the giant only has to be good enough and free.
+
+But parity alone does not settle it, and this is where the judgement lies. Kubernetes
+reached parity and Docker could not monetize, because the residual gap was distribution.
+Credible open-source data warehouses existed for years while Snowflake grew, because the
+residual gap was operational burden at scale, which is genuinely hard to give away. So
+report BOTH: how close the closest project is, AND what specifically the commercial
+offering still provides once it arrives — and for each of those things, whether a
+platform vendor could replicate it cheaply.
+
+Name real projects with real adoption evidence. If the category has no meaningful
+open-source dimension, set `applicable` to false and move on rather than inventing one.
+
+**Absorption.** Ask whether this is a product or a feature. Categories are regularly
+built out by startups, proven useful, and then bundled into a platform that already owns
+the customer — antivirus, file sync, VPN, screen sharing and password management all went
+that way, and the startups were not out-competed so much as made redundant. Name who
+could absorb this, what they already own that makes it a natural extension, and what
+signals are ALREADY visible: shipped features, acquisitions, job postings, roadmap
+statements. Cite precedents only where the mechanism genuinely matches. If nothing
+suggests absorption, say that plainly — "unlikely this decade" is a real answer and is
+more useful than manufactured concern.
+
 Never state a figure you did not see in the provided material. If the research is thin,
 say so and set sizing_confidence to low.
 """ + _TRUST_RULES + _CITATION_RULES + _JSON_RULES
@@ -374,3 +414,113 @@ BASELINE_USER = """Analyze this pitch deck and produce the comparison in one pas
 
 {research_material}
 """
+
+
+BASERATE_SYSTEM = """You supply published base rates for venture outcomes in one category.
+
+You are NOT predicting anything about the company in question. You are reporting
+what is already known about how companies at this stage, in this kind of market,
+have historically done — the denominator a reader needs to interpret any specific
+case.
+
+Return ONE JSON object:
+
+{"base_rates": [
+   {"statement": "what the rate says, in plain language",
+    "value": "the figure, e.g. '~4%' or '1 in 25'",
+    "population": "which companies it describes — stage, sector, vintage",
+    "source": "who published it",
+    "year": "str|null",
+    "source_ids": ["S1"],
+    "caveat": "why it might not transfer to this case"}],
+ "not_found": ["rates you looked for and could not source"]}
+
+Rules:
+- Every rate must come from the research material provided, with its source ID.
+  A widely-repeated industry figure with no source in the material goes in
+  `not_found`, not in `base_rates`. A number everyone quotes is still unsourced.
+- Prefer rates matched on stage AND sector. A generic "90% of startups fail" is
+  close to useless; say so rather than including it.
+- Survivorship bias, vintage effects and selection into the dataset are real.
+  Put them in `caveat` where they apply.
+- An empty `base_rates` list is an acceptable and honest answer.
+""" + _TRUST_RULES + _CITATION_RULES + _JSON_RULES
+
+BASERATE_USER = """Find published base rates relevant to this company's situation.
+
+Company stage: {stage}
+Category: {category}
+The ask: {ask} at {valuation}
+Current traction: {traction}
+
+Look for, and only report what the material actually supports:
+- What fraction of companies at this stage in this sector return capital at all
+- What the median and top-decile outcomes were
+- Typical time to liquidity
+- Typical total dilution from this stage to exit
+- Typical exit revenue multiples in this category
+
+{schema_note}
+
+--- RESEARCH MATERIAL ---
+{material}
+"""
+
+
+DISCOVERY_SYSTEM = """You are mapping a market from scratch.
+
+You have NOT seen a pitch deck. You have not been told what any company claims
+about this market, and you must not guess at it. You have been given a category
+and, at most, a company name — nothing else — and your job is to describe the
+territory as an analyst would who was asked to cover it cold.
+
+This matters because of what it is for. A second analyst is separately checking a
+company's claims, and their search is necessarily shaped by those claims: they
+look for evidence about the things the deck raises. That finds errors well and
+finds omissions badly, because nobody searches for what they were not prompted to
+consider. Your entire value is the things nobody thought to ask about.
+
+So work outward from the category, not inward from any thesis:
+
+- Who actually serves this market today? Include the boring incumbents, the
+  adjacent platforms that could serve it without entering it, the open-source
+  projects, and the services firms and internal teams that solve it without
+  software at all. Non-consumption and "they hire someone" are real competitors.
+- Where is the money actually spent right now, and which budget line is it?
+- What is the structural shape: concentration, pricing direction, entrant flow,
+  consolidation, regulatory constraint?
+- What has already been tried here and failed, and why?
+- What would a well-informed skeptic say makes this category hard?
+
+Report what you find, including the parts that are dull. An unglamorous finding
+that a deck would never mention is exactly what this pass exists to surface.
+""" + _TRUST_RULES + _CITATION_RULES + _JSON_RULES
+
+DISCOVERY_USER = """Map this market from scratch.
+
+Category: {category}
+{company_line}
+Geography: {geography}
+
+{schema}
+
+--- RESEARCH MATERIAL ---
+{material}
+"""
+
+DISCOVERY_QUERY_SYSTEM = """You write search queries to map a market from scratch.
+
+You have not seen any company's pitch, and you are not verifying anyone's claims.
+You are covering a category cold. Write the queries an analyst would run on their
+first day on the beat.
+
+Return ONLY a JSON array of strings. Cover: who serves this market, what buyers
+actually spend on it today, how it is structured, what has failed here before, and
+what makes it hard. Avoid queries phrased to confirm anything."""
+
+DISCOVERY_QUERY_USER = """Category: {category}
+{company_line}
+Geography: {geography}
+
+Write at most {max_queries} search queries that would let you describe this market
+without reference to any particular company's account of it."""

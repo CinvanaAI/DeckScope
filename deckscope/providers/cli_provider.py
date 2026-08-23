@@ -31,14 +31,31 @@ from typing import List, Optional
 from ..config import ProviderConfig
 from .base import Completion, LLMProvider, ProviderError
 
+#: Flags that turn each CLI into a plain text-in/text-out completer.
+#:
+#: This matters more than it looks. Every other provider sends text to an API and
+#: gets text back, so the worst an injection can do is bias the analysis. An agent
+#: CLI may hold filesystem, shell and network tools, and deck content reaching one
+#: of those is no longer only an analysis problem. Where the CLI exposes controls,
+#: they are used; where it does not, `sandbox` refuses to run it against untrusted
+#: input unless explicitly overridden.
 PRESETS = {
-    # --strict-mcp-config with no servers means no MCP tools are loaded.
+    # --strict-mcp-config with an empty config loads no MCP servers;
+    # --disallowedTools blocks the built-in filesystem and shell tools.
     "claude": ["claude", "-p", "--output-format", "text",
-               "--strict-mcp-config", "--mcp-config", "{}"],
-    "codex":  ["codex", "exec", "-"],
+               "--strict-mcp-config", "--mcp-config", "{}",
+               "--disallowedTools", "Bash,Edit,Write,Read,WebFetch,WebSearch,"
+                                    "NotebookEdit,Glob,Grep"],
+    # read-only sandbox, never prompt for approval
+    "codex":  ["codex", "exec", "--sandbox", "read-only",
+               "--ask-for-approval", "never", "-"],
     "gemini": ["gemini", "-p"],
     "ollama": ["ollama", "run"],
 }
+
+#: Presets DeckScope cannot verifiably restrict. Running these against a deck from
+#: an untrusted source is a decision the operator has to make deliberately.
+UNRESTRICTED_PRESETS = {"gemini", "ollama"}
 
 #: Environment variables a child CLI legitimately needs. Everything else — and in
 #: particular every *_API_KEY and *_TOKEN in the parent environment — is dropped.
@@ -64,12 +81,28 @@ class CLIProvider(LLMProvider):
     def __init__(self, config: Optional[ProviderConfig] = None) -> None:
         super().__init__(config)
         self.sandbox = bool(self.config.extra.get("sandbox", True))
+        self.allow_unrestricted = bool(
+            self.config.extra.get("allow_unrestricted_cli", False))
         preset = self.config.extra.get("preset") or self.model or "claude"
+        self.preset = preset
         self.argv: List[str] = list(
             self.config.extra.get("command") or PRESETS.get(preset, [preset])
         )
         if preset == "ollama" and self.config.extra.get("ollama_model"):
             self.argv.append(self.config.extra["ollama_model"])
+        if (self.sandbox and preset in UNRESTRICTED_PRESETS
+                and not self.config.extra.get("command")
+                and not self.allow_unrestricted):
+            raise ProviderError(
+                f"DeckScope cannot verify that the `{preset}` CLI runs without tools, "
+                f"so it will not send deck content to it by default — an injected "
+                f"instruction reaching a tool-capable agent is a different class of "
+                f"problem from a biased report.\n\n"
+                f"Either use a preset DeckScope can restrict (`claude`, `codex`), use "
+                f"an API provider, or accept the risk explicitly with:\n"
+                f"  provider: {{name: cli, extra: {{preset: {preset}, "
+                f"allow_unrestricted_cli: true}}}}")
+
         exe = self.argv[0]
         if not shutil.which(exe):
             raise ProviderError(

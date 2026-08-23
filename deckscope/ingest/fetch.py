@@ -94,8 +94,63 @@ def resolve_public(host: str) -> List[str]:
     return addrs
 
 
+class _PinnedConnectionMixin:
+    """Force the socket to the IP we already checked, keeping the Host header.
+
+    Without this, `resolve_public()` validates one answer and `urlopen` asks DNS
+    again — so a name that answers 93.184.216.34 for the check and 127.0.0.1 for
+    the connection sails straight through.
+    """
+
+    def _pinned_connect(self, http_class, req, **kw):
+        import http.client
+
+        host = req.host.split(":")[0]
+        port = None
+        if ":" in req.host:
+            try:
+                port = int(req.host.rsplit(":", 1)[1])
+            except ValueError:
+                port = None
+        addresses = resolve_public(host)
+        conn = http_class(addresses[0], port=port, **kw)
+        # Preserve the original name for TLS SNI, certificate validation and the
+        # Host header — only the socket target is pinned.
+        conn._pinned_host = host  # type: ignore[attr-defined]
+        return conn
+
+
+class _PinnedHTTPHandler(_PinnedConnectionMixin, urllib.request.HTTPHandler):
+    def http_open(self, req):  # noqa: D102
+        import http.client
+
+        return self.do_open(
+            lambda addr, **kw: self._pinned_connect(http.client.HTTPConnection, req, **kw),
+            req)
+
+
+class _PinnedHTTPSHandler(_PinnedConnectionMixin, urllib.request.HTTPSHandler):
+    def https_open(self, req):  # noqa: D102
+        import http.client
+        import ssl
+
+        context = ssl.create_default_context()
+
+        def factory(addr, **kw):
+            kw.pop("context", None)
+            conn = self._pinned_connect(http.client.HTTPSConnection, req,
+                                        context=context, **kw)
+            conn.host = getattr(conn, "_pinned_host", conn.host)
+            return conn
+
+        return self.do_open(factory, req)
+
+
 class _PinnedRedirectHandler(urllib.request.HTTPRedirectHandler):
     """Validate the destination of every redirect, not just the first URL."""
+
+    max_repeats = MAX_REDIRECTS
+    max_redirections = MAX_REDIRECTS
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: N802
         parsed = urllib.parse.urlparse(newurl)
@@ -125,7 +180,12 @@ def fetch_url(url: str, *, max_bytes: int = MAX_BYTES,
 
     resolve_public(parsed.hostname or "")
 
-    opener = urllib.request.build_opener(_PinnedRedirectHandler)
+    # Pin the connection to an address we validated. Resolving once to check and
+    # then letting urllib resolve again to connect leaves a rebinding window: the
+    # name can answer with a public address for the check and a private one for
+    # the connection.
+    opener = urllib.request.build_opener(_PinnedRedirectHandler,
+                                         _PinnedHTTPSHandler(), _PinnedHTTPHandler())
     req = urllib.request.Request(url, headers={
         "User-Agent": "DeckScope (+https://github.com/CinvanaAI/DeckScope)",
         "Accept": "application/pdf, text/html, text/plain, application/json;q=0.8, */*;q=0.5",

@@ -145,7 +145,7 @@ class SourceRegistry:
             "comes from a specific source. Never cite an ID that is not listed here.",
             "",
         ]
-        used = sum(len(l) for l in lines)
+        used = sum(len(line) for line in lines)
         for s in self.sources:
             if s.status == "quarantined":
                 continue
@@ -161,6 +161,21 @@ class SourceRegistry:
             lines.append(block)
             used += len(block)
         return "\n".join(lines)
+
+    @property
+    def citable(self) -> List[Source]:
+        """Sources that actually entered the evidence prompt.
+
+        Quarantined sources are in the registry so the report can say they were
+        dropped and why — but they were excluded from `prompt_block`, so the model
+        never saw them and a citation to one cannot be genuine. Validation must
+        use this, not `sources`.
+        """
+        return [s for s in self.sources if s.status != "quarantined"]
+
+    @property
+    def citable_ids(self) -> List[str]:
+        return [s.sid for s in self.citable]
 
     @property
     def cited(self) -> List[Source]:

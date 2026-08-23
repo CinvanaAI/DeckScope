@@ -43,6 +43,18 @@ research:
 lenses:
   - investor
 
+# ----------------------------------------------------- opportunity cost
+# Off by default. When on, DeckScope checks which named competitors are
+# publicly traded and computes what this company would have to REACH to match
+# holding them instead. It does not forecast returns — see docs/OPPORTUNITY.md.
+# opportunity:
+#   enabled: true
+#   market_data: auto            # auto | search | none
+#   future_dilution: 0.50        # before exit; the largest single lever
+#   exit_revenue_multiple: 6.0   # category-dependent
+#   horizon_years: 5
+#   preference_stack: 1.0        # what later investors take first
+
 # ------------------------------------------------------------------ output
 output:
   formats: [html, pdf]           # md html pdf docx pptx xlsx json txt

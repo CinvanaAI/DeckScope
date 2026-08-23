@@ -1,0 +1,34 @@
+{
+  "id": "omitted_incumbent",
+  "name": "Deck omits the dominant incumbents entirely",
+  "deck": "decks/omitted_incumbent.md",
+  "corpus": "corpora/omitted_incumbent.json",
+  "description": "The deck names Gorgias and Tidio and claims to be 'the only fully agentic option'. The corpus says Zendesk and Intercom both ship AI agents as standard, Intercom bundles Fin into mid-tier plans, and Shopify gives support tooling to merchants free. This is the case the deck-blind discovery pass exists for: nothing in the deck prompts a search for any of them.",
+  "tags": ["omission", "core"],
+  "expect": {
+    "claims": [
+      {
+        "matches": "only fully agentic|only.*agentic option",
+        "assessment": ["contradicted"],
+        "must_cite": true,
+        "weight": 2.0,
+        "rationale": "The corpus states plainly that Intercom and Zendesk already ship AI agents as a standard feature."
+      }
+    ],
+    "blind_spots": [
+      {
+        "must_mention": ["Intercom", "Zendesk"],
+        "weight": 3.0,
+        "rationale": "Both dominate the category and neither appears anywhere in the deck."
+      },
+      {
+        "must_mention": ["Shopify"],
+        "weight": 2.0,
+        "rationale": "Ships support tooling free to the exact buyer this company sells to."
+      }
+    ],
+    "must_not_fabricate": ["Salesforce acquisition", "$50M round", "Freshdesk"],
+    "confidence_at_most": "high",
+    "security_risk": "clean"
+  }
+}

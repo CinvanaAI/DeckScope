@@ -7,10 +7,9 @@ from typing import Any, List, Tuple
 
 from ..ingest.loader import DeckDocument
 from .forensics import scan_file
-from .policy import Mode, SecurityPolicy
+from .policy import SecurityPolicy
 from .report import Finding, ScanReport, SecurityAbort
-from .sanitizer import fence, sanitize
-from .text_scanner import scan_text
+from .sanitizer import fence, harden
 
 
 # ====================================================================== deck
@@ -31,17 +30,18 @@ def screen_deck(doc: DeckDocument, policy: SecurityPolicy,
     if policy.scan_deck_forensics and deck_path:
         report.extend(scan_file(deck_path, policy))
 
-    # 2. scan the extracted text itself
-    report.extend(scan_text(doc.text, "deck text"))
+    # 2-3. Normalize, scan and redact in one guarded sequence. `harden` owns the
+    #      ordering because doing it out of order is what made an earlier version
+    #      redact the wrong text and, worse, de-obfuscate an injection after
+    #      scanning it.
+    cleaned, text_report = harden(doc.text, policy, "deck text")
+    report.extend(text_report)
     report.scanned_items = max(report.scanned_items, doc.n_slides)
-    report.scanned_chars = len(doc.text)
 
-    # 3. abort or clean
     for f in report.findings:
         if policy.should_abort(f.severity):
             raise SecurityAbort(report)
 
-    cleaned = sanitize(doc.text, policy, report, "deck text")
     doc.text = fence(cleaned, "PITCH DECK CONTENT")
     if report.findings:
         doc.warnings.append(report.summary_line())
@@ -85,23 +85,28 @@ def screen_sources(results: List[Any], policy: SecurityPolicy) -> Tuple[List[Any
         # punycode host, is not evidence about a market no matter what it says.
         url_report = _scan_url(getattr(r, "url", "") or "", where)
         report.extend(url_report)
+        # One policy question, asked once, rather than severity comparisons
+        # hardcoded at each site. The default threshold is `medium`, so embedded
+        # credentials and punycode hosts now drop the source — which is what the
+        # documentation always said and the code did not do.
         url_blocking = [f for f in url_report.findings
-                        if f.severity in ("critical", "high")]
+                        if policy.should_quarantine(f.severity)]
 
         title = str(getattr(r, "title", "") or "")
         snippet = str(getattr(r, "snippet", "") or "")
-        # Scanned separately so each finding's span indexes the string it will
+        # Hardened separately so each finding's span indexes the string it will
         # actually be applied to.
-        title_scan = scan_text(title, f"{where} title")
-        snippet_scan = scan_text(snippet, where)
+        clean_title, title_scan = harden(title, policy, f"{where} title")
+        clean_snippet, snippet_scan = harden(snippet, policy, where)
         report.extend(title_scan)
         report.extend(snippet_scan)
         report.scanned_chars += len(title) + len(snippet)
 
         critical = [f for f in (title_scan.findings + snippet_scan.findings)
-                    if f.severity == "critical"]
+                    if policy.should_quarantine(f.severity)]
         if critical or url_blocking:
-            if policy.mode is Mode.STRICT:
+            if any(policy.should_abort(f.severity)
+                   for f in (critical + url_blocking)):
                 raise SecurityAbort(report)
             reasons = sorted({f.code for f in critical} | {f.code for f in url_blocking})
             report.add(Finding(
@@ -113,8 +118,8 @@ def screen_sources(results: List[Any], policy: SecurityPolicy) -> Tuple[List[Any
                 excerpt=(getattr(r, "url", "") or "")[:120], action="quarantined"))
             continue
 
-        r.title = sanitize(title, policy, report, f"{where} title")
-        snippet = sanitize(snippet, policy, report, where)
+        r.title = clean_title
+        snippet = clean_snippet
         if len(snippet) > policy.max_source_chars:
             snippet = snippet[:policy.max_source_chars] + "\n[truncated by DeckScope]"
         r.snippet = snippet

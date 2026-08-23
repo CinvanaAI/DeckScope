@@ -51,6 +51,54 @@ jobs:
           grep -q "Input integrity screen" ./_injected/*.md
           grep -q "CRITICAL" ./_injected/*.md
 
+  evaluation:
+    name: Evaluation suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[all]"
+
+      # The structural dimensions must hold for any provider, including the mock:
+      # a citation to a source that does not exist, an invented figure, or a missed
+      # injection is a defect regardless of how good the analysis is.
+      #
+      # claim_accuracy is NOT gated here, because the mock is a crude fixture and
+      # scores badly on it by design. Gating it would only pressure someone into
+      # tuning the fixture, which would make the suite prove nothing.
+      - name: Structural dimensions must not regress
+        run: |
+          python -m deckscope eval --mode pipeline --save eval.json --out ./_eval
+          python - <<'PY'
+          import json, sys
+          data = json.load(open("eval.json"))
+          dims = data["by_mode"]["pipeline"]["dimensions"]
+          required = ["citation_integrity", "no_fabrication", "injection_detection",
+                      "calibration"]
+          bad = [d for d in required if (dims.get(d) or 0) < 1.0]
+          for d in required:
+              print(f"  {d}: {dims.get(d)}")
+          if bad:
+              print(f"REGRESSION in {bad}")
+              sys.exit(1)
+          print("structural dimensions all at 100%")
+          PY
+
+      - name: The suite must be reproducible
+        run: |
+          python -m deckscope eval --trials 2 --save stability.json --out ./_eval2 || true
+          python - <<'PY'
+          import json, sys
+          s = json.load(open("stability.json"))["by_mode"]["pipeline"]["stability"]
+          print(f"  verdict identical across trials: "
+                f"{s['verdict_identical_across_trials']}")
+          if s["verdict_identical_across_trials"] != 1.0:
+              print("Frozen evidence must give identical results across trials.")
+              sys.exit(1)
+          PY
+
   minimal:
     name: Core install only (no optional extras)
     runs-on: ubuntu-latest

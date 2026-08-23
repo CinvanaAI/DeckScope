@@ -34,7 +34,7 @@ from .claim_align import align_claims
 from .config import Lens, ProviderConfig, RunConfig
 from .orchestrator import AnalysisResult, Pipeline
 from .prompts.lenses import lens_block
-from .panel.strategies import Decision, RoundState, RoundStrategy, get_strategy
+from .panel.strategies import RoundState, RoundStrategy, get_strategy
 from .panel.voting import Ballot, VoteResult, ballot_from_json, tally
 from .prompts.templates import (CONSENSUS_SYSTEM, CONSENSUS_USER, REVIEW_SYSTEM,
                                 REVIEW_USER, REVISE_SYSTEM, REVISE_USER,
@@ -42,6 +42,7 @@ from .prompts.templates import (CONSENSUS_SYSTEM, CONSENSUS_USER, REVIEW_SYSTEM,
 from .providers.registry import get_provider
 from .schemas import (COMPARISON_SCHEMA, CONSENSUS_SCHEMA, REVIEW_SCHEMA, coerce,
                       schema_block, scorecard_total)
+from .validate import ValidationReport, _check_ids, validate_comparison
 from .security.sanitizer import fence
 from .sources import SourceRegistry, merge_registries, rewrite_citations
 
@@ -236,10 +237,13 @@ class Panel:
             "panelists_failed": [{"name": p.name, "error": p.error}
                                  for p in self.panelists if not p.ok],
             "rounds_configured": self.rounds,
-            "rounds_run": sum(1 for e in result.round_log if e.get("ran")),
+            "rounds_run": len({e["after_round"] for e in result.round_log
+                               if e.get("ran")}),
             "strategy": self.strategy.name,
-            "stopped_because": (result.round_log[-1]["reason"]
-                                if result.round_log else "no review rounds"),
+            "stopped_because": ("; ".join(
+                f"[{e['lens']}] {e['reason']}" for e in result.round_log
+                if e["after_round"] == max(x["after_round"] for x in result.round_log))
+                if result.round_log else "no review rounds"),
             "chair": _pname(self.chair_config),
             "research_backend": (primary.stats or {}).get("research_backend") if primary else None,
             "sources_found": (primary.stats or {}).get("sources_found", 0) if primary else 0,
@@ -288,10 +292,10 @@ class Panel:
                           + (f"done in {p.elapsed:.0f}s — {_verdict_line(p)}"
                              if p.ok else f"FAILED — {p.error}"))
 
-    def _snapshot(self, working: List[Panelist], lenses: List[str],
-                  round_number: int, previous_spread: Optional[float]) -> RoundState:
-        """What the strategy sees. Uses the first lens as the reference view."""
-        lens = lenses[0] if lenses else "investor"
+    def _snapshot_lens(self, working: List[Panelist], lens: str,
+                       round_number: int,
+                       previous_spread: Optional[float]) -> RoundState:
+        """What the strategy sees for ONE lens."""
         metrics = measure_agreement(working, lens)
         return RoundState(
             round_number=round_number,
@@ -307,39 +311,76 @@ class Panel:
             contested_claims=len(metrics.get("contested_claims") or []),
         )
 
+    def _snapshot(self, working: List[Panelist], lenses: List[str],
+                  round_number: int,
+                  previous: Optional[Dict[str, float]] = None) -> Dict[str, RoundState]:
+        """One state per lens.
+
+        An earlier version used the first lens as a proxy for the whole panel,
+        which meant an investor view that had converged could stop the run while
+        the founder view was still split. The lenses ask different questions and
+        converge at different rates, so each gets its own reading.
+        """
+        previous = previous or {}
+        return {lens: self._snapshot_lens(working, lens, round_number,
+                                          previous.get(lens))
+                for lens in (lenses or ["investor"])}
+
     def _run_rounds(self, result: PanelResult, working: List[Panelist],
                     lenses: List[str]) -> None:
-        """Review and revise until the configured strategy says to stop."""
+        """Review and revise until every lens's strategy says to stop."""
         self._log(f"Stopping rule: {self.strategy.describe()}")
-        previous_spread: Optional[float] = None
+        lenses = lenses or ["investor"]
+        # One strategy instance per lens: `adaptive` chooses a delegate from what
+        # it sees, and the right choice can differ between lenses.
+        strategies = {
+            lens: (self.strategy if len(lenses) == 1
+                   else get_strategy(self.strategy.name,
+                                     max_rounds=self.strategy.max_rounds))
+            for lens in lenses}
+        previous: Dict[str, float] = {}
         round_number = 0
 
         while True:
-            state = self._snapshot(working, lenses, round_number, previous_spread)
-            decision: Decision = self.strategy.should_continue(state)
-            result.round_log.append({
-                "after_round": round_number,
-                "spread": state.spread,
-                "verdict_agreement": state.verdict_agreement,
-                "position_changes": state.total_changes,
-                "contested_claims": state.contested_claims,
-                "weakest_confidence": state.weakest_confidence,
-                "proceed": decision.proceed,
-                "reason": decision.reason,
-                "ran": False,
-                **decision.detail,
-            })
-            if not decision.proceed:
-                self._log(f"Stopping after {round_number} review round(s): "
-                          f"{decision.reason}")
+            states = self._snapshot(working, lenses, round_number, previous)
+            decisions = {lens: strategies[lens].should_continue(state)
+                         for lens, state in states.items()}
+
+            for lens, state in states.items():
+                d = decisions[lens]
+                result.round_log.append({
+                    "after_round": round_number,
+                    "lens": lens,
+                    "spread": state.spread,
+                    "verdict_agreement": state.verdict_agreement,
+                    "position_changes": state.total_changes,
+                    "contested_claims": state.contested_claims,
+                    "weakest_confidence": state.weakest_confidence,
+                    "proceed": d.proceed,
+                    "reason": d.reason,
+                    "ran": False,
+                    **d.detail,
+                })
+
+            # Continue while ANY lens still wants another round. Stopping when the
+            # first lens settles would leave the others mid-argument — and an
+            # earlier version did exactly that, using lens one as a proxy for the
+            # whole panel.
+            wants_more = [name for name, d in decisions.items() if d.proceed]
+            if not wants_more:
+                summary = "; ".join(f"[{name}] {d.reason}" for name, d in decisions.items())
+                self._log(f"Stopping after {round_number} review round(s): {summary}")
                 return
 
+            for entry in result.round_log:
+                if entry["after_round"] == round_number:
+                    entry["ran"] = True
             round_number += 1
-            self._log(f"Cross-review round {round_number} — {decision.reason}")
-            result.round_log[-1]["ran"] = True
-            previous_spread = state.spread
+            self._log(f"Cross-review round {round_number} — still open: "
+                      f"{', '.join(wants_more)}")
+            previous = {lens: st.spread for lens, st in states.items()}
             self._round_review(working, lenses, result.registry)
-            self._round_revise(working, lenses, result.registry)
+            self._round_revise(working, lenses, result.registry, round_number)
 
     def _round_vote(self, result: PanelResult, working: List[Panelist],
                     lenses: List[str]) -> None:
@@ -414,9 +455,13 @@ class Panel:
                     own=fence(own, "YOUR OWN ANALYSIS"),
                     peers=fence(peers, "PEER ANALYSES"),
                     sources=fence(sources, "SHARED BIBLIOGRAPHY"))
-                system = REVIEW_SYSTEM.format(
-                    lens_block=lens_block(Lens.parse(lenses[0]) if lenses
-                                          else Lens.INVESTOR))
+                # Each lens asks a different question, so a review packet spanning
+                # several lenses must say which posture applies to which — rather
+                # than silently applying the first lens's stance to all of them.
+                blocks = "\n\n".join(
+                    f"### When reviewing the {name} analyses:\n{lens_block(Lens.parse(name))}"
+                    for name in (lenses or ["investor"]))
+                system = REVIEW_SYSTEM.format(lens_block=blocks)
                 me.review = coerce(provider.complete_json(system, user, temperature=0.3),
                                    REVIEW_SCHEMA)
             except Exception as exc:  # noqa: BLE001
@@ -439,9 +484,11 @@ class Panel:
                           f"changing {n_changes} of its own position(s)")
 
     def _round_revise(self, working: List[Panelist], lenses: List[str],
-                      registry: Optional[SourceRegistry] = None) -> None:
+                      registry: Optional[SourceRegistry] = None,
+                      round_number: int = 1) -> None:
         self._log("Round 3: each panelist revises its own analysis")
         sources = _sources_block(working, registry)
+        citable = registry.citable_ids if registry else []
 
         def one(me: Panelist) -> None:
             if me.review.get("error"):
@@ -453,8 +500,11 @@ class Panel:
             provider = get_provider(me.provider)
             try:
                 for lens in lenses:
-                    own = json.dumps(_strip(me.result.comparisons.get(lens, {})),  # type: ignore[union-attr]
-                                     indent=2)[:60_000]
+                    # Revise from the panelist's CURRENT position, not its first
+                    # one. Reading the original every round meant round three
+                    # refined round zero and silently discarded round two.
+                    current = me.final(lens)
+                    own = json.dumps(_strip(current), indent=2)[:60_000]
                     user = REVISE_USER.format(
                         schema=schema_block(COMPARISON_SCHEMA, "RevisedComparison"),
                         own=fence(own, "YOUR ORIGINAL ANALYSIS"),
@@ -464,10 +514,16 @@ class Panel:
                     system = REVISE_SYSTEM.format(lens_block=lens_block(Lens.parse(lens)))
                     revised = coerce(provider.complete_json(system, user, temperature=0.3),
                                      COMPARISON_SCHEMA)
+                    # A revision is model output like any other. Skipping
+                    # validation here let out-of-range scores and invented
+                    # citations into the convergence metrics and the vote.
+                    validation = validate_comparison(
+                        revised, valid_source_ids=citable)
                     revised["_meta"] = {
-                        "lens": lens, "revised": True,
+                        "lens": lens, "revised": True, "round": round_number,
                         "weighted_score": scorecard_total(revised.get("scorecard") or []),
                         "revision_log": revised.get("revision_log") or [],
+                        "validation": validation.to_dict(),
                     }
                     me.revised[lens] = revised
             except Exception as exc:  # noqa: BLE001
@@ -496,6 +552,8 @@ class Panel:
         self._log(f"Round 4: {_pname(self.chair_config)} chairs the consensus")
         provider = get_provider(self.chair_config)
         sources = _sources_block(working, result.registry)
+        citable_upper = [s.upper() for s in
+                         (result.registry.citable_ids if result.registry else [])]
         composition = "\n".join(
             f"- {p.label} = {p.name}" + ("" if p.ok else f" (FAILED: {p.error})")
             for p in self.panelists)
@@ -522,8 +580,15 @@ class Panel:
                 system = CONSENSUS_SYSTEM.format(lens_block=lens_block(Lens.parse(lens)))
                 report = coerce(provider.complete_json(system, user, temperature=0.3),
                                 CONSENSUS_SCHEMA)
+                # The chair is a model too. Its citations get the same treatment.
+                chair_validation = ValidationReport()
+                for row in report.get("contested") or []:
+                    for pos in (row.get("positions") or []):
+                        _check_ids(pos, "source_ids", set(citable_upper),
+                                   "contested.positions", chair_validation)
                 report["_meta"] = {"lens": lens, "chair": _pname(self.chair_config),
-                                   "metrics": result.metrics.get(lens, {})}
+                                   "metrics": result.metrics.get(lens, {}),
+                                   "validation": chair_validation.to_dict()}
                 result.consensus[lens] = report
                 self._log(f"  [{lens}] consensus: "
                           f"{(report.get('consensus_verdict') or {}).get('call', '—')} "
@@ -776,7 +841,7 @@ def analyze_with_panel(deck: str, panel: List[str], *, lens: Any = "investor",
     lenses = lens if isinstance(lens, list) else [lens]
     cfg = RunConfig(
         deck_path=deck, company_hint=company,
-        lenses=[Lens.parse(l) for l in lenses],
+        lenses=[Lens.parse(x) for x in lenses],
         research=ResearchConfig(name=research),
         output=OutputConfig(formats=formats or ["md"], out_dir=out_dir),
         security=security, verbose=verbose)

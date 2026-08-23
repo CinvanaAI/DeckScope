@@ -288,10 +288,14 @@ def build_panel_markdown(result, lens: str) -> str:
     if result.round_log:
         add("<details><summary>How the panel decided to stop</summary>")
         add("")
-        add("| After round | Spread | Agreement | Changes | Contested | Continue? | Why |")
-        add("|:--:|:--:|---|:--:|:--:|:--:|---|")
+        add("Each lens is tracked separately — they ask different questions and "
+            "converge at different rates, so one settling does not stop the others.")
+        add("")
+        add("| After round | Lens | Spread | Agreement | Changes | Contested | Continue? | Why |")
+        add("|:--:|---|:--:|---|:--:|:--:|:--:|---|")
         for e in result.round_log:
-            add(f"| {txt(e.get('after_round'))} | {txt(e.get('spread'))} | "
+            add(f"| {txt(e.get('after_round'))} | {txt(e.get('lens'))} | "
+                f"{txt(e.get('spread'))} | "
                 f"{txt(e.get('verdict_agreement'))} | {txt(e.get('position_changes'))} | "
                 f"{txt(e.get('contested_claims'))} | "
                 f"{'yes' if e.get('proceed') else 'stop'} | {txt(e.get('reason'))} |")
@@ -529,7 +533,7 @@ reviewing each other</div></header>""")
             "content — the numbers they quote and the words they use — not by each "
             "panelist's own numbering, which is independent and not comparable.</p>")
         add("<div class='tw'><table><tr><th>Claim</th>"
-            + "".join(f"<th>{_e(l)}</th>" for l in labels) + "<th>Consensus</th></tr>")
+            + "".join(f"<th>{_e(name)}</th>" for name in labels) + "<th>Consensus</th></tr>")
         for c in claims:
             add(f"<tr><td><b>{_e(c.get('id'))}</b> {_e(str(c.get('claim'))[:80])}</td>")
             for lbl in labels:

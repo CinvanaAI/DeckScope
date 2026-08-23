@@ -181,7 +181,7 @@ def test_ballot_parsing_tolerates_the_shapes_models_produce():
 
 def _cfg(tmp_path, lenses=("investor",)):
     return RunConfig(
-        deck_path=str(DECK), lenses=[Lens.parse(l) for l in lenses],
+        deck_path=str(DECK), lenses=[Lens.parse(x) for x in lenses],
         provider=ProviderConfig(name="mock"),
         research=ResearchConfig(name="none"),
         output=OutputConfig(formats=["md"], out_dir=str(tmp_path)),
@@ -234,10 +234,15 @@ def test_mode_comparison_reports_differences_without_declaring_a_winner(tmp_path
 
     comparison = compare_modes(pipeline_result, baseline_result)
     investor = comparison["lenses"]["investor"]
-    assert investor["claims_examined"]["pipeline"] >= \
-        investor["claims_examined"]["baseline"]
+
+    # Rates rather than counts: a mode that simply says more must not score higher.
+    assert 0.0 <= investor["citation_density"]["pipeline"] <= 1.0
+    assert set(investor["claims"]) >= {"raised_by_both", "only_pipeline",
+                                       "only_baseline"}
+    assert "contradictions" in investor
     assert "cost" in comparison
-    assert "not a verdict on which analysis is better" in comparison["caveat"]
+    assert "evidence" in comparison
+    assert "measures DIFFERENCE, not correctness" in comparison["caveat"]
     assert "winner" not in comparison
 
 

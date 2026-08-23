@@ -1,0 +1,22 @@
+{
+  "id": "thin_evidence",
+  "name": "Almost no evidence exists, so confidence must stay low",
+  "deck": "decks/thin_evidence.md",
+  "corpus": "corpora/thin_evidence.json",
+  "description": "A pre-seed deck with no revenue, a one-line market claim, and a corpus containing a single source that explicitly says no reliable sizing estimate exists. The correct behaviour is to say so and keep confidence low. Confidently sizing this market would be the failure — this case exists to catch overclaiming on absent evidence, which is the most damaging thing a diligence tool can do.",
+  "tags": ["calibration", "core"],
+  "expect": {
+    "claims": [
+      {
+        "matches": "large and underserved|believe this is a large",
+        "assessment": ["unverifiable", "contradicted", "partially-supported"],
+        "weight": 2.0,
+        "rationale": "The corpus says no reliable public estimate exists, so this cannot be verified either way."
+      }
+    ],
+    "blind_spots": [],
+    "must_not_fabricate": ["$4B", "$12B", "CAGR of 24%", "Gartner"],
+    "confidence_at_most": "medium",
+    "security_risk": "clean"
+  }
+}

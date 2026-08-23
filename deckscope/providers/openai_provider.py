@@ -10,6 +10,14 @@ from .base import Completion, LLMProvider, ProviderError
 
 
 class OpenAIProvider(LLMProvider):
+    """OpenAI, and anything speaking its chat-completions shape.
+
+    Subclasses declare which of their models reject sampling parameters. Several
+    vendors now ship reasoning-first models where sending `temperature` at all —
+    even at its default value — is an error rather than a no-op, so the request
+    has to be built per model rather than uniformly.
+    """
+
     name = "openai"
     default_model = "gpt-4o"
     default_base = "https://api.openai.com/v1"
@@ -20,6 +28,14 @@ class OpenAIProvider(LLMProvider):
         ("gpt-4o-mini", "Fast and cheap"),
         ("o3-mini", "Reasoning-heavy, slower"),
     ]
+    #: Model-name prefixes that reject temperature/top_p. The reasoning families
+    #: run their own sampling policy and return an error if one is supplied.
+    no_sampling_prefixes: tuple = ("o1", "o3", "o4")
+    catalog_url = "https://platform.openai.com/docs/models"
+
+    def accepts_sampling(self) -> bool:
+        model = (self.model or "").lower()
+        return not any(model.startswith(p) for p in self.no_sampling_prefixes)
 
     def __init__(self, config: Optional[ProviderConfig] = None) -> None:
         super().__init__(config)
@@ -44,8 +60,13 @@ class OpenAIProvider(LLMProvider):
             "messages": [{"role": "system", "content": system}]
             + [{"role": m.role, "content": m.content} for m in messages],
             "max_tokens": max_tokens or self.config.max_tokens,
-            "temperature": self.config.temperature if temperature is None else temperature,
         }
+        # Sending temperature to a model that rejects it fails the request
+        # outright — omitting the field is the supported way to get default
+        # behaviour, not passing the default value.
+        if self.accepts_sampling():
+            payload["temperature"] = (self.config.temperature
+                                      if temperature is None else temperature)
         if tools:
             payload["tools"] = tools
         payload.update(self.config.extra.get("body", {}))
@@ -124,6 +145,11 @@ class GeminiProvider(OpenAIProvider):
         ("gemini-2.5-flash", "Pinned version, if you need reproducibility"),
     ]
     catalog_url = "https://ai.google.dev/gemini-api/docs/models"
+    #: Google's current generation does not accept sampling controls, and the
+    #: `-latest` aliases track that generation — so the default configuration
+    #: would have failed on its first call while sending temperature.
+    no_sampling_prefixes = ("gemini-flash-latest", "gemini-pro-latest",
+                            "gemini-3", "gemini-4")
 
     #: Names Google has retired. Naming them beats a raw 404 from the API.
     retired_models = {

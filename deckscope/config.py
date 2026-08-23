@@ -22,11 +22,11 @@ class Lens(str, Enum):
             return cls(str(value).strip().lower())
         except ValueError:
             raise ValueError(
-                f"Unknown lens {value!r}. Choose from: {', '.join(l.value for l in cls)}"
+                f"Unknown lens {value!r}. Choose from: {', '.join(m.value for m in cls)}"
             ) from None
 
 
-ALL_LENSES = [l.value for l in Lens]
+ALL_LENSES = [lens.value for lens in Lens]
 
 
 @dataclass
@@ -52,7 +52,33 @@ class ResearchConfig:
     max_queries: int = 8
     api_key_env: Optional[str] = None
     recency_days: Optional[int] = 540  # bias toward recent sources; None = no limit
+    #: Run a second, deck-blind pass that researches the category cold.
+    #:
+    #: The main market pass is given the deck's claims — it has to be, it is
+    #: checking them — which means its search is shaped by what the deck raises.
+    #: That finds errors well and omissions badly. This pass sees only the
+    #: category and a company name, so what it finds and the directed pass missed
+    #: is a blind spot no prompt could have produced.
+    cold_discovery: bool = False
+    cold_max_queries: int = 6
     extra: Dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class OpportunityConfig:
+    """Whether to price the alternative, and on what assumptions.
+
+    Off by default: it costs extra calls, and on a deck with no named public
+    competitors it has nothing to say.
+    """
+
+    enabled: bool = False
+    market_data: str = "auto"        # auto | search | none
+    #: Assumptions for the required-outcome arithmetic. See opportunity.py.
+    future_dilution: float = 0.50
+    exit_revenue_multiple: float = 6.0
+    horizon_years: int = 5
+    preference_stack: float = 1.0
 
 
 @dataclass
@@ -78,16 +104,25 @@ class RunConfig:
     # A cheaper/faster model may be used for extraction; falls back to `provider`.
     extract_provider: Optional[ProviderConfig] = None
     research: ResearchConfig = field(default_factory=ResearchConfig)
+    opportunity: OpportunityConfig = field(default_factory=OpportunityConfig)
     output: OutputConfig = field(default_factory=OutputConfig)
-    cache_dir: Optional[str] = ".deckscope_cache"
+    #: None means "the per-user application data directory", resolved at run time.
+    #: It used to default to `.deckscope_cache` in the working directory, which put
+    #: cleartext extractions of potentially confidential decks somewhere that gets
+    #: committed, shared or cloud-synced by accident.
+    cache_dir: Optional[str] = "__default__"
     verbose: bool = True
     #: Injection defenses. See deckscope/security/policy.py.
     security: Any = None  # SecurityPolicy; built in __post_init__
 
     def __post_init__(self) -> None:
-        self.lenses = [Lens.parse(l) for l in self.lenses]
+        self.lenses = [Lens.parse(lens) for lens in self.lenses]
         if not self.lenses:
             self.lenses = [Lens.INVESTOR]
+        if self.cache_dir == "__default__":
+            from .settings import default_cache_dir
+            self.cache_dir = str(default_cache_dir())
+
         from .security.policy import Mode, SecurityPolicy
 
         if self.security is None:
@@ -102,7 +137,7 @@ class RunConfig:
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
-        d["lenses"] = [l.value for l in self.lenses]
+        d["lenses"] = [lens.value for lens in self.lenses]
         sec = d.get("security") or {}
         if isinstance(sec, dict) and "mode" in sec:
             sec["mode"] = getattr(sec["mode"], "value", str(sec["mode"]))
@@ -152,6 +187,7 @@ def load_config(path: Optional[str] = None, **overrides: Any) -> RunConfig:
     xp = data.pop("extract_provider", None)
     extract_provider = ProviderConfig(**xp) if xp else None
     research = ResearchConfig(**data.pop("research", {}) or {})
+    opportunity = OpportunityConfig(**data.pop("opportunity", {}) or {})
     output = OutputConfig(**data.pop("output", {}) or {})
     known = {f for f in RunConfig.__dataclass_fields__}
     data = {k: v for k, v in data.items() if k in known}
@@ -160,6 +196,7 @@ def load_config(path: Optional[str] = None, **overrides: Any) -> RunConfig:
         provider=provider,
         extract_provider=extract_provider,
         research=research,
+        opportunity=opportunity,
         output=output,
         **data,
     )

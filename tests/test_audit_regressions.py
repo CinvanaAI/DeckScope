@@ -500,13 +500,20 @@ def test_mcp_get_settings_redacts_secrets():
 
 
 def test_mcp_client_times_out_instead_of_hanging():
-    """The finding: a blocking readline could wait forever."""
+    """The finding: a blocking readline could wait forever.
+
+    Uses the running Python rather than `sh`, because a stock Windows install has
+    no shell — the test passed in CI only because GitHub's Windows runner happens
+    to ship one, which hid a portability defect rather than proving its absence.
+    """
     from deckscope.providers.base import ProviderError
     from deckscope.providers.mcp_provider import MCPStdioClient
 
+    silent_server = [sys.executable, "-c",
+                     "import sys, time; sys.stdin.readline(); time.sleep(60)"]
     started = time.time()
     try:
-        MCPStdioClient(["sh", "-c", "cat > /dev/null; sleep 60"], timeout=3)
+        MCPStdioClient(silent_server, timeout=3)
     except ProviderError as exc:
         assert time.time() - started < 15
         assert "did not answer" in str(exc)
@@ -517,18 +524,22 @@ def test_mcp_client_times_out_instead_of_hanging():
 # ============================================================ CLI provider sandbox
 
 def test_cli_provider_does_not_leak_the_environment_or_the_cwd():
-    """The finding: deck content reached a CLI with full env and the real cwd."""
+    """The finding: deck content reached a CLI with full env and the real cwd.
+
+    Probes with the running Python so this exercises Windows too, where the
+    environment-inheritance question is just as real.
+    """
     from deckscope.config import ProviderConfig
     from deckscope.providers.base import Message
     from deckscope.providers.cli_provider import CLIProvider
 
-    if os.name == "nt":
-        return  # the probe below is a POSIX shell
     os.environ["DECKSCOPE_TEST_SECRET"] = "must-not-leak"
+    probe = ("import os;"
+             "print('CWD=' + os.getcwd());"
+             "print('SECRET=' + os.environ.get('DECKSCOPE_TEST_SECRET', 'absent'))")
     try:
         provider = CLIProvider(ProviderConfig(name="cli", extra={
-            "command": ["sh", "-c",
-                        "echo CWD=$PWD; echo SECRET=${DECKSCOPE_TEST_SECRET:-absent}"]}))
+            "command": [sys.executable, "-c", probe]}))
         out = provider.complete("sys", [Message("user", "hi")]).text
         assert "SECRET=absent" in out, "the child inherited the parent environment"
         assert "deckscope_cli_" in out, "the child ran outside its sandbox directory"

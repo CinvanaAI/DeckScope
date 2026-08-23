@@ -29,7 +29,7 @@ register_researcher(StubSearch)
 
 def _cfg(tmp_path, formats, lenses=("investor",)):
     return RunConfig(
-        deck_path=str(DECK), lenses=[Lens.parse(l) for l in lenses],
+        deck_path=str(DECK), lenses=[Lens.parse(x) for x in lenses],
         provider=ProviderConfig(name="mock"),
         research=ResearchConfig(name="stub", max_queries=2),
         output=OutputConfig(formats=list(formats), out_dir=str(tmp_path)),

@@ -10,6 +10,8 @@ from typing import Any, Callable, Dict, List, Optional
 
 from .console import out as _out
 from .agents import ComparisonSynthesist, DeckAnalyst, MarketAnalyst
+from .agents.discovery_agent import DiscoveryAnalyst
+from .agents.opportunity_agent import OpportunityAnalyst
 from .config import Lens, RunConfig
 from .ingest.loader import DeckDocument, load_deck
 from .providers.base import LLMProvider
@@ -35,6 +37,15 @@ class AnalysisResult:
     security: Dict[str, Any] = field(default_factory=dict)
     #: Full bibliography: every source retrieved, cited or not.
     registry: Optional[SourceRegistry] = None
+    #: What buying the listed alternative would require instead. Empty when the
+    #: opportunity-cost pass was not enabled.
+    opportunity: Dict[str, Any] = field(default_factory=dict)
+    #: The evidence this analysis read. Shared verbatim when two modes are compared.
+    corpus: Any = None
+    #: The market as it looks to an analyst who never saw the deck, and the diff
+    #: against the claim-directed view. Empty unless cold discovery was enabled.
+    cold_market: Dict[str, Any] = field(default_factory=dict)
+    discovery_delta: Dict[str, Any] = field(default_factory=dict)
 
     @property
     def company(self) -> str:
@@ -54,6 +65,9 @@ class AnalysisResult:
         return {"deck": self.deck, "market": self.market,
                 "comparisons": self.comparisons, "config": self.config,
                 "stats": self.stats, "security": self.security,
+                "opportunity": self.opportunity,
+                "cold_market": self.cold_market,
+                "discovery_delta": self.discovery_delta,
                 "references": self.registry.to_dict() if self.registry else {}}
 
     def save_json(self, path: str) -> str:
@@ -85,7 +99,14 @@ class Pipeline:
         self._owns_provider = provider is None
 
     # ------------------------------------------------------------------
-    def run(self, deck_path: Optional[str] = None) -> AnalysisResult:
+    def run(self, deck_path: Optional[str] = None,
+            corpus: Any = None) -> AnalysisResult:
+        """Run the analysis.
+
+        `corpus` replaces the research phase with frozen evidence, which is how
+        two modes are compared on identical sources instead of on whatever each
+        happened to retrieve.
+        """
         cfg = self.config
         started = time.time()
         source = deck_path or cfg.deck_path
@@ -95,7 +116,7 @@ class Pipeline:
         self._log("Starting analysis",
                   provider=self.provider.name, model=self.provider.model,
                   research=self.researcher.name,
-                  lenses=[l.value for l in cfg.lenses])
+                  lenses=[lens.value for lens in cfg.lenses])
 
         doc: DeckDocument = (load_deck(cfg.deck_text, is_text=True) if cfg.deck_text
                              else load_deck(source))
@@ -126,11 +147,78 @@ class Pipeline:
         market_agent = MarketAnalyst(self.provider, self.researcher,
                                      policy=policy, **kw)
         market = market_agent.run(deck, max_queries=cfg.research.max_queries,
-                                  max_results=cfg.research.max_results)
+                                  max_results=cfg.research.max_results,
+                                  corpus=corpus)
 
         comparisons: Dict[str, Dict[str, Any]] = {}
         synth = ComparisonSynthesist(self.provider, **kw)
-        valid_ids = [s.sid for s in (market_agent.registry.sources or [])]
+        # ---- Optional: map the market cold, without the deck.
+        cold_market: Dict[str, Any] = {}
+        delta: Dict[str, Any] = {}
+        if cfg.research.cold_discovery:
+            from .discovery_delta import compare as compare_discovery
+
+            try:
+                cold_agent = DiscoveryAnalyst(self.provider, self.researcher,
+                                              policy=policy, **kw)
+                cold_market = cold_agent.run(
+                    deck, max_queries=cfg.research.cold_max_queries,
+                    max_results=cfg.research.max_results)
+                if cold_agent.corpus and cold_agent.corpus.registry.sources:
+                    # Fold the cold pass's sources into the one bibliography, so
+                    # a finding it contributes is traceable like any other.
+                    market_agent.registry.add_results(
+                        [], backend=cold_agent.corpus.backend)
+                    for src in cold_agent.corpus.registry.sources:
+                        key = (src.url or f"__title__{src.title}").lower()
+                        if key not in market_agent.registry._by_url:
+                            src.sid = f"S{len(market_agent.registry.sources) + 1}"
+                            src.note = (src.note or "") + (
+                                " Found by the deck-blind discovery pass."
+                                if not src.note else "")
+                            market_agent.registry.sources.append(src)
+                            market_agent.registry._by_url[key] = src
+                dobj = compare_discovery(market, cold_market)
+                delta = dobj.to_dict()
+                if dobj.anything_found:
+                    self._log(f"Cold discovery: {dobj.note[:150]}")
+                else:
+                    self._log("Cold discovery surfaced nothing the directed pass missed")
+            except Exception as exc:  # noqa: BLE001 - an optional pass, not the run
+                self._log(f"Cold discovery failed, continuing without it: {exc}")
+                delta = {"ran": False, "reason_skipped": str(exc)}
+
+        # ---- Optional: price the alternative.
+        opportunity: Dict[str, Any] = {}
+        if getattr(cfg, "opportunity", None) and cfg.opportunity.enabled:
+            from .market_data.registry import get_market_data
+            from .opportunity import Assumptions
+
+            # The whole block is guarded, construction included: an unknown
+            # backend name raises here, and losing the entire analysis to an
+            # optional extra would be the wrong trade.
+            try:
+                feed = get_market_data(cfg.opportunity.market_data,
+                                       config=cfg.opportunity,
+                                       researcher=self.researcher,
+                                       provider=self.provider)
+                opp_agent = OpportunityAnalyst(
+                    self.provider, feed, researcher=self.researcher,
+                    assumptions=Assumptions(
+                        future_dilution=cfg.opportunity.future_dilution,
+                        exit_revenue_multiple=cfg.opportunity.exit_revenue_multiple,
+                        horizon_years=cfg.opportunity.horizon_years,
+                        preference_stack=cfg.opportunity.preference_stack),
+                    **kw)
+                opportunity = opp_agent.run(deck, market, market_agent.registry)
+            except Exception as exc:  # noqa: BLE001
+                self._log(f"Opportunity-cost pass failed, continuing without it: {exc}")
+                opportunity = {"error": str(exc)}
+
+        # Only sources that actually reached the model. A quarantined source is in
+        # the registry for reporting, but was never shown, so citing it is a
+        # fabrication like any other.
+        valid_ids = market_agent.registry.citable_ids
         for lens in cfg.lenses:
             comparisons[lens.value] = synth.run(deck, market, lens=lens,
                                                 valid_source_ids=valid_ids)
@@ -147,6 +235,10 @@ class Pipeline:
 
         result = AnalysisResult(
             deck=deck, market=market, comparisons=comparisons,
+            opportunity=opportunity,
+            cold_market=cold_market,
+            discovery_delta=delta,
+            corpus=market_agent.corpus,
             config=cfg.to_dict(),
             security={"overall_risk": combined.risk,
                       "mode": policy.mode.value,
@@ -160,6 +252,8 @@ class Pipeline:
                 "provider": self.provider.name, "model": self.provider.model,
                 "research_backend": self.researcher.name,
                 "sources_found": (market.get("_meta") or {}).get("n_results", 0),
+                "corpus_fingerprint": (market.get("_meta") or {}).get(
+                    "corpus_fingerprint"),
                 "security_risk": combined.risk,
                 "token_usage": usage,
                 "deckscope_version": _version(),
@@ -185,6 +279,7 @@ class Pipeline:
         written: List[str] = []
 
         formats = list(dict.fromkeys(cfg.output.formats))
+        failed: List[str] = []
         if cfg.output.include_raw_json and "json" not in formats:
             formats.append("json")
 
@@ -196,7 +291,12 @@ class Pipeline:
                     self._log(f"Wrote {p}")
             except Exception as exc:  # noqa: BLE001 - one bad format must not lose the rest
                 self._log(f"Could not write {fmt}: {exc}")
+                failed.append(fmt)
         result.written_files = written
+        # Recorded rather than raised: the analysis succeeded and the other
+        # formats are on disk. The CLI turns this into a non-zero exit, so a
+        # script that asked for a PDF is not told everything went fine.
+        result.stats["formats_failed"] = failed
         return written
 
     def close(self) -> None:
@@ -229,7 +329,7 @@ def analyze(deck: str, *, lens: "str | Lens | List[Any]" = "investor",
 
     lenses = lens if isinstance(lens, list) else [lens]
     cfg = RunConfig(
-        deck_path=deck, company_hint=company, lenses=[Lens.parse(l) for l in lenses],
+        deck_path=deck, company_hint=company, lenses=[Lens.parse(x) for x in lenses],
         provider=ProviderConfig(name=provider, model=model,
                                 **kwargs.pop("provider_kwargs", {})),
         research=ResearchConfig(name=research, **kwargs.pop("research_kwargs", {})),

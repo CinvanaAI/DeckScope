@@ -33,15 +33,29 @@ services that then argue with each other.
   ┌────────────────┐     ┌──────────────────┐     ┌────────────────────┐
   │ 1. Deck Analyst│ ──▶ │ 2. Market Analyst│ ──▶ │ 3. Comparison      │
   │ extract claims │     │ research the     │     │ claim-by-claim     │
-  │ never judge    │     │ market alone     │     │ deck vs. evidence  │
+  │ never judge    │     │ on its own terms │     │ deck vs. evidence  │
   └────────────────┘     └──────────────────┘     └────────────────────┘
         │                        │                          │
         └──── screened for prompt injection before either runs ────┘
 ```
 
-The deck agent extracts and never evaluates. The market agent researches the category
-without being told what the deck claims about it. Only the third agent sees both, and
-only it is allowed to draw conclusions.
+The deck agent extracts and never evaluates. The market agent researches the category and
+is instructed to describe it on its own terms. Only the third agent sees both artifacts,
+and only it is allowed to draw conclusions.
+
+**Being precise about what that isolation buys**, because it is easy to overstate: the
+market agent *is* given the deck's claims and a deck-derived research agenda — it has to
+be, or it would not know what to research. So it is **claim-directed falsification**, not
+deck-blind discovery. That reduces anchoring in the *conclusions* and leaves it in the
+*search*: a category the deck never mentions is one the market agent is unlikely to
+look for.
+
+Which is why `--cold-discovery` exists. It adds a second pass that receives only the
+category and a company name — never a claim, enforced by a whitelist and a test that
+asserts on the payload rather than the prompt — and reports what researching the market
+from scratch found that the claim-directed pass never looked for. On the sample deck the
+two routes overlap on 29% of the competitors they name.
+[How it works.](docs/EVIDENCE.md)
 
 ---
 
@@ -195,8 +209,9 @@ More in **[docs/LENSES.md](docs/LENSES.md)**.
 
 ## Output formats
 
-Pick any combination. Every format contains the full analysis, the complete
-bibliography, and the security screen result.
+Pick any combination. All formats carry the analysis, the bibliography and the security
+screen — except `pptx`, which is deliberately a curated summary and caps the claim, risk
+and action lists to what fits on slides.
 
 | Format | Flag | What it's for |
 |---|---|---|
@@ -340,6 +355,124 @@ unverified throughout.
 
 ---
 
+## Compared to what?
+
+The question an investor actually faces is not "is this deck any good" but "against
+what alternative". When a named competitor is publicly traded, that alternative is
+concrete — you could simply buy it.
+
+```bash
+deckscope run deck.pdf --opportunity
+deckscope demo --opportunity          # see it, free
+```
+
+DeckScope checks which named competitors are listed, pulls their actual historical
+returns, and then **inverts the question**. Instead of predicting a return it computes
+the outcome that would be *required*:
+
+> To match holding Microsoft (MSFT) over 5 years, this company would need to reach
+> roughly $27M in revenue — about 80x its current $340k — after typical dilution.
+
+Alongside it: sourced base rates for how companies at this stage in this category have
+historically done, so the requirement has a denominator.
+
+**It does not forecast returns, deliberately.** No model knows what a seed-stage company
+will be worth in five years, and "estimated return 3.2x, confidence medium" is a guess
+wearing the clothes of an analysis — it would be the least supportable number in a
+project that spends most of its effort refusing to state things it cannot cite. Every
+figure here is either arithmetic you can check by hand or an input that arrived with a
+citation, and the assumptions are printed with the result:
+
+| Assumption | Default | Flag |
+|---|---|---|
+| Future dilution before exit | 50% | `--dilution 0.6` |
+| Exit revenue multiple | 6x | `--exit-multiple 8` |
+| Horizon | 5 years | `--horizon 7` |
+
+Change any of them and every number changes. That is the point — it is a model you drive,
+not an answer you receive. *Not investment advice.*
+
+## Is this a product, or a feature?
+
+Categories get built out by startups, proven useful, and then bundled into a platform that
+already owns the customer. Antivirus, file sync, VPN, screen sharing, password management —
+the companies in those markets were not out-competed so much as made redundant.
+
+So the market analysis reports **absorption risk** explicitly: who could bundle this away,
+by what mechanism, what signals are *already visible* (shipped features, acquisitions, job
+postings), and which precedents genuinely match. Plus **saturation** with numbers behind
+it — how many funded competitors, whether new ones are still arriving, whether pricing is
+compressing, whether anyone is being acquired — because "concentrated" alone cannot
+distinguish a wide-open wedge from a played-out category.
+
+And **adjacent markets**: what this category is converging with, what substitutes it, and
+where it could expand.
+
+### Open source is the leading indicator
+
+Where a category has an open-source dimension, it predicts absorption better than market
+size, growth or funding do — and the mechanism is specific:
+
+> While an open-source alternative is meaningfully behind, commercial products compete on
+> capability and customers pay for something they cannot get free. Once open source reaches
+> rough parity, capability stops being the differentiator, and what remains is packaging,
+> operations, support and distribution — **which is precisely what a platform vendor
+> already owns.** It only has to be good enough and free, and the mid-market has nowhere
+> to stand.
+
+But parity alone does not decide it, and treating it as though it does gets the answer
+wrong in both directions. Kubernetes reached parity and Docker Inc. could not monetize,
+because the residual differentiation was distribution. Credible open-source warehouses
+existed throughout Snowflake's rise, because the residual differentiation was operational
+burden at scale — expensive to give away even if you are Amazon.
+
+So DeckScope records **both**: how close the closest project is, and what specifically the
+commercial offering still provides once it arrives — classifying each remainder by whether
+a platform vendor could reproduce it cheaply. The resulting bundling risk is derived in
+Python rather than asked of a model, so the same inputs always give the same reading and
+the reasoning is inspectable:
+
+| Open source is… | What's left is… | Reading |
+|---|---|---|
+| far behind | anything | **low** — customers are paying for capability |
+| at parity | packaging, distribution | **severe** — defending the hill the giant occupies |
+| at parity | operations, support | **elevated** — buys time, not safety |
+| at parity | compliance, data effects, workflow depth | **moderate** — slow and expensive to reproduce |
+
+A narrowing gap raises the reading; a widening one lowers it. Where the derived signal
+disagrees with the market agent's own product-or-feature verdict, the report says so
+rather than quietly picking one.
+
+## Is any of it actually any good?
+
+```bash
+deckscope eval                            # score the shipped suite, free
+deckscope eval --mode pipeline baseline   # compare the two architectures
+deckscope eval --trials 3                 # measure stability
+```
+
+Every audit of this project said the same thing: plausible and unproven. That was
+right, and it was not fixable by argument — "was the analysis good?" has no mechanical
+answer for a real deck, because nobody knows the true TAM of a real market.
+
+The way around it is to **author both sides**. If the deck claims $88B and the frozen
+corpus says $6-8B, then "contradicted" is correct and "supported" is wrong — not as a
+matter of taste, but because the evidence in front of the model says so. Ground truth
+exists because it was planted.
+
+Five cases ship: an inflated market, an omitted incumbent, evidence too thin to
+conclude from, a planted injection, and **an honest deck whose claims the evidence
+supports**. That last one matters most — a system that calls everything contradicted
+scores well on the other four, and the control is what stops the suite rewarding pure
+cynicism.
+
+Eight dimensions are scored, all computed in Python rather than judged by a model, and
+**never averaged into one number** — because a system scores perfectly on fabrication
+by saying nothing, and perfectly on recall by saying everything.
+
+Exits non-zero on any failure, so it can gate a release.
+[What it does and does not establish.](docs/EVALUATION.md)
+
 ## The panel: several AIs that review each other
 
 One model gives you one model's blind spots. A panel gives you something better — but
@@ -407,7 +540,9 @@ deckscope app
 **2. The command line** — see `deckscope --help`, or **[docs/CLI.md](docs/CLI.md)**.
 
 ```bash
-deckscope run deck.pdf --mode both     # three agents vs. one prompt, compared
+deckscope run deck.pdf --mode both     # three agents vs. one prompt, same evidence
+deckscope run deck.pdf --cold-discovery --opportunity
+deckscope run deck.pdf --save-corpus evidence.json   # replay it later with --corpus
 ```
 
 **3. The Python API:**
@@ -524,6 +659,9 @@ The same pattern works for research backends and output formats. See
 | [docs/OUTPUTS.md](docs/OUTPUTS.md) | Every format, with samples |
 | [docs/SECURITY.md](docs/SECURITY.md) | Threat model, detections, limits |
 | [docs/PANEL.md](docs/PANEL.md) | The multi-model panel in depth |
+| [docs/OPPORTUNITY.md](docs/OPPORTUNITY.md) | Opportunity cost, absorption risk, and why there are no forecasts |
+| [docs/EVIDENCE.md](docs/EVIDENCE.md) | Frozen corpora, deck-blind discovery, and comparing two modes fairly |
+| [docs/EVALUATION.md](docs/EVALUATION.md) | Scoring DeckScope against decks with planted, known-correct answers |
 | [docs/CITATIONS.md](docs/CITATIONS.md) | How sources are tracked and resolved |
 | [docs/PROMPTS.md](docs/PROMPTS.md) | Every prompt, and the reasoning behind it |
 | [docs/EXTENDING.md](docs/EXTENDING.md) | Adding backends, formats, agents |
@@ -555,11 +693,12 @@ Worth reading before you trust anything it produces.
   snippets, an injection further down the page is not seen.
 - **It cannot see injections inside images.** Text rendered into a picture is never
   extracted, so it is never scanned.
-- **The three-agent design is still unproven.** But the control now ships: `--mode both`
-  runs the pipeline and a single-prompt baseline on the same deck with the same sources,
-  and reports the differences — claims examined, citations carried, blind spots named,
-  tokens spent. It deliberately declines to declare a winner, because that is a judgement
-  about reasoning quality a count cannot make. Run it on your own decks.
+- **The three-agent design is measurable now, and still unproven.** `deckscope eval`
+  scores it against decks whose correct answers are known, because the decks and their
+  evidence were authored together. But five constructed cases is a smoke test, not a
+  benchmark: a high score means "does not fail in the ways we know how to check", which
+  is a floor. The planted answers are also one author's judgement, so a second
+  contributor would improve the suite more than a hundred more cases from the same one.
 - **The panel is not fully independent.** Panelists use separate models and separate
   research calls, but the research agenda is derived from one deck-extraction pass and
   they often retrieve overlapping sources. It is role-separated analysis with model

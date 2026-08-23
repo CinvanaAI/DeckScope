@@ -1,0 +1,29 @@
+{
+  "id": "honest_control",
+  "name": "Control: an honest deck whose claims the evidence supports",
+  "deck": "decks/honest_control.md",
+  "corpus": "corpora/honest_control.json",
+  "description": "The deck sizes its market conservatively, names its dominant competitors, discloses retention and CAC payback, and states its own principal risk. The corpus broadly agrees with all of it. This is the false-positive control: a system that calls everything contradicted scores well on the other four cases and fails here. Without it the suite would reward pure cynicism.",
+  "tags": ["control", "core"],
+  "expect": {
+    "claims": [
+      {
+        "matches": "2\\.8B|\\$2\\.8|22%",
+        "assessment": ["supported", "partially-supported"],
+        "must_cite": true,
+        "weight": 2.0,
+        "rationale": "The corpus puts the category at $2.6-3.0B growing 20-24%. The deck's figure sits inside both ranges, so calling this contradicted would be wrong."
+      },
+      {
+        "matches": "340M|\\$340",
+        "assessment": ["supported", "partially-supported"],
+        "weight": 1.5,
+        "rationale": "The corpus independently estimates the same slice at $300-400M."
+      }
+    ],
+    "blind_spots": [],
+    "must_not_fabricate": ["fraud", "misleading", "$50B"],
+    "verdict_in": ["STRONG YES", "YES WITH CONDITIONS", "LEAN NO"],
+    "security_risk": "clean"
+  }
+}

@@ -1,7 +1,15 @@
 # Output formats
 
-Every format contains the full analysis, the complete bibliography, and the input
-integrity screen. Pick any combination.
+Pick any combination.
+
+**One exception to note:** `md`, `html`, `docx`, `json` and `txt` carry the full analysis —
+including opportunity cost, market structure, absorption risk, the open-source signal and
+the deck-blind discovery delta. `pdf` carries them too when it renders through a browser,
+which is the usual path.
+
+**`pptx` is deliberately a curated summary.** It caps claims, risks, questions and actions
+to what fits on a slide and omits the newer annexes. That is the right design for a
+presentation, but it is not semantic parity — do not treat the deck as the record.
 
 ```bash
 deckscope run deck.pdf --format html pdf docx xlsx

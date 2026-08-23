@@ -83,6 +83,14 @@ Given the deck's claims — it must be, or it can't know what to research — bu
 > Describe the market as it actually is, independently of what the deck claims about it.
 > Describe the territory, not the map the founders drew.
 
+**What this does and does not achieve.** The instruction shapes how the agent *treats*
+the claims — as things to check rather than premises to work from. It does not make the
+agent deck-blind: it receives the claims and a deck-derived research agenda, because
+without them it would have nothing to search for. The honest description is
+**claim-directed falsification**. Anchoring is reduced in the conclusions and remains in
+the search space, which is why the report separately asks for blind spots — the things
+the market shows that the deck never raised.
+
 Four standards it holds itself to:
 
 **Rank sources.** "A regulator filing or a public company's disclosure beats an analyst
