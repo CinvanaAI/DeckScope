@@ -116,7 +116,7 @@ def build_parser() -> argparse.ArgumentParser:
     demo.add_argument("--opportunity", action="store_true",
                       help="Demo the opportunity-cost comparison")
     demo.add_argument("--cold-discovery", action="store_true",
-                      help="Demo the deck-blind market discovery pass")
+                      help="Demo the claim-blind market discovery pass")
 
     run = sub.add_parser("run", help="Analyze a pitch deck")
     run.add_argument("deck", help="Path or URL to a .pdf .pptx .docx .md .txt deck")
@@ -391,12 +391,21 @@ def _run_baseline(cfg: Any, corpus: Any = None):
     formats = list(dict.fromkeys(cfg.output.formats))
     if cfg.output.include_raw_json and "json" not in formats:
         formats.append("json")
+    failed: List[str] = []
     for fmt in formats:
         try:
             files.extend(render_fmt(fmt, result, out_dir, base, theme=cfg.output.theme))
         except Exception as exc:  # noqa: BLE001
             _out(f"[baseline] could not write {fmt}: {exc}")
+            failed.append(fmt)
     result.written_files = files
+    # Recorded, not merely printed. `_format_exit_code` reads this, and without
+    # it an automation that asked for a PDF was told the run succeeded when no
+    # PDF existed — the pipeline path reported the shortfall and baseline,
+    # `both` and panel silently did not.
+    stats = getattr(result, "stats", None)
+    if isinstance(stats, dict) and failed:
+        stats["formats_failed"] = failed
     return result, files
 
 
@@ -471,6 +480,12 @@ def _run_both(cfg: Any) -> int:
     for f in pipeline_files + baseline_files + [str(out_path)]:
         _out(f"    {f}")
     _out("")
+    # Either mode failing to produce a requested format is a shortfall for the
+    # whole command; returning 0 here told an automation both reports existed.
+    for res in (pipeline_result, baseline_result):
+        code = _format_exit_code(res)
+        if code:
+            return code
     return 0
 
 
@@ -694,6 +709,20 @@ def _panel(args: Any) -> int:
     return 0
 
 
+def _panel_exit_code(result: Any) -> int:
+    """Non-zero when the panel could not write a format that was asked for.
+
+    The panel path returned 0 unconditionally, so `--format pdf` that produced no
+    PDF still reported success.
+    """
+    missing = (getattr(result, "stats", None) or {}).get("formats_failed") or []
+    if not missing:
+        return 0
+    _out(f"  Requested format(s) could not be produced: {', '.join(missing)}")
+    _out("  Install the matching package, or drop them from --format.\n")
+    return 4
+
+
 def _print_panel_summary(result: Any, files: List[str]) -> None:
     _out()
     _out("═" * 68)
@@ -799,7 +828,7 @@ def _demo(args: Any) -> int:
             provider=ProviderConfig(name="mock"),
             research=ResearchConfig(name="none", cold_discovery=True),
             output=OutputConfig(formats=args.format, out_dir=out_dir), cache_dir=None)
-        _out("Running a demo WITH the deck-blind discovery pass. The cold pass sees\n"
+        _out("Running a demo WITH the claim-blind discovery pass. The cold pass sees\n"
              "only the category name — never a claim — so what it finds and the\n"
              "claim-directed pass missed is a blind spot no prompt could produce.\n")
         pipe = Pipeline(cfg)
@@ -862,7 +891,7 @@ def _demo(args: Any) -> int:
         files = panel.render(res)
         _print_panel_summary(res, files)
         _out("That was sample output. To run a real panel:  deckscope setup\n")
-        return 0
+        return _panel_exit_code(res)
 
     cfg = RunConfig(
         deck_path=str(deck) if deck else None,

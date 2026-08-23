@@ -668,6 +668,25 @@ Not investment advice.</footer></div></body></html>""")
 
 # =================================================================== dispatch
 
+def _central_result(result):
+    """The panel's own answer, shaped like a single analysis.
+
+    Renderers that were written for one report need one report. The panel's is
+    the vote-winning panelist's final comparison, carrying the merged
+    bibliography so citations resolve against the unified namespace.
+    """
+    primary = result.primary_result()
+    if primary is None:
+        return None
+    ranked = sorted(result.working,
+                    key=lambda p: (p.rank if p.rank is not None else 99))
+    if ranked:
+        primary.comparisons = {lens: ranked[0].final(lens)
+                               for lens in ranked[0].lenses()}
+    primary.registry = result.registry or primary.registry
+    return primary
+
+
 def render_panel(result, out_dir: Path, base: str, formats: List[str],
                  theme: str = "slate") -> List[str]:
     """Write the panel report in each requested format, plus each panelist's own."""
@@ -675,6 +694,7 @@ def render_panel(result, out_dir: Path, base: str, formats: List[str],
 
     out_dir = Path(out_dir)
     written: List[str] = []
+    failed: List[str] = []
     fmts = [resolve(f) for f in formats]
     if "json" not in fmts:
         fmts.append("json")
@@ -704,12 +724,32 @@ def render_panel(result, out_dir: Path, base: str, formats: List[str],
                         continue
                     p = Path(_panel_xlsx(result, out_dir, base))
                 else:
-                    # pdf / docx / pptx: render the consensus through the single-report
-                    # renderers by presenting the consensus as a comparison.
+                    # pdf / docx / pptx: render the panel's own answer through the
+                    # single-report renderers.
+                    #
+                    # This used to `continue`, so asking a panel for a PDF
+                    # produced no central artifact at all — only the individual
+                    # panelist files — and said nothing about it. A user who
+                    # exports a panel to Word should get the panel's report, not
+                    # silence.
+                    if lens != result.lenses[0]:
+                        continue
+                    central = _central_result(result)
+                    if central is None:
+                        continue
+                    for path in render_single(fmt, central, out_dir,
+                                              f"{base}_panel", theme=theme):
+                        written.append(str(path))
                     continue
                 written.append(str(p))
             except Exception as exc:  # noqa: BLE001
                 _out(f"[panel] could not write {fmt}: {exc}")
+                failed.append(fmt)
+
+    # Recorded so the CLI can exit non-zero. Printing a failure and returning
+    # success told an automation the file existed.
+    if failed and isinstance(getattr(result, "stats", None), dict):
+        result.stats["formats_failed"] = sorted(set(failed))
 
     # Each panelist's own final report, in the same formats the user asked for.
     single_fmts = [f for f in fmts if f in ("pdf", "docx", "pptx", "md", "html")]

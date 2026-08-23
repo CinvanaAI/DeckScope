@@ -5,6 +5,13 @@ on:
     branches: [main]
   pull_request:
 
+# Least privilege. The default token is read/write across the repository, which
+# is far more than any job here needs — nothing in CI writes to the repo, so a
+# compromised action cannot be handed the ability to.
+permissions:
+  contents: read
+
+
 jobs:
   test:
     name: Test · Python ${{ matrix.python }} · ${{ matrix.os }}

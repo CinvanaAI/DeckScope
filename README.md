@@ -110,7 +110,7 @@ two routes overlap on 29% of the competitors they name.
 
 **It is provider-agnostic by design.** Claude, GPT, Gemini, Llama on your own machine,
 an MCP server, an agent CLI you already have signed in, or copy-and-paste into whatever
-chat app you use. One interface, nine backends, and adding a tenth is about thirty lines.
+chat app you use. One interface, 11 backends, and adding another is about thirty lines.
 
 **It screens its inputs for prompt injection.** Both of DeckScope's inputs are written
 by other people. A founder can put white text on a white slide. Anyone can publish a web

@@ -73,6 +73,47 @@ was never a measurement. README and `docs/PANEL.md` carry the corrected table.
 
 Also: `E702` and an unused variable cleared, so lint is green.
 
+### Fixed (fourth audit, remainder)
+
+Everything below was understood and nearly deferred to "a separate cycle". That
+is a judgement about commit size, not about whether the defects matter, and each
+one is a place where DeckScope claimed something it did not do.
+
+- **Remote decks got no file-level forensics at all.** A fetched PDF/PPTX/DOCX
+  had its temporary download deleted the instant text was extracted, and the URL
+  was passed to the scanner instead. A URL is not a file, so hidden slides,
+  speaker notes, off-slide shapes, invisible PDF text and document metadata went
+  unexamined — on precisely the decks most likely to be hostile, while the docs
+  advertised the protection. The original now survives until forensics finish and
+  is cleaned up after. A planted speaker-note injection in a fetched deck is now
+  caught as CRITICAL; before, it produced nothing.
+- **Opportunity research bypassed the security screen.** It called the researcher
+  directly, so retrieved pages reached a model without passing the injection
+  screen — a second, quieter door into the prompt. It also numbered its sources
+  `[1]`, `[2]` locally while the schema asked for `S#`, so any citation it
+  produced could not resolve. Both now go through the same corpus, screening and
+  canonical-ID path as the main research, and its security findings are folded
+  into the run report instead of being dropped.
+- **PDF, PPTX and XLSX still led with the verdict and the composite score** after
+  every other format had dropped them, so the product meant something different
+  depending on which export button the reader pressed. All seven rendered formats
+  now lead with findings and none shows a weighted total.
+- **The panel produced no central artifact in PDF, DOCX or PPTX.** Those formats
+  hit a bare `continue`, so asking a panel for a Word document silently returned
+  only the individual panelist files. The panel's own answer now renders in every
+  requested format.
+- **Per-lens stopping decisions were computed and discarded.** One lens wanting
+  another round re-reviewed and re-revised *all* of them, so settled conclusions
+  kept changing, the panel paid for rounds nobody asked for, and the reported
+  stopping metric described something that never happened.
+- **Baseline, `both` and panel swallowed renderer failures**, printing the problem
+  and exiting 0 — telling an automation that asked for a PDF that the run
+  succeeded when no PDF existed. Only the pipeline path reported the shortfall.
+- **Least-privilege workflow permissions** on both workflows, and the release now
+  attests build provenance so "built by CI" is verifiable rather than asserted.
+- Documentation corrected: eleven backends rather than "nine", and CLI help calls
+  cold discovery claim-blind, which is what it is.
+
 ### Added — choose your models, and see which ones actually work
 
 `deckscope providers` lists the catalogue: everything DeckScope knows how to

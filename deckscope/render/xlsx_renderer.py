@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, List
 
-from .common import as_list, txt
+from .common import as_list, findings_for, txt
 
 
 def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) -> List[str]:
@@ -45,11 +45,19 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
     for k, v in (result.stats or {}).items():
         over.append([k.replace("_", " ").title(), txt(v, "")])
     for lens, comp in result.comparisons.items():
-        over.append([f"{lens} verdict", (comp.get("verdict") or {}).get("call")])
+        # Findings first here too. The Overview sheet used to open with a
+        # verdict, a confidence and the composite score — the one figure the
+        # other formats deliberately dropped — so a reader who opened the
+        # spreadsheet got a different product from one who opened the report.
+        found = findings_for(result, lens)
+        over.append([f"{lens} finding", found.headline])
+        over.append([f"{lens} evidence", found.evidence_state])
+        over.append([f"{lens} contested", found.counts.get("contested", 0)])
+        over.append([f"{lens} omissions", found.counts.get("omissions", 0)])
+        over.append([f"{lens} unresolved", found.counts.get("unverified", 0)])
+        over.append([f"{lens} verdict (one reading, not the answer)",
+                     (comp.get("verdict") or {}).get("call")])
         over.append([f"{lens} confidence", (comp.get("verdict") or {}).get("confidence")])
-        over.append([f"{lens} score",
-                     ((comp.get("_meta") or {}).get("weighted_score") or {}).get("score")])
-        over.append([f"{lens} headline", comp.get("headline")])
     sheet("Overview", ["Field", "Value"], over, [34, 110], first=True)
 
     # ---- Scorecard

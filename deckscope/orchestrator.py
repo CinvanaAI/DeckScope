@@ -127,12 +127,23 @@ class Pipeline:
         deck_scan = ScanReport(target="pitch deck")
         if policy.enabled:
             self._log(f"Screening deck for hidden instructions (mode: {policy.mode.value})")
-            doc, deck_scan = screen_deck(
-                doc, policy, deck_path=None if cfg.deck_text else source)
+            # `doc.local_path` is the on-disk original for a deck fetched from a
+            # URL. Forensics can only read hidden slides, speaker notes and
+            # invisible text out of the real binary — passing the URL, as this
+            # did before, meant the scanner had nothing to open and every
+            # file-level check silently skipped remote decks entirely.
+            forensic_target = doc.local_path or (None if cfg.deck_text else source)
+            try:
+                doc, deck_scan = screen_deck(doc, policy, deck_path=forensic_target)
+            finally:
+                # The temporary download has served its purpose either way.
+                doc.cleanup()
             self._log(deck_scan.summary_line())
             for f in deck_scan.findings[:8]:
                 if f.severity in ("critical", "high"):
                     self._log(f"  ! [{f.severity}] {f.where}: {f.detail}")
+        else:
+            doc.cleanup()
 
         if doc.is_thin:
             self._log("Deck contains very little readable text — results will be weak. "
@@ -152,6 +163,10 @@ class Pipeline:
                                   corpus=corpus)
 
         comparisons: Dict[str, Dict[str, Any]] = {}
+        # Security findings from the optional passes, folded into the run report
+        # at the end rather than discarded.
+        opportunity_scan = None
+        cold_scan = None
         synth = ComparisonSynthesist(self.provider, **kw)
         # ---- Optional: map the market cold, without the deck.
         cold_market: Dict[str, Any] = {}
@@ -186,6 +201,7 @@ class Pipeline:
                                        cold_agent.corpus.registry,
                                        note="Found by the claim-blind discovery pass.")
                     rewrite_citations(cold_market, remap)
+                    cold_scan = getattr(cold_agent.corpus, "security", None)
                 dobj = compare_discovery(market, cold_market)
                 delta = dobj.to_dict()
                 if dobj.anything_found:
@@ -212,6 +228,7 @@ class Pipeline:
                                        provider=self.provider)
                 opp_agent = OpportunityAnalyst(
                     self.provider, feed, researcher=self.researcher,
+                    policy=policy,
                     assumptions=Assumptions(
                         future_dilution=cfg.opportunity.future_dilution,
                         exit_revenue_multiple=cfg.opportunity.exit_revenue_multiple,
@@ -219,6 +236,11 @@ class Pipeline:
                         preference_stack=cfg.opportunity.preference_stack),
                     **kw)
                 opportunity = opp_agent.run(deck, market, market_agent.registry)
+                # Fold this pass's screening into the run's security report, so
+                # "every source was screened" describes the whole run rather
+                # than only the market pass.
+                if getattr(opp_agent, "security", None):
+                    opportunity_scan = opp_agent.security
             except Exception as exc:  # noqa: BLE001
                 self._log(f"Opportunity-cost pass failed, continuing without it: {exc}")
                 opportunity = {"error": str(exc)}
@@ -244,6 +266,14 @@ class Pipeline:
         combined = ScanReport(target="all inputs")
         combined.extend(deck_scan)
         combined.extend(source_scan)
+        # Every optional pass that fetched anything is screened too, and its
+        # findings belong in the run's report. Leaving them out meant "all
+        # sources were screened" described the market pass and quietly excluded
+        # cold discovery and the opportunity research.
+        for extra in (opportunity_scan, cold_scan):
+            if extra:
+                combined.extend(extra)
+                source_scan.extend(extra)
 
         result = AnalysisResult(
             deck=deck, market=market, comparisons=comparisons,

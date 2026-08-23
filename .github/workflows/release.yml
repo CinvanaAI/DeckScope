@@ -15,6 +15,11 @@ on:
 
 permissions:
   contents: read
+  # Build provenance: lets the workflow attest that these artifacts came from
+  # this repository at this commit, which is the only claim a downloader can
+  # actually verify. Without it "built by CI" is just an assertion in a README.
+  id-token: write
+  attestations: write
 
 jobs:
   artifacts:
@@ -77,6 +82,11 @@ jobs:
         run: |
           mkdir -p /tmp/newuser && cd /tmp/newuser
           bash "$GITHUB_WORKSPACE/scripts/acceptance.sh" /tmp/release/bin/python
+
+      - name: Attest what was built
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'dist/*'
 
       - uses: actions/upload-artifact@v4
         with:

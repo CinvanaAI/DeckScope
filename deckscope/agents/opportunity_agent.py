@@ -28,11 +28,18 @@ class OpportunityAnalyst(Agent):
 
     def __init__(self, provider, market_data: MarketDataProvider,
                  researcher: Any = None, assumptions: Optional[Assumptions] = None,
-                 **kw: Any) -> None:
+                 policy: Any = None, **kw: Any) -> None:
         super().__init__(provider, **kw)
         self.market_data = market_data
         self.researcher = researcher
         self.assumptions = assumptions or Assumptions()
+        #: The same screening policy the main research uses. Without it this
+        #: agent fetched pages and handed them to a model unscreened — a second
+        #: quieter door into the prompt that the security layer did not cover.
+        self.policy = policy
+        #: What the screen found here, so the run's security report can include
+        #: it instead of describing only the market pass.
+        self.security = None
 
     # ------------------------------------------------------------------
     def run(self, deck: Dict[str, Any], market: Dict[str, Any],
@@ -99,24 +106,36 @@ class OpportunityAnalyst(Agent):
 
         category = (market.get("market_definition") or {}).get("category") or "software"
         stage = (deck.get("company") or {}).get("stage") or "seed"
-        try:
-            results = self.researcher.search_many([
-                f"{stage} stage startup outcomes what percentage return capital study",
-                f"{category} startup exit multiples revenue acquisition data",
-                f"{stage} to exit dilution typical percentage venture",
-            ], max_results=5)
-        except Exception as exc:  # noqa: BLE001
-            self.emit(f"base-rate research failed: {exc}")
-            return []
-        if not results:
+
+        # Through the same evidence lifecycle as everything else: retrieved,
+        # registered, screened, quarantined if hostile, and given canonical
+        # source IDs. This used to call `search_many` directly, so pages reached
+        # a model without passing the injection screen, and the prompt numbered
+        # them `[1]`, `[2]` locally while the schema asked for global `S#` IDs —
+        # meaning any citation the model produced could not resolve.
+        from ..corpus import gather
+        from ..security.policy import SecurityPolicy
+        from ..sources import merge_into
+
+        corpus = gather(
+            self.researcher,
+            [f"{stage} stage startup outcomes what percentage return capital study",
+             f"{category} startup exit multiples revenue acquisition data",
+             f"{stage} to exit dilution typical percentage venture"],
+            self.policy or SecurityPolicy(),
+            max_results=5, on_event=self.on_event)
+        self.security = corpus.security
+        if not corpus.registry.sources:
             return []
 
         if registry is not None:
-            registry.add_results(results, backend=getattr(self.researcher, "name", ""))
-
-        material = "\n\n".join(
-            f"[{i}] {r.title}\n    {r.url}\n    {(r.snippet or '')[:1500]}"
-            for i, r in enumerate(results[:12], 1))
+            # Renumbering into the run's namespace, and the material block below
+            # is built from the merged IDs so a citation resolves.
+            merge_into(registry, corpus.registry,
+                       note="Retrieved for the opportunity-cost comparison.")
+            material = registry.prompt_block(char_budget=30_000)
+        else:
+            material = corpus.registry.prompt_block(char_budget=30_000)
         ask = deck.get("ask") or {}
         traction = deck.get("traction") or {}
         try:

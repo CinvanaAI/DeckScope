@@ -472,11 +472,23 @@ class Panel:
                 if entry["after_round"] == round_number:
                     entry["ran"] = True
             round_number += 1
+            settled = [name for name in lenses if name not in wants_more]
             self._log(f"Cross-review round {round_number} — still open: "
-                      f"{', '.join(wants_more)}")
+                      f"{', '.join(wants_more)}"
+                      + (f" (settled: {', '.join(settled)})" if settled else ""))
             previous = {lens: st.spread for lens, st in states.items()}
-            self._round_review(working, lenses, result.registry)
-            self._round_revise(working, lenses, result.registry, round_number)
+
+            # Only the lenses that asked for another round.
+            #
+            # Every lens got its own stopping decision and then every lens was
+            # reviewed and revised anyway, so the decision was computed and
+            # discarded. Three things followed: a lens that had converged kept
+            # changing, its settled conclusions were exposed to fresh regressions,
+            # and the panel paid for review rounds nobody had asked for. The
+            # reported stopping metric also described something that never
+            # happened, which is the kind of number that is worse than absent.
+            self._round_review(working, wants_more, result.registry)
+            self._round_revise(working, wants_more, result.registry, round_number)
 
     def _round_vote(self, result: PanelResult, working: List[Panelist],
                     lenses: List[str]) -> None:

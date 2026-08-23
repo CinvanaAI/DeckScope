@@ -12,7 +12,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, List
 
-from .common import ASSESSMENT_WORD, as_list, header_block, theme as get_theme
+from .common import findings_for, ASSESSMENT_WORD, as_list, header_block, theme as get_theme
 
 
 def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) -> List[str]:
@@ -111,11 +111,17 @@ def _via_reportlab(result, lens: str, target: Path, theme: str) -> bool:
     story.append(Paragraph(esc(result.company), title))
     story.append(Paragraph("Pitch deck claims measured against market evidence", small))
     story.append(Spacer(1, 12))
-    if h["headline"]:
-        story.append(Paragraph(f"<i>{esc(h['headline'])}</i>",
-                               ParagraphStyle("hl", parent=body, fontSize=11.5,
-                                              leading=16, textColor=accent)))
-        story.append(Spacer(1, 10))
+    # Same hierarchy as every other format: findings first, verdict demoted, no
+    # composite score. This still led with the model's headline, a verdict and
+    # "45.7 / 100" — so the product meant something different depending on which
+    # export button the reader pressed. See deckscope/findings.py.
+    found = findings_for(result, lens)
+    story.append(Paragraph(f"<b>{esc(found.headline)}</b>",
+                           ParagraphStyle("hl", parent=body, fontSize=11.5,
+                                          leading=16, textColor=accent)))
+    story.append(Spacer(1, 6))
+    story.append(Paragraph(f"<i>{esc(found.evidence_state)}</i>", small))
+    story.append(Spacer(1, 10))
 
     def table(data, widths, header=True, font=8.5):
         tb = Table(data, colWidths=widths, repeatRows=1 if header else 0)
@@ -134,12 +140,47 @@ def _via_reportlab(result, lens: str, target: Path, theme: str) -> bool:
         return tb
 
     story.append(table(
-        [["Verdict", esc(h["verdict"])], ["Confidence", esc(h["confidence"])],
-         ["Weighted score", f"{esc(h['score'])} / 100"],
+        [["Claims examined", str(found.counts.get("claims_examined", 0))],
+         ["Contested", str(found.counts.get("contested", 0))],
+         ["Omissions", str(found.counts.get("omissions", 0))],
+         ["Could not be checked", str(found.counts.get("unverified", 0))],
          ["Security screen", esc((result.security or {}).get("overall_risk", "n/a")).upper()],
          ["Research", esc(h["research"])], ["Model", esc(h["model"])],
          ["Generated", esc(h["generated"])]],
         [1.6 * inch, 5.0 * inch], header=False))
+
+    def _findings_section(heading: str, items, lede: str, unsourced_note: str = ""):
+        if not items:
+            return
+        story.append(Paragraph(heading, h1))
+        story.append(Paragraph(esc(lede), small))
+        story.append(Spacer(1, 6))
+        for f in items:
+            cites = (" ".join(f"[{s}]" for s in f.source_ids) if f.source_ids
+                     else unsourced_note)
+            detail = esc(f.delta or f.why or "")
+            story.append(Paragraph(
+                f"<b>{esc(f.text)}</b> {esc(cites)}<br/>{detail}", body))
+            story.append(Spacer(1, 5))
+
+    _findings_section(
+        "What the evidence contests", found.contested,
+        "Claims the deck makes that retrieved evidence pushes back on.",
+        "(no source — a reading, not a finding)")
+    _findings_section(
+        "What the deck leaves out", found.omissions,
+        "Present in the market evidence, absent from the deck.",
+        "(no source)")
+    _findings_section(
+        "What could not be checked", found.unverified,
+        "Neither confirmed nor refuted. Research tasks, not marks against the "
+        "company.")
+
+    if found.next_steps:
+        story.append(Paragraph("What to do next", h1))
+        for i, step in enumerate(found.next_steps, 1):
+            story.append(Paragraph(f"{i}. {esc(step)}", body))
+            story.append(Spacer(1, 4))
 
     story.append(Paragraph("Summary", h1))
     for para in (comp.get("summary") or "").split("\n"):
@@ -148,6 +189,14 @@ def _via_reportlab(result, lens: str, target: Path, theme: str) -> bool:
             story.append(Spacer(1, 6))
     if comp.get("integrity_note"):
         story.append(Paragraph(f"<b>Integrity note.</b> {esc(comp['integrity_note'])}", body))
+
+    story.append(Paragraph("What this adds up to, for this lens", h1))
+    story.append(Paragraph(
+        f"<b>{esc(h['verdict'])}</b> · confidence: {esc(h['confidence'])}", body))
+    story.append(Paragraph(
+        "A verdict is one reader's reading of the findings above, through one "
+        "lens. The findings are the durable part; this line is not.", small))
+    story.append(Spacer(1, 8))
 
     rows = comp.get("scorecard") or []
     if rows:

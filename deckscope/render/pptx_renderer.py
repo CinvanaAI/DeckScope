@@ -4,7 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, List
 
-from .common import ASSESSMENT_WORD, as_list, header_block, score_color, theme as get_theme, txt, alignment_text
+from .common import (ASSESSMENT_WORD, alignment_text, as_list, findings_for,
+                     header_block, score_color, theme as get_theme, txt)
 
 
 def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) -> List[str]:
@@ -88,14 +89,22 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
         p = tf.add_paragraph()
         p.space_before = Pt(22)
         r = p.add_run()
-        r.text = f"{h['lens']}  ·  {h['verdict']}  ·  {h['score']}/100"
+        # Findings, not a verdict and a composite score. The deck a reader
+        # circulates should say the same thing as the report it came from.
+        found = findings_for(result, lens)
+        c = found.counts
+        r.text = (f"{h['lens']}  ·  {c.get('contested', 0)} contested"
+                  f"  ·  {c.get('omissions', 0)} omitted"
+                  f"  ·  {c.get('unverified', 0)} unresolved")
         r.font.size, r.font.bold, r.font.color.rgb = Pt(16), True, rgb("FFFFFF")
 
         # -------------------------------------------------------- headline
-        if h["headline"]:
+        if found.headline:
             s = new_slide("The one-line version")
             tf = body_box(s, Inches(2.4))
-            bullet(tf, h["headline"], size=26, bold=True, color=t["accent"], space=18)
+            bullet(tf, found.headline, size=22, bold=True, color=t["accent"],
+                   space=14)
+            bullet(tf, found.evidence_state, size=12, color=t["muted"], space=16)
             bullet(tf, f"Confidence: {h['confidence']} — "
                        f"{(comp.get('verdict') or {}).get('confidence_rationale', '')}",
                    size=13, color=t["muted"])
@@ -103,7 +112,11 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
         # ------------------------------------------------------- scorecard
         rows = comp.get("scorecard") or []
         if rows:
-            s = new_slide("Scorecard", f"Weighted total: {h['score']}/100")
+            # No weighted total. It is the one figure in the report that cannot
+            # be traced to a source, and a slide is the format most likely to be
+            # screenshotted out of context.
+            s = new_slide("Scorecard",
+                          "Per dimension, each with its reasoning")
             top = Inches(2.0)
             row_h = Inches(0.52)
             for i, r_ in enumerate(rows[:8]):

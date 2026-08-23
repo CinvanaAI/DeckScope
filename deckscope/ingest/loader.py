@@ -11,7 +11,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 SUPPORTED_EXTENSIONS = {".pptx", ".ppt", ".pdf", ".docx", ".txt", ".md",
                         ".markdown", ".html", ".htm", ".json"}
@@ -29,6 +29,30 @@ class DeckDocument:
     fmt: str
     warnings: List[str] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
+    #: An on-disk copy of the ORIGINAL file, when the deck came from a URL.
+    #:
+    #: File-level forensics — hidden slides, speaker notes, off-slide shapes,
+    #: invisible PDF text, document metadata — can only run against the real
+    #: binary. Remote decks used to have their temporary download deleted the
+    #: instant the text was extracted, and the URL was handed to the scanner
+    #: instead. A URL is not a file, so the scanner found nothing and reported
+    #: nothing: every forensic protection the docs advertise silently did not
+    #: apply to any deck fetched over the network, which is exactly the deck most
+    #: likely to be hostile.
+    #:
+    #: The caller owns this file and must call `cleanup()` when done.
+    local_path: Optional[str] = None
+
+    def cleanup(self) -> None:
+        """Delete the temporary original, if we made one."""
+        if not self.local_path:
+            return
+        try:
+            Path(self.local_path).unlink()
+        except OSError:
+            pass
+        finally:
+            self.local_path = None
 
     @property
     def is_thin(self) -> bool:
@@ -265,11 +289,16 @@ def _from_url(url: str) -> DeckDocument:
                 fh.write(got.content)
             reader = {".pdf": _from_pdf, ".pptx": _from_pptx, ".docx": _from_docx}
             doc = reader[got.suffix](tmp)
-        finally:
+        except Exception:
             try:
                 tmp.unlink()
             except OSError:
                 pass
+            raise
+        # Deliberately NOT deleted here. Forensics needs the original bytes, and
+        # deleting them at this point is what made every file-level check skip
+        # remote decks. Ownership passes to the caller via `local_path`.
+        doc.local_path = str(tmp)
         doc.source = got.final_url
         doc.metadata["fetched_from"] = url
         return doc
