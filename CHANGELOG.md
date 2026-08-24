@@ -96,6 +96,13 @@ own `/v1/models` endpoint so a hard-coded list is no longer the only answer.
 - GitHub Actions are pinned to immutable commit SHAs rather than moving major
   tags, and packaging metadata uses the PEP 639 `license` expression instead of
   the deprecated table and classifier.
+- **`.gitattributes` would have broken the replay on Windows.** `* text=auto`
+  stores text with LF and checks it out with CRLF, so a fresh Windows clone
+  would have held benchmark prompts that no longer hashed to their own names —
+  the replay failing there while passing on Linux, which is a worse version of
+  the bug the bundle exists to prevent. `benchmarks/** -text` now stops git
+  rewriting a file whose name *is* the hash of its contents, and two tests hold
+  it: one on the rule and its precedence, one on the committed bytes.
 
 ### Fixed (fifth audit) — uneven guarantees
 

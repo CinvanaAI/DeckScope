@@ -23,7 +23,18 @@
 *.bat           text eol=crlf
 *.cmd           text eol=crlf
 
-# Never touch these.
+# Never touch these — byte-for-byte, on every platform.
+#
+# The benchmark bundle is content-addressed: each file's name is the first 16
+# hex characters of the sha256 of its own contents, and `scripts/replay_benchmark.py`
+# re-derives that hash to prove the retained prompt is the one the pipeline
+# generates. Line-ending normalization silently breaks exactly that: under
+# `* text=auto` these files are stored with LF and checked out with CRLF on
+# Windows, so a fresh Windows clone would hold prompts that no longer hash to
+# their own names. The replay would fail there and pass on Linux, which is the
+# worst version of the bug the bundle exists to prevent.
+benchmarks/**  -text
+
 *.png           binary
 *.jpg           binary
 *.pdf           binary

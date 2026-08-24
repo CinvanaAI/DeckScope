@@ -178,6 +178,45 @@ def test_benchmark_prompts_contain_no_machine_paths():
                 assert marker not in text, f"{prompt} contains {marker}"
 
 
+def test_git_never_rewrites_a_content_addressed_file():
+    """Line-ending normalization would break the hash the filename *is*.
+
+    `.gitattributes` sets `* text=auto`, which stores text with LF and checks it
+    out with CRLF on Windows. The benchmark prompts are named after the sha256 of
+    their own contents, so under that rule a fresh Windows clone would hold
+    prompts that no longer hash to their own names: the replay would fail there
+    and pass on Linux. A platform-dependent hash is the worst version of the bug
+    the bundle exists to prevent.
+    """
+    text = (ROOT / ".gitattributes").read_text(encoding="utf-8")
+    rules = [line.split("#")[0].strip() for line in text.splitlines()]
+    rules = [r for r in rules if r]
+    protecting = [r for r in rules
+                  if r.startswith("benchmarks/") and "-text" in r]
+    assert protecting, (
+        "benchmarks/ must be marked `-text` so git never rewrites a file whose "
+        "name is the hash of its contents")
+    # Later rules win in gitattributes, so the protection has to come after any
+    # rule that would otherwise match a file inside the bundle. Only patterns
+    # that actually match one count — `*.png binary` is later and irrelevant.
+    conflicting = {"*", "*.txt", "*.json", "*.md"}
+    last_conflict = max((i for i, r in enumerate(rules)
+                         if r.split()[0] in conflicting), default=-1)
+    assert rules.index(protecting[0]) > last_conflict, (
+        "a rule matching benchmark files appears after the benchmarks rule and "
+        "overrides it")
+
+
+def test_no_committed_benchmark_file_contains_carriage_returns():
+    """Belt and braces: if one ever gets normalized, the bytes say so."""
+    for bundle in _bundles():
+        for path in list((bundle / "prompts").glob("*.txt")) + \
+                    list((bundle / "answers").glob("*.json")):
+            assert b"\r\n" not in path.read_bytes(), (
+                f"{path.name} has CRLF line endings; its hash no longer matches "
+                f"the hash recorded on other platforms")
+
+
 def test_benchmarks_record_how_they_were_generated():
     """"a frontier model; see answered_by" is not provenance. An auditor needs
     the model, the date, who answered, and what that independence does and does
