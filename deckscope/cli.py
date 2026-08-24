@@ -203,6 +203,50 @@ def build_parser() -> argparse.ArgumentParser:
     panel.add_argument("--no-cache", action="store_true")
     panel.add_argument("--quiet", "-q", action="store_true")
     panel.add_argument("--config", default=None)
+
+    research = sub.add_parser(
+        "research",
+        help="Question-driven research: a loop that reads, then asks the next question",
+        description=(
+            "The difference from `run` is what happens in the middle. `run` writes "
+            "its search queries before reading anything, retrieves once, and reports. "
+            "This posts a queue of open questions, works the highest-priority one, "
+            "and lets what it reads add questions to any beat — so a regulation page "
+            "can put a question on the economics queue. Questions close only when a "
+            "stated rule fires: two independent sources agreeing, a flat "
+            "contradiction, or the attempts running out. Nothing closes because a "
+            "model felt finished.\n\n"
+            "Output is an evidence table, not a narrative: every finding carries a "
+            "source, a date and a method, and the ones that could not be sourced are "
+            "deleted rather than softened."))
+    research.add_argument("deck", help="Path or URL to the deck")
+    research.add_argument("--provider", default=None, help="Override the AI backend")
+    research.add_argument("--model", default=None, help="Override the model")
+    research.add_argument("--research-backend", default=None, dest="research_backend",
+                          help="auto tavily serper brave exa provider_native mcp none")
+    research.add_argument("--security", default=None,
+                          choices=["strict", "balanced", "permissive", "off"])
+    research.add_argument("--max-iterations", type=int, default=None,
+                          help="Questions the loop may work (default 24)")
+    research.add_argument("--max-retrievals", type=int, default=None,
+                          help="Retrievals across the whole run (default 40)")
+    research.add_argument("--max-seconds", type=float, default=None,
+                          help="Wall-clock cap (default 600)")
+    research.add_argument("--nda", action="store_true",
+                          help="Refuse to send any deck-derived text to a provider "
+                               "that is not running on this machine. Structurally "
+                               "enforced: the call raises rather than being logged.")
+    research.add_argument("--save", default=None, metavar="FILE",
+                          help="Write the full evidence table as JSON")
+    research.add_argument("--company", default=None,
+                          help="Company name, if the deck omits it")
+    research.add_argument("--quiet", "-q", action="store_true")
+    research.add_argument("--demo", action="store_true",
+                          help="Run the loop against fixed sample evidence with "
+                               "no AI connection and no search key. Every figure "
+                               "is illustrative; the point is to show the "
+                               "mechanics.")
+    research.add_argument("--config", default=None)
     return p
 
 
@@ -252,11 +296,235 @@ def main(argv: Optional[List[str]] = None) -> int:
     if cmd == "panel":
         return _panel(args)
 
+    if cmd == "research":
+        return _research(args)
+
     build_parser().print_help()
     return 1
 
 
 # ------------------------------------------------------------------ actions
+
+def _research(args: Any) -> int:
+    """The question-driven loop, end to end, printing its reasoning as it goes."""
+    import json
+
+    from .agents.deck_agent import DeckAnalyst
+    from .ingest.loader import load_deck
+    from .providers import get_provider
+    from .research.engine import run_research
+    from .research.loop import Budget
+    from .research.registry import get_researcher
+    from .security.policy import SecurityPolicy
+    from .security.report import SecurityAbort
+    from .security.screening import screen_deck
+    from .tiering import NDAGuard, NDAViolation, plan_from_config
+
+    settings.load_env()
+    overrides: Dict[str, Any] = {"deck_path": args.deck,
+                                 "company_hint": args.company,
+                                 "verbose": not args.quiet}
+    if args.security:
+        overrides["security"] = args.security
+    prov: Dict[str, Any] = {}
+    if args.provider:
+        prov["name"] = args.provider
+    if args.model:
+        prov["model"] = args.model
+    if prov:
+        overrides["provider"] = prov
+    if args.research_backend:
+        overrides["research"] = {"name": args.research_backend}
+
+    if args.demo:
+        from .config import ProviderConfig, ResearchConfig, RunConfig
+        cfg = RunConfig(deck_path=args.deck, company_hint=args.company,
+                        provider=ProviderConfig(name="mock"),
+                        research=ResearchConfig(name=_register_demo_research()),
+                        verbose=not args.quiet, cache_dir=None)
+        _out("Demo mode: no AI connection, no search key, fixed sample evidence. "
+             "Every figure below is illustrative — what is real is the loop.\n")
+    elif args.config:
+        from .config import load_config
+        cfg = load_config(args.config, **overrides)
+    else:
+        if not settings.is_configured():
+            _out("DeckScope isn't set up yet. Run:  deckscope setup\n"
+                 "Or watch the loop work with no setup at all:  "
+                 "deckscope research <deck> --demo")
+            return 1
+        cfg = settings.settings_to_runconfig(overrides)
+
+    provider = get_provider(cfg.provider)
+    researcher = get_researcher(cfg.research, provider)
+    policy: SecurityPolicy = cfg.security or SecurityPolicy()
+
+    if getattr(researcher, "name", "") == "none":
+        # Otherwise the run does everything correctly and prints sixteen lines
+        # of "could not be established", which is true but reads like a broken
+        # product rather than a missing search key.
+        _out("No web-research backend is configured, so nothing can be looked "
+             "up and every question will close as unanswerable. Run "
+             "`deckscope setup` to add one, or pass --research-backend.\n")
+
+    if args.nda and not _all_local(cfg):
+        # Said plainly and up front rather than discovered halfway through a run
+        # that has already sent three requests.
+        _out("NDA mode is on and at least one configured connection is a hosted "
+             "API. Deck content will not be sent to it — those calls will be "
+             "refused, not quietly downgraded. Point --provider at a local model "
+             "(Ollama or LM Studio through the openai_compatible backend) for a "
+             "complete run.\n")
+
+    doc = load_deck(cfg.deck_path)
+    try:
+        if policy.enabled:
+            doc, scan = screen_deck(doc, policy, deck_path=doc.local_path or cfg.deck_path)
+            _out(scan.summary_line())
+    except SecurityAbort as exc:
+        _out(f"\n{exc}")
+        return 3
+    finally:
+        doc.cleanup()
+
+    _out("Reading the deck…")
+    extraction = DeckAnalyst(provider, cache_dir=cfg.cache_dir,
+                             verbose=not args.quiet).run(
+        doc, company_hint=cfg.company_hint)
+
+    budget = Budget()
+    if args.max_iterations:
+        budget.max_iterations = args.max_iterations
+    if args.max_retrievals:
+        budget.max_retrievals = args.max_retrievals
+    if args.max_seconds:
+        budget.max_seconds = args.max_seconds
+
+    try:
+        result = run_research(
+            extraction=extraction, provider=provider, researcher=researcher,
+            policy=policy, plan=plan_from_config(cfg),
+            guard=NDAGuard(enabled=bool(args.nda)), budget=budget,
+            deck_text=doc.text,
+            on_event=(lambda m: None) if args.quiet else _out)
+    except NDAViolation as exc:
+        _out(f"\n{exc}")
+        return 4
+
+    _print_research(result)
+
+    if args.save:
+        with open(args.save, "w", encoding="utf-8") as fh:
+            json.dump(result, fh, indent=2, ensure_ascii=False)
+        _out(f"\nFull evidence table written to {args.save}")
+    return 0
+
+
+def _register_demo_research() -> str:
+    """Fixed sources on two distinct publishers, so the loop has real work.
+
+    Two domains rather than one is the whole point: with a single publisher
+    every question would close as "could not be independently corroborated" and
+    the demo would show the guard rail instead of the mechanism. The figures
+    disagree deliberately, so the contested path is visible too.
+    """
+    from .research.base import Researcher, SearchResult
+    from .research.registry import register_researcher
+
+    class _DemoResearch(Researcher):
+        name = "demo_research_loop"
+
+        def search(self, query, max_results=8):
+            return [
+                SearchResult(
+                    f"Independent analyst note — {query[:40]}",
+                    f"https://analyst.example.com/{abs(hash(query)) % 9999}",
+                    "The addressable segment is $6-8B in 2026. Startup capital "
+                    "for a single operator runs about $10,000 once equipment, "
+                    "licensing and insurance are counted.", "2026-02", query),
+                SearchResult(
+                    f"Wider category report — {query[:34]}",
+                    f"https://research.example.org/{abs(hash(query)) % 9999}",
+                    "The wider category is $41B, on a boundary that includes "
+                    "adjacent tooling. Roughly half of new firms are still "
+                    "trading after five years.", "2026-01", query),
+            ]
+
+    register_researcher(_DemoResearch)
+    return _DemoResearch.name
+
+
+def _print_research(result: Dict[str, Any]) -> None:
+    """The findings, then what could not be established. Both matter."""
+    research = result.get("research") or {}
+    comparison = result.get("comparison") or {}
+    findings = (research.get("findings") or {}).get("findings") or []
+
+    _out("\n" + "=" * 68)
+    _out("WHAT THE RESEARCH ESTABLISHED")
+    _out("=" * 68)
+    established = [f for f in findings if f.get("method") != "absent"]
+    if not established:
+        _out("  Nothing. Every question below explains why, and an empty section "
+             "here is a real result rather than a failure to render one.")
+    for f in established:
+        cites = " ".join(f"[{s}]" for s in f.get("source_ids") or [])
+        value = f" — {f['value_text']}" if f.get("value_text") else ""
+        stamp = f" (as of {f['as_of']})" if f.get("as_of") else ""
+        _out(f"  • {f.get('statement', '')}{value}{stamp} {cites}")
+
+    contested = comparison.get("contested") or []
+    if contested:
+        _out("\nWHERE THE SOURCES DISAGREE")
+        _out("-" * 68)
+        for row in contested:
+            _out(f"  ? {row.get('question', '')}")
+            for pos in row.get("positions") or []:
+                cites = " ".join(f"[{s}]" for s in pos.get("source_ids") or [])
+                _out(f"      {pos.get('value') or ''} — {pos.get('statement','')} {cites}")
+
+    signals = comparison.get("pitcher_signals") or []
+    if signals:
+        _out("\nABOUT WHOEVER WROTE THIS")
+        _out("-" * 68)
+        for s in signals:
+            _out(f"  ! {s.get('statement', '')}")
+            _out(f"    {s.get('why_it_matters', '')}")
+
+    claims = [c for c in comparison.get("claims") or []
+              if c.get("assessment") == "contradicted"]
+    if claims:
+        _out("\nCLAIMS THE EVIDENCE CONTRADICTS")
+        _out("-" * 68)
+        for c in claims:
+            _out(f"  ✗ {c.get('claim', '')}")
+            _out(f"    {c.get('gap_text') or c.get('because', '')}")
+
+    unanswered = comparison.get("unanswered") or []
+    if unanswered:
+        _out("\nWHAT COULD NOT BE ESTABLISHED, AND WHY")
+        _out("-" * 68)
+        for row in unanswered:
+            _out(f"  – {row.get('question', '')}")
+            _out(f"    {row.get('because', '')}")
+
+    budget = research.get("budget") or {}
+    _out(f"\n{budget.get('iterations', 0)} questions worked, "
+         f"{budget.get('retrievals', 0)} retrievals, "
+         f"{budget.get('seconds', 0)}s"
+         + (f" — stopped because {budget['stopped_because']}"
+            if budget.get("stopped_because") else ""))
+    nda = result.get("nda") or {}
+    if nda.get("enabled"):
+        _out(f"NDA mode: {len(nda.get('refusals') or [])} call(s) refused; "
+             f"{nda.get('protected_passages', 0)} passages fingerprinted.")
+
+
+def _all_local(cfg: Any) -> bool:
+    from .tiering import is_local
+    return all(is_local(c) for c in
+               filter(None, [cfg.provider, getattr(cfg, "extract_provider", None)]))
+
 
 def _run(args: Any) -> int:
     from .orchestrator import Pipeline

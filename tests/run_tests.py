@@ -11,6 +11,7 @@ from __future__ import annotations
 import inspect
 import sys
 import tempfile
+import unittest
 import traceback
 from pathlib import Path
 
@@ -49,15 +50,54 @@ def discover() -> list:
 MODULES = discover()
 
 
+def collect(mod) -> list:
+    """Every test in a module, as (name, callable).
+
+    Two styles are supported because the suite grew both. Bare `test_*`
+    functions came first; `unittest.TestCase` classes arrived later, and this
+    runner silently ignored them — a file of forty-five tests reported "0 tests"
+    and the run still said OK. That is the same defect as the hand-maintained
+    module list this discovery replaced, so both shapes are collected and a
+    module contributing nothing is now an error rather than a quiet zero.
+    """
+    tests = [(n, f) for n, f in vars(mod).items()
+             if n.startswith("test_") and inspect.isfunction(f)]
+
+    for cls_name, cls in vars(mod).items():
+        if not (inspect.isclass(cls) and issubclass(cls, unittest.TestCase)
+                and cls is not unittest.TestCase):
+            continue
+        for method in sorted(dir(cls)):
+            if not method.startswith("test"):
+                continue
+            tests.append((f"{cls_name}.{method}", _case_runner(cls, method)))
+    return tests
+
+
+def _case_runner(cls, method):
+    """Run one TestCase method with its setUp/tearDown, outside unittest."""
+    def run():
+        case = cls(method)
+        result = unittest.TestResult()
+        case.run(result)
+        if result.skipped:
+            return
+        for _case, tb in result.failures + result.errors:
+            raise AssertionError(tb)
+    return run
+
+
 def main() -> int:
     passed = failed = 0
     failures = []
+    empty = []
 
     for modname in MODULES:
         mod = __import__(modname)
-        tests = [(n, f) for n, f in vars(mod).items()
-                 if n.startswith("test_") and callable(f)]
+        tests = collect(mod)
         console.out(f"\n{modname}  ({len(tests)} tests)")
+        if not tests:
+            empty.append(modname)
         for name, fn in tests:
             try:
                 if "tmp_path" in inspect.signature(fn).parameters:
@@ -76,6 +116,11 @@ def main() -> int:
     console.out("\n" + "-" * 60)
     for modname, name, tb in failures:
         console.out(f"\n{modname}::{name}\n{tb}")
+    if empty:
+        failed += len(empty)
+        console.out(f"\nThese files matched test_*.py but contributed no tests, "
+                    f"which almost always means the runner cannot see them rather "
+                    f"than that they are empty: {', '.join(empty)}")
     console.out(f"{passed} passed, {failed} failed")
     return 1 if failed else 0
 

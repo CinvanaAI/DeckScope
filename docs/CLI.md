@@ -131,6 +131,40 @@ deckscope demo --cold-discovery           # free, illustrative
 
 ---
 
+## `research`
+
+The question-driven loop, instead of the single-pass pipeline `run` uses. See
+[RESEARCH_ENGINE.md](RESEARCH_ENGINE.md) for what it does and why.
+
+```bash
+deckscope research deck.pdf --demo         # no AI connection, no search key
+deckscope research deck.pdf
+deckscope research deck.pdf --nda          # nothing deck-derived leaves the machine
+deckscope research deck.pdf --save evidence.json
+```
+
+| Flag | Default | What it does |
+|---|---|---|
+| `--demo` | off | Fixed sample evidence, mock model. Illustrative figures; real mechanics |
+| `--nda` | off | Refuses — raises, not warns — any call carrying deck text to a non-local provider |
+| `--max-iterations` | 24 | Questions the loop may work |
+| `--max-retrievals` | 40 | Retrievals across the whole run |
+| `--max-seconds` | 600 | Wall clock |
+| `--save FILE` | — | The full evidence table as JSON: findings, questions, attempts, routing |
+| `--provider` / `--model` | from config | Override the AI backend |
+| `--research-backend` | from config | `tavily` `serper` `brave` `exa` `provider_native` `mcp` `none` |
+| `--security` | `balanced` | `strict` `balanced` `permissive` `off` |
+
+Output is an evidence table rather than a narrative, in four blocks: what the
+research established (with sources and dates), where the sources disagree, what
+it concluded about whoever wrote the deck, and what could not be established
+along with the reason. An empty first block is a real result, not a rendering
+failure.
+
+Exit codes: `0` success, `1` not set up, `3` security abort, `4` an NDA refusal.
+
+---
+
 ## `demo`
 
 A full run against a built-in sample deck, using built-in model answers. No AI account,

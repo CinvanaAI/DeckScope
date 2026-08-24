@@ -98,6 +98,7 @@ two routes overlap on 29% of the competitors they name.
 - [The security layer](#the-security-layer)
 - [Citations](#citations)
 - [The panel: several AIs that review each other](#the-panel-several-ais-that-review-each-other)
+- [The research engine](#the-research-engine)
 - [Four ways to use it](#four-ways-to-use-it)
 - [Configuration](#configuration)
 - [Extending it](#extending-it)
@@ -558,6 +559,66 @@ More in **[docs/PANEL.md](docs/PANEL.md)**.
 
 ---
 
+## The research engine
+
+`deckscope run` writes its search queries before it has read anything, retrieves
+once, and reports. Every conclusion is downstream of one guess made at the start.
+
+`deckscope research` is a loop.
+
+```bash
+deckscope research deck.pdf --demo      # no AI connection, no search key
+deckscope research deck.pdf --nda       # nothing leaves your machine
+```
+
+```
+while budget remains and open questions exist:
+    q       = highest-priority open question
+    route   = classify(q)          # search | dataset | filing | fetch
+    results = retrieve(q, route)   # screened and registered on the way in
+    read   -> findings, and NEW questions
+    post the new questions, to any beat
+    close q when a stated rule fires
+```
+
+What that buys:
+
+**Reading changes what gets asked next.** A regulation page that mentions an
+exemption threshold puts a question on the economics queue. That cross-posting
+surfaces the disagreements a single pass never reaches.
+
+**A database question never goes to a search engine.** "How many landscaping
+businesses operate in Maricopa County" is a query against County Business
+Patterns. A web search answers 193; the census says 71; nothing downstream can
+tell which is right. Dataset backends **refuse rather than degrade to search** —
+without a NAICS code the question closes as unanswerable, with the reason
+attached.
+
+**Questions close on stated rules, never on a model feeling finished.** Two
+sources agreeing counts only if they are *independent publishers*; four pages
+from one content farm is one source quoted four times. Disagreement survives as
+`contested` rather than being averaged into a tidy fake number.
+
+**Findings are the artifact, not the report.** Each carries a value, a unit, an
+`as_of` date, a method and its sources. Anything unsourced is deleted, not
+softened.
+
+**The gap between what was asked for and what is required is itself a finding.**
+When a deck asks for $5,000 and the evidence says $10,000, that is a fact about
+the person who wrote it, not about the industry — and it is the fact that
+decides how much to give and on what terms.
+
+**NDA mode is structural.** `--nda` makes any call carrying deck text to a
+non-local provider *raise*, checked twice: an explicit taint flag, and a content
+fingerprint as a backstop for when somebody forgets to set it.
+
+Not yet measured against `run` or against a single prompt. It is a better design
+for the reasons above; whether it produces better analyses is open.
+
+More in **[docs/RESEARCH_ENGINE.md](docs/RESEARCH_ENGINE.md)**.
+
+---
+
 ## Four ways to use it
 
 **1. The app window** — for people who never want a terminal.
@@ -684,6 +745,7 @@ The same pattern works for research backends and output formats. See
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | How the pieces fit, and why |
 | [docs/PROVIDERS.md](docs/PROVIDERS.md) | Each AI backend, setup and trade-offs |
 | [docs/RESEARCH.md](docs/RESEARCH.md) | Search backends and how queries are built |
+| [docs/RESEARCH_ENGINE.md](docs/RESEARCH_ENGINE.md) | The question-driven loop: routing, closing rules, NDA mode |
 | [docs/LENSES.md](docs/LENSES.md) | What each lens changes |
 | [docs/OUTPUTS.md](docs/OUTPUTS.md) | Every format, with samples |
 | [docs/SECURITY.md](docs/SECURITY.md) | Threat model, detections, limits |

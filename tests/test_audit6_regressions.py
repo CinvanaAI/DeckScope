@@ -120,7 +120,7 @@ def test_a_deck_path_never_reaches_the_prompt():
     from deckscope.agents.deck_agent import _source_label
 
     assert _source_label("/home/me/decks/inflated_tam.md") == "inflated_tam.md"
-    assert _source_label(r"C:\Users\von\Desktop\deck.pptx") == "deck.pptx"
+    assert _source_label(r"C:\Users\example\Desktop\deck.pptx") == "deck.pptx"
     # A URL is the identity of a remote deck, not a fact about a filesystem.
     assert _source_label("https://example.com/a/deck.pdf") == \
         "https://example.com/a/deck.pdf"

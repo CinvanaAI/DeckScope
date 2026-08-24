@@ -82,6 +82,15 @@ class MockProvider(LLMProvider):
             body = json.dumps(_deck_extraction(joined))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
+        if "reading research material to answer ONE question" in system:
+            allowed = self._available_sids(joined)
+            body = json.dumps(self._clamp_citations(_read_for(joined), allowed))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
+        if "Decide what market a company is actually in" in system:
+            body = json.dumps(_framing_for(joined))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "mapping a market from scratch" in system:
             body = json.dumps(_COLD_MARKET)
             return Completion(text=body, model=self.model,
@@ -1227,3 +1236,114 @@ def _delta_line(claim: str, source: dict) -> str:
     if figure and counter:
         return f"deck states {figure}; {counter}"
     return counter or "The retrieved evidence points elsewhere."
+
+
+# --------------------------------------------------------------------------
+# Fixtures for the research loop.
+#
+# These have to do more than return something well-formed. The loop's whole
+# claim is that reading changes what gets asked next, that absence is recorded
+# rather than glossed, and that two sources disagreeing survives to the report.
+# A fixture that always returns one tidy sourced finding would make every one of
+# those paths untested while the suite stayed green, so this one deliberately
+# produces a follow-up question, an honest "the sources do not answer this", and
+# a figure that contradicts another beat.
+# --------------------------------------------------------------------------
+
+def _question_in_prompt(prompt: str) -> str:
+    m = re.search(r"^Question \(([^)]*)\):\s*(.+)$", prompt or "", re.M)
+    return m.group(2).strip() if m else ""
+
+
+def _beat_in_prompt(prompt: str) -> str:
+    m = re.search(r"^Question \(([^)]*)\):", prompt or "", re.M)
+    return m.group(1).strip() if m else "sizing"
+
+
+def _read_for(prompt: str) -> dict:
+    """Stand in for a model reading screened sources to answer one question."""
+    question = _question_in_prompt(prompt).lower()
+    beat = _beat_in_prompt(prompt)
+    sources = _sources_in_prompt(prompt)
+    if not sources:
+        return {"findings": [{
+            "statement": "No source in this batch addresses the question.",
+            "absent": True, "confidence": "high", "source_ids": [],
+            "note": "nothing was retrieved"}], "new_questions": []}
+
+    sid = sources[0]["sid"]
+    other = sources[1]["sid"] if len(sources) > 1 else sid
+
+    if "how large" in question or "market size" in question:
+        return {"findings": [
+            {"statement": "Independent estimates put the market at $6-8B, well "
+                          "below the figure the deck uses.",
+             "value": "$6-8B", "unit": "USD", "as_of": "2026-01",
+             "confidence": "high", "source_ids": [sid]},
+            {"statement": "A second estimate covering a wider category reports "
+                          "$41B, which is a different boundary rather than a "
+                          "different measurement.",
+             "value": "$41B", "unit": "USD", "as_of": "2026-01",
+             "confidence": "medium", "source_ids": [other]}],
+            "new_questions": [
+                {"text": "Which of the two market boundaries does this company "
+                         "actually sell into?",
+                 "beat": "framing", "weight": "high"}]}
+
+    if "cost to start" in question or "cost to start and operate" in question:
+        return {"findings": [{
+            "statement": "Startup capital for a single-crew operation runs about "
+                         "$10,000 once equipment, licensing and insurance are "
+                         "included.",
+            "value": "$10,000", "unit": "USD", "as_of": "2026-02",
+            "confidence": "medium", "source_ids": [sid]}],
+            "new_questions": [
+                {"text": "How long until the first invoice is paid, and what "
+                         "does that do to working capital?",
+                 "beat": "economics", "weight": "medium"}]}
+
+    if "survive" in question or "fail" in question:
+        return {"findings": [{
+            "statement": "Roughly half of new firms in this sector are still "
+                         "trading after five years.",
+            "value": "50%", "unit": "%", "as_of": "2025",
+            "confidence": "medium", "source_ids": [sid]}],
+            "new_questions": []}
+
+    if "licence" in question or "license" in question or "permit" in question:
+        return {"findings": [{
+            "statement": "The retrieved pages describe registration requirements "
+                         "but none states whether an exemption applies at this "
+                         "scale.",
+            "absent": True, "confidence": "medium", "source_ids": [sid],
+            "note": "the sources cover the general rule, not the threshold"}],
+            "new_questions": [
+                {"text": "Is there a revenue or headcount threshold below which "
+                         "the licence is not required?",
+                 "beat": "regulation", "weight": "high"}]}
+
+    return {"findings": [{
+        "statement": f"The sources bear on this question but establish no figure "
+                     f"that settles it.",
+        "value": "", "unit": "n/a", "as_of": "", "confidence": "low",
+        "source_ids": [sid], "note": f"read for the {beat} beat"}],
+        "new_questions": []}
+
+
+def _framing_for(prompt: str) -> dict:
+    """Two readings of the market, close enough that both get researched."""
+    m = re.search(r"Category the deck names:\s*(.*)", prompt or "")
+    named = (m.group(1).strip() if m else "") or "workflow automation"
+    m2 = re.search(r"Sub-category:\s*(.*)", prompt or "")
+    sub = (m2.group(1).strip() if m2 else "")
+    rows = [{"label": named, "confidence": "medium",
+             "because": "the category the deck names for itself",
+             "naics": "", "geography_label": "United States",
+             "state_fips": "", "county_fips": ""}]
+    if sub and sub.lower() not in ("", "null", "none", named.lower()):
+        rows.append({"label": sub, "confidence": "medium",
+                     "because": "the narrower segment the deck also describes; "
+                                "sizing differs sharply between the two",
+                     "naics": "", "geography_label": "United States",
+                     "state_fips": "", "county_fips": ""})
+    return {"framings": rows}
