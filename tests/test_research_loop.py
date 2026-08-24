@@ -21,7 +21,8 @@ from __future__ import annotations
 import unittest
 
 from deckscope.claims import ClaimRegister
-from deckscope.compare import (MATERIAL_RATIO, OVER_ASK_CEILING, assess_claims,
+from deckscope.compare import (MATERIAL_RATIO, MISMATCH_CEILING,
+                               OVER_ASK_CEILING, assess_claims,
                                ask_versus_requirement, build, detect_omissions)
 from deckscope.config import ProviderConfig
 from deckscope.research.base import Researcher, SearchResult
@@ -369,6 +370,45 @@ class Comparison(unittest.TestCase):
         [assessment] = assess_claims(register, findings)
         self.assertEqual("supported", assessment.assessment)
 
+    def test_a_dollar_claim_is_not_measured_against_a_percentage(self):
+        """Matching units is necessary. The first version had no check at all,
+        and compared '$28,000 ACV' against '104-112%' — a ratio of about 270,
+        reported as a contradiction with a confident gap line."""
+        register = self._register("Average contract value: $28,000",
+                                  value_text="$28,000")
+        findings = FindingRegistry()
+        findings.add("Net revenue retention runs 104-112%", value_text="104-112%",
+                     unit="%", source_ids=["S1"], claims=["C1"])
+        [assessment] = assess_claims(register, findings)
+        self.assertNotEqual("contradicted", assessment.assessment)
+
+    def test_company_revenue_is_not_measured_against_market_size(self):
+        """Both are dollars, and they measure entirely different things.
+
+        The honest-control case produced 'claimed $520k ARR; evidence indicates
+        $2.6-3.0B — roughly 5384.6x below' and called it contradicted. The
+        control case exists to catch a system that calls everything contradicted,
+        and this is what it caught.
+        """
+        register = self._register("$520k ARR across 41 customers",
+                                  value_text="$520k")
+        findings = FindingRegistry()
+        findings.add("The category is $2.6-3.0B", value_text="$2.6-3.0B",
+                     unit="USD", source_ids=["S1"], claims=["C1"])
+        [assessment] = assess_claims(register, findings)
+        self.assertEqual("partially-supported", assessment.assessment)
+        self.assertGreater(assessment.ratio, MISMATCH_CEILING)
+        self.assertIn("not checked rather than judged", assessment.because)
+
+    def test_an_order_of_magnitude_overstatement_is_still_contradicted(self):
+        """The mismatch ceiling must not swallow the case the product is for."""
+        register = self._register("The market is $88B", value_text="$88B")
+        findings = FindingRegistry()
+        findings.add("The category is $6-8B", value_text="$6-8B", unit="USD",
+                     source_ids=["S1"], claims=["C1"])
+        [assessment] = assess_claims(register, findings)
+        self.assertEqual("contradicted", assessment.assessment)
+
     def test_a_claim_with_no_research_is_unverifiable_not_supported(self):
         register = self._register("We have the best team in the industry")
         [assessment] = assess_claims(register, FindingRegistry())
@@ -409,12 +449,36 @@ class Comparison(unittest.TestCase):
         register = ClaimRegister()
         register.add("We grew 40% last quarter", type="traction")
         findings = FindingRegistry()
-        findings.add("Half of firms in this sector fail within five years",
-                     beat="failure", value_text="50%", source_ids=["S1"])
+        findings.add("BlackLine already sells into this segment",
+                     beat="competitors", source_ids=["S1"])
         rows = detect_omissions(register, findings,
-                                assess_claims(register, findings))
+                                assess_claims(register, findings),
+                                deck_text="We grew 40% last quarter.")
         kinds = {r["kind"] for r in rows}
         self.assertIn("unaddressed-evidence", kinds)
+        self.assertIn("BlackLine", rows[0]["names"])
+
+    def test_a_competitor_the_deck_does_name_is_not_an_omission(self):
+        register = ClaimRegister()
+        findings = FindingRegistry()
+        findings.add("BlackLine already sells into this segment",
+                     beat="competitors", source_ids=["S1"])
+        rows = detect_omissions(register, findings, [],
+                                deck_text="Our competitors are BlackLine and Trintech.")
+        self.assertEqual([], [r for r in rows
+                              if r["kind"] == "unaddressed-evidence"])
+
+    def test_an_omission_found_while_checking_a_claim_still_counts(self):
+        """The route a finding arrived by says nothing about whether the deck
+        mentions it. Testing `not f.claims` dropped most of the blind spots."""
+        register = ClaimRegister()
+        claim = register.add("The market is $47B", type="market-size")
+        findings = FindingRegistry()
+        findings.add("Trintech is an incumbent in this category",
+                     beat="competitors", source_ids=["S1"], claims=[claim.id])
+        rows = detect_omissions(register, findings, [],
+                                deck_text="The market is $47B.")
+        self.assertIn("unaddressed-evidence", {r["kind"] for r in rows})
 
     def test_a_missing_section_is_recorded_as_a_finding_about_the_company(self):
         register = ClaimRegister.from_extraction({"claims": [], "market": {}})

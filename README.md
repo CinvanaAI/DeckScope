@@ -612,8 +612,26 @@ decides how much to give and on what terms.
 non-local provider *raise*, checked twice: an explicit taint flag, and a content
 fingerprint as a backstop for when somebody forgets to set it.
 
-Not yet measured against `run` or against a single prompt. It is a better design
-for the reasons above; whether it produces better analyses is open.
+It is scoreable on the same nine cases as every other mode:
+
+```bash
+deckscope eval --mode research pipeline baseline
+```
+
+On the mock provider it leads on citation rate (71% vs 59% and 67%), ties on
+fabrication, citation integrity, calibration, verdict and injection detection,
+and trails on blind-spot recall. **That table does not show the research engine
+is worse** — it shows the harness cannot answer the question. Every mode's
+answers come from a hand-written fixture, and the pipeline's has been tuned
+against these exact cases for months while this one was written the same day.
+Deciding between the architectures needs a real model on both sides.
+
+What the evaluation did do is catch two real bugs in the comparison stage, both
+the same mistake: comparing two numbers because they were both numbers. `$28,000
+of contract value` was measured against `104-112%` retention, and `$520k ARR`
+against the `$2.6-3.0B` size of the whole market — the second reported as
+"5384x below" and called a contradiction. The honest-control case exists to
+catch a system that calls everything contradicted, and that is what it caught.
 
 More in **[docs/RESEARCH_ENGINE.md](docs/RESEARCH_ENGINE.md)**.
 

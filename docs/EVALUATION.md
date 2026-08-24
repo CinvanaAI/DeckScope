@@ -3,6 +3,7 @@
 ```bash
 deckscope eval                                  # score the shipped suite
 deckscope eval --mode pipeline baseline         # compare the two architectures
+deckscope eval --mode research pipeline baseline
 deckscope eval --trials 3                       # measure stability
 deckscope eval --provider anthropic --model claude-sonnet-5
 ```
@@ -206,6 +207,41 @@ crossing the evidence boundary, which is the failure this whole project is built
 catch, and the baseline reading the same corpus did not do it. Across three
 evaluations the three-agent design has never produced a more accurate analysis than
 one good prompt, and it has now produced a less careful one once, at 9.5× the tokens.
+
+### The research engine, and why its number is not comparable
+
+`--mode research` scores the question-driven engine through the same scorer,
+the same nine cases and the same frozen corpora. On the **mock** provider it
+leads on citation rate and trails on blind-spot recall.
+
+That result is not usable as a comparison, and the reason is worth stating
+plainly because it applies to any new mode added here. On the mock provider,
+every mode's answers come from a hand-written fixture in
+`providers/mock_provider.py`. The pipeline's fixture has been refined against
+these exact nine cases across many sessions. The research engine's was written
+the same day the engine was. Improving it moved blind-spot recall from 8% to
+31% to 62% without touching the architecture at all — which is the signal to
+stop: the measurement was tracking fixture maturity, and one more round would
+have been fitting the mock to the benchmark.
+
+**Comparing architectures requires a real model on both sides**, as the
+pipeline-versus-baseline numbers above used. The mock run is a smoke test that
+every mode produces a scoreable artifact, not a verdict on which one thinks
+better.
+
+The run was still worth doing. It caught two real defects in the comparison
+stage that no unit test had, both the same mistake — comparing two numbers
+because they were both numbers:
+
+- `$28,000 average contract value` measured against `104-112%` retention, a
+  ratio of ~270, reported as `contradicted`. There was no unit check at all.
+- `$520k ARR` measured against the `$2.6-3.0B` size of the entire market. Both
+  dollars, so a unit check alone would not have saved it. Reported as "roughly
+  5384.6x below".
+
+The `honest_control` case exists to catch a system that calls everything
+contradicted. It caught this. Fixing it also took the verdict dimension from
+50% to 100%, because the wrong contradiction was driving the wrong call.
 
 ### These numbers replay
 

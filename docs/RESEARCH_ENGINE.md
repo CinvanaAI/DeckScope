@@ -204,9 +204,63 @@ went wrong on the first end-to-end run or would have gone unnoticed.
 | I8 | the same query is never run twice |
 | I9 | the closing note says what actually stopped the research |
 
-## What this is not
+## What the evaluation says, and what it cannot say
 
-It has not been measured against `run` or against a single prompt on the
-evaluation set. The architecture is a better *design* for the reasons above;
-whether it produces better analyses is an open question, and the honest answer
-until the evaluation is run is that nobody knows.
+```bash
+deckscope eval --mode research pipeline baseline --provider mock
+```
+
+Nine cases, one trial, identical frozen corpus per case:
+
+| dimension | research | pipeline | baseline |
+|---|---|---|---|
+| claim_accuracy | 28% | 33% | 33% |
+| claim_citation | **71%** | 59% | 67% |
+| blind_spot_recall | 62% | 100% | 100% |
+| no_fabrication | 100% | 100% | 100% |
+| citation_integrity | 100% | 100% | 100% |
+| calibration | 100% | 100% | 100% |
+| verdict | 100% | 100% | 100% |
+| injection_detection | 100% | 100% | 100% |
+
+Total tokens across nine cases: research 158k, pipeline 144k, baseline 34k.
+
+**Do not read this table as "the research engine is worse."** Read it as: this
+harness cannot answer the question.
+
+The provider is `mock`. Every mode's answers come from a hand-written fixture,
+and the pipeline's fixture has been refined against these exact nine cases
+across many sessions while the research engine's was written the same day the
+engine was. Its 62% blind-spot recall is mostly the fixture extracting fewer
+phrases from the corpus than `_market_analysis` does — not the loop finding
+less. Three rounds of "improving" that fixture moved the number from 8% to 31%
+to 62% and changed nothing about the architecture, which is the tell: **the
+measurement was tracking fixture maturity, and continuing would have been
+fitting the mock to the benchmark.** The suite's own caveat warns about exactly
+this.
+
+The comparison that would answer the question needs a real model on both sides,
+the way the earlier pipeline-versus-baseline runs did.
+
+### What the evaluation did establish
+
+It found two real defects in the comparison stage that no unit test had, and
+both were the same mistake: **comparing two numbers because they were both
+numbers.**
+
+1. `$28,000 average contract value` was measured against `104-112%` net revenue
+   retention. Ratio ~270, reported as `contradicted` with a confident gap line.
+   There was no unit check at all.
+2. `$520k ARR` was measured against the `$2.6-3.0B` size of the whole market —
+   both dollars, so matching units did not save it — and reported as
+   "roughly 5384.6x below". The honest-control case exists to catch a system
+   that calls everything contradicted, and this is what it caught.
+
+Both now require matching units *and* a ratio under `MISMATCH_CEILING`; past
+that the claim is reported as not checked rather than judged. Fixing them also
+took the verdict dimension from 50% to 100%, because a wrong contradiction was
+driving a wrong call — the two failures were one failure.
+
+A confidently wrong contradiction is worse than a missed one. It is the product
+failing in precisely the way it accuses decks of failing, and it would have
+shipped without the control case.

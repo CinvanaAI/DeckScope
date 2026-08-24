@@ -31,6 +31,7 @@ from ..security.policy import SecurityPolicy
 from ..sources import SourceRegistry
 from ..tiering import FRAME, JUDGE, ModelPlan, NDAGuard
 from .findings import FindingRegistry
+from .judge import judge, to_comparison
 from .loop import Budget, ResearchLoop
 from .questions import QuestionQueue
 from .reader import make_reader
@@ -73,15 +74,36 @@ def run_research(*, extraction: Dict[str, Any], provider: Any, researcher: Any,
                  guard: Optional[NDAGuard] = None,
                  budget: Optional[Budget] = None,
                  dataset_fixtures: Optional[Dict[str, Any]] = None,
-                 deck_text: str = "",
+                 deck_text: str = "", judge_it: bool = True,
+                 corpus: Any = None,
+                 on_usage: Optional[Callable[[Any], None]] = None,
                  on_event: Optional[Callable[[str], None]] = None) -> Dict[str, Any]:
-    """Run the full question-driven analysis over an already-extracted deck."""
+    """Run the full question-driven analysis over an already-extracted deck.
+
+    `corpus` replaces retrieval with frozen evidence, which is how this mode gets
+    compared against the others on identical sources instead of on whichever
+    pages each happened to find. Without it the comparison measures retrieval
+    luck and calls it architecture.
+    """
     emit = on_event or (lambda *_: None)
     started = time.time()
     policy = policy or SecurityPolicy()
     registry = registry or SourceRegistry()
     plan = plan or ModelPlan.single(getattr(provider, "config", None) or provider)
     guard = guard or NDAGuard(enabled=False)
+    # Every model call in this engine reports through one callback, so the
+    # cost of a run is measured rather than estimated. A mode compared on
+    # quality without its real token count is half an answer.
+    usage = {"input": 0, "output": 0, "calls": 0}
+
+    def track(completion: Any) -> None:
+        counts = getattr(completion, "usage", None) or {}
+        usage["input"] += counts.get("input", 0)
+        usage["output"] += counts.get("output", 0)
+        usage["calls"] += 1
+        if on_usage:
+            on_usage(completion)
+
     if deck_text:
         guard.protect(deck_text)
 
@@ -89,7 +111,7 @@ def run_research(*, extraction: Dict[str, Any], provider: Any, researcher: Any,
     register = ClaimRegister.from_extraction(extraction)
     emit(f"{len(register.claims)} claims, {len(register.omissions)} sections missing")
 
-    framings = _resolve_framing(extraction, provider, guard, plan, emit)
+    framings = _resolve_framing(extraction, provider, guard, plan, emit, track)
     for row in framings:
         register.add_framing(row.pop("label", ""), **row)
     primary = register.primary_framing()
@@ -104,33 +126,98 @@ def run_research(*, extraction: Dict[str, Any], provider: Any, researcher: Any,
     emit(f"{len(queue.questions)} opening questions")
 
     findings = FindingRegistry()
+    if corpus is not None and not corpus.empty:
+        researcher = _CorpusResearcher(corpus)
+        emit(f"replaying {corpus.kept} frozen source(s) "
+             f"({corpus.fingerprint()}) — no new retrieval")
     loop = ResearchLoop(
         researcher=researcher, registry=registry, queue=queue, findings=findings,
-        reader=make_reader(provider), policy=policy, budget=budget or Budget(),
+        reader=make_reader(provider, on_usage=track), policy=policy, budget=budget or Budget(),
         dataset_fixtures=dataset_fixtures,
         framing=primary.params() if primary else {},
         on_event=emit)
     research = loop.run()
 
     # ---- Stage 3: comparison, per claim, over the records rather than a summary.
-    comparison = build_comparison(register, findings, queue, extraction)
+    comparison = build_comparison(register, findings, queue, extraction,
+                                  deck_text)
     emit(f"{comparison['stats']['contradicted']} of "
          f"{comparison['stats']['claims_assessed']} claims contradicted by evidence")
     for signal in comparison["pitcher_signals"]:
         emit(f"about the pitcher: {signal['statement']}")
 
+    # ---- Stage 4: the one call that concludes.
+    judgment: Dict[str, Any] = {}
+    report: Dict[str, Any] = {}
+    if judge_it:
+        cfg = plan.for_task(JUDGE)
+        if cfg is not None:
+            try:
+                guard.check(cfg, "", tainted=True, where="judge")
+            except Exception as exc:  # NDAViolation
+                emit(str(exc))
+                cfg = None
+        if cfg is None and guard.enabled:
+            judgment = {"verdict": {"call": "", "confidence": "low",
+                                    "confidence_rationale":
+                                        "NDA mode refused the judging call; no "
+                                        "local model was configured for it"}}
+        else:
+            judgment = judge(comparison=comparison, findings=findings,
+                             research=research, extraction=extraction,
+                             provider=provider, on_usage=track)
+        report = to_comparison(judgment, comparison, findings)
+        verdict = (judgment.get("verdict") or {})
+        emit(f"verdict: {verdict.get('call') or '(none)'} "
+             f"(confidence {verdict.get('confidence')}, computed from the evidence)")
+
     return {
         "claims": register.to_dict(),
         "research": research,
         "comparison": comparison,
+        "judgment": judgment,
+        "report": report,
         "models": plan.to_dict(),
         "nda": guard.report(),
+        "usage": dict(usage),
         "elapsed_seconds": round(time.time() - started, 1),
     }
 
 
+class _CorpusResearcher:
+    """Serves every query from frozen evidence instead of the network.
+
+    The point of replay is that two modes are compared on *identical sources*
+    rather than on whichever pages each happened to find. Without it the
+    comparison measures retrieval luck and reports it as architecture.
+
+    Be clear about what this does and does not measure. Every question gets the
+    whole frozen corpus, so replay cannot show that the loop retrieves *better*
+    — it shows how each mode reasons over the same material. That is the right
+    control for the question at hand, and the wrong one for asking whether
+    question-driven retrieval finds more. The other modes get the same corpus the
+    same way, so no mode is advantaged.
+    """
+
+    name = "corpus_replay"
+
+    def __init__(self, corpus: Any) -> None:
+        self.corpus = corpus
+
+    def search(self, query: str, max_results: int = 8) -> List[Any]:
+        from .base import SearchResult
+
+        return [SearchResult(title=s.title, url=s.url, snippet=s.snippet,
+                             published=s.published, source_query=query)
+                for s in self.corpus.registry.citable][:max_results]
+
+    def search_many(self, queries, max_results: int = 8) -> List[Any]:
+        return self.search(queries[0] if queries else "", max_results)
+
+
 def _resolve_framing(extraction: Dict[str, Any], provider: Any, guard: NDAGuard,
-                     plan: ModelPlan, emit: Callable) -> List[Dict[str, Any]]:
+                     plan: ModelPlan, emit: Callable,
+                     track: Optional[Callable] = None) -> List[Dict[str, Any]]:
     """Ask once what market this is, and accept that the answer may be two."""
     from ..security.sanitizer import fence
 
@@ -157,7 +244,8 @@ def _resolve_framing(extraction: Dict[str, Any], provider: Any, guard: NDAGuard,
 
     try:
         payload = provider.complete_json(
-            FRAMING_SYSTEM, fence(summary, "DECK SUMMARY"), temperature=0.0)
+            FRAMING_SYSTEM, fence(summary, "DECK SUMMARY"), temperature=0.0,
+            on_usage=track)
     except Exception as exc:  # noqa: BLE001
         emit(f"framing model call failed ({exc}); falling back to the deck's own label")
         return _fallback_framing(market)

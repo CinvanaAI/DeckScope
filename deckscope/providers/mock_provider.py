@@ -87,6 +87,11 @@ class MockProvider(LLMProvider):
             body = json.dumps(self._clamp_citations(_read_for(joined), allowed))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
+        if "concluding an investment analysis that somebody else researched" in system:
+            allowed = self._available_sids(joined)
+            body = json.dumps(self._clamp_citations(_judgment_for(joined), allowed))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "Decide what market a company is actually in" in system:
             body = json.dumps(_framing_for(joined))
             return Completion(text=body, model=self.model,
@@ -1261,7 +1266,16 @@ def _beat_in_prompt(prompt: str) -> str:
 
 
 def _read_for(prompt: str) -> dict:
-    """Stand in for a model reading screened sources to answer one question."""
+    """Stand in for a model reading screened sources to answer one question.
+
+    This MUST actually read the sources it is given. The first version returned
+    canned statements regardless of input, and the evaluation duly reported 8%
+    blind-spot recall for the research engine against 100% for the pipeline —
+    which looked like a devastating architectural result and was entirely an
+    artifact of a lazy fixture. The pipeline's mock (`_market_analysis`) pulls
+    figures and company names out of the supplied evidence; anything scored
+    beside it has to clear the same bar or the comparison is rigged.
+    """
     question = _question_in_prompt(prompt).lower()
     beat = _beat_in_prompt(prompt)
     sources = _sources_in_prompt(prompt)
@@ -1271,63 +1285,144 @@ def _read_for(prompt: str) -> dict:
             "absent": True, "confidence": "high", "source_ids": [],
             "note": "nothing was retrieved"}], "new_questions": []}
 
-    sid = sources[0]["sid"]
-    other = sources[1]["sid"] if len(sources) > 1 else sid
+    findings, questions = [], []
 
-    if "how large" in question or "market size" in question:
-        return {"findings": [
-            {"statement": "Independent estimates put the market at $6-8B, well "
-                          "below the figure the deck uses.",
-             "value": "$6-8B", "unit": "USD", "as_of": "2026-01",
-             "confidence": "high", "source_ids": [sid]},
-            {"statement": "A second estimate covering a wider category reports "
-                          "$41B, which is a different boundary rather than a "
-                          "different measurement.",
-             "value": "$41B", "unit": "USD", "as_of": "2026-01",
-             "confidence": "medium", "source_ids": [other]}],
-            "new_questions": [
-                {"text": "Which of the two market boundaries does this company "
-                         "actually sell into?",
-                 "beat": "framing", "weight": "high"}]}
+    # ---- figures, attributed to the source that actually carried them.
+    for src in sources:
+        snippet = src.get("snippet", "")
+        for figure in _figures_in(snippet)[:2]:
+            findings.append({
+                "statement": _sentence_around(snippet, figure) or
+                             f"The source reports {figure}.",
+                "value": figure, "unit": "%" if "%" in figure else "USD",
+                "as_of": src.get("published") or "", "confidence": "medium",
+                "source_ids": [src["sid"]]})
 
-    if "cost to start" in question or "cost to start and operate" in question:
+    # ---- named organizations, which is how an omission ever gets noticed.
+    for src in sources:
+        for name in _org_names(src.get("snippet", ""))[:4]:
+            findings.append({
+                "statement": f"{name} is named in the research as active in this "
+                             f"market.",
+                "value": "", "unit": "n/a",
+                "as_of": src.get("published") or "", "confidence": "medium",
+                "source_ids": [src["sid"]],
+                "note": "entity named in a retrieved source"})
+            if beat != "competitors":
+                questions.append({
+                    "text": f"What position does {name} hold in this market?",
+                    "beat": "competitors", "weight": "medium"})
+
+    # ---- the sentences themselves.
+    #
+    # A reader reports what a source SAYS, not only the numbers and names in it.
+    # Restricting this fixture to figures and capitalised words meant a source
+    # stating "ships natively at no additional cost" produced no finding at all,
+    # while the pipeline's fixture echoed the same prose straight through — so
+    # the two modes were scored on different amounts of the same corpus.
+    for src in sources:
+        for sentence in _salient(src.get("snippet", ""))[:2]:
+            findings.append({
+                "statement": sentence, "value": "", "unit": "n/a",
+                "as_of": src.get("published") or "", "confidence": "medium",
+                "source_ids": [src["sid"]],
+                "note": "stated by the source"})
+
+    if not findings:
+        # An honest "the material does not answer this" rather than filler.
         return {"findings": [{
-            "statement": "Startup capital for a single-crew operation runs about "
-                         "$10,000 once equipment, licensing and insurance are "
-                         "included.",
-            "value": "$10,000", "unit": "USD", "as_of": "2026-02",
-            "confidence": "medium", "source_ids": [sid]}],
-            "new_questions": [
-                {"text": "How long until the first invoice is paid, and what "
-                         "does that do to working capital?",
-                 "beat": "economics", "weight": "medium"}]}
-
-    if "survive" in question or "fail" in question:
-        return {"findings": [{
-            "statement": "Roughly half of new firms in this sector are still "
-                         "trading after five years.",
-            "value": "50%", "unit": "%", "as_of": "2025",
-            "confidence": "medium", "source_ids": [sid]}],
+            "statement": "The retrieved sources bear on this question but "
+                         "establish no figure or entity that settles it.",
+            "absent": True, "confidence": "medium",
+            "source_ids": [sources[0]["sid"]],
+            "note": f"read for the {beat} beat"}],
             "new_questions": []}
 
-    if "licence" in question or "license" in question or "permit" in question:
-        return {"findings": [{
-            "statement": "The retrieved pages describe registration requirements "
-                         "but none states whether an exemption applies at this "
-                         "scale.",
-            "absent": True, "confidence": "medium", "source_ids": [sid],
-            "note": "the sources cover the general rule, not the threshold"}],
-            "new_questions": [
-                {"text": "Is there a revenue or headcount threshold below which "
-                         "the licence is not required?",
-                 "beat": "regulation", "weight": "high"}]}
+    # Deduplicate on the statement, keeping the first source that said it.
+    seen, unique = set(), []
+    for row in findings:
+        key = row["statement"].lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(row)
 
-    return {"findings": [{
-        "statement": f"The sources bear on this question but establish no figure "
-                     f"that settles it.",
-        "value": "", "unit": "n/a", "as_of": "", "confidence": "low",
-        "source_ids": [sid], "note": f"read for the {beat} beat"}],
-        "new_questions": []}
+    return {"findings": unique[:8], "new_questions": questions[:3]}
+
+
+#: Figures as a source writes them: $6-8B, 14-18%, $900M, 104-112%.
+_FIG_RX = re.compile(
+    r"\$\s?\d[\d,.]*\s*[-–]\s*\$?\d[\d,.]*\s*(?:[kKmMbB]|billion|million)?"
+    r"|\$\s?\d[\d,.]*\s*(?:[kKmMbB]|billion|million)?"
+    r"|\d+(?:\.\d+)?\s*[-–]\s*\d+(?:\.\d+)?\s*%"
+    r"|\d+(?:\.\d+)?\s*%")
+
+
+def _figures_in(text: str) -> list:
+    out, seen = [], set()
+    for m in _FIG_RX.finditer(text or ""):
+        fig = m.group(0).strip()
+        if len(fig) < 2 or fig.lower() in seen:
+            continue
+        seen.add(fig.lower())
+        out.append(fig)
+    return out
+
+
+def _sentence_around(text: str, needle: str) -> str:
+    """The sentence carrying a figure, so the finding says what it measures."""
+    for sentence in re.split(r"(?<=[.;])\s+", text or ""):
+        if needle in sentence:
+            clean = " ".join(sentence.split())
+            return clean if len(clean) <= 180 else clean[:177] + "…"
+    return ""
+
+
+#: Capitalised words that start sentences or describe things, not companies.
+_NOT_A_COMPANY = {
+    "The", "This", "That", "These", "Those", "Their", "There", "Both", "Its",
+    "Independent", "Growth", "Adoption", "Finance", "Net", "Per", "Open",
+    "Customer", "Small", "Standalone", "Estimates", "Analysts", "Most",
+    "Several", "Many", "Some", "Roughly", "About", "Public", "Private",
+    "Market", "Revenue", "Startup", "Wider", "Category", "Reconciliation",
+    "Support", "Companies", "Firms", "Vendors", "Buyers", "Sellers",
+}
+
+
+def _org_names(text: str) -> list:
+    """Capitalised names in a snippet — crude, and the same rule the pipeline uses.
+
+    Deliberately identical in spirit to `_market_analysis`'s extraction so
+    neither mode is advantaged by a smarter fixture.
+    """
+    out, seen = [], set()
+    for m in re.finditer(r"\b([A-Z][a-z][A-Za-z0-9.]*(?:\.com)?)\b", text or ""):
+        name = m.group(1)
+        if name in _NOT_A_COMPANY or len(name) < 3 or name.lower() in seen:
+            continue
+        seen.add(name.lower())
+        out.append(name)
+    return out
+
+
+def _salient(text: str) -> list:
+    """Sentences worth reporting: ones carrying a figure or a qualifier.
+
+    The qualifiers matter as much as the numbers. "Included at no additional
+    cost" and "growth has decelerated" are the sentences that decide an
+    absorption risk, and neither contains a company name or a clean figure.
+    """
+    out = []
+    for sentence in re.split(r"(?<=[.;])\s+", text or ""):
+        clean = " ".join(sentence.split())
+        if len(clean) < 20:
+            continue
+        if re.search(r"\d", clean) or re.search(
+                r"\b(nativ\w*|bundl\w*|includ\w*|free|no additional|no separate|"
+                r"standard|default|built[- ]in|in-platform|decelerat\w*|slow\w*|"
+                r"already|ship\w*|absor\w*|exempt\w*|requir\w*)\b", clean, re.I):
+            out.append(clean if len(clean) <= 200 else clean[:197] + "…")
+    return out
 
 
 def _framing_for(prompt: str) -> dict:
@@ -1347,3 +1442,57 @@ def _framing_for(prompt: str) -> dict:
                      "naics": "", "geography_label": "United States",
                      "state_fips": "", "county_fips": ""})
     return {"framings": rows}
+
+
+def _judgment_for(prompt: str) -> dict:
+    """Stand in for the judging model, reading the evidence table.
+
+    Reacts to the table rather than returning a constant, because a fixture that
+    always says the same thing would let the verdict cap, the confidence
+    computation and the claim-driven reasoning all rot without a test failing.
+    """
+    contradicted = len(re.findall(r"^\s*\[contradicted\]", prompt, re.M))
+    unverifiable = len(re.findall(r"^\s*\[unverifiable\]", prompt, re.M))
+    sources = _sources_in_prompt(prompt)
+    sids = [s["sid"] for s in sources[:3]]
+    cite = f" [{sids[0]}]" if sids else ""
+
+    if contradicted >= 2:
+        call, headline = "PASS", (
+            f"{contradicted} of the deck's claims are contradicted by the "
+            f"retrieved evidence{cite}.")
+    elif contradicted == 1:
+        call, headline = "LEAN NO", (
+            f"One load-bearing claim does not survive the research{cite}.")
+    elif unverifiable and not contradicted:
+        call, headline = "YES WITH CONDITIONS", (
+            "Nothing was contradicted, but little was independently corroborated "
+            "either.")
+    else:
+        call, headline = "YES WITH CONDITIONS", (
+            "The claims that could be checked held up against the evidence"
+            f"{cite}.")
+
+    lines = []
+    for match in re.finditer(r"^\s*\[(\w[\w-]*)\]\s*(.+)$", prompt, re.M):
+        lines.append(f"The claim {match.group(2)[:60]!r} was assessed "
+                     f"{match.group(1)}.")
+        if len(lines) >= 4:
+            break
+    reasoning = " ".join(lines) or "The evidence table contained no claims."
+    if sids:
+        reasoning += f" Figures above come from [{sids[0]}]."
+
+    return {
+        "headline": headline,
+        "verdict": {"call": call,
+                    "confidence_rationale": "what would have to be true for this "
+                                            "to be wrong is stated in the table"},
+        "reasoning": reasoning,
+        "questions": ["Which market boundary does this company actually sell into?",
+                      "What would it take to corroborate the figures that only one "
+                      "source supports?"],
+        "conditions": ([] if call.startswith("YES") and not contradicted
+                       else ["Independent corroboration of the contradicted "
+                             "figures before committing."]),
+    }

@@ -277,6 +277,8 @@ def run_suite(*, suite_dir: Optional[str] = None, modes: Optional[List[str]] = N
                             analyst.close()
                     elif mode == "panel":
                         analysis = _run_panel(cfg, corpus, provider, model, panel_size)
+                    elif mode == "research":
+                        analysis = _run_research(cfg, corpus, lens)
                     else:
                         pipe = Pipeline(cfg)
                         try:
@@ -299,6 +301,99 @@ def run_suite(*, suite_dir: Optional[str] = None, modes: Optional[List[str]] = N
                 log(f"    {'all checks passed' if not fails else f'{fails} check(s) failed'}")
 
     result.elapsed = time.time() - started
+    return result
+
+
+def _run_research(cfg, corpus, lens: str):
+    """Run the question-driven engine and shape its output for the same scorer.
+
+    The engine's native output is an evidence table, not a report, so it needs an
+    adapter. The adapter carries records across; it does not soften anything.
+    Every claim assessment, every blind spot and every citation the scorer reads
+    here is the one `compare.py` computed, and the registry is the run's real
+    bibliography — so a citation the engine invented fails citation_integrity
+    exactly as it would in any other mode.
+
+    Scoring a new mode by a yardstick built for it is how an architecture gets
+    declared better than the one it replaced. This runs the same nine cases,
+    against the same frozen corpus, through the same checks.
+    """
+    from ..agents.deck_agent import DeckAnalyst
+    from ..ingest.loader import load_deck
+    from ..orchestrator import AnalysisResult
+    from ..providers import get_provider
+    from ..research.engine import run_research
+    from ..research.loop import Budget
+    from ..sources import SourceRegistry
+    from ..tiering import plan_from_config
+
+    from ..security.report import ScanReport
+    from ..security.screening import screen_deck
+
+    provider = get_provider(cfg.provider)
+    doc = load_deck(cfg.deck_path)
+    # The deck is screened before any of it reaches a model, exactly as the CLI
+    # path does. Leaving it out of this adapter scored the engine 0% on
+    # injection_detection across every case — not because the screen was absent
+    # from the product, but because the harness never called it and the scorer
+    # correctly reported "unknown". A gate this evaluation exists to check is
+    # not one to wire up approximately.
+    deck_scan = ScanReport(target="pitch deck")
+    try:
+        if cfg.security and cfg.security.enabled:
+            doc, deck_scan = screen_deck(doc, cfg.security,
+                                         deck_path=doc.local_path or cfg.deck_path)
+        extraction = DeckAnalyst(provider, cache_dir=None, verbose=False).run(doc)
+    finally:
+        doc.cleanup()
+
+    registry = SourceRegistry()
+
+    started = time.time()
+    out = run_research(
+        extraction=extraction, provider=provider, researcher=None,
+        policy=cfg.security, registry=registry, plan=plan_from_config(cfg),
+        budget=Budget(max_iterations=18, max_retrievals=24),
+        corpus=corpus, deck_text=doc.text, on_event=lambda *_: None)
+
+    # The engine's own count, from the callback every model call reports through.
+    # Not the deck extraction's, which every mode pays equally and which is
+    # charged to whichever mode happens to run first if you read it off a shared
+    # provider.
+    usage = {k: v for k, v in (out.get("usage") or {}).items()
+             if k in ("input", "output")}
+
+    # Every screening report the loop produced, not just the first retrieval's.
+    source_scan = ScanReport(target="web sources")
+    for report in out["research"].get("security_reports") or []:
+        if report:
+            source_scan.extend(report)
+    combined = ScanReport(target="all inputs")
+    combined.extend(deck_scan)
+    combined.extend(source_scan)
+
+    result = AnalysisResult(
+        deck=extraction,
+        market={},
+        comparisons={lens: out["report"]},
+        registry=registry,
+        security={"overall_risk": combined.risk,
+                  "mode": cfg.security.mode.value if cfg.security else "off",
+                  "deck": deck_scan.to_dict(),
+                  "web_sources": source_scan.to_dict(),
+                  "summary": [deck_scan.summary_line(),
+                              source_scan.summary_line()]},
+        stats={"elapsed_seconds": round(time.time() - started, 1),
+               "token_usage": usage,
+               "questions_worked": (out["research"].get("budget") or {})
+               .get("iterations", 0),
+               "findings": len(
+                   (out["research"].get("findings") or {}).get("findings") or [])},
+    )
+    # Kept whole on the result so a saved evaluation can be re-read for what the
+    # loop actually did, not just for what it scored.
+    setattr(result, "research", out["research"])
+    setattr(result, "comparison_records", out["comparison"])
     return result
 
 

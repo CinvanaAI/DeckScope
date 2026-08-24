@@ -81,7 +81,7 @@ def build_parser() -> argparse.ArgumentParser:
             "calibration and injection detection — each computed in Python, never "
             "asked of a model."))
     ev.add_argument("--mode", nargs="+", default=["pipeline"],
-                    choices=["pipeline", "baseline", "panel"],
+                    choices=["pipeline", "baseline", "panel", "research"],
                     help="Which mode(s) to score. Give more than one to compare "
                          "them — the report says whether the comparison was "
                          "actually able to tell them apart.")
@@ -459,6 +459,25 @@ def _print_research(result: Dict[str, Any]) -> None:
     research = result.get("research") or {}
     comparison = result.get("comparison") or {}
     findings = (research.get("findings") or {}).get("findings") or []
+
+    judgment = result.get("judgment") or {}
+    verdict = judgment.get("verdict") or {}
+    if judgment:
+        _out("\n" + "=" * 68)
+        _out(judgment.get("headline") or "(no headline)")
+        _out("=" * 68)
+        call = verdict.get("call") or "(no call)"
+        _out(f"  {call}   confidence: {verdict.get('confidence', 'low')}")
+        # Said out loud because it is unusual and load-bearing: the number is
+        # counted from the evidence, so it cannot drift with the prose.
+        _out(f"  {verdict.get('confidence_rationale', '')}")
+        if verdict.get("capped_because"):
+            _out(f"  (the model answered {verdict['call_before_cap']}; "
+                 f"{verdict['capped_because']})")
+        if judgment.get("reasoning"):
+            _out("\n" + judgment["reasoning"])
+        for row in judgment.get("conditions") or []:
+            _out(f"  · condition: {row}")
 
     _out("\n" + "=" * 68)
     _out("WHAT THE RESEARCH ESTABLISHED")

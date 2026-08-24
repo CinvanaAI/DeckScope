@@ -329,6 +329,12 @@ class ResearchLoop:
 
     def report(self) -> Dict[str, Any]:
         return {
+            # Every screen the loop ran, so the run's security section describes
+            # the whole loop rather than the first retrieval. They were collected
+            # from the start and then never handed out, which meant a hostile
+            # page found on iteration nine was quarantined correctly and reported
+            # nowhere.
+            "security_reports": list(self.security_reports),
             "questions": self.queue.to_dict(),
             "findings": self.findings.to_dict(),
             "budget": self.budget.to_dict(),
