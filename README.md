@@ -743,44 +743,39 @@ Worth reading before you trust anything it produces.
   are the entire point of a panel. Counted honestly it is an order of magnitude, and the
   report now breaks the two apart.
 
-  Driven by a **real frontier model** through the `manual` provider's spool mode, on
-  the same five cases:
+  Driven by a **real frontier model** through the `manual` provider's spool mode.
+  Four harder "anchoring" cases were added to attack the pipeline's one structural
+  claim: isolation. The market pass never sees the deck's claims as authoritative, so
+  it should resist the deck's *framing* contaminating how the evidence is read.
+  Each supplies a plausible frame that is wrong with evidence that is correct inside
+  it — a market figure accurate for a category the company does not serve; a retention
+  number on a denominator the benchmark does not use; a win rate real against a
+  competitive set buyers do not use — plus a control whose framing is right, where
+  contradicting it is the failure.
 
-  | | checks passed | input tokens | output tokens |
-  |---|:--:|:--:|:--:|
-  | baseline (one prompt) | 43 / 43 | 10,709 | 22,038 |
-  | pipeline (three agents) | 43 / 43 | 64,515 | 46,803 |
-
-  Every dimension came back at 1.000 for both. Claim accuracy, blind-spot recall,
-  citation integrity, fabrication, calibration, verdict and injection detection: 86
-  checks, zero failures, in both architectures. The two modes produced genuinely
-  different analyses — the run fingerprints them and reported the comparison as
-  informative — so this is a tie that was measured, not a tie by construction.
-
-  A benchmark a capable model saturates cannot rank architectures, so four harder
-  cases were written to attack the pipeline's one structural claim. Isolation is the
-  whole argument for three agents: the market pass never sees the deck's claims as
-  authoritative, so it should resist the deck's *framing* contaminating how the
-  evidence is read. Nothing in the original five put pressure on that.
-
-  The **anchoring cases** each supply a plausible frame that is wrong, with evidence
-  that is correct inside it — a market figure that is accurate for a category the
-  company does not serve; a retention number measured on a denominator the benchmark
-  does not use; a win rate that is real against a competitive set buyers do not use.
-  A fourth case is the control: a deck whose framing is *right*, where contradicting
-  it is the failure. Each was answered by separate agents that saw only the prompt,
-  so the author of the cases and the answerer were different.
+  All nine cases, both modes, 36 exchanges, each answered by a separate agent given
+  only its own prompt file:
 
   | | checks passed | input tokens |
   |---|:--:|:--:|
-  | baseline (one prompt) | 52 / 52 | 9,901 |
-  | pipeline (three agents) | 52 / 52 | 87,121 |
+  | baseline (one prompt) | **95 / 95** | 20,610 |
+  | pipeline (three agents) | **94 / 95** | 195,310 |
 
-  **Neither trap caught either mode, and the pipeline cost 8.8× the input tokens to
-  tie.** These are cases written specifically to favour the three-agent design, and
-  it did not separate. Taken with the two earlier results, the position is settled
-  enough to state plainly: **the three-agent pipeline has never been shown to produce
-  a more accurate analysis than one good prompt.**
+  Every prompt and answer is committed under [`benchmarks/`](benchmarks/), and
+  `python scripts/replay_benchmark.py --all` re-scores them offline in CI — so these
+  numbers stop describing the code the moment the code moves.
+
+  **The pipeline's single failure is the interesting part.** On `anchored_category` it
+  named *LangSmith*, a real product in that category which appears in neither the deck
+  nor the frozen corpus. Every prompt says: never invent a number, a date, a company or
+  a URL. That is world knowledge leaking past the evidence boundary — the exact failure
+  this project exists to catch — and the baseline, reading the same corpus, did not do
+  it. On the only run where either mode failed anything, the mode that failed was the
+  one costing 9.5× the tokens.
+
+  So across three evaluations the position is settled enough to state plainly: **the
+  three-agent pipeline has never been shown to produce a more accurate analysis than
+  one good prompt**, and it has now been shown to produce a less careful one once.
 
   What it does buy is content, not accuracy. The pipeline is the only mode that
   produces the standalone market analysis — saturation, absorption risk, the

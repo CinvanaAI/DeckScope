@@ -42,8 +42,8 @@ from .cases import EvalCase
 #: It requires the bracket for the same reason the runtime does. The previous
 #: form matched any S-token, so a report saying "Amazon S3" was scored as
 #: carrying a citation, and `citation_integrity` was measuring prose accidents.
-INLINE_CITE_RX = re.compile(r"\[\s*S\d{1,3}(?:\s*[,;]\s*S\d{1,3})*\s*\]", re.I)
-_SID_RX = re.compile(r"S(\d{1,3})", re.I)
+INLINE_CITE_RX = re.compile(r"\[\s*S\d+(?:\s*[,;]\s*S\d+)*\s*\]", re.I)
+_SID_RX = re.compile(r"S(\d+)", re.I)
 
 
 def _inline_sids(text: str) -> List[str]:

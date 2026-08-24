@@ -33,6 +33,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import time
 import uuid
 from pathlib import Path
@@ -95,6 +96,30 @@ class ManualProvider(LLMProvider):
     def _key(prompt: str) -> str:
         return hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:16]
 
+    @staticmethod
+    def canonicalize(prompt: str) -> str:
+        """Strip local directory paths down to bare file names.
+
+        The cache key is the hash of the prompt, so anything machine-specific in
+        the prompt makes the key machine-specific too — a spool cannot be shared
+        between machines, and a committed prompt cannot be replayed anywhere but
+        the host that produced it. That is not hypothetical: it is exactly why
+        the first set of benchmark artifacts could not be replayed.
+
+        URLs are left alone. They are the identity of a remote document, not a
+        fact about anybody's filesystem.
+        """
+        def basename(match: "re.Match[str]") -> str:
+            path = match.group(0)
+            if "://" in path:
+                return path
+            return path.replace("\\", "/").rstrip("/").rsplit("/", 1)[-1] or path
+
+        # Windows drive paths, then POSIX absolute paths with at least one
+        # directory component. Both stop at whitespace and quotes.
+        text = re.sub(r"[A-Za-z]:[\\/][^\s\"'<>|]+", basename, prompt or "")
+        return re.sub(r"(?<![\w:/])/(?:[\w.+@\-]+/)+[\w.+@\-]+", basename, text)
+
     #: How long an answer file's size must hold steady before it is read. A file
     #: exists from its first byte, and reading it half-written looks exactly like
     #: a model emitting broken JSON — which sends whoever debugs it after the
@@ -134,9 +159,13 @@ class ManualProvider(LLMProvider):
     def complete(self, system, messages, *, max_tokens=None, temperature=None,
                  tools=None) -> Completion:
         self.step += 1
-        prompt = system + "\n\n" + "\n\n".join(
+        prompt = self.canonicalize(system + "\n\n" + "\n\n".join(
             f"[{m.role}]\n{m.content}" for m in messages
-        )
+        ))
+        # Canonicalized *before* it is hashed, written, or answered, so the file
+        # on disk is byte-for-byte what was asked and its name is the hash of
+        # its own contents. Scrubbing afterwards — which is what the first
+        # benchmark bundle did — silently breaks that identity.
         key = self._key(prompt)
         rfile = self.answers / f"{key}.txt"
         pfile = self.asked / f"{key}.prompt.txt"

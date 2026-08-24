@@ -199,9 +199,6 @@ class _PinnedRedirectHandler(urllib.request.HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
-import urllib.parse  # noqa: E402  (imported late so the handler above can use it)
-
-
 def fetch_url(url: str, *, max_bytes: int = MAX_BYTES,
               timeout: int = DEFAULT_TIMEOUT,
               deadline: int = DEFAULT_DEADLINE) -> Fetched:

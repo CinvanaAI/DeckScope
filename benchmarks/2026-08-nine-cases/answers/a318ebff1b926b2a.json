@@ -1,0 +1,402 @@
+{
+  "headline": "Harbor Desk is raising $4M at $22M post on $240k of ARR while the one differentiation claim it makes — that it is the only fully agentic option — is contradicted by the only landscape source we have, and the segment it sells to already gets the capability free from Shopify.",
+  "verdict": {
+    "call": "PASS",
+    "confidence": "medium",
+    "confidence_rationale": "The market evidence is thin and poorly sourced — all three documents come from a single unattributed domain with placeholder-style URLs [S1][S2][S3], sizing rests on one untraceable range [S2], and there is no funding, entrant, M&A or comparative-product data at all. That argues for humility about the market. But the decisive facts do not depend on source quality: the deck has no team slide, no pricing, no retention, no use of funds, and prices itself at roughly 92x ARR by arithmetic on its own slide 6 and slide 7 numbers. A seed deck that names no founders and attaches no milestones to a $4M ask is a pass on deck-internal grounds alone. Confidence is medium rather than high because the one thing that could reverse this — evidence that a specialist agent materially out-resolves the bundled agents from Zendesk, Intercom and Shopify — is precisely what the research does not address, and the sources are too weak to rule it out."
+  },
+  "scorecard": [
+    {
+      "dimension": "Market size & timing",
+      "score": 4,
+      "weight": 5,
+      "rationale": "The deck's $12B is the whole customer-support-software category, not the market Harbor Desk sells into. The e-commerce-specific slice is put at roughly $1.5-2B [S2], and inside that the small-merchant tier is further eroded by a free platform default [S1]. The growth rate the deck cites is broadly right for the category but is not established for the slice, and it is growth arriving through bundling rather than through standalone spend [S3]. Timing is the harder problem than size: the deck is arriving at the moment the capability stopped being scarce.",
+      "evidence": [
+        "Deck claims a $12B market growing 19% a year, methodology unstated (slides 4)",
+        "Category $11-14B in 2026 growing 17-21%; e-commerce slice roughly $1.5-2B [S2]",
+        "No growth rate exists for the e-commerce slice separately [S2]",
+        "Shopify ships native support tooling free, covering a large share of the small-merchant segment [S1]",
+        "Per-resolution prices fell through 2025 and 2026 as platform vendors bundled the capability [S3]"
+      ],
+      "source_ids": ["S1", "S2", "S3"]
+    },
+    {
+      "dimension": "Competitive position",
+      "score": 3,
+      "weight": 5,
+      "rationale": "The competition slide names two real-but-small vertical players [S2] and omits every party that actually threatens the business: Zendesk and Intercom, who dominate support software and now ship agents as standard and bundled respectively [S1], and Shopify, which gives the capability away to the exact target segment [S1]. Omitting the incumbent from a slide that sizes the incumbent market is not an oversight of detail; it is the analytical error the whole deck rests on.",
+      "evidence": [
+        "Deck names only Gorgias and Tidio (slide 5)",
+        "Zendesk and Intercom dominate customer support software overall and both ship AI agents as standard [S1]",
+        "Intercom's Fin is bundled into mid-tier plans — the tier a growing store graduates into [S1]",
+        "Shopify's free native tooling covers a large share of the small-merchant segment [S1]"
+      ],
+      "source_ids": ["S1", "S2"]
+    },
+    {
+      "dimension": "Product & moat",
+      "score": 3,
+      "weight": 4,
+      "rationale": "The entire moat is one undefined adjective: 'fully agentic'. No patents, no proprietary data, no architecture argument, no performance metric appears anywhere in the deck. Grounding an agent in a merchant's catalogue and policy documents is the thing the platform that stores the catalogue is best placed to do [S1, inference]. The one structurally durable asset a standalone vendor has here is multi-platform reach, and the deck never claims it. Score is not lower only because nothing in the research establishes that bundled agents resolve e-commerce tickets as well as a specialist — that gap is genuinely unmeasured.",
+      "evidence": [
+        "Deck states no technical moat; nearest claim is 'we are the only fully agentic option' (slide 5)",
+        "No demo, screenshots, deflection rate, resolution rate or CSAT anywhere in the deck",
+        "Zendesk and Intercom already ship agent capability inside subscriptions merchants pay for [S1]",
+        "Nothing in the research compares bundled agent quality against specialist agent quality — the decisive question is unanswered"
+      ],
+      "source_ids": ["S1"]
+    },
+    {
+      "dimension": "Business model",
+      "score": 2,
+      "weight": 3,
+      "rationale": "The deck discloses no pricing, packaging, unit economics, gross margin, CAC or payback. The only inferable figure is roughly $7,000 ARR per merchant, which is arithmetic on slide 6, not a disclosure. Against that silence the market evidence points one way: the pricing model in play is per-resolution and it is deflating [S3], expansion revenue at standalone vendors is compressed [S3], and the reference price for the small-merchant tier is zero [S1]. Weight is 3 rather than 5 because a seed company is allowed to still be finding its pricing — but not to omit the topic entirely.",
+      "evidence": [
+        "No pricing, unit economics, CAC, LTV or gross margin in the deck",
+        "$240k ARR across 34 merchants implies roughly $7k per merchant (arithmetic, not a deck figure)",
+        "Per-resolution pricing fell through 2025 and 2026 [S3]",
+        "Standalone vendors report compressed expansion revenue [S3]",
+        "Competing price for the target tier is zero via Shopify's native tooling [S1]"
+      ],
+      "source_ids": ["S1", "S3"]
+    },
+    {
+      "dimension": "Traction vs. stage",
+      "score": 4,
+      "weight": 5,
+      "rationale": "$240k ARR across 34 merchants is a respectable early-seed signal in absolute terms, and I do not penalise a seed company for thin revenue. I penalise it for thin evidence: no retention, no churn, no NRR, no logos, no distinction between paying, piloting and free merchants, no ARR definition, and a '9% MoM' with no base period, no denominator and no statement of whether it measures revenue or merchant count. Off a $240k base, 9% MoM is roughly $1,800 of incremental monthly revenue — a single merchant can produce it. At 34 accounts the difference between a trend and noise is a handful of logos, and the deck gives us no way to tell which this is.",
+      "evidence": [
+        "$240k ARR, 34 merchants, 9% MoM (slide 6), all undefined and uncorroborated",
+        "No retention, churn, NRR or pipeline anywhere in the deck",
+        "No customer logos, case studies or testimonials",
+        "No independent corroboration of merchant count available in the provided research"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Team",
+      "score": 1,
+      "weight": 5,
+      "rationale": "There is no team slide. No founders, no backgrounds, no headcount, no advisors. At seed, where the team is most of what is actually being underwritten, this is not a gap in the deck — it removes the primary object of diligence. I cannot score execution capability because nothing has been offered to score. This alone would stop a first meeting from converting.",
+      "evidence": [
+        "Deck names no founders, gives no backgrounds, no headcount, no advisors",
+        "No company website, founding date or location supplied anywhere"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Ask & plan",
+      "score": 2,
+      "weight": 4,
+      "rationale": "$4M at $22M post against $240k ARR is roughly a 92x ARR multiple by arithmetic on the deck's own numbers, and it arrives with no use of funds, no milestones and no runway figure. There is nothing in the deck that says what the money buys or what it would prove. I cannot benchmark the multiple against comparables because the provided research contains no round sizes, valuations or multiples of any kind — that is an unverifiable, not a contradicted, claim. What I can say is that the ask is priced like a competitive seed while the evidence package is pre-seed-plus.",
+      "evidence": [
+        "$4M at $22M post (slide 7); ~92x ARR on the deck's own $240k figure (my arithmetic)",
+        "No use of funds, no milestones, no runway stated",
+        "No funding, valuation or multiple data in any provided source [S1][S2][S3]"
+      ],
+      "source_ids": []
+    }
+  ],
+  "claim_audit": [
+    {
+      "id": "C1",
+      "claim": "Small merchants answer the same forty questions every day.",
+      "market_evidence": "No source I was given addresses merchant support ticket volume, question repetition, or any survey of small-merchant support workload. The research contains no demand-side primary data at all.",
+      "assessment": "unverifiable",
+      "delta": "Cannot be positioned against market data: there is no market figure for it to sit near or far from. The deck offers no source either, so this is a precise-sounding number resting on nothing on either side.",
+      "so_what": "Low stakes on its own, but it sets the pattern for the whole deck — a specific-sounding figure with no denominator and no citation. If the founders can produce the ticket-log analysis behind 'forty', that is a good sign about how they reason; if it is a figure of speech dressed as data, that is a bad one.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C2",
+      "claim": "Support is the first thing that breaks when a store grows.",
+      "market_evidence": "Nothing in the provided research speaks to what breaks first as a merchant scales. Indirectly, S1 establishes that a growing store graduating out of free platform tooling meets Intercom's mid-tier plans with Fin already bundled — so the moment of pain the claim describes is a moment an incumbent is already positioned to capture.",
+      "assessment": "unverifiable",
+      "delta": "Unfalsifiable as stated. The nearest checkable adjacent fact runs against the company rather than for it: the growth moment the claim identifies is the moment a bundled agent is waiting [S1].",
+      "so_what": "The claim is doing narrative work, not analytical work. More importantly, the strategic implication of it — that the growing store is the interesting customer — is the one the market evidence supports, and it is not the customer the rest of the deck targets.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/ecom-support-landscape"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C3",
+      "claim": "The agent is trained on the merchant's own catalogue and policy documents.",
+      "market_evidence": "No source characterises the technical architecture of any vendor in this category, including Harbor Desk. What the research does establish is that the party best placed to ground an agent in a merchant's catalogue is the party that already stores it — the platform [S1, inference from its native tooling position], and that grounding quality is an axis on which the research offers no comparative evidence for anyone.",
+      "assessment": "unverifiable",
+      "delta": "Not contradicted, but not distinguishing either. The deck presents catalogue-grounding as a differentiator; the market material gives no basis to say any vendor is better or worse at it, and gives a structural reason to think a platform starts ahead.",
+      "so_what": "The deck never says whether this is fine-tuning or retrieval, how ingestion works, how the agent escalates, or how it integrates with store platforms. That is the difference between a defensible engineering claim and a marketing sentence, and diligence has to resolve it in the first technical session.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/ecom-support-landscape"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C4",
+      "claim": "Deployed as a chat widget in under ten minutes.",
+      "market_evidence": "No source addresses setup time, time-to-value or onboarding effort for any vendor in this category. Time-to-value is plausibly a real axis in this segment but is entirely unevidenced in the provided material.",
+      "assessment": "unverifiable",
+      "delta": "No market benchmark exists to compare against, so the claim can be neither confirmed nor sized. Note also that a free tool already installed in the merchant's admin has a deployment time of zero [S1], which is the comparison that matters for this segment.",
+      "so_what": "Easily verified in diligence — watch an unassisted merchant install it on a stopwatch. But even if true, ten minutes is a feature, not a moat, and it competes against a default the merchant never had to install.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/ecom-support-landscape"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C5",
+      "claim": "Customer support software for e-commerce is a $12B market.",
+      "market_evidence": "The whole customer-support-software category across all industries is put at $11-14B in 2026; the e-commerce-specific slice inside it is put at roughly $1.5-2B [S2]. The deck's $12B sits squarely inside the category range and roughly 6-8x above the slice range.",
+      "assessment": "contradicted",
+      "delta": "The deck calls $12B the e-commerce market. The only sizing source available says $11-14B is the whole category and the e-commerce slice is roughly $1.5-2B [S2] — the deck's number is off by roughly six to eight times, and it is off in a specific and diagnostic way: it is the parent category's number relabelled as the child's. The addressable territory is narrower still, because a large share of the small-merchant tier is already covered by free platform-native tooling [S1] and the research does not size that residual.",
+      "so_what": "This is the single most load-bearing claim in the deck and it is wrong in kind, not just in magnitude. A $1.5-2B slice with a free default installed across much of the target tier does not obviously support a fund-returning outcome, and it means the market slide cannot be used to justify the ask. Caveat that matters: S2 is a single unattributed range with no methodology, so the correct reading is 'the deck's own framing collapses when the category is separated from the slice', not 'the true number is $1.75B'.",
+      "source_ids": ["S1", "S2"],
+      "sources": [
+        "https://research.example.org/ecom-support-landscape",
+        "https://research.example.org/support-sizing"
+      ],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C6",
+      "claim": "That market is growing 19% a year.",
+      "market_evidence": "The overall customer support software category is growing 17-21% in 2026 [S2]. No source states a growth rate for the e-commerce-specific slice, so it is unknown whether the slice grows faster or slower than the whole.",
+      "assessment": "partially-supported",
+      "delta": "19% sits mid-range of the 17-21% figure [S2] — but that figure describes the category, not the segment the deck is claiming to describe. The number is right for the wrong market, which is exactly the same error as C5. There is a second problem the deck cannot see: category growth of 17-21% coexists with per-resolution prices falling through 2025 and 2026 [S3], so the growth is coming from volume and bundled seat expansion rather than price, and is not evenly available to a standalone vendor.",
+      "so_what": "The tailwind is real at the category level and largely unavailable at the company level. Growth accruing to whoever bundles is not growth a specialist can underwrite a $22M post against.",
+      "source_ids": ["S2", "S3"],
+      "sources": [
+        "https://research.example.org/support-sizing",
+        "https://research.example.org/support-pricing"
+      ],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C7",
+      "claim": "Gorgias and Tidio serve this segment with rule-based flows.",
+      "market_evidence": "S2 confirms Gorgias and Tidio are real but small players within the e-commerce slice. No source I was given characterises either vendor's product architecture, AI capability, pricing or trajectory. There is no evidence for or against 'rule-based flows'.",
+      "assessment": "unverifiable",
+      "delta": "The half of the claim I can check is right — these are real competitors in the right slice [S2]. The half that carries the argument, the 'rule-based flows' characterisation, cannot be checked with the material available. I want to be precise about the failure mode: this is unverifiable here, not disproven.",
+      "so_what": "The characterisation is doing the work of establishing that no one else is agentic. A single afternoon on two public product pages settles it, and it is the cheapest diligence item on this list. If the characterisation turns out to be stale, C8 falls with it and the deck's credibility falls further — describing competitors' current products inaccurately is a judgement finding, not just a factual one.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/support-sizing"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C8",
+      "claim": "We are the only fully agentic option.",
+      "market_evidence": "Zendesk and Intercom dominate customer support software overall and both now ship AI agents as a standard feature rather than an add-on; Intercom's Fin agent is bundled into its mid-tier plans; Shopify ships native support tooling to its merchants at no additional cost, covering a large share of the small-merchant segment [S1]. Per-resolution pricing for AI agents fell through 2025 and 2026 precisely because platform vendors bundled the capability [S3].",
+      "assessment": "contradicted",
+      "delta": "The deck claims sole possession of agentic capability. The only landscape source available says the two dominant vendors in the category already ship AI agents as standard, one of them bundled into the mid-tier plan a growing store buys anyway [S1], and the price of agent resolutions has already deflated as a consequence [S3]. This is not a gap of degree — the claim asserts a monopoly on a capability the research describes as a shipped, bundled default. Even allowing that 'fully agentic' is undefined and might be narrower than 'AI agent', the deck offers no definition that would rescue it.",
+      "so_what": "This sentence is the entire differentiation argument and the entire justification for the price. If it is false, the company is a standalone vendor of a capability incumbents give away, in the segment where the platform gives it away for free — which is the configuration S3 says produces compressed expansion revenue. This is the claim that decides the investment, and the available evidence goes against it.",
+      "source_ids": ["S1", "S3"],
+      "sources": [
+        "https://research.example.org/ecom-support-landscape",
+        "https://research.example.org/support-pricing"
+      ],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C9",
+      "claim": "$240k ARR.",
+      "market_evidence": "No source I was given contains revenue, ACV or customer data for Harbor Desk or any comparable vendor. There are no pricing points anywhere in the research against which to sanity-check roughly $7k per merchant.",
+      "assessment": "unverifiable",
+      "delta": "No external check is possible. The deck also does not define ARR — contracted, annualised MRR, or booked — so the figure is not fully interpretable even on its own terms.",
+      "so_what": "This is the 'right but unproven' category rather than the 'wrong' one: $240k is a plausible early-seed number and I have no reason to doubt it. It simply has not been evidenced, and the definition gap matters when a 92x multiple is being priced off it. Bank statements and a Stripe export resolve it in an hour.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C10",
+      "claim": "34 merchants.",
+      "market_evidence": "No source provides customer counts, install data, app-store presence or reviews for Harbor Desk or any competitor. Segmentation by merchant size is implied by the sources but never quantified [S2].",
+      "assessment": "unverifiable",
+      "delta": "Nothing to compare against. The deck does not distinguish paying from piloting from free merchants, and provides no logos, so the number is uncorroborated even in principle.",
+      "so_what": "At 34 accounts the composition matters more than the count. If a meaningful share are free pilots, both the ARR-per-merchant arithmetic and the growth rate change character. Ask for the account list with start date, plan and status.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/support-sizing"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C11",
+      "claim": "9% MoM growth.",
+      "market_evidence": "No source provides growth rates for individual vendors. The only company-level trajectory signal in the research runs the other way: standalone vendors report compressed expansion revenue [S3], and nothing establishes whether Gorgias or Tidio are growing or shrinking under bundling pressure [S1][S2].",
+      "assessment": "unverifiable",
+      "delta": "Uncheckable externally and underspecified internally: no base period, no statement of whether it measures revenue or merchant count, no number of consecutive months. Off a $240k ARR base, 9% MoM is roughly $1,800 of incremental monthly revenue, which one merchant at the implied ~$7k ACV can generate — so the percentage is easy to sustain and hard to interpret.",
+      "so_what": "This is the metric the round is being sold on and it has no denominator. Twelve months of MRR by cohort with churn separated out converts it from a talking point into evidence — or reveals it as a small-numbers artefact.",
+      "source_ids": ["S3"],
+      "sources": ["https://research.example.org/support-pricing"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C12",
+      "claim": "Raising $4M at $22M post.",
+      "market_evidence": "The provided research contains no round sizes, no valuations, no revenue multiples, no exit comps and no dates for any company in this category [S1][S2][S3]. Valuation norms are explicitly unassessable from the material.",
+      "assessment": "unverifiable",
+      "delta": "I cannot benchmark the price against comparables, and I will not invent a multiple from outside the record. What I can state arithmetically from the deck's own slides is that $22M post against $240k ARR is roughly 92x ARR, and that the ask carries no use of funds, no milestones and no runway figure.",
+      "so_what": "The price is unverifiable; the absence of a plan behind it is not. A $4M ask with nothing attached to it means the investment committee is being asked to fund a number rather than a set of proof points. That is a structural reason to decline independent of what the market comps would have said.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    }
+  ],
+  "alignment": {
+    "where_deck_matches_market": [
+      "The growth rate is in the right band: the deck's 19% sits mid-range of the 17-21% category growth reported for 2026 [S2], even though it is applied to the wrong market.",
+      "Gorgias and Tidio are correctly identified as real competitors operating in the e-commerce-specific slice [S2] — the deck picked genuine players, it simply picked the wrong tier of them.",
+      "The e-commerce slice is a real, named segment with dedicated vendors serving it [S2], so the deck is not inventing a category; the buying pattern exists rather than needing to be created.",
+      "Buyer education is done: AI resolution agents are mainstream enough that dominant vendors ship them as standard [S1], so the deck is right that merchants no longer need convincing an agent can deflect tickets.",
+      "The narrative instinct behind 'support is the first thing that breaks when a store grows' points at the growing store, and the market evidence agrees that the growing store — not the small merchant with a free default — is where a specialist could plausibly stand [S1]."
+    ],
+    "where_deck_overstates": [
+      "Market size: $12B is presented as the e-commerce support market; the only sizing source puts the e-commerce slice at roughly $1.5-2B and $11-14B at the whole category across all industries [S2] — roughly six to eight times, and a category-for-slice substitution rather than a rounding difference.",
+      "Differentiation: 'we are the only fully agentic option' is contradicted by Zendesk and Intercom both shipping AI agents as standard, with Fin bundled into mid-tier plans [S1].",
+      "Competitive framing: characterising the field as 'Gorgias and Tidio with rule-based flows' omits the two dominant vendors and the platform, and the 'rule-based' characterisation itself is offered without evidence and cannot be verified from the provided research [S2].",
+      "Traction interpretation: 9% MoM off a $240k base is roughly $1,800 of incremental monthly revenue — presented as a growth story, it is within the noise a single ~$7k account creates.",
+      "Price: $22M post against $240k ARR is roughly 92x ARR by arithmetic on the deck's own figures, with no comparables offered and none available in the research.",
+      "Product maturity is recorded as 'scaling' with no demo, no performance metric, no retention and no logos to support it."
+    ],
+    "where_deck_understates": [
+      "Multi-platform reach: the one capability the research identifies as structurally hard for a platform vendor to replicate — serving merchants not on, or not only on, a single commerce platform, because replicating it means serving competitors' merchants [S1] — is never claimed by the deck at all.",
+      "Vertical workflow depth as a survival argument: the continued existence of Gorgias and Tidio as distinct vertical players inside a market Zendesk and Intercom dominate [S1][S2] is the strongest available evidence that a specialist can hold ground here, and the deck never makes the argument.",
+      "The catalogue-and-policy grounding claim is asserted in one line on slide 3 with no detail on ingestion, retrieval, escalation or integrations — if there is real engineering behind it, the deck is under-selling the only technical asset it mentions."
+    ],
+    "blind_spots": [
+      {
+        "what": "Shopify ships native support tooling to its merchants at no additional cost, already covering a large share of the small-merchant segment — the exact segment named on slide 2 — and it owns the catalogue, the order data and the billing rail.",
+        "why_it_matters": "The reference price in the target tier is zero, so the merchant conversation starts at 'why pay at all' rather than 'which vendor'. This is the most important competitor in the entire analysis and it appears nowhere in the deck. It also creates platform dependency: the company likely needs the platform for data and distribution while the platform ships a free competing tool.",
+        "source_ids": ["S1"]
+      },
+      {
+        "what": "Per-resolution pricing for AI support agents fell through 2025 and 2026 specifically because platform vendors bundled the capability, and standalone vendors report compressed expansion revenue.",
+        "why_it_matters": "The deck has no pricing slide at all, so it never confronts the fact that the price of what it sells is deflating and that land-and-expand — the motion by which support tools normally reach real ACV — is impaired for exactly the class of vendor Harbor Desk belongs to. This bears directly on whether ~$7k per merchant holds or erodes.",
+        "source_ids": ["S3"]
+      },
+      {
+        "what": "The dominant competitive axis in this category is now bundled versus standalone, which is not a product axis at all.",
+        "why_it_matters": "The deck argues entirely on capability ('fully agentic') in a market where capability has stopped being the thing that is scarce. Category growth of 17-21% [S2] alongside falling unit prices [S3] means the growth is accruing to whoever bundles, not to whoever sells the capability alone — so the market slide's tailwind is not available to this company.",
+        "source_ids": ["S1", "S2", "S3"]
+      },
+      {
+        "what": "Intercom's Fin is bundled specifically into mid-tier plans — the tier a growing online store lands in as it scales.",
+        "why_it_matters": "It closes the escape route implied by the deck's own problem statement. A merchant that outgrows Shopify's free tooling does not arrive at a buying decision; it arrives at a bundled agent inside a plan it was already going to buy. That squeezes the specialist from both ends of the customer lifecycle.",
+        "source_ids": ["S1"]
+      },
+      {
+        "what": "Nothing in the research establishes whether bundled agents from Zendesk, Intercom or Shopify actually resolve e-commerce tickets as well as a specialist agent does.",
+        "why_it_matters": "This is the single question the whole investment turns on, and it is unanswered in both directions. The deck does not raise it — it offers no deflection rate, resolution rate or CSAT, and no comparison against any competitor — which means it has not produced the one piece of evidence that could justify its own existence.",
+        "source_ids": []
+      },
+      {
+        "what": "AI agents answering customers on a merchant's behalf create liability for wrong answers about policy, returns and pricing, and merchant catalogues plus end-customer conversations imply PII handling.",
+        "why_it_matters": "The deck contains no regulatory, data-privacy or data-handling content whatsoever. Flagged honestly as inference: no source I was given raises regulation in this category either, so this is unassessed rather than established as a live risk.",
+        "source_ids": []
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "The core differentiation claim is false. If 'fully agentic' does not describe something Zendesk, Intercom, Gorgias and Tidio cannot do, there is no product argument left in the deck.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Read the current public product and pricing pages for Zendesk, Intercom/Fin, Gorgias and Tidio and write down what each agent does autonomously. Then ask the founders for a written definition of 'fully agentic' that excludes those products. If they cannot produce one, the claim is marketing."
+    },
+    {
+      "risk": "Free platform substitution. Shopify's native tooling covers a large share of the small-merchant segment at no additional cost [S1], so the named target segment has an installed free default.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask what share of the 34 merchants are Shopify-native, and interview five of them on why they pay rather than use the included tooling. A crisp, repeated reason is the strongest possible evidence for this company; a vague one is the end of the thesis."
+    },
+    {
+      "risk": "Price deflation in per-resolution pricing with compressed expansion revenue at standalone vendors [S3] erodes the implied ~$7k ACV and the land-and-expand motion before the company reaches scale.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Get the actual price list and 12 months of per-account revenue. Test whether ACV per merchant is rising, flat or falling within existing cohorts — the answer is decisive and the company already has the data."
+    },
+    {
+      "risk": "Traction is smaller and softer than it reads: undefined ARR, undisclosed mix of paying and pilot merchants, and a 9% MoM figure with no base period that one account could produce.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Stripe/bank export, cohort MRR by month for 12 months, logo-level churn and NRR, and a paying-versus-pilot breakdown of the 34. Refusal to provide these at seed is itself the answer."
+    },
+    {
+      "risk": "Unknown team. No founders, backgrounds or headcount appear anywhere, so execution capability cannot be assessed at the stage where it matters most.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Founder bios and references before any further work. This is a gate, not a diligence item."
+    },
+    {
+      "risk": "Platform dependency: the company likely relies on a commerce platform for data access and distribution while that platform ships a free competing tool [S1]. No contract or product decision removes this exposure.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Establish what share of revenue depends on a single platform's API and app store, and whether the product genuinely works multi-platform today — the one durable defence identified in the research [S1]."
+    },
+    {
+      "risk": "The ask is unanchored: $4M with no use of funds, no milestones and no runway, priced at roughly 92x ARR by the deck's own arithmetic.",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask for the operating plan: what the $4M buys, what it proves, and what ARR and retention it is expected to reach by when. If the answer arrives quickly and is specific, the omission was a deck problem; if not, it is a planning problem."
+    },
+    {
+      "risk": "Analytical judgement risk. The deck omits the largest incumbent from a slide that sizes the incumbent market, and relabels a category number as a segment number. Whether careless or deliberate, it means claims cannot be taken at face value.",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask directly where the $12B came from and why Zendesk, Intercom and Shopify do not appear on slide 5. The quality of that answer is more informative than any single metric in the deck."
+    },
+    {
+      "risk": "Our own market picture is weak. All three sources share one unattributed placeholder-style domain, sizing rests on a single untraceable range, and there is no entrant, M&A or funding data — so this assessment could be wrong about the market even where it is right about the deck.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Before any further work, replace S1-S3 with primary evidence: vendor pricing pages, an analyst-house sizing with disclosed methodology, and a funding database pull on agentic e-commerce support entrants."
+    }
+  ],
+  "questions": [
+    "Define 'fully agentic' in one sentence that excludes Intercom's Fin, Zendesk's standard AI agents, and whatever Gorgias and Tidio ship today. If no such sentence exists, what is the differentiation?",
+    "Where did $12B come from — what report, what year, what geography, and does it describe e-commerce support or all customer support software?",
+    "Of the 34 merchants, how many pay, how many are pilots, how many are free? What is the largest account as a share of the $240k, and what is the ARR definition?",
+    "How many consecutive months has 9% held, on what base, and is it revenue or merchant count?",
+    "What is logo churn and net revenue retention over the last 12 months? At 34 accounts, how many have ever cancelled?",
+    "What share of your merchants are on Shopify, and when they had Shopify's free support tooling available, why did they pay you instead?",
+    "What is your deflection or resolution rate, measured how, and how does it compare with the bundled agents merchants can already get?",
+    "Who are the founders, what have they built before, and how large is the team today?",
+    "What does the $4M buy, and what specific ARR, retention and product milestones does it get you to by when?",
+    "How was $22M post arrived at, and what comparables were used?",
+    "Do you work outside a single commerce platform today, and what share of revenue comes from multi-platform or non-Shopify merchants?",
+    "What is your pricing model — per resolution, per seat, or flat — and has your realised price per resolution moved over the last 12 months?",
+    "How is merchant catalogue data and end-customer conversation data handled for privacy, retention and residency, and who is liable when the agent states a wrong return policy?"
+  ],
+  "actions": [
+    {
+      "action": "Send the founders a short written request for founder bios, a paying-versus-pilot breakdown of the 34 merchants, 12 months of cohort MRR with churn, and the pricing sheet — before scheduling anything. The response time and completeness are themselves the first data point.",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Spend one afternoon on the public product and pricing pages of Zendesk, Intercom/Fin, Gorgias, Tidio and Shopify's native support tooling, and write a one-page matrix of what each agent resolves autonomously. This settles C7 and C8, the two claims the investment turns on, at near-zero cost.",
+      "owner": "Associate",
+      "priority": "P0"
+    },
+    {
+      "action": "Replace the market picture. All three current sources share one unverifiable placeholder domain [S1][S2][S3]; obtain an analyst sizing with disclosed methodology for the e-commerce support slice, and a funding-database pull on agentic e-commerce support entrants to establish whether the category is still being funded.",
+      "owner": "Research",
+      "priority": "P0"
+    },
+    {
+      "action": "Reference-call five current merchants, weighted toward Shopify-native ones, on a single question: why pay rather than use the included tooling. This is the highest-information call available and it directly tests the free-substitute risk.",
+      "owner": "Deal lead",
+      "priority": "P1"
+    },
+    {
+      "action": "If and only if the differentiation matrix leaves a real capability gap and retention comes back clean, re-open at a repriced round with an explicit milestone plan — and treat the current $22M post as a non-starter rather than a negotiation opening.",
+      "owner": "Investment committee",
+      "priority": "P1"
+    },
+    {
+      "action": "Log the deck's category-for-slice market-size substitution and the omission of Zendesk, Intercom and Shopify from the competition slide in the deal memo as a judgement finding, so it is weighed even if the metrics check out.",
+      "owner": "Deal lead",
+      "priority": "P2"
+    }
+  ],
+  "summary": "Harbor Desk sells an AI support agent to small e-commerce merchants, claims a $12B market growing 19% a year, names Gorgias and Tidio as rule-based competitors, says it is the only fully agentic option, and asks for $4M at $22M post on $240k of ARR across 34 merchants. Two of those claims fail against the only market evidence available, and the failures are related. The $12B is not the e-commerce support market; it is the whole customer-support-software category across all industries, which is put at $11-14B in 2026, while the e-commerce-specific slice inside it is put at roughly $1.5-2B [S2]. That is a six-to-eightfold gap, and the shape of the error matters more than its size: the deck has taken the parent category's number and labelled it as the child's. The addressable territory is narrower still, because a large share of the small-merchant tier — the tier slide 2 names — already receives support tooling free from Shopify at no additional cost [S1], and the research does not size what is left over. The growth rate fares better: 19% sits mid-range of the 17-21% reported for the category [S2], but no source gives a growth rate for the slice, so the deck is again right about a market it is not selling into.\n\nThe differentiation claim is the one that decides the investment, and it is contradicted. Zendesk and Intercom dominate customer support software overall and both now ship AI agents as a standard feature rather than an add-on, with Intercom's Fin bundled into mid-tier plans [S1]. A company cannot be the only fully agentic option in a market where the two dominant vendors ship agents as standard. The deck's competition slide names neither of them, nor Shopify, which is the free default in its own target segment. Omitting the incumbent from slide 5 while implicitly sizing the incumbent market on slide 4 is the structural tell in this deck. The characterisation of Gorgias and Tidio as 'rule-based flows' I can neither confirm nor refute — the sources establish only that both are real but small players in the slice [S2] — and I want to keep that failure mode separate from the first: C5 and C8 are wrong; C7 is unverifiable with the evidence I have; C9 through C12 are unproven rather than either.\n\nThe market picture the deck never engages with is the one that governs the outcome. Per-resolution pricing for AI support agents fell through 2025 and 2026 specifically because platform vendors bundled the capability, and standalone vendors report compressed expansion revenue [S3]. Read alongside the category growing 17-21% [S2], the tailwind and the headwind are the same event: the growth is accruing to whoever bundles, not to whoever sells the capability alone. The dominant competitive axis in this category is now bundled versus standalone, which is not a product axis at all — and Harbor Desk is arguing entirely on capability at the moment capability stopped being scarce. There is a version of this company that works, and the market evidence points at it: the growing store that has outgrown the free platform tool, served across multiple commerce platforms, which is the one thing a platform vendor structurally cannot replicate because replicating it means serving competitors' merchants [S1]. The deck never makes that argument. It targets the tier with the free default and claims a moat that the evidence says does not exist.\n\nOn traction and stage I try to be fair. $240k ARR across 34 merchants is a reasonable early-seed result, and I do not penalise a seed company for thin revenue. I penalise it for thin evidence of demand, and here the evidence is thin in every direction: no retention, no churn, no NRR, no logos, no split between paying and piloting merchants, no ARR definition, and a 9% MoM figure with no base period and no statement of whether it measures revenue or merchant count. Off a $240k base, 9% is roughly $1,800 of incremental monthly revenue — one merchant at the implied ~$7,000 ACV produces it. There is no team slide at all, which at seed removes the primary object of underwriting. And the ask, $4M at $22M post, is roughly 92x ARR on the deck's own arithmetic, carrying no use of funds, no milestones and no runway. I cannot say whether that price is out of line with comparables, because the provided research contains no rounds, valuations or multiples of any kind [S1][S2][S3] — that is an unverifiable claim, not a contradicted one. But an ask with nothing attached to it asks the committee to fund a number rather than a set of proof points.\n\nA word on how much weight this analysis can bear. All three sources come from a single unattributed domain with a placeholder-style URL, none names an author or a methodology, sizing rests on one untraceable range [S2], and the material contains no entrant data, no M&A, no funding, no absolute pricing and — most consequentially — no comparison of whether bundled agents actually resolve e-commerce tickets as well as a specialist does. Two documents from the same unverified domain are not two independent confirmations. So I hold the market conclusions at medium confidence and lower rather than higher. The deck-internal problems need no sources at all, and they are sufficient on their own: no team, no pricing, no retention, no use of funds, a market number that is the wrong market's number, and a differentiation claim the one landscape source contradicts. The call is PASS. What would change it is narrow and testable: hard evidence that a specialist agent materially out-resolves the bundled defaults on e-commerce-specific tickets, plus clean retention across the 34 accounts and a repriced round with milestones attached.",
+  "integrity_note": "No manipulation was attempted. The deck extraction explicitly records that the deck contained no prompt-injection attempt, no instructions addressed to the analyst, no attempt to dictate a verdict, and no [REDACTED BY DECKSCOPE] markers; the market analysis returned an empty injection_findings list. The content was clean data throughout and nothing in it tried to influence this analysis. Two integrity observations that are not manipulation but should travel with this report. First, provenance: all three sources share one unattributed, placeholder-style domain with no author or methodology and no primary document among them, so they should be treated as possibly one source rather than three, and every market finding here inherits that limit. Second, an internal inconsistency in the material I was given: the market analysis's own `bundling_assessment` block reasons that 'the closest open-source project is meaningfully behind, so commercial products here are still differentiated on capability' and calls that 'the healthy configuration' — but the same analysis states plainly that no open-source project was named or evidenced anywhere in the research and that those enum values are schema placeholders meaning 'not assessed'. I have therefore disregarded the bundling_assessment reasoning and relied on the evidenced findings from S1 and S3 instead. Flagging it because a downstream reader could otherwise take a placeholder for a finding."
+}

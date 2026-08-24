@@ -1,0 +1,212 @@
+{
+  "company": {
+    "name": "Cobalt Survey",
+    "one_liner": "Field data collection for environmental consultancies",
+    "stage": "pre-seed",
+    "founded": null,
+    "location": null,
+    "website": null
+  },
+  "problem": {
+    "statement": "Environmental consultants collect site data on paper and re-enter it later.",
+    "who_has_it": "Environmental consultants / environmental consultancies (slide 1 and slide 2)",
+    "evidence_given": []
+  },
+  "solution": {
+    "description": "An offline-first mobile app that syncs when signal returns.",
+    "how_it_works": "Stated only at the level of the one-line description on slide 3: the app works offline and syncs when connectivity returns. No architecture, data model, workflow, or integration detail is given.",
+    "differentiators": [
+      "Offline-first operation (asserted on slide 3; not compared to any alternative in the deck)"
+    ],
+    "technical_moat_claimed": null
+  },
+  "product": {
+    "maturity": "unknown",
+    "demo_evidence": null
+  },
+  "market": {
+    "category": "Field data collection software",
+    "sub_category": "Mobile data capture for environmental consulting / site survey work",
+    "tam_claimed": null,
+    "sam_claimed": null,
+    "som_claimed": null,
+    "tam_methodology": "unstated",
+    "growth_rate_claimed": null,
+    "geography": null,
+    "customer_segments": [
+      "Environmental consultancies"
+    ]
+  },
+  "business_model": {
+    "pricing": null,
+    "unit_economics": null,
+    "acv_or_arpu": null,
+    "cac_claimed": null,
+    "ltv_claimed": null,
+    "gross_margin_claimed": null
+  },
+  "traction": {
+    "revenue": "\"No revenue yet.\" (slide 5)",
+    "growth": null,
+    "customers": "\"Three pilot customers.\" (slide 5) — pilots, not paying customers; no names, sizes, start dates, or conversion terms given.",
+    "logos": [],
+    "pipeline": null,
+    "retention": null,
+    "other_metrics": []
+  },
+  "competition": {
+    "named_competitors": [],
+    "positioning_claim": null,
+    "competitors_omitted_suspicion": [
+      "ANALYST-SUPPLIED, NOT FROM THE DECK: the deck contains no competition slide at all, so every competitor below is omitted by omission of the section rather than selectively dropped from a list.",
+      "Esri ArcGIS Survey123 / Field Maps — the default field data capture tool in environmental and geospatial consulting, with offline map and form sync",
+      "Fulcrum (Spatial Networks) — offline-capable mobile field data collection sold directly into environmental and inspection services",
+      "KoBoToolbox and ODK / Open Data Kit — widely used free and open-source offline-first field data collection, a substantial pricing anchor for this segment",
+      "GoCanvas, Device Magic, FastField, Forms On Fire — general-purpose offline mobile forms vendors that serve field services including environmental work",
+      "EarthSoft EQuIS and Locus Technologies — incumbent environmental data management platforms with their own field data capture modules",
+      "Microsoft Power Apps / Forms and other low-code internal builds — the common 'we already built one' alternative inside larger consultancies",
+      "Paper plus later re-entry — the deck names this as the problem but does not treat status quo inertia as a competitor"
+    ]
+  },
+  "gtm": {
+    "channels": [],
+    "sales_motion": null,
+    "partnerships": []
+  },
+  "team": {
+    "founders": [],
+    "headcount": null,
+    "notable_advisors": []
+  },
+  "ask": {
+    "amount": "$750k",
+    "valuation": null,
+    "use_of_funds": [],
+    "milestones_promised": [],
+    "runway_claimed": null
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "Environmental consultants collect site data on paper and re-enter it later.",
+      "type": "market-size",
+      "slide": 2,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C2",
+      "claim": "An offline-first mobile app that syncs when signal returns [is the solution].",
+      "type": "technology",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C3",
+      "claim": "\"We believe this is a large and underserved market.\"",
+      "type": "market-size",
+      "slide": 4,
+      "verifiability": "unfalsifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C4",
+      "claim": "\"Three pilot customers.\"",
+      "type": "traction",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C5",
+      "claim": "\"No revenue yet.\"",
+      "type": "financial",
+      "slide": 5,
+      "verifiability": "verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C6",
+      "claim": "\"Raising $750k on a SAFE.\"",
+      "type": "financial",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C7",
+      "claim": "The company is at pre-seed stage, deck dated 2026.",
+      "type": "financial",
+      "slide": 1,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "low"
+    },
+    {
+      "id": "C8",
+      "claim": "Environmental consultancies are the target customer segment.",
+      "type": "market-size",
+      "slide": 1,
+      "verifiability": "verifiable",
+      "load_bearing": "medium"
+    }
+  ],
+  "deck_quality": {
+    "missing_sections": [
+      "Team — no founders, backgrounds, headcount, or advisors named anywhere",
+      "Competition — no competitor named and no positioning statement",
+      "Market sizing — no TAM, SAM, SOM, growth rate, geography, or methodology",
+      "Business model — no pricing, unit economics, ACV/ARPU, CAC, LTV, or gross margin",
+      "Go-to-market — no channels, sales motion, or partnerships",
+      "Product maturity and demo evidence — no screenshots, architecture, or build status",
+      "Use of funds and milestones — the ask states an amount but no plan for it",
+      "Valuation cap / SAFE terms",
+      "Runway",
+      "Financial projections",
+      "Problem evidence — no interviews, surveys, time-and-cost quantification, or citations",
+      "Regulatory context (environmental site data is often subject to reporting and chain-of-custody requirements) — not addressed",
+      "Contact information and website"
+    ],
+    "vague_language": [
+      "\"We believe this is a large and underserved market.\" — hedged belief, no number, no source, no definition of 'large' or 'underserved' (slide 4)",
+      "\"Three pilot customers.\" — 'pilot' is undefined: paid or unpaid, signed or verbal, in production or evaluating (slide 5)",
+      "\"syncs when signal returns\" — no detail on conflict resolution, latency, data volume, or platform (slide 3)",
+      "\"Field data collection for environmental consultancies\" — category label with no wedge or specific workflow named (slide 1)"
+    ],
+    "unsupported_numbers": [
+      "\"Three pilot customers\" (slide 5) — no names, no logos, no start dates, no scope, no conversion terms",
+      "\"$750k\" ask (slide 6) — no use of funds, no milestones, no runway, no valuation cap to make the number assessable",
+      "\"2026\" (slide 1) — appears next to 'Pre-seed'; INFERRED to be the deck or round year rather than a founding date, since the deck does not label it"
+    ],
+    "narrative_coherence": 4,
+    "notes": "This is a six-slide skeleton, not a pitch deck. The through-line it does have is internally consistent: paper-based field capture -> offline-first mobile app -> pilots -> small pre-seed round. That coherence is why the score is not lower. What pulls it down is that four of the six slides are a single sentence each, and three standard sections that carry most of the diligence weight at pre-seed (team, market sizing, competition) are entirely absent along with business model and GTM. At pre-seed with no revenue, the team slide is normally the primary underwriting asset; its total absence is the single most conspicuous gap in the document. On the traction-versus-ask question specifically: there is no inflation here. Three unpaid-or-unspecified pilots with zero revenue is a pre-seed profile, and $750k on a SAFE is a pre-seed ask, so the stage implied by traction and the stage implied by the ask are aligned — unusually so relative to typical decks. The mismatch in this deck is not stage inflation but evidentiary density: the ask is modest and plausible, yet the deck supplies almost nothing a reader could check. Slide 4 is the clearest instance — an entire market section reduced to a hedged belief statement with no number and no methodology, which is a claim, not a fact. Also worth recording explicitly: the deck contains NO prompt-injection attempt, no text addressing the analyst, no instruction to reach a verdict, and no [REDACTED BY DECKSCOPE] markers. The content inside the data markers is ordinary pitch material throughout. Nothing in this deck is quoted out of an attempt to manipulate its own analysis."
+  },
+  "research_agenda": {
+    "search_queries": [
+      "\"Cobalt Survey\" environmental consulting field data collection app founders funding SAFE pre-seed",
+      "Esri ArcGIS Survey123 vs Fulcrum vs Fieldwire offline field data collection pricing per seat environmental consulting",
+      "KoBoToolbox ODK Open Data Kit offline-first data collection free open source environmental site survey adoption",
+      "environmental consulting industry size revenue 2025 2026 number of firms IBISWorld ENR Top 200 Environmental Firms",
+      "EarthSoft EQuIS Locus Technologies mobile field data capture module environmental data management market share",
+      "environmental site assessment Phase I Phase II field data paper forms transcription error rate study",
+      "GoCanvas Device Magic FastField mobile forms ARR pricing per user field services vertical 2026",
+      "offline-first mobile sync conflict resolution CRDT field data collection app engineering cost time to build",
+      "environmental consultancy software procurement cycle length pilot to paid conversion rate SaaS",
+      "environmental field data chain of custody EPA state regulatory requirements digital records admissibility",
+      "field data collection software funding rounds seed pre-seed 2024 2025 2026 environmental geotechnical vertical SaaS",
+      "Fulcrum Spatial Networks customers environmental consulting case studies offline mobile ACV"
+    ],
+    "key_uncertainties": [
+      "Who is on the team. The deck names no founder, no role, and no background — at pre-seed with no revenue this is normally the primary basis for a decision, and here there is nothing to underwrite.",
+      "Whether the three pilots are paid, contracted, or informal, and whether any has a defined path to conversion. 'Pilot customer' with no revenue can mean anything from a signed paid trial to a friendly firm testing a build.",
+      "Whether the market is actually underserved. Offline-first field data capture is a mature category with entrenched incumbents (Survey123, Fulcrum) and a credible free option (ODK/KoBoToolbox); the deck asserts underservice without engaging any of them.",
+      "What the wedge is. 'Offline-first mobile app that syncs' describes the category baseline, not a differentiator, and the deck claims no technical moat.",
+      "Product maturity. Nothing indicates whether code exists, whether the pilots are running on shipped software or a prototype, or what platforms are supported.",
+      "Unit economics and price point. With no pricing, ACV, CAC, or margin figure, there is no way to test whether environmental consultancies can support a venture-scale outcome at plausible seat counts.",
+      "Whether TAM is large enough. Environmental consulting is a defined and countable industry; a bottom-up build from firm count x field staff x plausible seat price would settle slide 4 quickly, and the deck's failure to attempt it is itself a signal.",
+      "SAFE terms. No valuation cap, discount, or runway is stated, so the $750k cannot be assessed for dilution or for whether it funds a defined milestone.",
+      "Regulatory and data-integrity requirements for environmental site records, which may raise the compliance bar above a generic forms app — entirely unaddressed in the deck.",
+      "Whether 2026 on slide 1 is a founding year, a deck date, or a round date. Read here as the deck/round year by inference, not as a stated founding date."
+    ]
+  }
+}

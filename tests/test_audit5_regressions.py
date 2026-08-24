@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from deckscope.sources import (CITATION_SECTIONS, PROSE_CITE_RX, SourceRegistry,
                                audit_citations, audit_fragment,
-                               map_prose_citations, merge_registries, merge_into,
+                               map_prose_citations, merge_registries,
                                prose_citations, resolve_citations,
                                rewrite_citations)
 
@@ -303,17 +303,24 @@ def test_the_panel_counts_the_rounds_that_make_it_a_panel():
     revision, voting and the chair — precisely the interaction being paid for."""
     import subprocess
 
+    import tempfile
+
     root = Path(__file__).resolve().parent.parent
-    out = Path(os.environ.get("TMPDIR", "/tmp")) / "_panel_cost_test"
-    subprocess.run([sys.executable, "-m", "deckscope", "demo", "--panel",
-                    "--format", "json", "--out", str(out)],
-                   cwd=str(root), capture_output=True, text=True, check=True)
+    # `TMPDIR` is unset on Windows and "/tmp" resolves to an unwritable
+    # drive-relative "\\tmp", so this test failed on every Windows runner for a
+    # reason that had nothing to do with panels. `tempfile` knows where the
+    # temporary directory is on the platform it is running on.
     stats = {}
-    for path in out.glob("*.json"):
-        data = json.loads(path.read_text(encoding="utf-8"))
-        if "panelists" in (data.get("stats") or {}):
-            stats = data["stats"]
-            break
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "panel_cost"
+        subprocess.run([sys.executable, "-m", "deckscope", "demo", "--panel",
+                        "--format", "json", "--out", str(out)],
+                       cwd=str(root), capture_output=True, text=True, check=True)
+        for path in out.glob("*.json"):
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if "panelists" in (data.get("stats") or {}):
+                stats = data["stats"]
+                break
     usage = stats.get("token_usage") or {}
     assert usage.get("panel_rounds", {}).get("calls", 0) > 0, "no round calls counted"
     assert usage["input"] > usage["independent_analyses"]["input"], (
@@ -481,5 +488,7 @@ def test_benchmark_artifacts_carry_no_machine_paths():
 def test_benchmark_results_record_who_answered_and_what_that_limits():
     for run in _benchmark_runs():
         manifest = json.loads((run / "result.json").read_text(encoding="utf-8"))
-        assert manifest.get("answered_by"), f"{run.name} does not say who answered"
+        answered = (manifest.get("answered_by")
+                    or (manifest.get("generation") or {}).get("answered_by"))
+        assert answered, f"{run.name} does not say who answered"
         assert manifest.get("date") and manifest.get("provider")

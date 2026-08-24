@@ -23,9 +23,9 @@ jobs:
         python: ["3.9", "3.11", "3.13"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
         with:
           python-version: ${{ matrix.python }}
           cache: pip
@@ -62,8 +62,8 @@ jobs:
     name: Evaluation suite
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
         with:
           python-version: "3.11"
       - run: pip install -e ".[all]"
@@ -158,6 +158,15 @@ jobs:
           print("the panel is measurable, scored, and honestly costed")
           PY
 
+      # A benchmark whose prompts no longer map to the run is a claim, not
+      # evidence — and that is exactly what shipped last time, because the
+      # prompts were path-scrubbed after they were hashed. This replays the
+      # committed answers through the evaluator offline: no model is called, so
+      # it runs here, and a prompt that this build no longer generates is a
+      # cache miss that fails rather than a mismatch nobody notices.
+      - name: Committed benchmarks must still replay
+        run: python scripts/replay_benchmark.py --all
+
       - name: The suite must be reproducible
         run: |
           python -m deckscope eval --trials 2 --save stability.json --out ./_eval2 || true
@@ -175,8 +184,8 @@ jobs:
     name: Clean-wheel install (the gate must ship with the package)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
         with:
           python-version: "3.11"
       - run: pip install build
@@ -243,8 +252,8 @@ jobs:
     name: Core install only (no optional extras)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
         with:
           python-version: "3.11"
       # The core must work with nothing but PyYAML — a missing optional package
@@ -257,8 +266,8 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
         with:
           python-version: "3.11"
       - run: pip install ruff
@@ -268,8 +277,8 @@ jobs:
     name: MCP server handshake
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
         with:
           python-version: "3.11"
       - run: pip install -e ".[all]"

@@ -1,0 +1,260 @@
+{
+  "market_definition": {
+    "category": "Payroll and seasonal workforce compliance for agricultural employers in North America — a specialist layer sitting inside the much larger, mature general payroll market, and overlapping with farm-management ERP and with outsourced employer-of-record services.",
+    "boundary_notes": "The whole category (every North American farm employer that must run payroll) is not the servable slice. The provided research is explicit that software vendors built specifically for agricultural payroll together hold an estimated 6-9% of agricultural employers, and that the majority obtain payroll either bundled with a farm-management ERP or through a professional employer organisation [S1][S3]. The servable slice for a specialist vendor is therefore not 'farms that need payroll' but 'farms that will run a specialist evaluation at all' — and S1 reports that a specialist payroll vendor appears in only a minority of buying evaluations, with the common shortlist being the incumbent farm-management ERP against a PEO. That demand-side constraint, not the number of competitors, is the defining boundary of this market. No source in the provided material states a dollar size for either the whole category or the slice.",
+    "how_analysts_segment_it": [
+      "By delivery model: specialist ag payroll software vs. payroll module bundled into a farm-management ERP vs. outsourced PEO [S1][S2][S3]",
+      "By pay structure: hourly-only vs. piece-rate and mixed piece-rate/hourly pay runs — S2 notes ERP modules handle hourly and, in recent releases, piece-rate [S2]",
+      "By workforce type: domestic year-round crews vs. H-2A seasonal visa workers, where wage-rate compliance is the differentiating requirement [S2][S3]",
+      "By intake scale: employers running large seasonal intakes, which S3 identifies as both the highest-PEO-adoption group and the group with the most acute payroll complexity [S3]",
+      "The provided material does not segment the market by crop type, by farm revenue band, or by state/province — any segmentation along those lines would be inference, not reading"
+    ]
+  },
+  "sizing": {
+    "tam_estimates": [],
+    "consensus_view": "There is no consensus view available, because none of the four provided sources states a market size, a revenue figure, a seat count, an employer count, or a growth rate for agricultural payroll software in North America. The only quantity anywhere in the research material is a share figure: the two specialist vendors together hold an estimated 6-9% of agricultural employers [S1]. That is a penetration statistic, not a TAM, and it cannot be converted into one without an employer-count denominator and an ARPU figure, neither of which was provided. Any dollar TAM presented for this market would have to come from outside this bibliography.",
+    "cagr_range": null,
+    "sizing_confidence": "low",
+    "why_estimates_diverge": "Estimates cannot be said to diverge, because no estimates were supplied. The structural reason sizing is hard here, visible in the material itself, is that most agricultural payroll spend does not show up as agricultural-payroll-software revenue: it is embedded inside a bundled farm-management ERP licence or inside a PEO's per-employee service fee [S1][S2][S3]. A software-only TAM would therefore undercount the spend, and a total-spend TAM would overcount what is addressable by a software vendor. Sizing this category credibly requires deciding which of those two lines to draw, and the sources do not draw either."
+  },
+  "demand_signals": {
+    "tailwinds": [
+      "Agricultural pay is structurally harder than general payroll — mixed piece-rate and hourly pay, seasonality, and H-2A wage-rate requirements — and S2 identifies H-2A wage-rate coverage as the most frequently cited gap in the incumbent ERP payroll modules [S2]. A named, repeatedly-cited gap in the default option is the clearest genuine demand signal in this bibliography.",
+      "The employers with the most acute payroll complexity are identifiable and concentrated: S3 describes large seasonal intakes as the profile that experiences the most acute complexity [S3]. Complexity that clusters in a definable segment is easier to sell against than complexity spread thinly.",
+      "S2 notes ERP piece-rate support arrived only 'in recent releases' [S2], implying the requirement was unmet until recently — evidence the underlying need is real rather than vendor-manufactured."
+    ],
+    "headwinds": [
+      "Default adoption is the dominant acquisition path and it does not favour specialists. S2 states the ERP payroll module 'is adopted by default rather than selected' [S2] — meaning the specialist must dislodge an installed, already-paid-for option rather than win an open evaluation.",
+      "A specialist payroll vendor appears in only a minority of buying evaluations; the common shortlist is farm-management ERP vs. PEO [S1]. The binding constraint is being considered at all, not winning once considered.",
+      "The highest-complexity segment — large seasonal intakes — is also where PEO adoption is highest [S3]. The buyers who most need the product are the ones most likely to have already outsourced the entire problem, including the workers-comp and compliance liability that software cannot assume.",
+      "Specialist share is low in absolute terms: 6-9% of agricultural employers across both named specialist vendors combined [S1]. That is either a large greenfield or a demonstrated ceiling, and the material does not contain the time series that would tell them apart."
+    ],
+    "buyer_budget_reality": "Not established by the provided material. No source states pricing, per-employee-per-month rates, contract sizes, or budget-holder identity. What the sources do imply is that the buyer often has no separate payroll line item to spend: the ERP module is bundled into a system already operated [S2], and the PEO fee is a bundled service charge covering payroll, workers compensation and seasonal compliance together [S3]. A specialist therefore frequently sells into a budget that is already committed elsewhere, and must displace rather than expand it. This is inference from the delivery-model descriptions in S2 and S3, not a stated finding.",
+    "adoption_stage": "early-adopters"
+  },
+  "competitive_landscape": {
+    "incumbents": [
+      {
+        "name": "Farm-management ERP platforms (payroll modules)",
+        "position": "The default option and, on the evidence here, the true incumbent. Leading farm-management ERP platforms ship payroll modules handling hourly and, in recent releases, piece-rate pay; the module is bundled with a system the farm office already operates and 'is adopted by default rather than selected' [S2]. It appears on the common buying shortlist [S1]. Its acknowledged weak point is H-2A wage-rate coverage, which varies by platform and is the most frequently cited gap [S2]. Note this is the incumbent that would not appear on a specialist's competitive matrix as a payroll competitor at all, because it is sold as farm software.",
+        "funding_or_scale": null,
+        "threat_level": "high",
+        "url": "https://research.example.org/farm-erp-payroll",
+        "source_ids": ["S2", "S1"]
+      },
+      {
+        "name": "Professional employer organisations (PEOs) serving agriculture",
+        "position": "A service substitute rather than a software competitor, and the second half of the common shortlist [S1]. PEOs absorb payroll, workers compensation and seasonal compliance as a service, and adoption is highest among employers running large seasonal intakes — the same profile with the most acute payroll complexity [S3]. They compete not on features but on removing the function and its liability from the farm office entirely, which is a proposition software cannot match head-on.",
+        "funding_or_scale": null,
+        "threat_level": "high",
+        "url": "https://research.example.org/ag-peo",
+        "source_ids": ["S3", "S1"]
+      }
+    ],
+    "challengers": [
+      {
+        "name": "AgriPay",
+        "position": "One of two software vendors identified as built specifically for agricultural payroll; together with HarvestHR holds an estimated 6-9% of agricultural employers [S1]. No source states its individual share, product scope, H-2A capability, pricing or funding.",
+        "funding_or_scale": null,
+        "threat_level": "medium",
+        "url": "https://research.example.org/ag-payroll-landscape",
+        "source_ids": ["S1"]
+      },
+      {
+        "name": "HarvestHR",
+        "position": "The other software vendor identified as built specifically for agricultural payroll; combined share with AgriPay estimated at 6-9% of agricultural employers [S1]. No source states its individual share, product scope, H-2A capability, pricing or funding.",
+        "funding_or_scale": null,
+        "threat_level": "medium",
+        "url": "https://research.example.org/ag-payroll-landscape",
+        "source_ids": ["S1"]
+      }
+    ],
+    "adjacent_threats": [
+      "Farm-management ERP vendors extending payroll depth: piece-rate arrived in recent releases and H-2A wage-rate coverage is the named remaining gap [S2]. The adjacent player closing one specific, publicly-known compliance gap is the most concrete competitive risk in this material.",
+      "PEOs moving upmarket in seasonal compliance, since they already bundle it with workers compensation for exactly the large-intake employers who are the highest-value software prospects [S3].",
+      "General-purpose payroll and HCM providers are not named or assessed in any provided source. They are a plausible adjacent threat but this bibliography contains no evidence about their agricultural capability in either direction — see research gaps.",
+      "Farm labour contractors and H-2A agent/filing services are not covered by any provided source, so their overlap with this workflow could not be assessed."
+    ],
+    "concentration": "fragmented",
+    "differentiation_axes": [
+      "H-2A wage-rate compliance depth — the explicitly named gap in the default option [S2]",
+      "Mixed piece-rate and hourly handling within a single pay run, now partially matched by ERP modules [S2]",
+      "Seasonal intake and onboarding throughput, implied by the large-seasonal-intake profile S3 identifies as most complex [S3]",
+      "Distribution and default position — S2's 'adopted by default rather than selected' makes channel position, not capability, the axis that decides most deals [S2][S1]",
+      "Assumption of liability, which is the PEO's axis and is not available to a software vendor [S3]"
+    ],
+    "saturation": {
+      "funded_competitors_known": null,
+      "new_entrants_trend": "unknown",
+      "pricing_direction": "unknown",
+      "consolidation_activity": "None seen. No acquisition, merger, or investment in this category appears in any of the four provided sources. This is an absence of evidence, not evidence of absence — the bibliography contains no funding or M&A source at all.",
+      "lifecycle_stage": "emerging",
+      "room_for_a_new_entrant": "a defensible niche remains",
+      "why": "The competitor count is genuinely low: the material names exactly two vendors built for this market, AgriPay and HarvestHR, holding 6-9% of agricultural employers between them [S1]. That is the opposite of a played-out category on the supply side, and it is why 'fragmented' understates the situation — over 90% of employers are served by something other than a specialist. But the constraint on this market is not supply, it is the buying process. S1 finds a specialist payroll vendor appears in a minority of evaluations and the common shortlist is the ERP against a PEO; S2 finds the ERP module is adopted by default rather than selected [S1][S2]. So the niche that remains is defensible on capability — H-2A wage-rate coverage is a named, unclosed gap in the default option [S2] — but the entrant's problem is getting into the room, not winning in it. I could not verify funding status for either named vendor, whether new entrants are arriving, or whether pricing is compressing; none of the four sources addresses funding, entry rates, or price. 'Emerging' is my read from low specialist penetration plus recent-release feature movement in the adjacent ERP tier [S1][S2], and it is a low-confidence read."
+    }
+  },
+  "absorption_risk": {
+    "verdict": "contested",
+    "horizon": "2-3 years",
+    "confidence": "medium",
+    "likely_absorbers": [
+      {
+        "name": "Farm-management ERP platforms",
+        "why_them": "They already own the customer, the farm office already operates their system, and their payroll module is adopted by default rather than selected [S2]. They have already shipped the harder-looking half of the differentiator — piece-rate pay, added in recent releases — leaving H-2A wage-rate coverage as the single named gap, one that varies by platform rather than being universally absent [S2]. A finite, published compliance rule set is exactly the kind of gap a platform vendor closes cheaply once it decides to, because the rules are public and the distribution is already in place.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "Payroll modules already shipped across leading farm-management ERP platforms [S2]",
+          "Piece-rate pay support added 'in recent releases' — a documented, recent capability expansion into the specialist's territory [S2]",
+          "H-2A wage-rate coverage described as varying between platforms rather than absent everywhere, indicating at least some platforms already ship it [S2]",
+          "ERP presence on the common buying shortlist against PEOs [S1]"
+        ],
+        "source_ids": ["S2", "S1"]
+      },
+      {
+        "name": "Professional employer organisations serving agriculture",
+        "why_them": "Absorption here is by service model rather than by software bundling. PEOs already absorb payroll, workers compensation and seasonal compliance together, and their adoption is highest precisely among the large-seasonal-intake employers with the most acute payroll complexity [S3]. They do not need to build the software feature to remove the customer from the software market.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "Payroll, workers compensation and seasonal compliance already absorbed as a single service [S3]",
+          "Highest adoption concentrated in the large-seasonal-intake segment [S3]",
+          "Standing presence on the common buying shortlist [S1]"
+        ],
+        "source_ids": ["S3", "S1"]
+      }
+    ],
+    "precedents": [
+      {
+        "category": "Specialist payroll/HR point tools folded into the system of record that already held the employee data",
+        "absorbed_by": "The incumbent suite that owned the customer relationship",
+        "how_long_it_took": null,
+        "why_it_is_comparable": "The mechanism matches the one visible in S2 — a platform with default adoption progressively extending its bundled module into the specialist's differentiators. I am flagging explicitly that no source in this bibliography documents this precedent; the source_ids array is empty because the claim rests on no provided source. It is offered as a mechanism analogy only, and should be weighted accordingly. I am not citing consumer precedents such as antivirus or file sync here, because the mechanism differs: those were absorbed by an OS vendor with universal distribution, whereas agricultural payroll would be absorbed by a vertical ERP with partial distribution and a live compliance-liability question.",
+        "source_ids": []
+      }
+    ],
+    "what_would_prevent_it": [
+      "Regulatory depth as a genuine moat: H-2A wage-rate compliance is the most frequently cited gap in ERP modules and coverage varies between platforms [S2]. If the rules change often enough that maintaining them is a continuing cost rather than a one-time build, a generalist platform has a structural reason not to chase it.",
+      "Liability asymmetry: getting an H-2A wage rate wrong has consequences a general farm-software vendor may not want to own, which can keep a platform deliberately shallow in this area. This is inference from the compliance framing in S2 and S3, not a stated finding.",
+      "Workflow depth in seasonal intake: S3 identifies large seasonal intakes as the acute-complexity profile [S3]; if that workflow is deep enough, it is expensive to replicate as a side module. The provided material does not establish how deep it actually is.",
+      "The PEO alternative cuts both ways — it removes customers from the software market, but it also means the ERP vendor may see the hardest segment as already lost and not worth building for [S3]."
+    ],
+    "notes": "The honest read is 'contested', not 'feature'. The absorption signal here is real and documented rather than speculative — the platform that owns the customer by default has already moved into piece-rate and has one named remaining gap [S2] — which is stronger evidence than most categories offer. But it is one source, it does not name specific platforms or ship dates, and it does not say whether H-2A coverage is being actively built. Equally, absorption is not the only path to the same outcome: the PEO route removes the customer from the software market entirely without anyone building anything [S3]. The 2-3 year horizon is my inference from the pace implied by 'recent releases' in S2, not a stated timeline in any source."
+  },
+  "open_source_landscape": {
+    "applicable": false,
+    "projects": [],
+    "closest_project": null,
+    "capability_gap": "far behind",
+    "gap_trend": "stable",
+    "evidence_for_the_gap": "No open-source project, repository, foundation, or community effort relating to agricultural payroll, H-2A compliance, or piece-rate pay calculation appears anywhere in the four provided sources. I am not aware of a meaningful open-source dimension in payroll compliance generally, and rather than invent one I am marking this category not applicable. The structural reason is that the value here is a maintained, liability-bearing compliance rule set tied to changing wage regulations plus statutory filing obligations — the ongoing maintenance burden and the liability are what make it a poor fit for volunteer-maintained open source, not the difficulty of the code. The enum fields above are filled only because the schema requires values; they should be read as 'not assessed' given applicable is false.",
+    "what_commercial_still_provides": [],
+    "pricing_pressure": "none",
+    "company_relationship_to_oss": "unclear",
+    "strip_mining_risk": null,
+    "notes": "Open source is not the absorption vector to watch in this market. The equivalent free-and-good-enough threat is the bundled ERP payroll module, which is not free but is already paid for and adopted by default [S2] — it produces the same economic effect on a specialist's pricing power that a credible open-source alternative would, without any open-source project existing. That is where the pricing-pressure analysis belongs, and it is captured in the absorption section."
+  },
+  "adjacent_markets": [
+    {
+      "market": "Farm-management ERP",
+      "relationship": "converging with this one",
+      "size_note": null,
+      "why_it_matters": "This is the market that is moving into agricultural payroll rather than the reverse: leading platforms ship payroll modules, added piece-rate in recent releases, and are adopted by default [S2]. A specialist is pulled into competing with it whether or not it names it as a competitor.",
+      "source_ids": ["S2", "S1"]
+    },
+    {
+      "market": "PEO / outsourced employer services for agriculture",
+      "relationship": "substitute",
+      "size_note": null,
+      "why_it_matters": "A direct substitute that removes the buyer from the software market entirely, bundling payroll with workers compensation and seasonal compliance, and strongest in the highest-complexity segment [S3]. Every PEO win is a permanently unavailable software customer, and it is on the common shortlist [S1].",
+      "source_ids": ["S3", "S1"]
+    },
+    {
+      "market": "H-2A visa filing, seasonal compliance and workers-compensation services",
+      "relationship": "converging with this one",
+      "size_note": null,
+      "why_it_matters": "S3 shows these are already bundled with payroll by PEOs [S3], and S2 shows H-2A wage-rate compliance is the axis on which payroll products are judged [S2]. Whether a payroll vendor could expand into filing and compliance services, or be squeezed by someone who already does them, cannot be determined from this material — no source describes that market on its own terms.",
+      "source_ids": ["S3", "S2"]
+    },
+    {
+      "market": "General-purpose SMB payroll and HCM",
+      "relationship": "substitute",
+      "size_note": null,
+      "why_it_matters": "Structurally the largest adjacent market and the one that would matter most if general payroll platforms added agricultural pay logic. No provided source names a single general payroll vendor or assesses their agricultural capability, so I can neither support nor contradict any claim about them. Listed here as an unassessed boundary, not as a finding.",
+      "source_ids": []
+    }
+  ],
+  "economics": {
+    "typical_pricing": "Not stated in any provided source. No per-employee-per-month rate, seat price, contract value, or pricing model appears in S1-S4. The one structural observation available is that competing delivery models price differently in kind: the ERP module is bundled into an existing system rather than priced separately [S2], and the PEO charges for payroll, workers compensation and seasonal compliance as one service [S3] — which makes like-for-like price comparison difficult for buyers and, by extension, makes standalone software pricing hard to anchor. That is inference from the delivery-model descriptions, not a pricing finding.",
+    "typical_gross_margin": "Not stated in any provided source. No margin, cost-of-service, or unit-economics data appears in S1-S4.",
+    "typical_cac_payback": "Not stated in any provided source. Directionally, S1's finding that specialists appear in a minority of evaluations and S2's 'adopted by default' both point to expensive customer acquisition, since the specialist must first create an evaluation that would not otherwise occur [S1][S2]. That is a qualitative inference; no CAC or payback figure exists in the material.",
+    "capital_intensity": "low"
+  },
+  "funding_environment": {
+    "recent_rounds": [],
+    "valuation_norms": "Not established. No round, valuation, multiple, or comparable transaction for any agricultural payroll vendor appears in any provided source.",
+    "exit_comps": [],
+    "investor_appetite": null,
+    "notes": "The bibliography contains no funding source of any kind — no round announcements, no investor commentary, no M&A. I cannot say whether capital is flowing into this category, whether AgriPay or HarvestHR are venture-backed at all, or what agricultural vertical SaaS trades at. investor_appetite is set to null rather than guessed at, since none of the enum values would rest on evidence. This is a material gap for any stage that needs to assess a valuation."
+  },
+  "regulatory_and_structural": {
+    "factors": [
+      "H-2A wage-rate requirements are the defining compliance obligation in this category and the most frequently cited gap in incumbent ERP payroll modules [S2]. Regulation is simultaneously the entry barrier that creates the specialist opportunity and the maintenance burden that makes it a continuing cost.",
+      "Seasonal compliance is treated as a distinct obligation bundled with workers compensation by PEOs, indicating it is heavy enough that employers pay to outsource it [S3].",
+      "Piece-rate pay is a first-class requirement, not an edge case: ERP vendors added it in recent releases specifically for this market [S2].",
+      "Structural: default adoption via bundled ERP modules means competitive outcomes are decided partly by channel position rather than by regulatory capability [S2].",
+      "Structural: the highest-complexity employers concentrate in the PEO channel, so the software-addressable population is skewed away from the hardest and likely highest-value problems [S3].",
+      "Evidentiary/structural finding relevant to how this market is assessed: no independent source publishes head-to-head win rates for agricultural payroll vendors, and vendor-reported win rates in adjacent categories have been found to describe only the deals a vendor was invited into — excluding decisions where no specialist was shortlisted at all [S4]. Given that specialists appear in a minority of evaluations [S1], any win-rate figure in this category is measured over a small and self-selected subset of the decisions actually being made. This is a fact about the market's information environment, stated here because it conditions every competitive claim anyone makes about it.",
+      "Multi-jurisdiction payroll obligations across states and provinces are asserted by the deck (C1) but are not addressed by any provided source; I could not verify that dimension."
+    ],
+    "risk_level": "high"
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "title": "Who actually sells payroll to agricultural employers",
+      "url": "https://research.example.org/ag-payroll-landscape",
+      "date": "2026-03",
+      "reliability": "secondary",
+      "what_it_supported": "The two named specialist vendors (AgriPay, HarvestHR); their combined estimated 6-9% share of agricultural employers; the finding that the majority of farm employers get payroll via a farm-management ERP bundle or a PEO; and that a specialist payroll vendor appears in a minority of evaluations, with the common shortlist being ERP vs. PEO. Reliability note: an aggregated research summary with no named primary survey, sample size, or methodology behind the '6-9%' or the 'minority of evaluations' claim — treat both as directional, not measured. It is the single most load-bearing source in this analysis, which is itself a weakness."
+    },
+    {
+      "id": "S2",
+      "title": "Farm-management ERP payroll modules",
+      "url": "https://research.example.org/farm-erp-payroll",
+      "date": "2026-03",
+      "reliability": "secondary",
+      "what_it_supported": "That leading farm-management ERP platforms ship payroll modules covering hourly and, in recent releases, piece-rate; that H-2A wage-rate coverage varies and is the most frequently cited gap; and that the module is adopted by default rather than selected. This is the primary evidence for both the incumbent read and the absorption read. Reliability note: no ERP platform is named, no release is dated, and 'most frequently cited' has no cited source behind it."
+    },
+    {
+      "id": "S3",
+      "title": "PEOs in agriculture",
+      "url": "https://research.example.org/ag-peo",
+      "date": "2026-03",
+      "reliability": "secondary",
+      "what_it_supported": "That PEOs serving agriculture absorb payroll, workers compensation and seasonal compliance as a service, and that adoption is highest among large-seasonal-intake employers — the same profile with the most acute payroll complexity. Supports the substitute-threat and segment-overlap findings. Reliability note: no PEO is named and no adoption rate is quantified."
+    },
+    {
+      "id": "S4",
+      "title": "No published win-rate data exists for this category",
+      "url": "https://research.example.org/ag-payroll-winrates",
+      "date": "2026-03",
+      "reliability": "secondary",
+      "what_it_supported": "That no independent source publishes head-to-head win rates for agricultural payroll vendors, and that vendor-reported win rates in adjacent categories describe only deals the vendor was invited into. Supports the information-environment finding in regulatory_and_structural and the research gap on competitive performance data. This is a negative finding and is useful precisely as such."
+    }
+  ],
+  "research_gaps": [
+    "No market size, revenue figure, employer count, or growth rate for North American agricultural payroll software exists anywhere in the provided material. sizing_confidence is set to low for that reason; a dollar TAM cannot be produced from this bibliography without inventing one.",
+    "No funding data on AgriPay or HarvestHR — whether either is venture-backed, at what stage, or at what valuation. This makes 'funded_competitors_known' unanswerable and is why it is null rather than 2: two vendors were found, but neither was verified as funded.",
+    "No entry-rate data: whether new agricultural payroll vendors are arriving, and at what pace. new_entrants_trend is unknown as a result, and the saturation read is correspondingly soft.",
+    "No pricing data of any kind — no rate cards, no per-employee pricing, no evidence of discounting or compression. pricing_direction is unknown.",
+    "No M&A or consolidation record for this category.",
+    "No named farm-management ERP platform, so I cannot assess which specific incumbent already ships H-2A wage-rate coverage and which does not — the crux of the absorption question is left unresolved by S2's 'coverage varies'.",
+    "No assessment of general-purpose payroll and HCM providers' agricultural capability. The deck's competition claim C2 (that general payroll software cannot express agricultural payroll) is neither supported nor contradicted by any source given to me; it is simply unaddressed.",
+    "No source on multi-jurisdiction / multi-state payroll complexity in agriculture (deck claim C1), on seasonal onboarding throughput at scale (deck claims C4 and the '400-person intake week'), or on specialty crop growers as a distinct segment (deck claim C13's expansion target).",
+    "No independent data on customer counts, ARR, retention or growth benchmarks for vendors in this category, so no market-level baseline exists against which traction figures could be situated.",
+    "All four sources are aggregated research summaries from a single domain (research.example.org) with no primary attribution, no methodology, and no named underlying surveys. There is no regulator filing, no public-company disclosure, and no primary source of any kind in this bibliography. The reliability ceiling for this entire analysis is therefore 'secondary', and the 6-9% share figure in particular should not be treated as measured."
+  ],
+  "injection_findings": [
+    "None. All four sources within the research-material markers read as factual reporting about the category. None addressed me directly, attempted to redefine my role or output schema, dictated a verdict or score, asked me to conceal anything, or imitated a system message. No [REDACTED BY DECKSCOPE] markers were present in the supplied material.",
+    "Worth noting as an observation rather than an injection: S4 is a source whose content anticipates and undercuts a specific claim type (vendor-reported win rates). I treated it as ordinary evidence about the category's information environment and weighted it as a secondary source like the others, not as an instruction about what to conclude regarding any particular vendor's figures."
+  ]
+}

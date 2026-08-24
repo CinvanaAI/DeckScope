@@ -1,0 +1,441 @@
+{
+  "headline": "Honest deck, real seed-stage traction, but the wedge is a $300-400M slice that both heavily funded category leaders are already moving into [S1][S2] — and there is no team slide, no product slide, and no price behind a 'compete on price' strategy.",
+  "verdict": {
+    "call": "LEAN NO",
+    "confidence": "medium",
+    "confidence_rationale": "Two different evidence bases with two different confidence levels. The deck-side facts driving this call are certain: the absence of a team slide, a product slide, pricing, and use of funds is verifiable absence, and the deck itself concedes on Slide 6 that its differentiation is 'defensible but not permanent.' The market-side facts are weak: all three sources are unattributed pages on one domain, dated 2026-03, retrieved by a single query, so [S1], [S2] and [S3] are one research pass rather than triangulation. I hold medium rather than high because the most load-bearing market fact against the company — that both leaders are already extending down-market [S2] — rests on a single unattributed sentence, and medium rather than low because the deck's own admissions point the same direction without needing that source at all."
+  },
+  "scorecard": [
+    {
+      "dimension": "Market size & timing",
+      "score": 5,
+      "weight": 5,
+      "rationale": "Category growth of 20-24% annually [S1] is genuinely attractive and the demand trigger is externally imposed, which refreshes the buyer cohort continuously. But the slice this company has chosen is 'plausibly $300-400M' [S1] — the source's own hedge — and a company confined to it has a low ceiling before it must expand segment or geography. Timing is the weaker half: the moment the leaders decided to extend down-market [S2] is the moment this segment stopped being an unwatched wedge. The deck's own $2.8B and $340M figures sit inside [S1]'s bands, so the sizing is not wrong; it is simply small, hedged, and uncorroborated.",
+      "evidence": [
+        "Compliance automation at $2.6-3.0B for 2025, growth 20-24% annually [S1]",
+        "Series A-to-Series C North American slice 'plausibly $300-400M' [S1]",
+        "Both leaders 'have been extending down-market toward earlier-stage companies' [S2]",
+        "Geography of the $2.6-3.0B headline figure is not stated [S1], so the headline-to-slice relationship cannot be checked"
+      ],
+      "source_ids": ["S1", "S2"]
+    },
+    {
+      "dimension": "Competitive position",
+      "score": 3,
+      "weight": 5,
+      "rationale": "The company's entire positioning is price plus depth in the earliest-stage segment. [S2] says the two heavily funded leaders are moving into exactly that segment now. Worse for the price half: no source in the material describes price levels or price competition in this category at all, so there is no evidence that price is an axis buyers actually decide on — the deck asserts an axis the market data cannot confirm. The deck names Vanta and Drata candidly but omits Secureframe, Sprinto, Scrut and Thoropass, which the extraction flags as precisely the vendors already occupying the low-price startup position; note that no source I was given names them either, so I treat their existence as an extraction observation, not a market finding.",
+      "evidence": [
+        "Vanta and Drata are 'the two clear leaders,' 'both heavily funded,' both extending down-market [S2]",
+        "Market analysis found no source describing price levels or price competition in this category",
+        "Known funded competitor count of 2 is a floor set by the research, not a census [S2]",
+        "Deck concedes the leaders 'dominate this category and are both well funded' (Slide 4)"
+      ],
+      "source_ids": ["S2"]
+    },
+    {
+      "dimension": "Product & moat",
+      "score": 2,
+      "weight": 4,
+      "rationale": "Seven slides and no description of what the software does — no architecture, no workflow, no screenshot, no demo. 'Depth' is never operationalized, and Slide 6 pre-concedes it is 'not permanent.' The one real capability boundary the market identifies — auditor-ready evidence packages versus raw control monitoring [S2] — is a category moat, not a company moat: it protects commercial vendors against open source, and the leaders already have it [S2]. Auditor-readiness also depends on what audit firms accept rather than on code, and no source in the material discusses audit firms at all, so even the boundary's durability is unexamined.",
+      "evidence": [
+        "Open-source alternatives exist for control monitoring but 'do not produce auditor-ready evidence packages' [S2]",
+        "The leaders already provide auditor-ready output [S2], so the boundary does not differentiate this company from them",
+        "Deck states no patent, proprietary data, or technical barrier; differentiator is the word 'depth'",
+        "Deck: 'defensible but not permanent' (Slide 6)"
+      ],
+      "source_ids": ["S2"]
+    },
+    {
+      "dimension": "Business model",
+      "score": 4,
+      "weight": 3,
+      "rationale": "CAC payback of 14 months sits inside the 12-18 month normal band [S3] — it is unremarkable rather than good, and it is the only economics figure in the deck with any market reference point. Everything else is missing: no price, no gross margin, no CAC or LTV dollars, no logo churn. ACV of roughly $12.7k is my arithmetic from $520k over 41 customers, not a stated figure. A company whose stated strategy is to compete on price and which discloses no price is asking the committee to underwrite a pricing strategy it cannot see, in a category where no source I have gives a single price point.",
+      "evidence": [
+        "'CAC payback of 12-18 months is within the normal band' [S3]; deck claims 14 months",
+        "No pricing, ACV, or discounting data exists anywhere in [S1], [S2] or [S3]",
+        "Inferred, not read: $520k ARR / 41 customers implies roughly $12.7k average ARR per customer",
+        "Deck states no gross margin and no CAC or LTV dollar figures"
+      ],
+      "source_ids": ["S3"]
+    },
+    {
+      "dimension": "Traction vs. stage",
+      "score": 6,
+      "weight": 5,
+      "rationale": "The headline numbers are respectable for seed and I do not penalize a seed deck for thin revenue. What I penalize is the one metric that reads worse against the market than against nothing: 104% net revenue retention. [S3] says NRR above 100% is typical in this category because customers add frameworks over time — meaning expansion is structural and available to everyone. Landing at 104% in a category with built-in expansion implies meaningful gross churn or downgrade underneath, which is exactly the post-audit retention risk nobody in the deck addresses. Add that 8% MoM is disclosed for six months only on a base where a single deal moves the rate, and that all five metrics are founder-reported with no stated ARR, customer, or NRR-cohort definitions.",
+      "evidence": [
+        "'Net revenue retention above 100% is typical for compliance vendors serving growing startups, as customers add frameworks over time' [S3]; deck claims 104%",
+        "$520k ARR across 41 customers, 8% MoM for six months (deck, Slide 5)",
+        "8% MoM over six months implies ARR of roughly $328k six months ago — my arithmetic, not a deck figure",
+        "No definitions given for ARR basis, customer counting, or NRR cohort window"
+      ],
+      "source_ids": ["S3"]
+    },
+    {
+      "dimension": "Team",
+      "score": 1,
+      "weight": 5,
+      "rationale": "There is no team information anywhere in the deck — no founders, no backgrounds, no headcount, no advisors. At seed, the team is the primary asset being underwritten, and this is a total absence rather than a weak slide. I score 1 to reflect zero evidence, not a judgment that the team is bad; the honest statement is that execution capability cannot be assessed at all from this material. No source bears on this.",
+      "evidence": [
+        "Deck extraction: founders [], headcount null, notable_advisors []",
+        "'Team — no founders, backgrounds, headcount, or advisors anywhere in the deck' (deck_quality.missing_sections)"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Ask & plan",
+      "score": 4,
+      "weight": 3,
+      "rationale": "$4M at $20M post implies roughly 38x current ARR and 20% dilution (my arithmetic). No source in the material gives any valuation, multiple, or round size for this category, so I have no market basis to call the terms rich or fair — that is a research gap, not a pass. No use of funds and no runway figure accompany the ask. One point in the plan's favor that the deck does not make for itself: $520k to $2M in 24 months requires about 5.8% MoM compounded, below the 8% MoM claimed, so the milestone is either deliberately conservative or an implicit admission that growth decelerates.",
+      "evidence": [
+        "$4M at $20M post; $20M / $520k ARR is roughly 38x — my arithmetic, not a deck or source figure",
+        "$520k to $2M over 24 months requires roughly 5.8% MoM, versus 8% MoM claimed — my arithmetic",
+        "'No valuation, multiple, or round size for any company in this category appears in [S1], [S2] or [S3]'",
+        "Use of funds is empty and no runway is claimed"
+      ],
+      "source_ids": []
+    }
+  ],
+  "claim_audit": [
+    {
+      "id": "C1",
+      "claim": "Startups reaching Series A need SOC2; collecting evidence takes an engineer roughly six weeks of part-time work spread over a quarter.",
+      "market_evidence": "No source I was given measures evidence-collection effort, engineer hours, or whether Series A startups 'need' SOC 2. The closest support is structural: [S2] frames auditor-ready evidence packages as the deliverable and [S1] sizes a distinct Series A-to-Series C segment, both of which are consistent with a real, stage-triggered buying need — but neither states that the need exists or how much labor it consumes.",
+      "assessment": "unverifiable",
+      "delta": "The directional premise (a stage-triggered compliance need exists in this segment) is consistent with [S1] and [S2]. The specific quantity — six weeks of part-time engineering — has no counterpart anywhere in the material, and the deck gives no source, sample, or method. There is no delta to measure because there is no market figure to measure against.",
+      "so_what": "This is the pain quantification the whole value proposition rests on and it is currently an assertion. It is also cheaply testable: ten reference calls would settle it. Failure mode here is 'unverifiable with available evidence,' not 'wrong.'",
+      "source_ids": ["S1", "S2"],
+      "sources": ["https://research.example.org/compliance-sizing", "https://research.example.org/compliance-incumbents"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C2",
+      "claim": "The compliance automation market was $2.8B in 2025.",
+      "market_evidence": "[S1] puts compliance automation at $2.6-3.0B for 2025, attributed to unnamed 'independent estimates' with no methodology and no stated geography.",
+      "assessment": "supported",
+      "delta": "Essentially zero. $2.8B is the exact midpoint of [S1]'s $2.6-3.0B band. But 'supported' here means 'matches the only source I have,' and that source is one unattributed page. The deck and the research also share the same weakness — both attribute to 'independent analyst estimates' and neither names an analyst.",
+      "so_what": "The figure is fine and it barely matters. The deck itself treats it as context and moves to the $340M slice, which is correct instinct. What should give the committee pause is that the deck's number matches the research so precisely while both trace to the same kind of unattributed source — this is agreement, not corroboration.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/compliance-sizing"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C3",
+      "claim": "The compliance automation market is growing at roughly 22% a year, according to independent analyst estimates.",
+      "market_evidence": "[S1] gives growth of 20-24% annually, with no time horizon and no statement of whether the figure is historical or forecast.",
+      "assessment": "supported",
+      "delta": "None — 22% is the midpoint of [S1]'s 20-24%. Neither the deck nor [S1] names the analyst, so 'according to independent analyst estimates' is an unfollowable chain of evidence in both documents.",
+      "so_what": "A category compounding above 20% is the strongest single argument for this company existing at all. It is also the argument that makes the segment attractive to the leaders [S2] — growth cuts both ways here.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/compliance-sizing"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C4",
+      "claim": "The serviceable slice — startups between Series A and Series C in North America — is closer to $340M.",
+      "market_evidence": "[S1] describes the identical segment as 'a small fraction of that, plausibly $300-400M'. The word 'plausibly' is the source's own hedge. [S1] does not date the slice figure and does not state the geography of the headline figure it is a fraction of.",
+      "assessment": "partially-supported",
+      "delta": "Numerically nil — $340M sits inside $300-400M. Methodologically the gap is total: the deck offers no derivation and [S1] offers no methodology, so a figure the deck calls 'closer to $340M' and a source calls 'plausibly $300-400M' are the same order-of-magnitude judgement wearing two different degrees of confidence. Neither is a bottom-up build from startup counts times a defensible ACV.",
+      "so_what": "This is the most load-bearing number in the deck and the least supported. It is also small: a company confined to a $300-400M serviceable market [S1] that is simultaneously being entered by two heavily funded leaders [S2] has to take a large share of a small pool to return a fund. The specific thing that would have to be true: that Alder can hold 10%+ of this slice against Vanta and Drata, or that the slice is a beachhead into something larger the deck never names.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/compliance-sizing"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C5",
+      "claim": "Vanta and Drata dominate this category and are both well funded.",
+      "market_evidence": "[S2] states Vanta and Drata are 'the two clear leaders in compliance automation, both heavily funded.' No market share, revenue, customer count, round size, or valuation appears in any source.",
+      "assessment": "supported",
+      "delta": "The deck's characterization matches [S2] almost word for word. Neither document quantifies 'dominate' or 'well funded,' so the claim is directionally confirmed and numerically empty on both sides.",
+      "so_what": "Credit where due: the deck names its two hardest competitors on its own competition slide and concedes they lead. That candor is a genuine positive signal about the founders and it is rare. It does not, however, change the competitive arithmetic.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/compliance-incumbents"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C6",
+      "claim": "We compete on price and on depth for a narrower customer profile rather than on breadth.",
+      "market_evidence": "[S2] establishes that stage-fit is contested ground — the leaders are 'extending down-market toward earlier-stage companies' — which makes the narrow-profile half of the claim a description of a fight rather than of an empty niche. On the price half, no source in [S1], [S2] or [S3] states pricing, contract values, discounting, or price competition in this category. There is no market evidence that price is a dimension buyers decide on.",
+      "assessment": "unverifiable",
+      "delta": "The deck asserts a two-axis strategy; the market data confirms one axis is contested and is silent on whether the other axis exists. The deck also never states a price, so even the internal version of the claim is untestable — there is no number to compare to anything.",
+      "so_what": "Competing on price with no disclosed price, against two heavily funded competitors [S2] who can subsidize a down-market tier, is the strategic core of this investment and the least evidenced part of it. If price is the wedge, the committee needs the price list before the first meeting, not after.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/compliance-incumbents"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C7",
+      "claim": "Open-source tooling exists but does not produce auditor-ready evidence.",
+      "market_evidence": "[S2] states, in one sentence: 'Open-source alternatives exist for control monitoring but do not produce auditor-ready evidence packages.' No project is named, no repository, no adoption data, no date on when this was last true.",
+      "assessment": "supported",
+      "delta": "None — this is the deck restating [S2] nearly verbatim. The support is real but paper-thin: a single unattributed assertion with no named project behind it.",
+      "so_what": "This is true and it is the wrong thing to be reassured by. The gap protects the whole commercial category against free tooling; it does not protect Alder against Vanta and Drata, who already produce auditor-ready output [S2]. The deck presents a category-level moat as if it were a company-level one.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/compliance-incumbents"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C8",
+      "claim": "$520k ARR across 41 customers.",
+      "market_evidence": "No source in the material contains company-level revenue or customer data for any vendor in this category, including the leaders. There is nothing to check this against.",
+      "assessment": "unverifiable",
+      "delta": "Not measurable against market data. Internally it implies roughly $12.7k average ARR per customer — my arithmetic, not a deck figure — which is consistent with [S3]'s 12-18 month CAC payback band implying contracts large enough to support a real sales motion but not enterprise-sized.",
+      "so_what": "This is 'unverifiable with available evidence,' not 'unproven in the deck' — a diligence pull of the billing system settles it in a day. The live risks are definitional (what counts as ARR, what counts as a customer) and concentration: 41 accounts is few enough that two or three outsized logos could carry the number.",
+      "source_ids": ["S3"],
+      "sources": ["https://research.example.org/compliance-retention"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C9",
+      "claim": "8% MoM growth for six months.",
+      "market_evidence": "No source gives growth benchmarks for individual companies; [S1]'s 20-24% is category growth, not company growth. Company-level 8% MoM compounds to roughly 152% annually, which is far above category growth and would therefore represent share gain — but nothing in the material supports or contradicts it.",
+      "assessment": "unverifiable",
+      "delta": "No comparable market figure exists. The internal delta worth noting: six months at 8% MoM implies a base of roughly $328k half a year ago (my arithmetic), so this is compounding on a small base where individual deals move the rate materially, and the deck discloses no window longer than six months.",
+      "so_what": "Real if true and the single strongest thing in the deck. But durability is unestablished, and the deck's own 24-month milestone implies about 5.8% MoM — slower than the rate it is advertising, which the deck never reconciles.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/compliance-sizing"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C10",
+      "claim": "Net revenue retention 104%.",
+      "market_evidence": "[S3]: 'Net revenue retention above 100% is typical for compliance vendors serving growing startups, as customers add frameworks over time.' No sample size, no cohort definition, no distribution — so 'typical' names a floor, not a median.",
+      "assessment": "partially-supported",
+      "delta": "This is the most informative delta in the audit and it runs against the company. The deck presents 104% as an achievement; [S3] says above 100% is the category baseline because expansion is structural. Alder is four points above a floor that the category's own mechanics hand to every vendor. In a business where customers add frameworks over time [S3], net 104% implies gross churn or downgrade eating nearly all of the expansion.",
+      "so_what": "This is the number that most changes my read. It is consistent with the untested category-specific risk that customers downgrade or leave after passing their first SOC 2 audit — the deck never raises it and no source measures it. If mature-cohort NRR is materially higher and 104% is dragged down by a definitional artifact, that materially improves the case; if not, the growth engine is a leaky bucket and the 4x ARR plan gets much harder.",
+      "source_ids": ["S3"],
+      "sources": ["https://research.example.org/compliance-retention"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C11",
+      "claim": "CAC payback 14 months.",
+      "market_evidence": "[S3]: 'CAC payback of 12-18 months is within the normal band.'",
+      "assessment": "supported",
+      "delta": "14 months sits in the lower half of the 12-18 month band [S3] — normal, slightly better than mid-band. The deck gives no CAC or LTV dollar figures and no derivation, so the input to the calculation is invisible even though the output is checkable.",
+      "so_what": "This is the deck's best-corroborated metric and it establishes only that the go-to-market is ordinary. Note the tension with C6: a company competing on price should, other things equal, show shorter payback than the band's midpoint, not a figure sitting inside it. Either the price advantage is not translating into cheaper acquisition, or it is not much of a price advantage.",
+      "source_ids": ["S3"],
+      "sources": ["https://research.example.org/compliance-retention"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C12",
+      "claim": "Vanta could move down-market at any time; our differentiation is depth, which is defensible but not permanent.",
+      "market_evidence": "[S2] states that Vanta and Drata 'have been extending down-market toward earlier-stage companies' — present perfect, an already-underway motion, and both leaders rather than one. The market analysis calls this 'the strongest absorption signal in the entire research set,' while noting that no shipped feature, pricing tier, acquisition, or job posting corroborates or dates it.",
+      "assessment": "partially-supported",
+      "delta": "Tense and count. The deck frames the down-market move as a conditional future event by one competitor ('could move at any time'); [S2] reports it as a current motion by both. That is the difference between a risk slide and a description of present conditions, and it is the most consequential gap between deck and market in this analysis.",
+      "so_what": "The deck's honesty here is real but it is honesty about the wrong timeline. If [S2] is right, the encroachment has started, which compresses the window in which 'depth' has to become something a range-extending competitor cannot match. The deck's own words — 'not permanent' — are the correct read; the deck simply has not priced in that the clock is already running. Weight this against C5, where the deck's candor earned credit: the candor is genuine but it consistently understates immediacy.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/compliance-incumbents"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C13",
+      "claim": "Raising $4M at $20M post to reach $2M ARR in 24 months.",
+      "market_evidence": "No source in [S1], [S2] or [S3] contains a valuation, revenue multiple, round size, or exit comparable for this category. The market analysis states plainly that it has 'no basis for evaluating any particular company's proposed terms against market norms.'",
+      "assessment": "unverifiable",
+      "delta": "Cannot be measured against the market at all. My own arithmetic: $20M post on $520k ARR is roughly 38x, and $520k to $2M over 24 months requires about 5.8% MoM — less than the 8% MoM claimed. So the plan is internally undemanding relative to current stated growth, while the price is unbenchmarkable.",
+      "so_what": "A milestone that requires slower growth than the company already claims is either sandbagging or an unstated deceleration assumption, and the deck never says which. With no use of funds and no runway figure, the committee cannot tell what the $4M buys or how long it lasts — which is the ordinary minimum for a seed check.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    }
+  ],
+  "alignment": {
+    "where_deck_matches_market": [
+      "Market size: $2.8B for 2025 is the exact midpoint of [S1]'s $2.6-3.0B band.",
+      "Growth: 'roughly 22% a year' is the midpoint of [S1]'s 20-24% annually.",
+      "Serviceable slice: 'closer to $340M' sits inside [S1]'s 'plausibly $300-400M' for the same segment definition (Series A to Series C, North America).",
+      "Competitive structure: Vanta and Drata as dominant and well funded matches [S2]'s 'two clear leaders... both heavily funded' almost verbatim.",
+      "Open source: 'exists but does not produce auditor-ready evidence' restates [S2]'s sentence nearly word for word.",
+      "CAC payback: 14 months sits inside [S3]'s 12-18 month normal band.",
+      "Candor about the moat: the deck's 'defensible but not permanent' is a more honest self-assessment than most decks contain, and it aligns with [S2]'s picture of a segment the leaders are moving into.",
+      "Important qualifier on all of the above: the market analysis flagged that the deck's claims track [S1], [S2] and [S3] unusually closely, and that all three sources come from one domain via one query. This is agreement with a single research pass, not independent corroboration, and the committee should not read the tightness of fit as validation."
+    ],
+    "where_deck_overstates": [
+      "Immediacy of the competitive threat is understated, which is the same thing as overstating safety: Slide 6 says Vanta 'could move down-market at any time,' while [S2] says both leaders 'have been extending down-market toward earlier-stage companies' — already happening, and both of them.",
+      "104% NRR is presented as a traction achievement; [S3] establishes that above-100% NRR is typical in this category because customers add frameworks over time, so 104% is four points above a structural floor rather than evidence of unusual account health.",
+      "'Auditor-ready evidence' is positioned as differentiation from open source, but [S2] confirms the leaders already produce it — the deck presents a category boundary as a company advantage.",
+      "'Compete on price' is asserted with no price stated and with no source in [S1]-[S3] establishing that price is an axis buyers in this category decide on.",
+      "'Depth for a narrower customer profile' is asserted but never operationalized anywhere in seven slides, and the deck contains no product description against which depth could be judged.",
+      "Product maturity is characterized as 'scaling' while the deck contains no product slide, no architecture, no demo, and no customer evidence of any kind."
+    ],
+    "where_deck_understates": [
+      "The 24-month milestone is materially less aggressive than the deck's own growth claim: $520k to $2M needs roughly 5.8% MoM versus the 8% MoM claimed (my arithmetic). Either the plan is conservative — which is unusual and worth credit — or the company privately expects deceleration and has not said so.",
+      "The strength of the auditor-ready boundary as protection against commoditisation from below [S2] is real and the deck spends only a clause on it; it is the one structural argument for why this category resists being given away free.",
+      "The category's built-in expansion motion — customers adding frameworks over time [S3] — is a genuine and evidenced growth vector that the deck never articulates as a strategy, even though it is the mechanism behind its own NRR figure.",
+      "Demand durability: because the deliverable is set by third-party auditors rather than buyer preference, demand in this category is externally imposed and structurally sticky. The deck asserts the need on Slide 2 without making this argument."
+    ],
+    "blind_spots": [
+      {
+        "what": "Both leaders are already extending down-market toward earlier-stage companies — not one, and not hypothetically [S2].",
+        "why_it_matters": "The deck's risk slide anticipates a single future move by Vanta. The market says the motion is underway and simultaneous across both heavily funded leaders. Two well-capitalized incumbents entering the same segment at once is a different competitive picture from one, and it shortens the runway in which 'depth' has to become durable.",
+        "source_ids": ["S2"]
+      },
+      {
+        "what": "Above-100% net revenue retention is a category norm produced by framework expansion, not a company achievement [S3].",
+        "why_it_matters": "It reframes 104% from a strength into a question about gross churn. In a category where expansion is structural, a net figure this close to the floor implies losses underneath it that the deck never discloses, and it bears directly on the credibility of the 4x ARR plan.",
+        "source_ids": ["S3"]
+      },
+      {
+        "what": "CAC payback of 12-18 months is simply the normal band [S3].",
+        "why_it_matters": "The deck presents 14 months as a metric worth putting on the traction slide. It establishes ordinariness, and it sits awkwardly beside a price-leadership claim that should produce cheaper acquisition than the band's middle.",
+        "source_ids": ["S3"]
+      },
+      {
+        "what": "Audit and accounting firms — the parties who define what counts as 'auditor-ready' and who own the relationship for the deliverable the buyer actually needs — appear nowhere in the deck and nowhere in the research.",
+        "why_it_matters": "[S2] makes auditor-readiness the category's defining capability, which means the product specification is set by a third-party profession the vendor does not control. The deck builds its differentiation on that word while describing no audit-firm relationship at all, and the research cannot tell us whether audit firms are moving into software themselves. This is the highest-value unknown in the entire analysis.",
+        "source_ids": ["S2"]
+      },
+      {
+        "what": "Security, identity and IT-management platforms already hold the underlying control data that a compliance product collects.",
+        "why_it_matters": "Whoever owns the monitoring layer sits upstream of the evidence layer and can move downstream more easily than the reverse [S2]. This is the genuine platform-absorption risk, as distinct from competitive encroachment by Vanta and Drata, and neither the deck nor the research examines it.",
+        "source_ids": ["S2"]
+      },
+      {
+        "what": "Nothing anywhere establishes whether the incoming buyer cohort is growing or shrinking — no startup formation rates, no venture funding volume, no deal-cycle or budget data.",
+        "why_it_matters": "The entire thesis is a continuously refreshed cohort of companies arriving at Series A needing SOC 2. If Series A formation contracts, the $300-400M slice [S1] contracts with it, and no evidence in this material speaks to the direction.",
+        "source_ids": ["S1"]
+      },
+      {
+        "what": "The geography of the $2.6-3.0B headline figure is not stated [S1].",
+        "why_it_matters": "The deck presents $2.8B and $340M as though the second is a slice of the first. Because the base's geography is unknown, that relationship cannot be computed or checked for consistency — so the one piece of internal arithmetic the market section appears to offer is not actually verifiable.",
+        "source_ids": ["S1"]
+      },
+      {
+        "what": "The known funded-competitor count of two is a floor set by thin research, not a census [S2].",
+        "why_it_matters": "A $2.6-3.0B category growing at 20-24% [S1] almost certainly contains more funded players than the two named. Both the deck's competition slide and my market picture are therefore incomplete in the same direction, and the extraction separately flags Secureframe, Sprinto, Scrut and Thoropass as omitted — the vendors occupying precisely the low-price startup position Alder claims."
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Vanta and Drata's already-underway down-market extension [S2] covers the segment adequately before Alder's 'depth' becomes something they cannot match.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask for win/loss records against Vanta and Drata over the last two quarters, specifically deals lost after the incumbent offered an early-stage tier. Ask what, concretely, the product does that a range-extension product cannot — in a demo, not a word. The specific thing that would have to be true: that a Series A buyer will choose a specialist over a name they already know, at a price the incumbent can match."
+    },
+    {
+      "risk": "104% NRR reflects real gross churn or post-audit downgrade masked by structural framework expansion [S3], making the $2M ARR bridge dependent on ever-increasing new logo acquisition.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Pull cohort-level gross retention, logo churn, and expansion separately, split by whether the customer has completed a first SOC 2 audit. Get the NRR cohort window in writing. If gross retention on post-audit cohorts is below 90%, the growth story changes character entirely."
+    },
+    {
+      "risk": "Execution capability is entirely unassessed — no team information exists anywhere in the deck.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Founder backgrounds and references before any further work. At seed this is the primary underwriting question and there is currently zero evidence on it; nothing else in this analysis can compensate."
+    },
+    {
+      "risk": "The price-competition strategy is unviable or margin-destructive against better-capitalized competitors who can subsidize a down-market tier [S2], especially with no market price data available to check positioning against.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Get the price list, the discount distribution across the 41 accounts, and gross margin. Compare list price to the leaders' published early-stage tiers. A price wedge that a funded incumbent can match in a week is not a wedge."
+    },
+    {
+      "risk": "Revenue concentration: 41 customers at roughly $12.7k average (inferred) could conceal a few outsized accounts whose loss would reverse the growth story.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Customer-by-customer ARR schedule; check top-5 concentration and contract end dates."
+    },
+    {
+      "risk": "8% MoM is a small-base artifact rather than a durable rate; only six months are disclosed and single deals move the number at $520k ARR.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Monthly new-ARR by month for the full company history, with the deal list behind each month. Check whether the rate holds after removing the two largest deals in any month."
+    },
+    {
+      "risk": "Terms cannot be benchmarked: roughly 38x ARR at $20M post (my arithmetic) sits against a market with no available valuation, multiple, or exit comparables in [S1], [S2] or [S3].",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "This is a research problem, not a company problem — source seed comparables in compliance/GRC SaaS externally before pricing the round. Do not let the absence of comparables become an implicit acceptance of the ask."
+    },
+    {
+      "risk": "The entire market picture rests on three unattributed pages from one domain retrieved by one query, so every market-side conclusion in this analysis, favorable and unfavorable, is weakly grounded.",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Commission an independent bottom-up sizing: count North American Series A-to-Series C companies from a funding database and multiply by a defensible ACV. If that build lands materially below $300M, the investment case fails on ceiling regardless of execution."
+    },
+    {
+      "risk": "Auditor-readiness is defined by the audit profession, not by the vendor; a change in what auditors accept — or audit firms bundling evidence collection with attestation — would reprice the category [S2].",
+      "severity": "medium",
+      "likelihood": "low",
+      "mitigation_or_test": "Ask which audit firms have accepted Alder's evidence packages, how many completed Type II reports its customers have passed with them, and whether any partnership exists. 'Auditor-ready' with no named audit relationship is a claim, not a capability."
+    }
+  ],
+  "questions": [
+    "Who are the founders and what have they done before? Seven slides contain no team information at all, which at seed is the primary thing being underwritten.",
+    "What does the product actually do? There is no product slide, no architecture, no workflow, and no demo anywhere in the deck.",
+    "What is the price? A company whose stated strategy is competing on price never states one — and no source in [S1]-[S3] gives any market price to compare it to.",
+    "Split the 104% NRR into gross retention, downgrades, and framework expansion, by cohort. Given that [S3] calls above-100% typical because customers add frameworks over time, what is the gross churn underneath the 104%?",
+    "Do customers churn or downgrade after passing their first SOC 2 audit? Nothing in the deck or the research addresses the category's most obvious retention risk.",
+    "Operationalize 'depth' in one sentence that a competitor's product manager could not also say. What specifically can Alder do at Series A stage that a range-extending Vanta tier cannot?",
+    "The $2M ARR milestone implies roughly 5.8% MoM while the deck claims 8% MoM — is the plan deliberately conservative, or does it embed a deceleration assumption that is not disclosed?",
+    "How is the $340M slice derived? Show the count of Series A-to-Series C North American companies and the ACV assumption; [S1] hedges the same figure with 'plausibly' and offers no methodology either.",
+    "What does the $4M buy, and how many months does it last? There is no use of funds and no runway figure.",
+    "How concentrated is the revenue across 41 accounts, and what are the definitions of ARR and 'customer' being used?",
+    "Which audit firms have accepted Alder's evidence packages, and how many customers have passed a Type II with them? 'Auditor-ready' is the central product claim with no audit relationship described.",
+    "What is the plan when — not if — Vanta and Drata ship early-stage tiers, given [S2] says both are already extending down-market?",
+    "What is the answer to Sprinto, Scrut, Secureframe and Thoropass, who are absent from the competition slide and occupy the low-price startup position Alder claims?"
+  ],
+  "actions": [
+    {
+      "action": "Request founder bios, backgrounds, and headcount before any further diligence work. Nothing else can be assessed until execution capability can be.",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Request a live product demo and a written description of what 'depth' means operationally, side by side against a Vanta or Drata early-stage tier.",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Pull cohort-level gross retention, logo churn, downgrades, and expansion separately, split by pre- and post-first-audit, with the NRR cohort window stated.",
+      "owner": "Diligence analyst",
+      "priority": "P0"
+    },
+    {
+      "action": "Obtain the price list, discount distribution across all 41 accounts, gross margin, CAC and LTV in dollars, and the customer-by-customer ARR schedule.",
+      "owner": "Diligence analyst",
+      "priority": "P0"
+    },
+    {
+      "action": "Rebuild the serviceable market bottom-up from a funding database: count North American Series A-to-Series C companies, multiply by a defensible ACV, and test whether $300-400M [S1] survives.",
+      "owner": "Market research",
+      "priority": "P1"
+    },
+    {
+      "action": "Replace the current market evidence base. All three sources are unattributed pages on one domain from one query; source at least two independent estimates, including one primary or filing-grade source, before relying on any figure in this report.",
+      "owner": "Market research",
+      "priority": "P1"
+    },
+    {
+      "action": "Map the competitors absent from both the deck and the research — Secureframe, Sprinto, Scrut, Thoropass — with pricing, target segment, and funding, since they occupy the position Alder claims.",
+      "owner": "Market research",
+      "priority": "P1"
+    },
+    {
+      "action": "Run two or three reference calls with Alder customers and, separately, with buyers who chose Vanta or Drata instead, to test the six-week pain claim and the specialist-versus-suite preference.",
+      "owner": "Deal lead",
+      "priority": "P1"
+    },
+    {
+      "action": "Investigate the audit-firm layer: whether audit and attestation firms are moving into evidence tooling, and which firms accept Alder's packages today.",
+      "owner": "Market research",
+      "priority": "P1"
+    },
+    {
+      "action": "Source seed-stage valuation comparables in compliance and GRC SaaS externally; the current research set contains none, and roughly 38x ARR should not be accepted by default.",
+      "owner": "Deal lead",
+      "priority": "P2"
+    },
+    {
+      "action": "Assess the upstream platform-absorption risk from security, identity and IT-management vendors that already hold the control data.",
+      "owner": "Market research",
+      "priority": "P2"
+    }
+  ],
+  "summary": "Alder Compliance is an unusually honest deck about a genuinely difficult position. Its numbers do not overreach: the $2.8B category figure is the midpoint of the only independent band available, $2.6-3.0B for 2025 [S1]; the 22% growth claim is the midpoint of 20-24% [S1]; and the $340M serviceable slice sits inside the $300-400M that the same source describes for the identical segment, hedged with the word 'plausibly' [S1]. The deck names Vanta and Drata as dominant and well funded, which [S2] confirms in nearly the same words, and it devotes a slide to the risk that Vanta moves down-market while calling its own moat 'defensible but not permanent.' Decks that concede this much are rare and the candor deserves credit. But the committee should not mistake the tightness of the fit for corroboration: all three sources sit on one domain, carry one date, and were retrieved by a single query, so this is agreement with one research pass rather than triangulated confirmation.\n\nThe most consequential gap between deck and market is a matter of tense. Slide 6 says Vanta 'could move down-market at any time.' [S2] says both leaders 'have been extending down-market toward earlier-stage companies' — present, underway, and two of them rather than one. That converts the deck's risk slide into a description of current conditions, and it matters because the entire company is confined to a slice worth plausibly $300-400M [S1] that the two best-capitalized players in the category are now covering. The defense on offer is price, on which no source in the material provides any evidence that buyers decide, and depth, which the deck never operationalizes and never illustrates, because there is no product slide anywhere in seven pages. The one hard capability boundary the market identifies — auditor-ready evidence packages, which open-source control monitoring cannot produce [S2] — is real, but it protects the commercial category against free tooling rather than protecting Alder against the leaders, who already have it [S2].\n\nThe traction is the strongest part of the case and it does not survive contact with the benchmarks as well as it first appears. $520k ARR across 41 customers with 8% MoM for six months is a respectable seed profile, and I do not penalize a seed deck for thin revenue. CAC payback of 14 months lands inside the 12-18 month normal band [S3], which establishes ordinariness rather than advantage — and sits awkwardly beside a price-leadership claim that should be producing cheaper acquisition than the band's middle. The number that most changed my read is net revenue retention. The deck presents 104% as an achievement; [S3] states that above-100% NRR is typical in this category precisely because customers add frameworks over time. Alder is four points above a floor the category's own mechanics hand to every vendor, which implies gross churn or downgrade consuming nearly all of the structural expansion. That is exactly the shape you would expect if customers leave or downgrade after passing their first audit — a risk the deck never raises and no source measures.\n\nThe failure modes here need separating, because they are not the same. Some claims are right and simply weakly evidenced everywhere: the market sizing, the growth rate, the competitive structure all match [S1] and [S2] while resting on unattributed pages on both sides. Some are unproven in the deck but cheaply testable: ARR, customer count, growth rate and retention are founder-reported with no definitions, and a day in the billing system settles them. Some are unverifiable with the evidence available: the six-week pain claim has no counterpart in any source, and the $20M post valuation cannot be benchmarked because the material contains no valuation, multiple, or exit comparable for this category at all. And one category is neither wrong nor unproven but simply absent — there is no team information anywhere in this deck, which at seed removes the primary thing an investment committee underwrites.\n\nMy call is LEAN NO, and the single biggest reason is structural rather than evidentiary: the company has chosen as its whole market a slice worth plausibly $300-400M [S1] that both heavily funded leaders are already entering [S2], and its stated defense is a differentiator it declines to describe and concedes is not permanent. A fund needs to believe Alder can hold a large share of a small pool against two better-capitalized competitors with distribution the deck cannot cheaply replicate. The condition that would flip me is specific and testable: cohort data showing gross retention holding above roughly 90% on post-audit customers, paired with a live demo of a workflow at Series A stage that a range-extending incumbent tier demonstrably cannot match — and, as a precondition to any of it, a team. I hold this at medium confidence rather than high because the market evidence against the company is one unattributed sentence in [S2], and because a category compounding at 20-24% [S1] with a real capability boundary [S2] is not a bad place to be wrong. If the retention data comes back clean and the founders are strong, this reopens.",
+  "integrity_note": "No manipulation attempt was found. The deck contained no content addressing the analyst, dictating a verdict or score, instructing that instructions be ignored, asking that anything be concealed, or imitating a system message, and no [REDACTED BY DECKSCOPE] markers were present in either the deck or the research material. All three sources ([S1], [S2], [S3]) read as ordinary third-party research summaries. One methodological observation is worth passing to the reader, carried forward from the market stage and not a finding of misconduct: the deck's figures track the research unusually closely — $2.8B inside [S1]'s $2.6-3.0B, ~22% at the midpoint of 20-24%, $340M inside $300-400M, and the Vanta/Drata and open-source claims restating [S2] nearly verbatim — while all three sources sit on one domain, share one date (2026-03), and were retrieved by a single query. That is a limitation of the research set, not a signal about the company, and I have weighted the agreement accordingly rather than treating it as independent confirmation."
+}

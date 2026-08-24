@@ -1,0 +1,272 @@
+{
+  "company": {
+    "name": "Alder Compliance",
+    "one_liner": "SOC2 evidence collection for Series A startups",
+    "stage": "seed",
+    "founded": null,
+    "location": null,
+    "website": null
+  },
+  "problem": {
+    "statement": "Startups reaching Series A need SOC2, and collecting the evidence takes an engineer roughly six weeks of part-time work spread over a quarter.",
+    "who_has_it": "Startups reaching Series A (deck's serviceable framing extends to startups between Series A and Series C in North America)",
+    "evidence_given": [
+      "Assertion only: 'roughly six weeks of part-time work spread over a quarter' — no source, sample size, or customer research cited",
+      "Assertion that startups reaching Series A 'need' SOC2 — no data, survey, or buyer citation given"
+    ]
+  },
+  "solution": {
+    "description": "SOC2 evidence collection tooling aimed at Series A-stage startups; the deck states the category and target profile but never describes the product itself.",
+    "how_it_works": "Not stated. The deck contains no product, architecture, or workflow slide; the only mechanism-adjacent statement is a competitive one — that open-source tooling 'does not produce auditor-ready evidence,' implying Alder does.",
+    "differentiators": [
+      "Competes on price (Slide 4)",
+      "Competes on depth for a narrower customer profile rather than on breadth (Slide 4)",
+      "Produces auditor-ready evidence, unlike open-source tooling (implied by Slide 4)"
+    ],
+    "technical_moat_claimed": "None claimed as technology. The deck names 'depth' as the differentiator and explicitly hedges it on Slide 6: 'defensible but not permanent.' No patent, proprietary data, or technical barrier is asserted."
+  },
+  "product": {
+    "maturity": "scaling",
+    "demo_evidence": null
+  },
+  "market": {
+    "category": "Compliance automation",
+    "sub_category": "SOC2 evidence collection / audit readiness for venture-backed startups",
+    "tam_claimed": "$2.8B in 2025 (compliance automation market)",
+    "sam_claimed": "closer to $340M (startups between Series A and Series C in North America)",
+    "som_claimed": null,
+    "tam_methodology": "unstated",
+    "growth_rate_claimed": "roughly 22% a year",
+    "geography": "North America (stated for the serviceable slice only; geography of the $2.8B figure is not stated)",
+    "customer_segments": [
+      "Series A startups (Slide 1)",
+      "Startups between Series A and Series C in North America (Slide 3)"
+    ]
+  },
+  "business_model": {
+    "pricing": null,
+    "unit_economics": "Only CAC payback of 14 months is given (Slide 5). No margin, no CAC or LTV dollar figures, no payback derivation.",
+    "acv_or_arpu": "Not stated. Inferred, not read: $520k ARR / 41 customers implies roughly $12.7k average ARR per customer.",
+    "cac_claimed": null,
+    "ltv_claimed": null,
+    "gross_margin_claimed": null
+  },
+  "traction": {
+    "revenue": "$520k ARR",
+    "growth": "8% MoM growth for six months",
+    "customers": "41 customers",
+    "logos": [],
+    "pipeline": null,
+    "retention": "Net revenue retention 104%",
+    "other_metrics": [
+      "CAC payback 14 months"
+    ]
+  },
+  "competition": {
+    "named_competitors": [
+      "Vanta",
+      "Drata",
+      "Open-source tooling (unnamed)"
+    ],
+    "positioning_claim": "'Vanta and Drata dominate this category and are both well funded. We compete on price and on depth for a narrower customer profile rather than on breadth. Open-source tooling exists but does not produce auditor-ready evidence.'",
+    "competitors_omitted_suspicion": [
+      "Secureframe — a direct SOC2 automation competitor routinely bracketed with Vanta and Drata",
+      "Sprinto — SOC2 automation vendor explicitly targeting startups and SMBs, the same profile Alder claims",
+      "Thoropass (formerly Laika) — bundles audit plus automation, directly relevant to the 'auditor-ready evidence' claim",
+      "Scrut Automation — price-competitive SOC2 automation vendor, directly relevant to the 'compete on price' claim",
+      "Hyperproof, AuditBoard, and other GRC platforms that define the upper end of the $2.8B compliance automation market",
+      "Traditional audit firms and vCISO/compliance consultancies, which are the incumbent alternative to any automation tool",
+      "No mention of any competitor at the price-sensitive low end, which is where a 'compete on price' strategy is most exposed"
+    ]
+  },
+  "gtm": {
+    "channels": [],
+    "sales_motion": null,
+    "partnerships": []
+  },
+  "team": {
+    "founders": [],
+    "headcount": null,
+    "notable_advisors": []
+  },
+  "ask": {
+    "amount": "$4M",
+    "valuation": "$20M post",
+    "use_of_funds": [],
+    "milestones_promised": [
+      "Reach $2M ARR in 24 months"
+    ],
+    "runway_claimed": null
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "Startups reaching Series A need SOC2; collecting evidence takes an engineer roughly six weeks of part-time work spread over a quarter.",
+      "type": "market-size",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C2",
+      "claim": "The compliance automation market was $2.8B in 2025.",
+      "type": "market-size",
+      "slide": 3,
+      "verifiability": "verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C3",
+      "claim": "The compliance automation market is growing at roughly 22% a year, according to independent analyst estimates.",
+      "type": "growth",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C4",
+      "claim": "The serviceable slice — startups between Series A and Series C in North America — is closer to $340M.",
+      "type": "market-size",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C5",
+      "claim": "Vanta and Drata dominate this category and are both well funded.",
+      "type": "competition",
+      "slide": 4,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C6",
+      "claim": "We compete on price and on depth for a narrower customer profile rather than on breadth.",
+      "type": "competition",
+      "slide": 4,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C7",
+      "claim": "Open-source tooling exists but does not produce auditor-ready evidence.",
+      "type": "technology",
+      "slide": 4,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C8",
+      "claim": "$520k ARR across 41 customers.",
+      "type": "traction",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C9",
+      "claim": "8% MoM growth for six months.",
+      "type": "growth",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C10",
+      "claim": "Net revenue retention 104%.",
+      "type": "financial",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C11",
+      "claim": "CAC payback 14 months.",
+      "type": "financial",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C12",
+      "claim": "Vanta could move down-market at any time; our differentiation is depth, which is defensible but not permanent.",
+      "type": "competition",
+      "slide": 6,
+      "verifiability": "unfalsifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C13",
+      "claim": "Raising $4M at $20M post to reach $2M ARR in 24 months.",
+      "type": "financial",
+      "slide": 7,
+      "verifiability": "unfalsifiable",
+      "load_bearing": "high"
+    }
+  ],
+  "deck_quality": {
+    "missing_sections": [
+      "Team — no founders, backgrounds, headcount, or advisors anywhere in the deck",
+      "Product — no description of what the software does, no architecture, no screenshots or demo",
+      "Business model and pricing — 'compete on price' is asserted but no price point is given",
+      "Unit economics beyond CAC payback — no gross margin, no CAC or LTV dollar figures, no logo churn",
+      "Go-to-market — no channels, sales motion, or partnerships stated",
+      "Use of funds — the $4M ask has no allocation attached",
+      "Customer evidence — no logos, no named references, no case studies, no testimonials",
+      "Company facts — no founding date, location, or website",
+      "Regulatory/audit-partner detail — 'auditor-ready' is central but no audit firm relationship is described"
+    ],
+    "vague_language": [
+      "'roughly six weeks of part-time work' (Slide 2) — 'roughly' and 'part-time' both unquantified",
+      "'growing at roughly 22% a year according to independent analyst estimates' (Slide 3) — no analyst named",
+      "'is closer to $340M' (Slide 3) — 'closer to' hedges a figure with no derivation",
+      "'dominate this category' and 'well funded' (Slide 4) — no share or funding figures",
+      "'compete on price' (Slide 4) — no price, discount, or comparison given",
+      "'depth for a narrower customer profile' (Slide 4) — 'depth' is never operationalized",
+      "'auditor-ready evidence' (Slide 4) — standard not defined",
+      "'defensible but not permanent' (Slide 6) — self-hedged and untestable",
+      "'could move down-market at any time' (Slide 6) — directional, no probability or trigger"
+    ],
+    "unsupported_numbers": [
+      "$2.8B 2025 compliance automation market — attributed to 'independent analyst estimates' with no analyst, report, or date named",
+      "22% annual growth — same unnamed attribution",
+      "$340M serviceable slice — no methodology, no startup count, no per-customer assumption shown; not reconcilable from anything else in the deck",
+      "Six weeks of part-time engineer work — no source or sample",
+      "$520k ARR, 41 customers, 8% MoM, 104% NRR, 14-month CAC payback — all founder-reported with no definitions (ARR basis, customer counting, NRR cohort window) and no third-party or accounting corroboration",
+      "$2M ARR in 24 months — no bridge from current ARR, no assumption set",
+      "$20M post valuation — no comparables or basis given"
+    ],
+    "narrative_coherence": 8,
+    "notes": "The deck is internally consistent and unusually plain-spoken: it names its two strongest competitors by name, concedes they dominate and are well funded, and devotes a full slide to the risk that Vanta moves down-market while calling its own moat 'not permanent.' That candor is the deck's defining characteristic and is itself a finding. No content in the deck attempted to address the analyst, override instructions, dictate a verdict, or conceal anything; no [REDACTED BY DECKSCOPE] markers were present. The material weakness is omission rather than distortion: there is no team slide, no product slide, no pricing, and no use of funds, so a reader cannot assess who is executing, what the software actually does, or what 'compete on price' means numerically. Stage signals are broadly aligned — $520k ARR with 41 customers and a $4M seed at $20M post sits in a conventional band — though the traction is roughly a quarter of the way to the promised $2M ARR while the milestone window is 24 months, and the 8% MoM figure is stated for a six-month window only, so its durability is unestablished. Competitive framing is selectively narrow: naming Vanta and Drata while omitting Secureframe, Sprinto, Scrut, and Thoropass leaves out precisely the vendors that already occupy the low-price, startup-focused position Alder claims. Market sizing is cited but not sourced; the $340M serviceable figure carries the most weight of any number in the deck and has the least support behind it."
+  },
+  "research_agenda": {
+    "search_queries": [
+      "compliance automation market size 2025 $2.8 billion Gartner Forrester IDC SOC2 GRC report",
+      "Vanta Drata market share SOC2 compliance automation customer count 2025 2026",
+      "Vanta Drata funding rounds valuation total raised 2025 2026",
+      "Vanta pricing startup tier down-market SOC2 plan cost per year",
+      "Secureframe Sprinto Scrut Automation Thoropass SOC2 pricing comparison startups",
+      "number of US Series A to Series C startups 2025 count Crunchbase PitchBook North America",
+      "SOC2 Type II compliance software average contract value ACV startup seed Series A pricing benchmark",
+      "SaaS seed benchmarks net revenue retention 104% CAC payback 14 months compliance SaaS median",
+      "open source SOC2 compliance tooling auditor ready evidence comply openSCAP limitations",
+      "Alder Compliance SOC2 startup funding seed round team founders",
+      "SOC2 audit evidence collection time engineer hours weeks survey benchmark startup",
+      "SOC2 compliance automation churn rate startups downgrade after audit certification renewal"
+    ],
+    "key_uncertainties": [
+      "Who is on the team — the deck names no founder, no background, and no headcount, so execution capability cannot be assessed at all",
+      "What the product actually is — no product, demo, or architecture detail exists anywhere in seven slides",
+      "Whether 'depth' is a real, describable product difference or a positioning word; the deck never operationalizes it and concedes on Slide 6 that it is 'not permanent'",
+      "Whether the $340M serviceable slice survives a bottom-up rebuild (count of Series A-C North American startups multiplied by a defensible ACV); no derivation is offered",
+      "The provenance of the $2.8B / 22% figures — 'independent analyst estimates' names no analyst, so the number is currently a claim, not a fact",
+      "Whether the pricing strategy is viable against Sprinto, Scrut, and Secureframe, who are unnamed in the deck but occupy the same low-price startup segment",
+      "How Alder defines ARR, a 'customer,' and its NRR cohort window — all five traction metrics are founder-reported with no stated definitions",
+      "Whether 8% MoM is durable or a small-base artifact; six months is the only window disclosed, and $520k ARR is a base at which single deals move the rate materially",
+      "Retention risk specific to this category — whether customers churn or downgrade after passing their first SOC2 audit, which 104% NRR over an undisclosed window may not capture",
+      "The bridge from $520k to $2M ARR in 24 months — roughly 4x with no stated assumptions, no use of funds, and no runway figure",
+      "Whether the customer base is concentrated — 41 customers at roughly $12.7k average (inferred, not stated) could hide a handful of outsized accounts",
+      "Basis for the $20M post valuation — no comparables, revenue multiple, or rationale is given"
+    ]
+  }
+}

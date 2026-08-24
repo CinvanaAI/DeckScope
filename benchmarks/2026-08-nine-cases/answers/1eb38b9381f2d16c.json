@@ -1,0 +1,381 @@
+{
+  "headline": "Northwind Ledger is selling a $88B market that independent estimates put at $6-8B with a mid-market slice of $900M-1.3B, against a competitive set the deck never names and a team it never introduces - pass, at any price.",
+  "verdict": {
+    "call": "PASS",
+    "confidence": "medium",
+    "confidence_rationale": "The market evidence itself is thin - three secondary sources from one domain, all dated 2026-03, none triangulated, and S1 alone carries every sizing figure [S1][S2][S3]. On sizing questions alone I would hold confidence low. But the PASS does not rest on sizing: it rests on facts internal to the deck that no additional research would change. There is no team slide, no product description, no pricing, no use of funds, and no retention data, at a $18M post on $180k ARR. Even if S1 were wrong and the deck's $88B were right, I could not underwrite a seed round with no founders named. The residual uncertainty is about how badly the market is overstated, not about whether the package is fundable."
+  },
+  "scorecard": [
+    {
+      "dimension": "Market size & timing",
+      "score": 3,
+      "weight": 5,
+      "rationale": "The deck's own segment - mid-market reconciliation - is sized independently at $900M-1.3B, not the $9B the deck claims for it, and the category as a whole at $6-8B against a claimed $88B [S1]. Growth is 14-18% annually, roughly half the 31% claimed, and S1 specifically flags '30%+' claims as unsupported [S1]. A $1B slice growing at 16% can support a fine company; it cannot support the story this deck tells or, on its own, return a fund. Timing is the worse half: incumbents have been moving down-market into this exact segment for two years and the ERPs already ship the function [S2], so the entrant is arriving after the convergence started, not before it.",
+      "evidence": [
+        "Independent 2026 estimates: whole close-and-reconciliation category $6-8B; mid-market slice $900M-1.3B [S1]",
+        "Growth 14-18% annually, 'well below the 30%+ sometimes claimed' [S1]",
+        "$80B+ figures roll up the entire office-of-the-CFO stack including ERP and are characterized as vendor marketing [S1]",
+        "Geography unresolved - S1 does not state whether its figures are global or North America, so the deck's North America SAM cannot be scoped precisely against it [S1]"
+      ],
+      "source_ids": ["S1", "S2"]
+    },
+    {
+      "dimension": "Competitive position",
+      "score": 2,
+      "weight": 5,
+      "rationale": "The deck names no software vendor at all and defines the competitive set as Excel. The market shows four well-resourced competitors converging on the same buyer from two directions: BlackLine and Trintech, both public or PE-held, moving down-market toward mid-market finance teams over the last two years, and NetSuite and Sage shipping native reconciliation bundled with the ERP those teams already run [S2]. That is not an omission of detail, it is an omission of the thing being competed for. Either the founders do not know the category they are selling into, or they know and chose not to show it; both are disqualifying at this stage, and the second is worse.",
+      "evidence": [
+        "BlackLine and Trintech are the established vendors, both public or PE-held, both moved down-market toward mid-market finance teams in the last two years [S2]",
+        "NetSuite and Sage ship native reconciliation modules bundled with the ERP mid-market finance teams already run [S2]",
+        "Deck's only named competitor is 'Spreadsheets / Excel', described as status quo rather than a vendor (slide 5)",
+        "The deck sizes the market at $88B while claiming no vendor competes in it - internally inconsistent on its own terms"
+      ],
+      "source_ids": ["S2"]
+    },
+    {
+      "dimension": "Product & moat",
+      "score": 2,
+      "weight": 4,
+      "rationale": "Six slides contain no product description, no mechanism, no demo, no screenshots, no integrations, and no moat claim; the solution exists only as the slide 1 tagline. That is not a stage-appropriate gap - a seed deck may lack scale, not a product. Worse, the one defensible axis the evidence identifies is unclaimed: S3 puts the binding constraint on clean feeds from banks and the ERP rather than on the matching engine [S3], and a product that genuinely owned feed quality would have something a bundled ERP module structurally does not. The deck never mentions data connectivity, security posture, or SOC 2 despite handling bank and ledger data.",
+      "evidence": [
+        "No product slide, demo, architecture, or mechanism anywhere in the deck",
+        "differentiators list is empty; technical_moat_claimed is null",
+        "Adoption failures cluster on source data quality, not on the reconciliation tool; teams without clean bank and ERP feeds see little benefit from automation [S3]",
+        "No regulatory or security posture stated despite bank and general-ledger data handling"
+      ],
+      "source_ids": ["S3"]
+    },
+    {
+      "dimension": "Business model",
+      "score": 2,
+      "weight": 3,
+      "rationale": "No pricing, packaging, contract structure, CAC, LTV, payback, or gross margin. The only ACV figure in play - roughly $26k - is the extractor's arithmetic on $180k across 7 customers, not something the deck states. This matters more than usual here because pricing in this category is anchored against a bundled alternative already inside the ERP subscription [S2], so the vendor is asking for incremental budget to replace something nominally free. S3 adds that where feeds are dirty the spend does not produce benefit [S3], which is a margin and renewal problem, not just a sales one.",
+      "evidence": [
+        "pricing, unit_economics, cac_claimed, ltv_claimed, gross_margin_claimed all null",
+        "Bundled ERP reconciliation sets a low reference point for incremental value [S2]",
+        "Per-customer integration work implied by S3's findings tends to push effective margins below headline software levels [S3]",
+        "No pricing data exists in the market research either - this is a gap on both sides, not only in the deck [S1][S2][S3]"
+      ],
+      "source_ids": ["S2", "S3"]
+    },
+    {
+      "dimension": "Traction vs. stage",
+      "score": 5,
+      "weight": 4,
+      "rationale": "This is the strongest part of the deck and I am not marking it down for size. $180k ARR across 7 paying customers is real early-seed evidence of demand, and in a category where the buyer's ERP already includes the function [S2], seven people paying anyway is a genuine signal. What is missing is the part that would make it interpretable: '12% month-over-month growth' never names what is growing, and at 7 customers one logo produces that rate; there is no retention, churn, NRR, contract length, or pipeline; and the deck never says whether these are arms-length contracts or converted design partners on pilot terms. In this specific category retention is the number that matters most, because S3 says the benefit fails where feeds are dirty [S3] - which means early ARR can be real and still not renew.",
+      "evidence": [
+        "$180k ARR, 7 paying customers, 12% MoM for three months (slide 4)",
+        "Growth denominator unspecified - revenue, customers, or usage is never named",
+        "No retention, churn, NRR, or contract-length data anywhere in the deck",
+        "S3: teams that cannot get clean feeds from banks and their ERP see little benefit from automation, making renewal the real test [S3]"
+      ],
+      "source_ids": ["S3"]
+    },
+    {
+      "dimension": "Team",
+      "score": 1,
+      "weight": 5,
+      "rationale": "The deck names no founder, no role, and no background. At seed, with $180k ARR and no product slide, the team is the asset being priced, and it is absent. No amount of market research fixes this - it is the one dimension where the deck's silence is dispositive rather than merely unhelpful. Scored 1 rather than 'unscoreable' because for an investment decision at this stage, absent is functionally the same as failing.",
+      "evidence": [
+        "founders array empty; headcount null; notable_advisors empty",
+        "Extractor flags team as a missing section: 'no names, roles, or backgrounds anywhere in the deck'",
+        "No source in the bibliography addresses this company, its founders, or its funding - the market research contains no company-specific material at all [S1][S2][S3]"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Ask & plan",
+      "score": 2,
+      "weight": 4,
+      "rationale": "$3M at $18M post on $180k ARR is roughly a 100x ARR multiple, offered with no use of funds, no milestones, and no runway. I have no comparable to price it against - the research body contains no funding or M&A data whatsoever and valuation_norms is explicitly not stated [S1][S2][S3] - so I am not calling the number wrong, I am calling it unjustified. The mechanism that should worry the founders is in S1: a category whose public growth narrative runs at 30%+ against measured 14-18% is a category whose multiples get reset when the correction lands [S1], and this round is priced on the uncorrected narrative.",
+      "evidence": [
+        "$3M at $18M post, ~100x ARR on $180k, with empty use_of_funds and milestones_promised",
+        "No valuation norms, comps, or recent rounds available in the research material [S1][S2][S3]",
+        "Category growth narrative overstates measured growth by roughly a factor of two [S1]"
+      ],
+      "source_ids": ["S1"]
+    }
+  ],
+  "claim_audit": [
+    {
+      "id": "C1",
+      "claim": "The financial reconciliation software market is $88B",
+      "market_evidence": "S1 puts 'the whole financial close and reconciliation software category' at $6-8B in 2026 and states directly that the '$80B+ figures that circulate in vendor marketing' roll up 'the entire office-of-the-CFO software stack including ERP' [S1]. The deck gives no source, no methodology, no year, and no analyst house for its $88B.",
+      "assessment": "contradicted",
+      "delta": "Deck claims $88B; the independent estimate for the category it describes is $6-8B - roughly 11-15x, an order of magnitude. And the gap is definitional rather than statistical: the deck's figure sits squarely in the class of number S1 identifies as ERP spend relabeled as reconciliation spend [S1].",
+      "so_what": "The single largest load-bearing figure in the deck is a number S1 pre-emptively names as vendor marketing. Since the deck states no methodology, I cannot tell whether this was copied uncritically or chosen; either way it is the figure the whole market slide rests on, and it does not survive contact with the one independent source available.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/recon-sizing-2026"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C2",
+      "claim": "growing at 31% CAGR",
+      "market_evidence": "S1 gives category growth as '14-18% annually' and explicitly contrasts this with the '30%+ sometimes claimed', which it says the evidence does not support [S1]. No source gives a separate growth rate for the mid-market slice.",
+      "assessment": "contradicted",
+      "delta": "Deck claims 31% CAGR; the independent figure is 14-18% - roughly half, and the deck's number falls precisely into the band S1 names as unsupported. Time window and geography are unstated on both sides.",
+      "so_what": "Two of the deck's three market figures land in categories a single independent source flags as inflated before ever seeing this deck. That is a pattern about how the market slide was built, not two separate errors.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/recon-sizing-2026"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C3",
+      "claim": "SAM: $9B (mid-market North America)",
+      "market_evidence": "S1 sizes 'the mid-market reconciliation slice specifically' at $900M-1.3B [S1]. S1 does not state whether that figure is global or regional, so it cannot be resolved to North America from this material.",
+      "assessment": "contradicted",
+      "delta": "Deck claims $9B for mid-market North America; the independent mid-market slice is $900M-1.3B - roughly 7-10x. The sharper tell is that the deck's regional, single-segment SAM ($9B) exceeds S1's estimate for the entire close-and-reconciliation category worldwide ($6-8B) [S1]. A subset cannot be larger than its set.",
+      "so_what": "This is the figure that actually matters, because it is the market the company says it sells into. On S1's numbers, capturing a fifth of the entire mid-market slice would be a ~$200M revenue business - a good outcome, but not the one a $88B/$9B framing is asking the committee to underwrite.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/recon-sizing-2026"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C4",
+      "claim": "SOM: $600M",
+      "market_evidence": "No source addresses this company's obtainable share. Measured against S1's mid-market slice of $900M-1.3B [S1], $600M is 46-67% of the entire segment. The deck states no share assumption and no time horizon.",
+      "assessment": "contradicted",
+      "delta": "Deck implies an obtainable $600M; against the independent mid-market slice that is roughly half to two-thirds of the whole segment, in a segment already held by two public or PE-held incumbents moving down into it and two ERPs shipping the function free [S1][S2]. Against the deck's own $9B SAM it is a more ordinary 6.7% - the figure is only defensible on the deck's own inflated denominator.",
+      "so_what": "The SOM is the clearest demonstration that the market slide was not built bottom-up. Chained to the independent numbers it describes market dominance rather than an obtainable share, which no seed company should be projecting and no committee should be pricing.",
+      "source_ids": ["S1", "S2"],
+      "sources": ["https://research.example.org/recon-sizing-2026", "https://research.example.org/recon-incumbents"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C5",
+      "claim": "Finance teams reconcile bank statements against the ledger by hand every month; it takes our design partners four days",
+      "market_evidence": "No source in the bibliography addresses manual reconciliation time, effort, or a time-study. S3 speaks to the adjacent point that reconciliation automation often fails to deliver benefit, but on data-quality grounds, and says nothing about how long manual work takes [S3].",
+      "assessment": "unverifiable",
+      "delta": "No delta can be computed. The claim rests on an unnamed cohort of unstated size and there is no market figure to compare it to. This is the 'unverifiable' failure mode, not the 'wrong' one - it may well be true.",
+      "so_what": "The underlying pain is plausible and the company is closer to it than I am. But four days for an unnamed number of design partners is an anecdote, and at seed the fixable version of this - a time study across a named set of prospects, with an error rate and an audit-finding cost - is exactly the diligence the founders could have done and did not.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C6",
+      "claim": "Manual reconciliation 'produces errors nobody catches until audit'",
+      "market_evidence": "No provided source addresses reconciliation error rates, audit findings, or the cost of undetected errors. The research body contains no regulatory, audit-standards, or compliance material at all.",
+      "assessment": "unverifiable",
+      "delta": "No delta computable - no error frequency, magnitude, or cost is given by the deck and none exists in the sources against which to check it.",
+      "so_what": "This is the claim that would justify urgency and premium pricing if quantified, since audit exposure is what turns a nice-to-have into a budget line. Unquantified, it does no work.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C7",
+      "claim": "$180k ARR",
+      "market_evidence": "No source addresses this company. Nothing in S1, S2, or S3 confirms or contradicts a company-internal revenue figure, and the research contains no funding, filing, or company-specific data [S1][S2][S3].",
+      "assessment": "unverifiable",
+      "delta": "No external delta. Internally the figure is arithmetically ordinary against 7 customers (~$26k implied average, a number the deck itself never states).",
+      "so_what": "Right-but-unproven rather than wrong: this is a bank-statement-and-contracts diligence item, not a research question. It is the deck's most credible claim and the reason this is a PASS rather than a dismissal.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C8",
+      "claim": "7 paying customers",
+      "market_evidence": "No source addresses this company or its customers. No logos, references, or named accounts are given in the deck.",
+      "assessment": "unverifiable",
+      "delta": "No external delta available. Note the interaction with S2: seven teams paying for a standalone tool while their ERP ships reconciliation natively [S2] would be a meaningful signal if the deck established that any of them run NetSuite or Sage - it does not.",
+      "so_what": "Verifiable in an afternoon with contracts and two reference calls. The question that matters is not whether there are seven, but whether they are arms-length buyers or converted design partners on pilot pricing.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/recon-incumbents"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C9",
+      "claim": "12% month-over-month growth for three months",
+      "market_evidence": "No source addresses this company's growth. For context only, S1 puts category growth at 14-18% annually [S1] - not a comparable denominator, and I am not treating it as one.",
+      "assessment": "unverifiable",
+      "delta": "Not computable, because the metric being grown is never named. At 7 customers, a single new logo can produce 12% month-over-month, so the figure is compatible with both real momentum and statistical noise.",
+      "so_what": "A percentage without a denominator is presentation, not evidence. Three months of history at this customer count cannot distinguish a trend from a coincidence, and the deck presents it as the growth story.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C10",
+      "claim": "Competition is spreadsheets: 'Most mid-market finance teams still reconcile in Excel.'",
+      "market_evidence": "S2 names BlackLine and Trintech as the established reconciliation vendors, both public or PE-held, and states both 'have moved down-market toward mid-market finance teams in the last two years'; it further states that 'NetSuite and Sage also ship native reconciliation modules bundled with the ERP that mid-market finance teams already run' [S2]. No source measures what share of mid-market teams use Excel.",
+      "assessment": "contradicted",
+      "delta": "Two distinct sub-claims, and they fail differently. The prevalence claim - that most mid-market teams still use Excel - is unverifiable: no source quantifies it and it may be true. The framing claim - that spreadsheets constitute the competitive set - is contradicted outright, since the market shows two dedicated vendors actively targeting this exact segment and two ERPs shipping the function bundled to the same buyers [S2]. The deck omits all four.",
+      "so_what": "This is the most damaging finding in the audit. The real competitive question in this category is not Excel, it is whether a finance team will pay separately for something already included in the ERP they run [S2]. The deck does not answer that question because it does not acknowledge it exists, which means the market slide, the SOM, and the pricing that is not stated are all resting on a competitive picture the evidence does not support.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/recon-incumbents"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C11",
+      "claim": "Raising $3M at $18M post",
+      "market_evidence": "No source addresses valuation norms, recent rounds, or exit comps in this category; the research body contains no funding or M&A data whatsoever, and valuation_norms is explicitly not stated [S1][S2][S3]. S2's note that the incumbents are 'both public or PE-held' implies prior liquidity events but names no transaction, buyer, date, or price [S2].",
+      "assessment": "unverifiable",
+      "delta": "Cannot be benchmarked against comps - none exist in this material, and I will not invent one. What is computable is internal: $18M post on $180k ARR is approximately a 100x ARR multiple, offered with no use of funds, no milestones, and no runway.",
+      "so_what": "I am not saying the price is wrong; I am saying nothing in the deck or the research justifies it. The forward risk S1 identifies is relevant here - a category whose growth narrative is corrected from 30%+ to 14-18% typically sees multiples reset [S1], and this round is priced against the uncorrected narrative.",
+      "source_ids": ["S1", "S2"],
+      "sources": ["https://research.example.org/recon-sizing-2026", "https://research.example.org/recon-incumbents"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C12",
+      "claim": "Company has 'design partners' (plural, unquantified) using or informing the product",
+      "market_evidence": "No source addresses this company. Nothing in the bibliography speaks to its design partners, customers, or product.",
+      "assessment": "unverifiable",
+      "delta": "Not computable. The deck gives no count, no identity, and no statement of whether design partners pay - which also leaves open whether they overlap with the 7 paying customers on slide 4.",
+      "so_what": "The overlap question is material to the traction claim: if the 7 customers are converted design partners on pilot terms, the $180k ARR is a different asset than if they are arms-length wins. The deck's wording lets both readings stand.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    }
+  ],
+  "alignment": {
+    "where_deck_matches_market": [
+      "The problem is real and the category is real. Manual reconciliation pain and a maturing close-and-reconciliation software category both exist, with independent 2026 sizing of $6-8B and a distinct mid-market slice [S1] - the deck picked a genuine market, it just mis-sized it.",
+      "The mid-market is a legitimate target segment. S1 breaks out mid-market reconciliation as its own slice [S1], and S2 shows incumbents deliberately moving toward it over two years [S2] - independent confirmation that this buyer has budget worth chasing, even though it also means the deck's chosen segment is the one being converged on.",
+      "Growth is real and above software-market average even after correction: 14-18% annually [S1]. The deck's direction of travel is right; only the magnitude is wrong.",
+      "Standalone reconciliation is still bought, not only bundled - two dedicated vendors large enough to be public or PE-held are evidence that buyers do pay separately for this [S2], which is consistent with the deck having found 7 paying customers."
+    ],
+    "where_deck_overstates": [
+      "TAM: $88B claimed against $6-8B independent for the category described - roughly an order of magnitude, and the deck's figure falls into the class S1 identifies as vendor marketing that rolls up ERP spend [S1].",
+      "SAM: $9B for mid-market North America against $900M-1.3B for the mid-market slice - roughly 7-10x, and the deck's regional single-segment SAM exceeds S1's estimate for the entire global category [S1].",
+      "Growth: 31% CAGR against measured 14-18%, with S1 naming '30%+' claims as specifically unsupported [S1].",
+      "SOM: $600M, which is 46-67% of the entire independent mid-market slice [S1] - a share figure that is only coherent on the deck's own inflated denominator.",
+      "Competitive headroom: framing spreadsheets as the competition overstates available white space in a segment with two dedicated vendors moving down-market and two ERPs shipping the function bundled [S2].",
+      "Implied stage: the $18M post presents the company as a Series-A-adjacent asset while the traction slide shows early-seed evidence, and the deck never bridges the two."
+    ],
+    "where_deck_understates": [
+      "Its own most defensible ground. S3 puts the binding constraint on clean bank and ERP feeds rather than on the matching tool [S3] - a company that had actually solved feed quality would hold the one thing a bundled ERP module structurally does not, and the deck never mentions data connectivity at all.",
+      "The strength of its own traction against the real alternative. Seven teams paying for a standalone tool while reconciliation ships free inside NetSuite and Sage [S2] would be a genuine displacement proof point - the deck presents the number and never makes that argument, because it does not know the bundled alternative exists.",
+      "Sales difficulty as a signal: any customer won against an incumbent moving down-market [S2] is worth more than the deck's undifferentiated '7 paying customers' conveys. No win/loss detail is offered."
+    ],
+    "blind_spots": [
+      {
+        "what": "Reconciliation already ships bundled inside the ERPs these buyers run. NetSuite and Sage include native reconciliation modules in the system mid-market finance teams already pay for [S2].",
+        "why_it_matters": "This inverts the sales motion the deck implies. The buyer is not choosing between manual work and software; they are choosing whether to pay extra for something nominally included. It caps pricing, lengthens the sale, and makes the real competitor invisible on any spreadsheets-versus-us slide. It is also why the independent read of absorption risk is 'feature, already happening' rather than a forecast [S2].",
+        "source_ids": ["S2"]
+      },
+      {
+        "what": "Two well-capitalized dedicated incumbents have spent the last two years moving into precisely this segment. BlackLine and Trintech, both public or PE-held, have moved down-market toward mid-market finance teams [S2].",
+        "why_it_matters": "The window the deck implicitly claims is open is being closed from above at the same time it is being closed from inside the system of record. A seed company entering now is not early - it is late to a convergence, and needs a wedge the deck does not describe.",
+        "source_ids": ["S2"]
+      },
+      {
+        "what": "Adoption fails upstream of the product. Failures cluster on source data quality rather than on the reconciliation tool, and teams without clean bank and ERP feeds see little benefit from automation [S3].",
+        "why_it_matters": "This is simultaneously the biggest churn risk to the $180k ARR, the main drag on gross margin through per-customer integration work, and the only durable positioning the evidence supports. The deck mentions none of it, which means its early revenue may be less durable than it looks and its best strategy is one it has not noticed.",
+        "source_ids": ["S3"]
+      },
+      {
+        "what": "The category's public growth narrative is being corrected downward - 14-18% measured against 30%+ claimed [S1].",
+        "why_it_matters": "Rounds priced against the uncorrected narrative reprice when the correction lands. The deck's 31% CAGR and $18M post are both artifacts of the narrative S1 says the evidence does not support, so the valuation risk is structural, not just aggressive.",
+        "source_ids": ["S1"]
+      },
+      {
+        "what": "The addressable market is not resolvable to North America from the available evidence. S1 does not state whether $6-8B and $900M-1.3B are global or regional [S1].",
+        "why_it_matters": "The deck's SAM is explicitly North America-scoped, so the true comparison could be even less favorable than 7-10x if S1's mid-market slice turns out to be global. This is a gap in my evidence, not a point in the deck's favor, and I have lowered confidence accordingly rather than assuming the harsher reading."
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Absorption: the function becomes a checkbox inside the ERP rather than a purchase. NetSuite and Sage already ship native reconciliation to these buyers [S2], which is a shipped feature, not a roadmap threat.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Find out what the bundled modules actually do and where they stop - this is the single highest-value unknown in the whole analysis. Test: for each of the 7 customers, which ERP do they run, did they evaluate the native module, and what specifically did it fail to do? If none of the 7 run NetSuite or Sage, the company has never faced its real competitor."
+    },
+    {
+      "risk": "Market sizing collapse: the entire market slide is roughly an order of magnitude off, so the fund-return math the ask implies does not exist [S1].",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask the founders to rebuild TAM/SAM/SOM bottom-up: count of mid-market North American companies, stated spend per company, share assumption, time horizon. The rebuild is more diagnostic than the number - it reveals whether the original figure was copied or constructed."
+    },
+    {
+      "risk": "Competitive naivety or non-disclosure: the deck names no vendor in a category with four named competitors [S2]. Either the founders do not know the landscape or chose to omit it.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "One question in the first meeting - 'walk me through your last three competitive losses' - separates the two readings immediately. An unprepared answer is a founder-quality finding; a prepared answer omitted from the deck is a disclosure finding."
+    },
+    {
+      "risk": "Retention risk driven by upstream data quality: benefit fails where bank and ERP feeds are dirty [S3], so early ARR may not renew and reference-ability may not materialize.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Pull contract dates, renewal history, and any churn to date; ask how many hours of integration work each of the 7 customers required and who paid for it. Gross-margin drag shows up here before it shows up in the P&L."
+    },
+    {
+      "risk": "Team unknown: no founder, role, or background is disclosed, removing the primary basis for seed underwriting.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Trivially resolvable - request bios and references before any further work. If they cannot be produced quickly, that is itself the answer."
+    },
+    {
+      "risk": "Valuation reset: $18M post is priced on a growth narrative the evidence corrects by roughly half [S1], with no comps available to anchor it.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Price against a bottom-up mid-market slice of $900M-1.3B [S1] rather than the claimed $9B and see whether the founders will re-cut the round. Willingness to reprice is informative independent of the number."
+    },
+    {
+      "risk": "Product may not exist in a mature form. Six slides contain no product evidence; only the revenue figure implies something shippable.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Live demo against a real customer's messy data, not a scripted dataset. Ask for automation rate and exception volume on an actual account."
+    },
+    {
+      "risk": "Regulatory and security gating: the product handles bank and general-ledger data with no stated SOC 2, data-residency, or bank-access posture. No source in this material addresses category compliance requirements, so I am flagging this as unverified rather than measured.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Ask directly for SOC 2 status and bank-connectivity method. Finance buyers commonly gate on it, and remediation cost lands in the use of funds the deck does not have."
+    }
+  ],
+  "questions": [
+    "Where did $88B come from? Naming the source settles more than the number - it tells us whether the market slide was constructed or copied [S1].",
+    "Which ERP does each of the 7 customers run, and did any of them evaluate the native reconciliation module already included in it before buying [S2]?",
+    "What exactly is growing 12% month over month - revenue, customers, or usage - and how much of it was one logo?",
+    "How many design partners are there, and how many of the 7 paying customers are converted design partners on pilot or discounted terms?",
+    "Who are the founders, what have they built before, and why them for this problem? The deck does not say.",
+    "What is the product's answer to source data quality - the thing S3 says determines whether reconciliation automation delivers benefit at all [S3]?",
+    "Has anything churned, and what are the contract lengths behind the $180k ARR?",
+    "How was $18M post arrived at, and what specifically does $3M buy - what milestone is this round meant to reach?",
+    "If the mid-market reconciliation slice is $900M-1.3B rather than $9B [S1], what does the company become at best, and does the founding team still want to build it?",
+    "Why does the competition slide name no software vendor in a market the same deck sizes at $88B - what reconciles those two slides?"
+  ],
+  "actions": [
+    {
+      "action": "Decline for now with a specific, non-generic note: the market figures are off by roughly an order of magnitude against independent estimates [S1] and the competitive set omits four named vendors [S2]. Offer to re-look at a bottom-up market build with a team slide attached.",
+      "owner": "Deal partner",
+      "priority": "P0"
+    },
+    {
+      "action": "Request founder bios and references before any further diligence spend. No team disclosure means no seed underwriting basis, and this is a five-minute fix on their side.",
+      "owner": "Deal partner",
+      "priority": "P0"
+    },
+    {
+      "action": "If the team check comes back strong, run one 45-minute call focused solely on the ERP-bundling question: which ERPs the 7 customers run, whether the native module was evaluated, and what it failed to do [S2]. That single answer decides whether this is a wedge or a feature.",
+      "owner": "Associate",
+      "priority": "P0"
+    },
+    {
+      "action": "Commission a proper market build to replace the single-source picture: primary vendor filings and disclosures for BlackLine and Trintech, ERP module documentation for NetSuite and Sage, and a bottom-up count of mid-market North American companies. All current sizing rests on one secondary source [S1].",
+      "owner": "Research lead",
+      "priority": "P1"
+    },
+    {
+      "action": "Run a funding and M&A scan for AI-native reconciliation and close-automation entrants. The research body contains no funding data at all, so the saturation picture is unresolved and the 'four competitors' count reflects only what one source named [S2].",
+      "owner": "Research lead",
+      "priority": "P1"
+    },
+    {
+      "action": "If the deal advances, verify traction directly: contracts, bank statements, renewal dates, and two customer reference calls covering integration effort and realized time savings [S3].",
+      "owner": "Associate",
+      "priority": "P1"
+    },
+    {
+      "action": "Track the company for 6-9 months. The interesting signal is not this round - it is whether the 7 customers renew, which tests the data-quality durability question S3 raises [S3].",
+      "owner": "Deal partner",
+      "priority": "P2"
+    }
+  ],
+  "summary": "Northwind Ledger is pitching a real problem in a real category, and almost every number attached to it is wrong in the same direction. The deck opens with an $88B market growing at 31% CAGR, narrowed to a $9B mid-market North America SAM and a $600M SOM. The one independent source available puts the whole financial close and reconciliation software category at $6-8B in 2026, growing 14-18% annually, with the mid-market slice specifically at $900M-1.3B [S1]. That is roughly an order of magnitude on the headline and 7-10x on the segment that actually matters. The gap is definitional rather than statistical, and S1 explains it before the deck ever arrives: the $80B+ figures circulating in this category are vendor marketing that rolls up the entire office-of-the-CFO stack including ERP [S1]. The deck's SAM for one region and one segment is larger than S1's estimate of the entire category, which is the kind of arithmetic that only survives if nobody chains the figures together. The 31% CAGR lands in the same place - S1 names '30%+' claims specifically as unsupported by the evidence [S1].\n\nThe competition slide is the more serious finding. It names exactly one competitor - spreadsheets - in a market the same deck sizes at $88B, and the evidence shows four vendors converging on this precise buyer from two directions at once. BlackLine and Trintech, both public or PE-held, have moved down-market toward mid-market finance teams over the last two years, and NetSuite and Sage ship native reconciliation modules bundled with the ERP those teams already run [S2]. The bundled ERP module is the competitor that decides this company's outcome, because it does not need to win an evaluation - it only needs to be present, adequate, and already paid for. That single fact rewrites the sales motion, caps pricing, and turns the deck's premise from 'sell software to people doing it by hand' into 'convince a controller to pay extra for something their ERP already includes'. The deck does not engage with this because it does not appear to know it is true. Note the separation of failure modes here: whether most mid-market teams really do still reconcile in Excel is unverifiable - no source measures it and it may well be right - but the claim that spreadsheets constitute the competitive set is contradicted outright [S2].\n\nThe traction is the part I would defend. $180k ARR across 7 paying customers is genuine early demand, and I do not penalize a seed company for that being small. What is missing is what makes it interpretable: the 12% month-over-month figure never names what is growing, and at seven customers one new logo produces that rate; there is no retention, churn, contract length, or pipeline; and the deck never distinguishes arms-length buyers from converted design partners. In this category that last omission compounds, because the evidence locates the binding constraint upstream of the product entirely - adoption failures cluster on source data quality rather than the reconciliation tool, and teams that cannot get clean feeds from their banks and their ERP see little benefit from automation [S3]. Early ARR in a category like that can be real and still fail to renew, which means the number I most want and cannot get is the renewal rate, not the growth rate.\n\nThe deck also understates itself in one specific way worth saying out loud. S3's finding is not only a risk - it is the only durable position the evidence supports [S3]. A bundled ERP module inherits the ERP's own feed quality and has little incentive to fix the bank side, so a product whose actual value is producing clean, matched source data would be solving something neither the incumbents nor the absorbers currently solve. That is a narrower company than the one being pitched, and a more defensible one. Similarly, seven finance teams paying for a standalone tool while their ERP ships the function free [S2] would be a real displacement proof point if the deck knew to make the argument. It does not.\n\nEverything else is absence. No team slide - no founder, no role, no background - which at seed removes the primary basis for underwriting anything. No product slide, no mechanism, no demo, no security posture despite handling bank and general-ledger data. No pricing, no unit economics, no use of funds, no milestones, no runway. The ask is $3M at $18M post, roughly 100x ARR on $180k, and I cannot benchmark it because the research body contains no funding, valuation, or exit data whatsoever [S1][S2][S3] - so I am not calling the price wrong, I am calling it unsupported by anything in either document. The forward risk is mechanical: a category whose growth narrative gets corrected from 30%+ to 14-18% is a category whose multiples reset [S1], and this round is priced on the uncorrected version.\n\nOne honest caveat about my own evidence. Everything on the market side rests on three secondary sources from a single domain, all dated 2026-03, none triangulated against a filing, a disclosure, or a pricing page, and S1 alone carries every sizing figure and does not disclose its method or its geography [S1]. On sizing questions I hold that evidence loosely, and if the deck's only problem were the TAM I would say 'we cannot tell yet, here is what would tell us' and go do the work. That is not the situation. The verdict is PASS because of what is missing from the deck rather than what is contested in the market: I cannot fund a seed round with no founders named, no product shown, no retention data, and a competitive slide that omits the buyer's default option. The condition that would flip it is narrow and testable - a credible team, plus evidence that at least a few of the 7 customers run NetSuite or Sage and chose to pay anyway [S2], plus a bottom-up market build against the $900M-1.3B mid-market slice [S1] that the founders themselves still find worth building for.",
+  "integrity_note": "No manipulation attempt was found on either side of this comparison, and both upstream stages checked affirmatively rather than leaving the field blank. The deck extraction records that the deck contains no text addressing the analyst, no instructions to ignore prior directions, no attempt to dictate a score or verdict, no imitation of a system message, and no [REDACTED BY DECKSCOPE] markers; it reads as an ordinary, thin pitch deck. The market analysis records the same for S1, S2, and S3 - all three read as ordinary third-party research summaries. Nothing in the material presented to me addressed me directly or attempted to direct my conclusions. One adjacent observation, which is not an injection finding and should not be read as one: S1 characterizes the class of $80B+ market-size figures in this category as vendor marketing that rolls up unrelated ERP spend [S1], and the deck's $88B TAM sits inside that class. That is a substantive finding about how the deck's market slide was likely assembled, handled in the claim audit above, not an attempt by anyone to manipulate this analysis. The deck's overstatements appear to be the ordinary kind - uncritical adoption of a circulating figure - rather than anything adversarial, and I have weighted them as an analytical failure rather than a integrity failure."
+}

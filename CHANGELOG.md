@@ -6,6 +6,97 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ## [Unreleased]
 
+### Fixed (sixth audit) — the guarantees a stranger can check
+
+Internal design held up; the externally visible surface did not. Protocol
+conformance, a replayable benchmark, a model catalogue and a green build all
+failed when independently exercised.
+
+**The MCP server advertised a revision it did not speak.** DeckScope declared
+`2026-07-28` while emitting the older result envelope: `server/discover` and
+`tools/list` carried no `ttlMs` or `cacheScope`, and no modern result carried
+`resultType`. A strict client was entitled to reject a server claiming its
+protocol. The MCP CI job stayed green because it only checked that a version came
+back and that a tool ran — a smoke test standing in for conformance. Results are
+now stamped per revision, and the legacy `initialize` handshake deliberately is
+*not* stamped, because trading one conformance break for another is not a fix.
+Six tests exercise the wire directly.
+
+**The committed benchmark could not be replayed.** This is the finding worth
+internalising, because the check that existed passed the whole time.
+
+The bundle shipped with a manifest of hashes and a test asserting the manifest
+matched its own files. Both agreed. But the prompts had been path-scrubbed
+*after* they were hashed, so 17 of 34 ids no longer equalled the hash of the file
+beside them, and the pipeline cases — the ones whose prompts contained the deck's
+path — could not replay at all. **A check that verifies a document against itself
+proves nothing about the world.**
+
+The fix is structural rather than more careful scrubbing:
+
+- The deck agent sends the deck's *file name*, never its path. The path is
+  useless to the model, leaks the operator's directory layout into a third-party
+  prompt, and made every prompt machine-specific.
+- The `manual` provider canonicalizes any remaining paths *before* hashing,
+  writing or sending, so a spool is portable between machines.
+- `scripts/replay_benchmark.py` checks `id == sha256(prompt)[:16]` directly and
+  then re-scores the retained answers through the evaluator, offline.
+- CI runs that replay on every push. A change that alters a prompt now fails
+  loudly instead of quietly invalidating the published numbers.
+- The bundle generator *refuses* to write a prompt containing a machine path, so
+  the pipeline gets fixed rather than the artifact.
+
+The whole suite was then re-run under the corrected prompts, with full generation
+provenance recorded — model, date, who answered each exchange, and the explicit
+note that answering was independent while authoring was not.
+
+**The result changed, and not in the pipeline's favour.**
+
+| mode | checks | input tokens |
+|---|:--:|:--:|
+| baseline (one prompt) | **95 / 95** | 20,610 |
+| pipeline (three agents) | **94 / 95** | 195,310 |
+
+The pipeline named *LangSmith* on `anchored_category` — a real product in the
+category, present in neither the deck nor the frozen corpus, when every prompt
+forbids inventing a company. That is world knowledge crossing the evidence
+boundary, which is the failure this project exists to catch, and the baseline
+reading the same corpus did not do it. On the only run where either mode failed
+anything, the mode that failed cost 9.5× the tokens.
+
+**The OpenAI catalogue was wrong in the opposite direction from last time.** The
+previous cycle removed models OpenAI had retired and replaced them with
+`gpt-5.2-mini` and `gpt-5.2-nano` — names produced by pattern-matching on
+`gpt-5.2` rather than read from the docs, where the small variants are
+`gpt-5-mini` and `gpt-5-nano`. Two of the three models the setup wizard offered
+did not exist, and a retired-model message redirected users to one of them. The
+catalogue is now short and verified, and `available_models()` asks the provider's
+own `/v1/models` endpoint so a hard-coded list is no longer the only answer.
+
+**Other fixes**
+
+- Citations stopped working past `S999`. The registry mints IDs without a
+  ceiling, but the prose parser and `find()` both capped at three digits, so a
+  structured citation survived the audit while the inline form was ignored and
+  the lookup failed — leaving the bibliography filing a cited source as uncited.
+  A panel is deliberately unbounded, so a large merged registry is reachable.
+- `merge_into()` copied admitted IDs but not the `_prompt_built` flag, so an
+  incoming registry that built a prompt and admitted nothing widened the target's
+  citable set back to everything — the widened-trust bug the flag exists to
+  prevent, reintroduced through the merge.
+- The Unix installer said nothing outside the folder and Desktop changed while
+  creating a symlink in `~/.local/bin` or `/usr/local/bin`. It now lists
+  everything it touches.
+- CI was red on every Windows job and on lint. The acceptance test treated "bash
+  exists on PATH" as "bash can run this script" — on Windows it is Git Bash,
+  which failed before reaching the guard — and a test hard-coded POSIX `/tmp`,
+  which resolves to an unwritable drive-relative path there. A test now forbids
+  hard-coded `/tmp` across the suite. Lint: one duplicate import, one unused
+  import.
+- GitHub Actions are pinned to immutable commit SHAs rather than moving major
+  tags, and packaging metadata uses the PEP 639 `license` expression instead of
+  the deprecated table and classifier.
+
 ### Fixed (fifth audit) — uneven guarantees
 
 The theme was that DeckScope's promises were real but not uniform. A citation was

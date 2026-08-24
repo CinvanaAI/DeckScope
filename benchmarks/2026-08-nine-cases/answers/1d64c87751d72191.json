@@ -1,0 +1,289 @@
+{
+  "headline": "Northwind Ledger is selling a real mid-market pain, but its market slide is off by roughly an order of magnitude and its competition slide omits the incumbents that have spent two years moving into exactly this segment.",
+  "verdict": {
+    "call": "LEAN NO",
+    "confidence": "medium",
+    "confidence_rationale": "The sizing and competitive gaps are established by the research material and are large enough to be decisive [S1][S2]. Confidence is held at medium rather than high because the deck omits the team, the product and the business model entirely, so the two things that most often flip a seed decision are simply not in evidence either way."
+  },
+  "scorecard": [
+    {
+      "dimension": "Market size & timing",
+      "score": 3,
+      "weight": 5,
+      "rationale": "The deck claims $88B for financial reconciliation software. Independent 2026 estimates put the whole close-and-reconciliation category at $6-8B, with the larger figures explained as rollups of the entire office-of-the-CFO stack including ERP [S1]. The deck's own SAM of $9B is larger than the credible whole-category figure, which means the sizing does not survive contact with the first source a diligence process would pull. The mid-market reconciliation slice is $900M-1.3B [S1] — a real market, but one where a $600M SOM implies roughly half of it.",
+      "evidence": [
+        "Deck slide 3: $88B market, 31% CAGR, $9B SAM, $600M SOM",
+        "Independent composite: $6-8B category, $900M-1.3B mid-market slice, 14-18% growth [S1]"
+      ],
+      "source_ids": ["S1"]
+    },
+    {
+      "dimension": "Competitive position",
+      "score": 2,
+      "weight": 5,
+      "rationale": "The competition slide names spreadsheets and nothing else. BlackLine and Trintech are the established reconciliation vendors and both have moved down-market toward mid-market finance teams in the last two years; NetSuite and Sage ship native reconciliation modules bundled with the ERP these teams already run [S2]. Bundled-with-the-ERP is the harder of the two problems, because it competes at a price of zero against a budget line that already exists.",
+      "evidence": [
+        "Deck slide 5 names no software vendor",
+        "BlackLine and Trintech established and moving down-market; NetSuite and Sage bundle native modules [S2]"
+      ],
+      "source_ids": ["S2"]
+    },
+    {
+      "dimension": "Product & moat",
+      "score": 2,
+      "weight": 4,
+      "rationale": "There is no product slide. The deck never says how the reconciliation is automated, what state the product is in, or what would stop a competitor doing the same thing. No moat is claimed, so none can be assessed.",
+      "evidence": [
+        "No product description, maturity, demo or technical claim anywhere in six slides"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Business model",
+      "score": 3,
+      "weight": 3,
+      "rationale": "No pricing, no unit economics, no gross margin. $180k ARR across 7 customers implies about $26k per customer, which is a plausible mid-market ACV, but that is arithmetic performed on the deck's behalf rather than anything the deck asserts.",
+      "evidence": [
+        "Deck slide 4: $180k ARR, 7 customers",
+        "No pricing or margin disclosure"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Traction vs. stage",
+      "score": 5,
+      "weight": 5,
+      "rationale": "$180k ARR with 7 customers and 12% MoM for three months is a reasonable seed shape and should not be penalized for its size. It should be penalized for its thinness of evidence: three months is short, the base is small enough that one or two deals produce the whole growth rate, and there is no retention or expansion figure at all. For a product whose value depends on staying installed, the absence of any retention number is the more telling gap.",
+      "evidence": [
+        "Deck slide 4: $180k ARR, 7 paying customers, 12% MoM for three months",
+        "No retention, churn, pipeline or expansion figure given"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Team",
+      "score": 1,
+      "weight": 5,
+      "rationale": "The deck contains no team slide, no founder names, no backgrounds and no headcount. At seed, with $180k of ARR, the team is most of what is being underwritten. This is not a scoring judgment about the founders; it is that nothing was supplied to judge.",
+      "evidence": [
+        "No team information of any kind in the deck"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Ask & plan",
+      "score": 3,
+      "weight": 4,
+      "rationale": "$3M at $18M post is a $15M pre-money on $180k ARR, roughly 83x. That multiple is defensible at seed only on the strength of team, market and product velocity, and the deck evidences none of the three. There is no use of funds and no milestone the round is meant to reach.",
+      "evidence": [
+        "Deck slide 6: raising $3M at $18M post",
+        "No use of funds, no milestones, no runway stated"
+      ],
+      "source_ids": []
+    }
+  ],
+  "claim_audit": [
+    {
+      "id": "C1",
+      "claim": "The financial reconciliation software market is $88B",
+      "market_evidence": "Independent 2026 estimates put the whole financial close and reconciliation software category at $6-8B; figures above $80B roll up the entire office-of-the-CFO software stack including ERP [S1].",
+      "assessment": "contradicted",
+      "delta": "The deck's figure is roughly 11-15x the independent estimate for the category it names. The deck's own SAM of $9B exceeds the credible size of the entire category.",
+      "so_what": "The headline market number does not survive the first source a diligence process would pull, and the SAM and SOM are derived from it, so the whole sizing stack falls with it.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/recon-sizing-2026"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C2",
+      "claim": "growing at 31% CAGR",
+      "market_evidence": "Growth for the category is estimated at 14-18% annually, described as well below the 30%+ sometimes claimed [S1].",
+      "assessment": "contradicted",
+      "delta": "31% claimed against 14-18% estimated — roughly double the top of the credible range.",
+      "so_what": "Growth rate is doing the work of justifying an 83x ARR entry multiple. At 14-18% the market is healthy but not one that carries a seed valuation on its own.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/recon-sizing-2026"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C3",
+      "claim": "SAM: $9B (mid-market North America)",
+      "market_evidence": "The mid-market reconciliation slice specifically is estimated at $900M-1.3B [S1].",
+      "assessment": "contradicted",
+      "delta": "$9B claimed against $900M-1.3B estimated, roughly 7-10x.",
+      "so_what": "This is the number that matters for this company, and it is the one most overstated relative to what the segment can actually support.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/recon-sizing-2026"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C4",
+      "claim": "SOM: $600M",
+      "market_evidence": "Against an independently estimated mid-market slice of $900M-1.3B, a $600M SOM implies capturing roughly half of the entire segment [S1].",
+      "assessment": "contradicted",
+      "delta": "Not a wrong figure so much as an impossible share: 46-67% of the whole mid-market slice.",
+      "so_what": "A SOM that large is a signal that the stack was derived top-down by applying percentages rather than built up from customers and price.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/recon-sizing-2026"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C5",
+      "claim": "Spreadsheets are the competition; most mid-market finance teams still reconcile in Excel",
+      "market_evidence": "BlackLine and Trintech are the established reconciliation vendors and have both moved down-market toward mid-market finance teams in the last two years. NetSuite and Sage ship native reconciliation modules bundled with the ERP mid-market finance teams already run [S2].",
+      "assessment": "contradicted",
+      "delta": "The deck's competitive set contains zero vendors; the research material names four, two of them incumbents actively entering this exact segment and two of them bundled into the buyer's existing ERP.",
+      "so_what": "This is the most serious gap in the deck. It is not that the company loses to these vendors — it is that the founders either do not know they are there or chose not to say, and both readings are material at seed.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/recon-incumbents"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C6",
+      "claim": "$180k ARR, 7 paying customers, 12% month-over-month growth for three months",
+      "market_evidence": "No source in the research material addresses this company's revenue.",
+      "assessment": "unverifiable",
+      "delta": "Cannot be checked from the outside. The figures are internally consistent and the shape is normal for seed.",
+      "so_what": "Verifiable only in diligence. Ask for the customer list, the contract values, and month-by-month rather than a compound rate on a small base.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C7",
+      "claim": "Reconciliation takes our design partners four days and produces errors nobody catches until audit",
+      "market_evidence": "Adoption failures in this category cluster on data quality at the source rather than on the reconciliation tool; teams that cannot get clean feeds from banks and ERP see little benefit from automation [S3].",
+      "assessment": "partially-supported",
+      "delta": "The pain is real and the deck describes it credibly. What the deck does not address is that the pain being real does not mean this product removes it — the binding constraint is usually upstream data quality [S3].",
+      "so_what": "Four days of manual work is a compelling wedge only if the feeds can be cleaned. That is the thing to test with the design partners.",
+      "source_ids": ["S3"],
+      "sources": ["https://research.example.org/recon-adoption"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C8",
+      "claim": "Raising $3M at $18M post",
+      "market_evidence": "No source addresses this company's valuation.",
+      "assessment": "unverifiable",
+      "delta": "A $15M pre-money on $180k ARR is approximately 83x. Whether that is defensible is a judgment, not a fact the market data settles.",
+      "so_what": "The multiple needs team and product velocity to justify it, and the deck supplies neither.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    }
+  ],
+  "alignment": {
+    "where_deck_matches_market": [
+      "The underlying problem is real: manual bank-to-ledger reconciliation is a genuine mid-market pain and the category exists as its own software segment [S1].",
+      "Mid-market North America is the right segment to name — it is the slice with an identifiable independent size [S1]."
+    ],
+    "where_deck_overstates": [
+      "TAM: $88B claimed against a $6-8B independent estimate for the category [S1].",
+      "Growth: 31% CAGR claimed against 14-18% estimated [S1].",
+      "SAM: $9B claimed against a $900M-1.3B mid-market slice [S1].",
+      "SOM: $600M implies roughly half the entire mid-market segment [S1].",
+      "Competitive position: 'spreadsheets' overstates how open the field is, given two incumbents moving down-market and two ERP vendors bundling the function [S2]."
+    ],
+    "where_deck_understates": [
+      "The wedge itself. Four days of manual work per close, ending in errors found at audit, is a sharper and more defensible story than the market slide, and the deck spends one slide on it and one on a number that does not hold."
+    ],
+    "blind_spots": [
+      {
+        "what": "BlackLine and Trintech, the established reconciliation vendors, have both moved down-market toward mid-market finance teams in the last two years.",
+        "why_it_matters": "The deck's entire positioning rests on the claim that the alternative is a spreadsheet. If the incumbents are already in the segment, Northwind is not creating a category — it is entering one late, against vendors with reference customers and auditor relationships.",
+        "source_ids": ["S2"]
+      },
+      {
+        "what": "NetSuite and Sage ship native reconciliation modules bundled with the ERP that mid-market finance teams already run.",
+        "why_it_matters": "Bundled functionality competes at an incremental price of zero and requires no new vendor review. For a $26k-ACV product sold to a finance team, 'good enough and already paid for' is the most common way the deal dies.",
+        "source_ids": ["S2"]
+      },
+      {
+        "what": "Adoption failures in this category cluster on source data quality — bank and ERP feeds — rather than on the reconciliation tool itself.",
+        "why_it_matters": "It relocates the risk. The deck treats automation as the hard part; the evidence says getting clean feeds is, which changes what the $3M has to buy and how long implementation takes.",
+        "source_ids": ["S3"]
+      },
+      {
+        "what": "The figures above $80B that circulate in this category are rollups of the whole office-of-the-CFO stack including ERP.",
+        "why_it_matters": "It suggests the $88B was taken from vendor marketing rather than derived. That is a process signal about how this team handles numbers, and it will be read that way by any partner who checks."
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Incumbents moving down-market reach the same buyer first, with audit-grade references Northwind cannot match",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask which vendors appeared in the last ten competitive deals and what the win rate was against each [S2]."
+    },
+    {
+      "risk": "ERP-bundled reconciliation is judged good enough and the deal never reaches a buying decision",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask what ERP each of the 7 customers runs and whether they evaluated the native module before buying [S2]."
+    },
+    {
+      "risk": "The sizing error is a symptom rather than a slip, and other numbers were sourced the same way",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Ask for the derivation of the $88B and the $9B. The answer to 'where did this come from' is more informative than the correction."
+    },
+    {
+      "risk": "Implementations stall on bank and ERP feed quality, lengthening payback and depressing retention",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask for time-to-first-value on each of the 7 accounts and what share of onboarding was spent on data plumbing [S3]."
+    },
+    {
+      "risk": "Growth is an artifact of a small base — one or two deals producing 12% MoM",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Ask for month-by-month ARR with logo-level detail rather than a compound rate."
+    },
+    {
+      "risk": "No team information means the primary seed underwriting object is unassessed",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Founder backgrounds and domain history, before any further work."
+    }
+  ],
+  "questions": [
+    "Where did the $88B come from, and does that source describe reconciliation software or the whole office-of-the-CFO stack? [S1]",
+    "Which reconciliation vendors have you met in a live deal, and what happened? [S2]",
+    "What ERP do each of your 7 customers run, and did they evaluate the bundled reconciliation module? [S2]",
+    "What is your net revenue retention, and how many of the 7 have renewed at all?",
+    "How much of the 12% MoM over three months is one customer?",
+    "How long did it take to get usable bank and ERP feeds for each account? [S3]",
+    "Who is the team, and what have they built before?",
+    "What does the $3M buy, and what milestone does it reach?"
+  ],
+  "actions": [
+    {
+      "action": "Ask for the derivation of the market stack before any further diligence — the answer determines whether this is a sloppy slide or a habit",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Request the competitive history: vendors met, deals won and lost, and against whom",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Request the team slide that is missing, with founder backgrounds",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Reference two of the seven customers on time-to-value and feed quality",
+      "owner": "Associate",
+      "priority": "P1"
+    },
+    {
+      "action": "Rebuild the SOM bottom-up from ACV and reachable accounts and compare it to the deck's $600M",
+      "owner": "Associate",
+      "priority": "P1"
+    }
+  ],
+  "summary": "Northwind Ledger is a six-slide seed deck for automated bank-to-ledger reconciliation aimed at mid-market finance teams. The problem it names is real and specifically described — four days of manual work per close at its design partners, with errors surfacing only at audit — and that is the strongest thing in the deck. Almost everything else is either overstated or absent.\n\nThe market slide does not hold. It claims an $88B financial reconciliation software market growing at 31% CAGR, with a $9B SAM and a $600M SOM. Independent 2026 estimates put the entire financial close and reconciliation category at $6-8B, and note that figures above $80B are rollups of the whole office-of-the-CFO stack including ERP [S1]. The mid-market slice this company is actually selling into is estimated at $900M-1.3B, growing 14-18% rather than 31% [S1]. The deck's SAM alone is larger than the credible size of the whole category, and its SOM implies capturing roughly half of the mid-market segment. This is the descending-percentages shape of a top-down estimate, and the deck does not state a methodology that would let a reader check it.\n\nThe competition slide is the more serious problem. It names spreadsheets — a process, not a vendor — and no software company at all. The research material names four: BlackLine and Trintech, the established reconciliation vendors, both of which have moved down-market toward mid-market finance teams in the last two years, and NetSuite and Sage, which ship native reconciliation modules bundled with the ERP these teams already run [S2]. The bundled modules are the harder threat, because they compete at an incremental price of zero against a budget line that already exists. A deck can be wrong about market size and recover; a deck that does not name the incumbent moving into its segment either has not looked or has decided not to say, and at seed both readings bear on the founders.\n\nThere is a third gap the deck does not know it has. Adoption failures in this category cluster on data quality at the source rather than on the reconciliation tool, and teams that cannot get clean feeds from their banks and their ERP see little benefit from automation [S3]. That relocates the risk from 'can this be automated' to 'can the feeds be cleaned', which changes implementation time, payback, and what the $3M is actually buying.\n\nAgainst that, the traction is fine for the stage and should not be marked down for its size: $180k ARR across 7 customers at roughly $26k each, growing 12% month-over-month for three months. The thinness is in the evidence rather than the number — three months is short, a base of seven means one or two deals produce the whole rate, and no retention figure appears anywhere, which for a product whose value depends on staying installed is the omission that matters most. The ask of $3M at $18M post implies about 83x ARR, a multiple that at seed is carried by team and product velocity; the deck contains no team slide, no product description, no pricing and no use of funds, so none of the three is available to carry it.\n\nThe call is LEAN NO, and the single biggest reason is the competitive omission rather than the sizing error — the numbers can be corrected in a conversation, but a competitive set with no vendors in it is a statement about how the founders see their own market. What would flip it: a credible bottom-up rebuild of the mid-market opportunity against the $900M-1.3B independent figure [S1], together with a competitive history showing they have met BlackLine, Trintech or a bundled ERP module in a live deal and know why they won or lost [S2].",
+  "integrity_note": null
+}

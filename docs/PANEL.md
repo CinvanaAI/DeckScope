@@ -340,12 +340,14 @@ different analyses, so the tie was measured rather than manufactured.
 That did not settle the question in the pipeline's favour — it said the suite had no
 headroom. Four harder **anchoring cases** were then written to attack the pipeline's
 one structural claim, isolation, and answered by separate agents that saw only the
-prompt. Both modes passed 52 of 52 while the pipeline spent 8.8× the input tokens. See
+prompt. Over all nine cases the baseline passed 95 of 95 and the pipeline 94 of 95, at
+9.5× the input tokens — the pipeline's single failure being a company it named from
+world knowledge that appears in neither the deck nor the corpus. See
 [EVALUATION.md](EVALUATION.md#the-anchoring-cases).
 
 So across three evaluations the three-agent pipeline has never separated from a single
-prompt on any measured dimension. What it buys is the standalone market analysis, not
-accuracy.
+prompt on any measured dimension, and has now scored below it once. What it buys is the
+standalone market analysis, not accuracy.
 
 The panel has not been run this way. It would take roughly 90 exchanges rather than 15,
 and the case for spending them is weak while the two cheaper modes still cannot be told

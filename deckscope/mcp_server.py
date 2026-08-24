@@ -345,7 +345,40 @@ def _write(obj: Dict[str, Any]) -> None:
     sys.stdout.flush()
 
 
-def _result(req_id: Any, payload: Dict[str, Any]) -> None:
+#: The most conservative caching policy the 2026-07-28 revision allows, and the
+#: right default for this server: every result is derived from a deck the caller
+#: supplied, so nothing here is safe for a shared intermediary to cache and
+#: nothing is stable enough to be worth re-serving.
+DEFAULT_TTL_MS = 0
+DEFAULT_CACHE_SCOPE = "private"
+
+#: Results that carry caching hints in the 2026-07-28 revision.
+CACHEABLE_METHODS = ("server/discover", "tools/list", "prompts/list",
+                     "resources/list", "resources/read")
+
+
+def _result(req_id: Any, payload: Dict[str, Any], *,
+            method: str = "", modern: bool = False,
+            result_type: str = "complete") -> None:
+    """Send a result, stamped for the revision the caller asked for.
+
+    The modern revision is not just a version string. Its results carry a
+    `resultType`, and the discovery and list results additionally carry `ttlMs`
+    and `cacheScope` so a client's cache layer knows what it may keep and for
+    how long. DeckScope advertised `2026-07-28` while emitting the older
+    envelope, so a strict client was entitled to reject responses from a server
+    that claimed to speak its protocol — and the MCP smoke test could not catch
+    it, because it only checked that a version came back and a tool ran.
+
+    Legacy revisions must NOT receive these fields, so the stamping is keyed off
+    what the caller actually requested rather than applied everywhere.
+    """
+    if modern:
+        payload = dict(payload)
+        payload.setdefault("resultType", result_type)
+        if method in CACHEABLE_METHODS:
+            payload.setdefault("ttlMs", DEFAULT_TTL_MS)
+            payload.setdefault("cacheScope", DEFAULT_CACHE_SCOPE)
     _write({"jsonrpc": "2.0", "id": req_id, "result": payload})
 
 
@@ -410,14 +443,23 @@ def main() -> int:
         # Modern requests declare their version per request. Refuse one we do
         # not speak before doing any work, and tell the client what we do speak
         # so it can retry rather than guess.
-        if _version_refused(req_id, _requested_version(params)):
+        requested = _requested_version(params)
+        if _version_refused(req_id, requested):
             continue
+
+        # `server/discover` is a modern-only method, so a client using it is
+        # speaking the modern revision even when it omits the per-request
+        # version metadata.
+        modern = (requested in MODERN_VERSIONS) or method == "server/discover"
+
+        def send(payload: Dict[str, Any], result_type: str = "complete") -> None:
+            _result(req_id, payload, method=method, modern=modern,
+                    result_type=result_type)
 
         if method == "server/discover":
             # Mandatory in the modern spec, and the probe a dual-era client uses
             # on stdio to tell a modern server from a legacy one.
-            _result(req_id, {
-                "resultType": "complete",
+            send({
                 "supportedVersions": list(SUPPORTED_VERSIONS),
                 "capabilities": {"tools": {}},
                 "instructions": SERVER_INSTRUCTIONS,
@@ -425,6 +467,8 @@ def main() -> int:
                                                  "version": __version__}},
             })
         elif method == "initialize":
+            # Legacy handshake. Never stamped: the older revisions have no
+            # `resultType` and a strict old client should not receive one.
             _result(req_id, {
                 "protocolVersion": _negotiate_legacy(params.get("protocolVersion")),
                 "capabilities": {"tools": {}},
@@ -433,7 +477,7 @@ def main() -> int:
         elif method in ("notifications/initialized", "notifications/cancelled"):
             continue
         elif method == "tools/list":
-            _result(req_id, {"tools": TOOLS})
+            send({"tools": TOOLS})
         elif method == "tools/call":
             name = params.get("name")
             handler = HANDLERS.get(name)
@@ -442,15 +486,16 @@ def main() -> int:
                 continue
             try:
                 text = handler(params.get("arguments") or {})
-                _result(req_id, {"content": [{"type": "text", "text": text}]})
+                send({"content": [{"type": "text", "text": text}]})
             except Exception as exc:  # noqa: BLE001
-                _result(req_id, {
-                    "content": [{"type": "text",
-                                 "text": f"{type(exc).__name__}: {exc}\n\n"
-                                         f"{traceback.format_exc()[-1200:]}"}],
-                    "isError": True})
+                # Still a well-formed result — a tool that failed is a result
+                # with `isError`, not a JSON-RPC error — so it is stamped too.
+                send({"content": [{"type": "text",
+                                   "text": f"{type(exc).__name__}: {exc}\n\n"
+                                           f"{traceback.format_exc()[-1200:]}"}],
+                      "isError": True})
         elif method == "ping":
-            _result(req_id, {})
+            send({})
         elif req_id is not None:
             _error(req_id, -32601, f"Method not found: {method}")
     return 0

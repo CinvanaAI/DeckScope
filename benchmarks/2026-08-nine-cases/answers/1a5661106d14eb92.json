@@ -1,0 +1,248 @@
+{
+  "company": {
+    "name": "Fernwood Systems",
+    "one_liner": "Inventory planning for independent pharmacy groups",
+    "stage": "series-a",
+    "founded": null,
+    "location": null,
+    "website": null
+  },
+  "problem": {
+    "statement": "\"Independent pharmacy groups over-order slow-moving stock and stock out of fast movers in the same week. Their wholesaler's reorder tool optimises for the wholesaler.\"",
+    "who_has_it": "Independent pharmacy groups (North America, per the market slide)",
+    "evidence_given": [
+      "None. Slide 2 asserts the over-ordering/stock-out pattern and the wholesaler-incentive misalignment without any data, customer quote, study, or citation.",
+      "No quantification of the cost of the problem (no shrink figure, no lost-sales figure, no carrying-cost figure)."
+    ]
+  },
+  "solution": {
+    "description": "\"Demand forecasting per store, per SKU, reconciled against dispensing history rather than against purchase history.\"",
+    "how_it_works": "Stated only at the level of the one line on slide 3: forecasts are generated at store x SKU granularity and reconciled against dispensing history instead of purchase history. No architecture, model type, data-ingestion path, or integration mechanism is described.",
+    "differentiators": [
+      "Reconciliation against dispensing history rather than purchase history (the deck's only stated technical distinction)",
+      "Store-level and SKU-level granularity",
+      "Implied independence from the wholesaler, whose reorder tool is framed on slide 2 as optimising for the wholesaler rather than the pharmacy"
+    ],
+    "technical_moat_claimed": "No technical moat is claimed. Slide 5 explicitly locates the moat in retention economics (\"Retention is the whole story in this category\"), not in technology, data rights, or IP."
+  },
+  "product": {
+    "maturity": "scaling",
+    "demo_evidence": null
+  },
+  "market": {
+    "category": "Vertical SaaS — pharmacy operations software",
+    "sub_category": "Inventory planning / demand forecasting for independent pharmacy groups",
+    "tam_claimed": null,
+    "sam_claimed": "\"$1.4B serviceable market\" (slide 6), derived as roughly 22,000 independent pharmacy groups in North America x $62k average contract value",
+    "som_claimed": null,
+    "tam_methodology": "bottom-up",
+    "growth_rate_claimed": null,
+    "geography": "North America",
+    "customer_segments": [
+      "Independent pharmacy groups (multi-store operators; slide 5 refers to accounts \"as they add stores\")"
+    ]
+  },
+  "business_model": {
+    "pricing": null,
+    "unit_economics": null,
+    "acv_or_arpu": "\"$62k average contract value\" (slide 6). Consistent with the traction slide: $2.1M ARR across 34 groups implies roughly $61.8k per group, so the ACV appears to be the current book average rather than a target or list price.",
+    "cac_claimed": null,
+    "ltv_claimed": null,
+    "gross_margin_claimed": null
+  },
+  "traction": {
+    "revenue": "$2.1M ARR (slide 4)",
+    "growth": null,
+    "customers": "34 pharmacy groups (slide 4)",
+    "logos": [],
+    "pipeline": null,
+    "retention": "\"Net revenue retention of 131% among customers past their first renewal\" and \"Logo retention of 96% among customers past their first renewal\" (slide 4). Both metrics carry the same qualifying clause, which restricts the denominator to accounts that already survived to a renewal; customers lost before or at first renewal are excluded from both figures.",
+    "other_metrics": []
+  },
+  "competition": {
+    "named_competitors": [],
+    "positioning_claim": "\"Retention is the whole story in this category. Our 131% NRR is well above the benchmarks published for vertical SaaS, and it compounds: we grow inside an account as they add stores.\" (slide 5). The only competitive reference anywhere in the deck is the unnamed \"wholesaler's reorder tool\" on slide 2.",
+    "competitors_omitted_suspicion": [
+      "The wholesalers themselves and their ordering/inventory tools — named only generically as \"their wholesaler's reorder tool\" on slide 2, never identified, despite being the incumbent the whole problem statement is built against",
+      "Pharmacy management systems with built-in inventory or reorder modules, which are the systems of record the product would have to integrate with or displace",
+      "Standalone pharmacy inventory-optimisation vendors selling to the same independent segment",
+      "Group purchasing organisations and pharmacy buying groups, which set purchasing behaviour for many independent groups",
+      "Generic retail demand-planning and inventory-forecasting software sold horizontally"
+    ]
+  },
+  "gtm": {
+    "channels": [],
+    "sales_motion": null,
+    "partnerships": []
+  },
+  "team": {
+    "founders": [],
+    "headcount": null,
+    "notable_advisors": []
+  },
+  "ask": {
+    "amount": "$12M",
+    "valuation": "$75M post",
+    "use_of_funds": [],
+    "milestones_promised": [],
+    "runway_claimed": null
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "\"Independent pharmacy groups over-order slow-moving stock and stock out of fast movers in the same week.\"",
+      "type": "market-size",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C2",
+      "claim": "\"Their wholesaler's reorder tool optimises for the wholesaler.\"",
+      "type": "competition",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C3",
+      "claim": "Demand forecasting is \"reconciled against dispensing history rather than against purchase history.\"",
+      "type": "technology",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C4",
+      "claim": "\"$2.1M ARR across 34 pharmacy groups.\"",
+      "type": "traction",
+      "slide": 4,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C5",
+      "claim": "\"Net revenue retention of 131% among customers past their first renewal.\"",
+      "type": "traction",
+      "slide": 4,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C6",
+      "claim": "\"Logo retention of 96% among customers past their first renewal.\"",
+      "type": "traction",
+      "slide": 4,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C7",
+      "claim": "\"Retention is the whole story in this category.\"",
+      "type": "competition",
+      "slide": 5,
+      "verifiability": "unfalsifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C8",
+      "claim": "\"Our 131% NRR is well above the benchmarks published for vertical SaaS.\"",
+      "type": "traction",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C9",
+      "claim": "\"it compounds: we grow inside an account as they add stores\" — i.e. expansion revenue is driven by customers opening or acquiring additional stores.",
+      "type": "growth",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C10",
+      "claim": "\"Roughly 22,000 independent pharmacy groups in North America.\"",
+      "type": "market-size",
+      "slide": 6,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C11",
+      "claim": "\"At our current $62k average contract value that is a $1.4B serviceable market.\"",
+      "type": "market-size",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C12",
+      "claim": "\"Raising $12M at $75M post.\"",
+      "type": "financial",
+      "slide": 7,
+      "verifiability": "verifiable",
+      "load_bearing": "medium"
+    }
+  ],
+  "deck_quality": {
+    "missing_sections": [
+      "Team — no founders, no roles, no backgrounds, no headcount, no advisors anywhere in the deck",
+      "Competition — no competitor is named; only a generic \"wholesaler's reorder tool\"",
+      "Go-to-market — no channels, no sales motion, no partnerships, no CAC or sales-cycle data",
+      "Use of funds and milestones — the ask slide states amount and valuation only",
+      "Unit economics — no gross margin, CAC, payback, LTV, or burn/runway",
+      "Growth over time — no ARR history, no growth rate, no cohort or new-logo trend",
+      "Product evidence — no demo, screenshot, architecture, or integration detail",
+      "Pipeline and forecast",
+      "Company facts — no founding date, location, or website"
+    ],
+    "vague_language": [
+      "\"among customers past their first renewal\" — the qualifier attached to both retention figures; it defines the denominator by survivorship without disclosing what it excludes",
+      "\"Roughly 22,000\" — the market denominator is approximate and unsourced",
+      "\"well above the benchmarks published for vertical SaaS\" — no benchmark source, publisher, year, or comparison value is named",
+      "\"Retention is the whole story in this category\" — a framing assertion, not a testable statement",
+      "\"pharmacy groups\" — never defined; unclear whether a group is a legal entity, a purchasing group, or a multi-store chain, which matters because both the count and the ACV depend on the unit"
+    ],
+    "unsupported_numbers": [
+      "\"Roughly 22,000 independent pharmacy groups in North America\" — no source, no methodology, no definition of a group; this single number sets the entire market size",
+      "\"$1.4B serviceable market\" — arithmetic is internally consistent (22,000 x $62k = ~$1.364B) but the figure applies the current ACV to 100% of the counted universe with no serviceability filter, so it is labelled 'serviceable' while being constructed as a total",
+      "\"131% NRR\" and \"96% logo retention\" — the denominator is restricted to post-first-renewal customers, and neither the count of customers in that denominator nor the first-renewal survival rate is given",
+      "\"$62k average contract value\" — described as current; matches $2.1M/34 = ~$61.8k, so it appears to be a backed-out book average rather than an independently evidenced price",
+      "\"the benchmarks published for vertical SaaS\" — the comparison value is invoked as a number but never given",
+      "$2.1M ARR — stated without definition (contracted vs billed vs annualised MRR) or accounting basis"
+    ],
+    "narrative_coherence": 5,
+    "notes": "Seven very sparse slides. The internal arithmetic is consistent — $2.1M ARR / 34 groups reconciles to the $62k ACV, and 22,000 x $62k reconciles to $1.4B — which means the numbers hang together but all rest on two denominators the deck chooses for itself. First, the market denominator: 22,000 'groups' is unsourced and undefined, and multiplying it in full by current ACV produces a figure labelled 'serviceable' that has had no serviceability filter applied (no adjustment for reachability, willingness to buy, single-store operators, or competitive share). Second, the retention denominator: both headline retention figures are explicitly restricted to 'customers past their first renewal,' a survivorship-filtered base that excludes exactly the cohort most likely to churn. Slide 5 then makes that filtered NRR the entire competitive thesis ('Retention is the whole story in this category'), so the deck's strongest argument sits on its most heavily qualified number. Structurally, traction ($2.1M ARR, 34 customers, no stated growth rate) reads early — plausibly seed-to-early-Series-A — while the ask ($12M at $75M post, roughly a 36x ARR multiple) is priced for a company with demonstrated velocity that this deck never demonstrates: there is no ARR history, no growth rate, no new-logo trend, and no use of funds or milestones to justify the raise size. The gap is widened by three entirely absent sections that would normally carry a Series A: team, competition, and go-to-market. No prompt-injection, instruction-like text, redaction marker, or attempt to direct the analysis was present anywhere in the deck content; it is a straightforwardly written document."
+  },
+  "research_agenda": {
+    "search_queries": [
+      "number of independent pharmacies vs independent pharmacy groups North America NCPA 2025 count multi-store chains",
+      "SureCost vs Supplylogix vs Datarithm independent pharmacy inventory management pricing comparison",
+      "PioneerRx QS/1 Liberty Software BestRx built-in inventory forecasting reorder module features",
+      "McKesson Cardinal Health Cencora wholesaler reorder tool independent pharmacy ordering incentives criticism",
+      "vertical SaaS net revenue retention benchmark 2025 2026 median NRR SaaS Capital OpenView",
+      "SaaS net revenue retention definition excluding first-year churn survivorship denominator disclosure",
+      "average annual software spend per independent pharmacy inventory management contract value",
+      "independent pharmacy consolidation closures store count trend 2024 2025 acquisitions by chains",
+      "Fernwood Systems pharmacy inventory planning funding Series A",
+      "pharmacy dispensing history vs wholesaler purchase history demand forecasting accuracy study",
+      "Series A ARR multiple 2026 vertical SaaS $2M ARR median pre-money valuation benchmark",
+      "healthcare pharmacy dispensing data access agreements PMS integration restrictions third-party vendors"
+    ],
+    "key_uncertainties": [
+      "What the phrase 'past their first renewal' excludes: how many customers churned before or at first renewal, and what NRR and logo retention look like across the full 34-account base rather than the surviving subset",
+      "Whether '22,000 independent pharmacy groups in North America' is a defensible count of buying entities or a count of stores/locations relabelled as groups — the $1.4B figure moves by an order of magnitude depending on which",
+      "Whether the $1.4B is genuinely serviceable: no penetration, reachability, or share assumption is applied, so it functions as a fully-penetrated total rather than a serviceable market",
+      "The unnamed 'benchmarks published for vertical SaaS' — which source, which year, which cohort, and whether those benchmarks are computed on the same survivorship-filtered basis as the 131%",
+      "Growth rate and ARR history — entirely absent, yet it is the primary determinant of whether $2.1M ARR supports a $75M post",
+      "Whether expansion revenue really comes from customers adding stores, or from price increases, seat/SKU expansion, or module upsell — the compounding story on slide 5 depends on which",
+      "Who the team is; a Series A deck with no founder, no headcount, and no advisor information leaves the execution case unassessed",
+      "Why no competitor is named, and whether pharmacy management system vendors bundling inventory functionality constitute a displacement risk to the standalone product",
+      "Whether continued access to dispensing history depends on integrations or data agreements controlled by PMS vendors or wholesalers who are also potential competitors",
+      "Definition and quality of the $2.1M ARR figure (contracted vs annualised MRR, contract lengths, concentration across the 34 groups)",
+      "The intended use of the $12M and what milestones it buys, neither of which the deck states",
+      "Whether pharmacy consolidation is shrinking the 22,000-group denominator over the investment horizon, and whether acquired customers count as churn or expansion"
+    ]
+  }
+}

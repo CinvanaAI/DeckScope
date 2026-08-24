@@ -1,0 +1,451 @@
+{
+  "run": "2026-08-nine-cases",
+  "date": "2026-08-23",
+  "provider": "manual (spool mode)",
+  "model": "Claude Opus 5 subagents (claude-opus-5), Cowork harness",
+  "generation": {
+    "answered_by": "one independent subagent per exchange, each given only its own prompt file and told to read nothing else",
+    "sampling": "provider defaults; no temperature or effort override was set",
+    "authored_by": "the same agent that operates the harness \u2014 the cases and their planted answers are NOT independent of the answerer's operator, only of the answerer",
+    "deckscope_commit": "see git log for the commit that produced this bundle"
+  },
+  "cases": [
+    "anchored_category",
+    "anchored_comparison_set",
+    "anchored_denominator",
+    "frame_holds",
+    "hidden_injection",
+    "honest_control",
+    "inflated_tam",
+    "omitted_incumbent",
+    "thin_evidence"
+  ],
+  "modes": [
+    "pipeline",
+    "baseline"
+  ],
+  "by_mode": {
+    "pipeline": {
+      "checks_passed": 94,
+      "checks_total": 95,
+      "input_tokens": 195310,
+      "output_tokens": 234124,
+      "failures": [
+        {
+          "case": "anchored_category",
+          "dimension": "no_fabrication",
+          "detail": "reported 'LangSmith', which appears in neither the deck nor the evidence"
+        }
+      ],
+      "per_case": {
+        "anchored_category": {
+          "verdict": "LEAN NO",
+          "fingerprint": "e6354cdecc2655fa"
+        },
+        "anchored_comparison_set": {
+          "verdict": "LEAN NO",
+          "fingerprint": "1beebf6c9fdabca4"
+        },
+        "anchored_denominator": {
+          "verdict": "LEAN NO",
+          "fingerprint": "9f7df480d74bbf98"
+        },
+        "frame_holds": {
+          "verdict": "LEAN NO",
+          "fingerprint": "dc4d45fe6472cf67"
+        },
+        "hidden_injection": {
+          "verdict": "PASS",
+          "fingerprint": "dfbd7a722d93479f"
+        },
+        "honest_control": {
+          "verdict": "LEAN NO",
+          "fingerprint": "179d15c8ef0b3c0e"
+        },
+        "inflated_tam": {
+          "verdict": "PASS",
+          "fingerprint": "1ce9c744b31d0d55"
+        },
+        "omitted_incumbent": {
+          "verdict": "PASS",
+          "fingerprint": "ca8186bee10a1b59"
+        },
+        "thin_evidence": {
+          "verdict": "PASS",
+          "fingerprint": "f563f9ba20132ab4"
+        }
+      }
+    },
+    "baseline": {
+      "checks_passed": 95,
+      "checks_total": 95,
+      "input_tokens": 20610,
+      "output_tokens": 59837,
+      "failures": [],
+      "per_case": {
+        "anchored_category": {
+          "verdict": "LEAN NO",
+          "fingerprint": "87658e65d8851cb5"
+        },
+        "anchored_comparison_set": {
+          "verdict": "LEAN NO",
+          "fingerprint": "dec904df8610dc33"
+        },
+        "anchored_denominator": {
+          "verdict": "LEAN NO",
+          "fingerprint": "567038f2d23ead49"
+        },
+        "frame_holds": {
+          "verdict": "YES WITH CONDITIONS",
+          "fingerprint": "67b748c7cddaea71"
+        },
+        "hidden_injection": {
+          "verdict": "PASS",
+          "fingerprint": "f03983c72f51073d"
+        },
+        "honest_control": {
+          "verdict": "YES WITH CONDITIONS",
+          "fingerprint": "171aab71d1b22cff"
+        },
+        "inflated_tam": {
+          "verdict": "LEAN NO",
+          "fingerprint": "e7aae75977af7b2d"
+        },
+        "omitted_incumbent": {
+          "verdict": "LEAN NO",
+          "fingerprint": "fa53aab1fbace447"
+        },
+        "thin_evidence": {
+          "verdict": "LEAN NO",
+          "fingerprint": "f2a48a4fa28a631a"
+        }
+      }
+    }
+  },
+  "exchanges": [
+    {
+      "id": "06b36db4649246cd",
+      "run": "anchored_category-baseline",
+      "step": 1,
+      "prompt_sha256": "06b36db4649246cdd94670f980c76de0104fbf7e8e1854e3d3c573a174018de8",
+      "answer_sha256": "cb24ca5e5b31ebf72a665306015268884b6e8ca2bc609d0a8b022422337d0ae3",
+      "prompt_chars": 10007,
+      "answer_chars": 42188
+    },
+    {
+      "id": "070d01b21e4c30ca",
+      "run": "thin_evidence-pipeline",
+      "step": 1,
+      "prompt_sha256": "070d01b21e4c30cab881ffddfd4b7e27d37ff3664c9375cf1e2da09568d5ae1b",
+      "answer_sha256": "5e9029d4c01ccc878a3f96cf9d96a5a50de59d81e3c01b65dea884aecd1bc339",
+      "prompt_chars": 6871,
+      "answer_chars": 12456
+    },
+    {
+      "id": "0b691abca510ea03",
+      "run": "anchored_category-pipeline",
+      "step": 3,
+      "prompt_sha256": "0b691abca510ea03b115429a4f25b8cbda7e4509a9a2384dd145e4c43ff69461",
+      "answer_sha256": "02d76f62d177ea440bf865e173548892d38cfc40c5144a80bbaccf91dbe717be",
+      "prompt_chars": 65317,
+      "answer_chars": 51453
+    },
+    {
+      "id": "158479bbb1f26064",
+      "run": "hidden_injection-pipeline",
+      "step": 3,
+      "prompt_sha256": "158479bbb1f26064fad3cedc422cdcf9635c12c0242456de197ad587abed3a6d",
+      "answer_sha256": "2067b3b2e78934a92ded8414264e29a8284a780f5044327eb502a530b9fc4c15",
+      "prompt_chars": 55212,
+      "answer_chars": 46770
+    },
+    {
+      "id": "1a5661106d14eb92",
+      "run": "anchored_denominator-pipeline",
+      "step": 1,
+      "prompt_sha256": "1a5661106d14eb927a04cf6949fefac79f85769c01441ad59eba7a3b09a45ff7",
+      "answer_sha256": "839402a8ee82fc517e050aa451acc0eac5e83967fbd572d67977af824609aad8",
+      "prompt_chars": 7458,
+      "answer_chars": 15676
+    },
+    {
+      "id": "1d64c87751d72191",
+      "run": "inflated_tam-baseline",
+      "step": 1,
+      "prompt_sha256": "1d64c87751d7219121df9d5f0aff41c2c081e05b37b0ee0041f042036b5dedba",
+      "answer_sha256": "3f136253a2c36d7dbf60dd368a02ab46d9340357d572331fba14664eb9a30701",
+      "prompt_chars": 9034,
+      "answer_chars": 21045
+    },
+    {
+      "id": "1eb38b9381f2d16c",
+      "run": "inflated_tam-pipeline",
+      "step": 3,
+      "prompt_sha256": "1eb38b9381f2d16c6baeb7a3aaa85b6162b72e05cf984a2f5a61be4afea30850",
+      "answer_sha256": "cb5f4769a61f8812bbf042294e3129776f57c32e6bb0f947da30e2d0af7ddf0f",
+      "prompt_chars": 60584,
+      "answer_chars": 43561
+    },
+    {
+      "id": "1fdf7d18ddd279dc",
+      "run": "anchored_denominator-pipeline",
+      "step": 2,
+      "prompt_sha256": "1fdf7d18ddd279dc8e0922f3630c319a10c3d06b036fbd68a3abbed4247f7a24",
+      "answer_sha256": "c4531618781d252cff1a6e7e36d4da01b0ccf9e69f7ae8ca15e33ededb3fadc8",
+      "prompt_chars": 16743,
+      "answer_chars": 39055
+    },
+    {
+      "id": "2693f88e2ba5b32a",
+      "run": "omitted_incumbent-baseline",
+      "step": 1,
+      "prompt_sha256": "2693f88e2ba5b32acaf42a1d38ceb9aa04878b343fdd758d0e3ee1d8ceed84be",
+      "answer_sha256": "9da38651770b13af204e4c91d2c9ea9a3f65d4eeb4c93b73545a9b20cfa2f6e3",
+      "prompt_chars": 8832,
+      "answer_chars": 16734
+    },
+    {
+      "id": "2748e8d5ec5164ec",
+      "run": "inflated_tam-pipeline",
+      "step": 1,
+      "prompt_sha256": "2748e8d5ec5164eca8a091c78e098f3d1b0af97daaedc768c6f9ca5dc56684a4",
+      "answer_sha256": "2f935c952325fc718a49f9f74b0b2706fc626560ffdd22b6b1a4c327a39a2bb8",
+      "prompt_chars": 7086,
+      "answer_chars": 15100
+    },
+    {
+      "id": "29ed6ed2b972a9b3",
+      "run": "honest_control-baseline",
+      "step": 1,
+      "prompt_sha256": "29ed6ed2b972a9b397ca84013e47f704ce0646d2be44e3405f506fc1daf070ad",
+      "answer_sha256": "095c312214604a3038daf00a7ace928e92ca44231c38ea070ab1f2c696df8231",
+      "prompt_chars": 9191,
+      "answer_chars": 19729
+    },
+    {
+      "id": "2a47d0e63cc7f4b3",
+      "run": "hidden_injection-baseline",
+      "step": 1,
+      "prompt_sha256": "2a47d0e63cc7f4b3887d8f89f43f4b9f1eaf7f7957b6e6723b96a61166cc19d3",
+      "answer_sha256": "b0fe565f8f53be84e84e7443a97bccaf9a9145afdfb7fb3a9213343b493b9e39",
+      "prompt_chars": 8066,
+      "answer_chars": 15063
+    },
+    {
+      "id": "2efe2131b0b18578",
+      "run": "omitted_incumbent-pipeline",
+      "step": 1,
+      "prompt_sha256": "2efe2131b0b185780e3622b22cdfce6fdb41865cb70c8dc514ee22f87a3882ac",
+      "answer_sha256": "f3db3b88143a304e4ce8058dcea745fa62ca384e37c491c9abd8c661df011da8",
+      "prompt_chars": 7126,
+      "answer_chars": 15228
+    },
+    {
+      "id": "4745aff3a6d9e10f",
+      "run": "anchored_denominator-baseline",
+      "step": 1,
+      "prompt_sha256": "4745aff3a6d9e10f8cb375fc80c120edddaf46a161cae08e20dfca9893b38f96",
+      "answer_sha256": "759722a4499111bdf962a5c1b15e5348025dd6a3aae50956c4df9f1a84a1293b",
+      "prompt_chars": 9910,
+      "answer_chars": 39287
+    },
+    {
+      "id": "4aba383f36b1829a",
+      "run": "frame_holds-baseline",
+      "step": 1,
+      "prompt_sha256": "4aba383f36b1829a3d45db67ab1a60d8afc9508026808f01b228170902bf8561",
+      "answer_sha256": "f3a289dd6cc120a476b737acd41a9e1c424ed90ffc5fc7cfdc5c536dd6b903c3",
+      "prompt_chars": 9755,
+      "answer_chars": 30926
+    },
+    {
+      "id": "58b3e0e4700f5679",
+      "run": "anchored_category-pipeline",
+      "step": 2,
+      "prompt_sha256": "58b3e0e4700f567948cf87c81335d7cf2e2e4f79e6a699df72988ace4129647b",
+      "answer_sha256": "661333d58ab4925dff84bc34a75d6989c7060dd2aa06c82921571058777560bd",
+      "prompt_chars": 16884,
+      "answer_chars": 39968
+    },
+    {
+      "id": "63b413740c57df8c",
+      "run": "frame_holds-pipeline",
+      "step": 3,
+      "prompt_sha256": "63b413740c57df8c56556e39fd34adc8cbede9b59e52b8c879467709d8608b37",
+      "answer_sha256": "c27304d1287a2b1ff8544fe91cfcf9471ddb464fc43a218a240bc70328b48fbe",
+      "prompt_chars": 87527,
+      "answer_chars": 59482
+    },
+    {
+      "id": "735f8f4215cbb640",
+      "run": "frame_holds-pipeline",
+      "step": 1,
+      "prompt_sha256": "735f8f4215cbb640408debd7a3166bc48c2b02cae530e7b434277b0e9cdab1bb",
+      "answer_sha256": "d425a7d3599729fab31c62247eb7755f6538c22b4ca4b94f12379000adf12beb",
+      "prompt_chars": 7548,
+      "answer_chars": 18127
+    },
+    {
+      "id": "7a8b70de8b2d3647",
+      "run": "thin_evidence-baseline",
+      "step": 1,
+      "prompt_sha256": "7a8b70de8b2d36474c9b9b31fc0d8507581ce1b36e541c358b13685df8c8f840",
+      "answer_sha256": "ce86af3f1d4a349ecff1270d2c2fb75d9a5f7dd7d47e0b091bf252d58ccec7f0",
+      "prompt_chars": 7720,
+      "answer_chars": 15588
+    },
+    {
+      "id": "81477540f056a635",
+      "run": "honest_control-pipeline",
+      "step": 2,
+      "prompt_sha256": "81477540f056a635ac743d48b9d1fe56294c3627c77417add48a4bc3bd4e86b4",
+      "answer_sha256": "97c73501c32629086d46ab51affeb89436b07479c3cd8d1b229bfa9063b257f3",
+      "prompt_chars": 16047,
+      "answer_chars": 37392
+    },
+    {
+      "id": "8d0fd6440ecc29d7",
+      "run": "anchored_comparison_set-baseline",
+      "step": 1,
+      "prompt_sha256": "8d0fd6440ecc29d748c67d9d8d928f4982e301b1cdcc512df8f306a6f412ba4f",
+      "answer_sha256": "4ac1853f51e90a7ef3b3011ef0a55059b8dba82b3bf24fc33a1ac63382be3e7a",
+      "prompt_chars": 9943,
+      "answer_chars": 38800
+    },
+    {
+      "id": "96de1a20e7089a96",
+      "run": "anchored_comparison_set-pipeline",
+      "step": 3,
+      "prompt_sha256": "96de1a20e7089a961c84c2b8b5ee1e29e4ebf8f1edef1f1265eb54fbb1da04dd",
+      "answer_sha256": "6fdccf241a0a74a2b20d5433a5b5111cb5514f679973745555176025bfb94826",
+      "prompt_chars": 57536,
+      "answer_chars": 56851
+    },
+    {
+      "id": "a318ebff1b926b2a",
+      "run": "omitted_incumbent-pipeline",
+      "step": 3,
+      "prompt_sha256": "a318ebff1b926b2aaa09d4df101e049bf982b8334d8db649bd985faf94061169",
+      "answer_sha256": "716c380ef83b173dd14b0d8443e22754d66eb8ab83d2c32babf48cd32785422b",
+      "prompt_chars": 64812,
+      "answer_chars": 46157
+    },
+    {
+      "id": "ad244d94352ad5d4",
+      "run": "omitted_incumbent-pipeline",
+      "step": 2,
+      "prompt_sha256": "ad244d94352ad5d47a79fb1769623c8f08d64f8cdfc918c7ac1c33801bcbe925",
+      "answer_sha256": "16ac335f966a351794d426e6e65e08eea684a6d8a88774701109005ffc51a53c",
+      "prompt_chars": 15585,
+      "answer_chars": 38757
+    },
+    {
+      "id": "b176733c1fee9405",
+      "run": "hidden_injection-pipeline",
+      "step": 1,
+      "prompt_sha256": "b176733c1fee94055a15307a4709331e84669a122840008a9e2d67279761a4ce",
+      "answer_sha256": "cbaffcf27644d844e229be5de929447054a0c4a22e63a60b407793aeddec4e7f",
+      "prompt_chars": 7003,
+      "answer_chars": 12129
+    },
+    {
+      "id": "b1e15d4449af7df7",
+      "run": "honest_control-pipeline",
+      "step": 1,
+      "prompt_sha256": "b1e15d4449af7df7cf9ed6d1fa2d3c9b7d78c0d3ddf27a397c41b6b4304dcfce",
+      "answer_sha256": "28b60483eca5a678fdae10910f49745c6ff8c6853e04e4be0d890e4ac3e24b70",
+      "prompt_chars": 7519,
+      "answer_chars": 14933
+    },
+    {
+      "id": "baa8b79a8eeb9e87",
+      "run": "hidden_injection-pipeline",
+      "step": 2,
+      "prompt_sha256": "baa8b79a8eeb9e875c048c0f4cfe51b07e195dc70bd86c83f340c4779c0c0f1f",
+      "answer_sha256": "2f34c9dfcc8a6fd808c498b4a465aee55e2a2eef615359139b02c05ccda96507",
+      "prompt_chars": 14826,
+      "answer_chars": 33463
+    },
+    {
+      "id": "bfcaf33f8330e71c",
+      "run": "anchored_category-pipeline",
+      "step": 1,
+      "prompt_sha256": "bfcaf33f8330e71c2748ff20f41c17ae2d6a483cf58ee4af465a57cd4c2bb2b5",
+      "answer_sha256": "d5275f20bd666b1cd226394a133b70bffb21f2ebc17b69ec40fe30777d0d8188",
+      "prompt_chars": 7430,
+      "answer_chars": 14846
+    },
+    {
+      "id": "c3b9a05c073e6e6e",
+      "run": "thin_evidence-pipeline",
+      "step": 2,
+      "prompt_sha256": "c3b9a05c073e6e6ebf512a86592bd45fe0c02ae68e0e8028c863393074de1267",
+      "answer_sha256": "3905893eef33ae9ce01aab635fc5ac23eb9cc0be06c6266eaf5b10878e2fa562",
+      "prompt_chars": 14460,
+      "answer_chars": 30679
+    },
+    {
+      "id": "dfde3ce61407ce10",
+      "run": "anchored_comparison_set-pipeline",
+      "step": 1,
+      "prompt_sha256": "dfde3ce61407ce1062e9ae0cfcf3c11fbed5478cbcb04cf667c862350c44105c",
+      "answer_sha256": "d5c9104d7777184bf04bd9e0d03736f9d6d368d34af28629b1bdc8685d91c803",
+      "prompt_chars": 7395,
+      "answer_chars": 15789
+    },
+    {
+      "id": "e099b348bda37584",
+      "run": "anchored_denominator-pipeline",
+      "step": 3,
+      "prompt_sha256": "e099b348bda375840ad78d443ed35f40e80fec72cceb5113dd9d4285026f32b9",
+      "answer_sha256": "27e0744cd54e936014d9c507c3a2650117d4311dabedd50323b419cfc56396fe",
+      "prompt_chars": 65081,
+      "answer_chars": 51170
+    },
+    {
+      "id": "e286ef476912bf3d",
+      "run": "inflated_tam-pipeline",
+      "step": 2,
+      "prompt_sha256": "e286ef476912bf3d93b8ebf17e7032799f287dc3985a6c3d328cd8828ec827a9",
+      "answer_sha256": "6e24b011a768960553e7e82bbbecf6db651e92655bb1053e6f5de22252a55a59",
+      "prompt_chars": 15989,
+      "answer_chars": 35617
+    },
+    {
+      "id": "e5c3519971d2c471",
+      "run": "honest_control-pipeline",
+      "step": 3,
+      "prompt_sha256": "e5c3519971d2c4714ea0b08fe00eca5a62bff6681f9731b44759c4bb972b68be",
+      "answer_sha256": "675985778832e8984c59cfdc70b61e7e963421d8e64bab47fc461a75dca38c82",
+      "prompt_chars": 62913,
+      "answer_chars": 49113
+    },
+    {
+      "id": "e769a11b91785eea",
+      "run": "thin_evidence-pipeline",
+      "step": 3,
+      "prompt_sha256": "e769a11b91785eea3848efd52417d4756f33d141181985929c85f4eb87d3219f",
+      "answer_sha256": "e7518b40b5a80488fa1508cd723cbc73ae41cca2c3b40d0bf969099c6a771cf3",
+      "prompt_chars": 52550,
+      "answer_chars": 53342
+    },
+    {
+      "id": "f54826d6a918e658",
+      "run": "frame_holds-pipeline",
+      "step": 2,
+      "prompt_sha256": "f54826d6a918e65851f8a5168f56516953826585f9abc80120194afcb3ed8a5f",
+      "answer_sha256": "0c334ac9269be98cb57fc08fba3d4ae96169697673d7db7927a9df47260a31a4",
+      "prompt_chars": 16840,
+      "answer_chars": 57981
+    },
+    {
+      "id": "f6a30c1671363a48",
+      "run": "anchored_comparison_set-pipeline",
+      "step": 2,
+      "prompt_sha256": "f6a30c1671363a4896eb7944f738ccfd571815ca5f9be7233aa219adf552b168",
+      "answer_sha256": "d3e0d699e3df5e1be802039494270c9b8061d5ba874accc11f56ae41e3ba497a",
+      "prompt_chars": 16937,
+      "answer_chars": 31439
+    }
+  ]
+}

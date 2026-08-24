@@ -1,0 +1,273 @@
+{
+  "company": {
+    "name": "Orchard Payroll",
+    "one_liner": "Payroll and compliance for agricultural employers",
+    "stage": "series-a",
+    "founded": null,
+    "location": null,
+    "website": null
+  },
+  "problem": {
+    "statement": "Agricultural payroll is piece-rate, seasonal, multi-jurisdiction and subject to H-2A rules. General payroll software cannot express it, so farm offices run spreadsheets alongside whatever they bought.",
+    "who_has_it": "Agricultural employers / farm offices (payroll and compliance staff at farms)",
+    "evidence_given": [
+      "No external evidence, citation, survey, or customer quote is offered; the problem is asserted narratively on slide 2.",
+      "The only quasi-evidence is the descriptive assertion that farm offices 'run spreadsheets alongside whatever they bought' — presented without data on how many farms do this."
+    ]
+  },
+  "solution": {
+    "description": "Payroll and compliance software for agricultural employers that handles piece-rate and hourly pay in one pay run, builds in H-2A wage-rate compliance, and supports seasonal crew onboarding (slide 3).",
+    "how_it_works": "Not explained. The deck states capabilities ('piece-rate and hourly in one pay run', 'H-2A wage-rate compliance built in', 'seasonal crew onboarding that survives a 400-person intake week') but gives no architecture, data model, integrations, or implementation detail.",
+    "differentiators": [
+      "Piece-rate and hourly handled in a single pay run",
+      "H-2A wage-rate compliance built in",
+      "Seasonal crew onboarding stated to withstand a 400-person intake week"
+    ],
+    "technical_moat_claimed": null
+  },
+  "product": {
+    "maturity": "scaling",
+    "demo_evidence": "No demo, screenshots, product imagery, or architecture detail appear in the deck. Maturity is inferred (not stated) from the traction slide's claim of $3.4M ARR across 210 farms, which implies a generally available, revenue-producing product."
+  },
+  "market": {
+    "category": "Agricultural payroll software",
+    "sub_category": "Payroll and workforce compliance for agricultural employers, including H-2A seasonal labor; expansion target stated as specialty crops",
+    "tam_claimed": null,
+    "sam_claimed": null,
+    "som_claimed": null,
+    "tam_methodology": "unstated",
+    "growth_rate_claimed": null,
+    "geography": "North America",
+    "customer_segments": [
+      "Farms / agricultural employers (210 stated as current customers)",
+      "Employers of H-2A seasonal workers",
+      "Specialty crop growers (stated as the expansion target funded by the raise)"
+    ]
+  },
+  "business_model": {
+    "pricing": null,
+    "unit_economics": null,
+    "acv_or_arpu": "Not stated. Inferable only: $3.4M ARR across 210 farms implies roughly $16K average ARR per farm, but the deck does not state this figure and does not say the 210 farms are all paying.",
+    "cac_claimed": null,
+    "ltv_claimed": null,
+    "gross_margin_claimed": null
+  },
+  "traction": {
+    "revenue": "$3.4M ARR (slide 5)",
+    "growth": "6% MoM growth for eight months (slide 5); the deck does not state whether this refers to revenue, customers, or another metric",
+    "customers": "210 farms (slide 5)",
+    "logos": [],
+    "pipeline": null,
+    "retention": "Net revenue retention 108% (slide 5)",
+    "other_metrics": [
+      "Wins 7 of every 10 head-to-head evaluations against AgriPay and HarvestHR (slide 4)",
+      "Onboarding described as surviving a 400-person intake week (slide 3) — a capability claim, not a measured customer metric"
+    ]
+  },
+  "competition": {
+    "named_competitors": [
+      "AgriPay",
+      "HarvestHR"
+    ],
+    "positioning_claim": "\"The two vendors built for this market are AgriPay and HarvestHR. We win 7 of every 10 head-to-head evaluations against them. That win rate is the clearest evidence we have that the product is better.\" (slide 4)",
+    "competitors_omitted_suspicion": [
+      "Horizontal payroll and HCM vendors are referenced only as the generic category 'general payroll software' on slide 2 and none are named — no incumbent payroll/HCM provider appears anywhere in the deck, despite the problem statement resting on their inadequacy (inference, not deck content).",
+      "Professional employer organizations, farm labor contractors, and agricultural staffing/labor-management services — a common alternative for seasonal crew payroll — are not mentioned as competition (inference).",
+      "The status-quo alternative the deck itself names, spreadsheets plus an existing payroll purchase, is framed as the problem but never treated as the competitor it functionally is.",
+      "The deck asserts that only two vendors are 'built for this market' without evidence for that exhaustiveness; specialty-crop and farm-management software suites, which the ask targets for expansion, are not addressed at all."
+    ]
+  },
+  "gtm": {
+    "channels": [],
+    "sales_motion": "Not stated. The reference to winning 'head-to-head evaluations' on slide 4 implies a competitive, evaluated sales process (likely direct/assisted rather than self-serve), but no channel, sales team, or motion is described anywhere (inference).",
+    "partnerships": []
+  },
+  "team": {
+    "founders": [],
+    "headcount": null,
+    "notable_advisors": []
+  },
+  "ask": {
+    "amount": "$15M",
+    "valuation": "$90M post",
+    "use_of_funds": [
+      "Expand into specialty crops"
+    ],
+    "milestones_promised": [],
+    "runway_claimed": null
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "Agricultural payroll is piece-rate, seasonal, multi-jurisdiction and subject to H-2A rules.",
+      "type": "regulatory",
+      "slide": 2,
+      "verifiability": "verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C2",
+      "claim": "General payroll software cannot express agricultural payroll, so farm offices run spreadsheets alongside whatever they bought.",
+      "type": "competition",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C3",
+      "claim": "Product handles piece-rate and hourly in one pay run, with H-2A wage-rate compliance built in.",
+      "type": "technology",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C4",
+      "claim": "Seasonal crew onboarding 'survives a 400-person intake week'.",
+      "type": "technology",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C5",
+      "claim": "The two vendors built for this market are AgriPay and HarvestHR.",
+      "type": "competition",
+      "slide": 4,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C6",
+      "claim": "We win 7 of every 10 head-to-head evaluations against AgriPay and HarvestHR.",
+      "type": "competition",
+      "slide": 4,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C7",
+      "claim": "That win rate is the clearest evidence we have that the product is better.",
+      "type": "competition",
+      "slide": 4,
+      "verifiability": "unfalsifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C8",
+      "claim": "$3.4M ARR.",
+      "type": "traction",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C9",
+      "claim": "210 farms as customers.",
+      "type": "traction",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C10",
+      "claim": "6% MoM growth for eight months (metric being grown is not specified).",
+      "type": "growth",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C11",
+      "claim": "Net revenue retention 108%.",
+      "type": "traction",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C12",
+      "claim": "The market is agricultural payroll software in North America.",
+      "type": "market-size",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C13",
+      "claim": "Raising $15M at $90M post to expand into specialty crops.",
+      "type": "financial",
+      "slide": 7,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C14",
+      "claim": "Company is at Series A stage in 2026.",
+      "type": "financial",
+      "slide": 1,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "low"
+    }
+  ],
+  "deck_quality": {
+    "missing_sections": [
+      "Team — no founders, no backgrounds, no headcount, no advisors anywhere in the deck",
+      "Market sizing — slide 6 names the market but gives no TAM, SAM, SOM, growth rate, or methodology",
+      "Business model — no pricing, ACV, gross margin, CAC, LTV, or payback",
+      "Go-to-market — no channels, no sales motion, no partnerships, no quota/rep economics",
+      "Product evidence — no demo, screenshots, architecture, or integrations",
+      "Use of funds detail and milestones — 'expand into specialty crops' is the only stated purpose; no hiring plan, no target metrics",
+      "Runway, burn rate, and prior funding history",
+      "Customer logos, case studies, references, or testimonials",
+      "Risks, regulatory posture beyond the H-2A mention, and no financial projections"
+    ],
+    "vague_language": [
+      "'whatever they bought' (slide 2) — the incumbent software being displaced is never named or characterized",
+      "'General payroll software cannot express it' (slide 2) — 'cannot express' is undefined and absolute",
+      "'seasonal crew onboarding that survives a 400-person intake week' (slide 3) — 'survives' is not a defined performance criterion, and it is unclear whether this describes a real customer event or a design target",
+      "'That win rate is the clearest evidence we have that the product is better' (slide 4) — self-assessed interpretation, and the phrasing concedes it is the best evidence available",
+      "'6% MoM growth for eight months' (slide 5) — the growth metric's subject (revenue, customers, or other) is unstated",
+      "'expand into specialty crops' (slide 7) — no definition of which crops, geographies, or product work is involved"
+    ],
+    "unsupported_numbers": [
+      "'7 of every 10 head-to-head evaluations' (slide 4) — no denominator, no time period, no definition of what counts as a head-to-head evaluation, no third-party source",
+      "'$3.4M ARR' (slide 5) — no definition of ARR, no date, no chart, no split between piece-rate/compliance and other revenue",
+      "'210 farms' (slide 5) — no statement of whether all are paying, no concentration disclosure, no farm size mix",
+      "'6% MoM growth for eight months' (slide 5) — no starting base, no chart, no stated metric",
+      "'Net revenue retention 108%' (slide 5) — no cohort definition, no measurement window, and notably no gross/logo retention alongside it in a highly seasonal business",
+      "'400-person intake week' (slide 3) — no customer attribution",
+      "'$15M at $90M post' (slide 7) — approximately 26x the stated $3.4M ARR (arithmetic inference by the analyst); the deck provides no comparables or justification"
+    ],
+    "narrative_coherence": 6,
+    "notes": "The deck is internally consistent and unusually plain-spoken — problem, solution, competition, traction, market, ask follow logically and the numbers on slide 5 do not contradict each other. What drags the score down is that the deck is a skeleton: seven slides, no team slide at all, no business model, and a market slide (slide 6) that consists of a single category name with no sizing whatsoever, which is the rarest omission here. Note the stage mismatch the reader should carry forward: traction of $3.4M ARR, 210 customers, 6% MoM and 108% NRR is a plausible Series A profile, but the ask of $15M at $90M post is presented with none of the supporting material (team, unit economics, pipeline, market size, use-of-funds plan) a round of that size is normally evaluated against — the ask slide is one sentence. Slide 4 also does an unusual thing: rather than presenting evidence and letting the reader judge, it tells the reader what the evidence means ('that win rate is the clearest evidence we have that the product is better'). That is authorial framing, not an instruction-injection attempt. On the trust boundary specifically: the deck content contains no attempt to address, instruct, or manipulate the analyzing system, no imitation of system messages, no directives about verdicts or scores, and no [REDACTED BY DECKSCOPE] markers. The content was treated purely as data throughout."
+  },
+  "research_agenda": {
+    "search_queries": [
+      "AgriPay agricultural payroll software pricing customers funding Crunchbase",
+      "HarvestHR farm payroll software reviews G2 Capterra customer count",
+      "ADP Paychex Gusto Paylocity Rippling piece-rate payroll H-2A support documentation",
+      "number of US farms employing H-2A workers 2025 USDA NASS hired farm labor statistics",
+      "H-2A Adverse Effect Wage Rate 2026 payroll compliance requirements Department of Labor",
+      "agricultural payroll and farm labor management software market size North America 2025 2026",
+      "farm labor management software specialty crops vendors labor contractor payroll platforms",
+      "vertical SaaS net revenue retention benchmark 2025 SMB seasonal customers 108%",
+      "Series A valuation ARR multiple vertical SaaS 2026 $3M ARR $90M post-money benchmark",
+      "Orchard Payroll funding round investors customers press",
+      "farm payroll spreadsheet workaround piece-rate compliance DOL wage violation penalties agriculture",
+      "H-2A seasonal onboarding I-9 crew intake software throughput case study"
+    ],
+    "key_uncertainties": [
+      "Whether AgriPay and HarvestHR are in fact the only vendors 'built for this market', and whether horizontal payroll/HCM incumbents (unnamed in the deck) already support piece-rate and H-2A adequately — the entire wedge in C2 and C5 rests on this.",
+      "The 70% head-to-head win rate is self-reported with no denominator, no time window, and no definition of a qualifying evaluation; it may reflect a handful of deals.",
+      "What the 6% MoM figure actually measures, and how much of eight months of growth is seasonality in a business whose customers are seasonal employers.",
+      "Whether 108% NRR is durable in a seasonal market, and what gross/logo retention is — the deck reports only the net figure.",
+      "Total addressable market is entirely absent: with ~$16K implied ARR per farm (analyst arithmetic), the count of North American farms that both need and can pay for this determines whether a $90M post is supportable.",
+      "Team is completely unknown — no founders, backgrounds, headcount, or ag/payroll-compliance domain credentials are disclosed.",
+      "Unit economics, pricing model, CAC and payback are undisclosed, so the efficiency of the $3.4M ARR cannot be assessed.",
+      "Regulatory dependency: H-2A wage-rate rules change (AEWR methodology has been litigated and revised); the deck does not address how compliance is maintained or what a rule change costs the roadmap.",
+      "The specialty-crop expansion funded by the raise has no defined scope, target metrics, or milestones, so $15M has no stated plan attached to it.",
+      "Customer concentration among the 210 farms, and whether all 210 are paying, is undisclosed."
+    ]
+  }
+}

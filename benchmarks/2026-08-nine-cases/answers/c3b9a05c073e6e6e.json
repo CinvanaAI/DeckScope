@@ -1,0 +1,265 @@
+{
+  "market_definition": {
+    "category": "Field data collection software (mobile capture of site observations, samples and forms) sold into environmental consulting workflows",
+    "boundary_notes": "The research corpus contains exactly one source [S1], and it makes a boundary claim rather than a sizing claim: spend on field data collection software is not separately measurable because it is 'typically bundled into broader project management or captured as internal IT cost' [S1]. That is the single most important structural fact available. It means the category, as the deck names it, is not recognised as a standalone line item by the buyers themselves — it sits inside project management software budgets, inside environmental data management (EDMS/LIMS) systems, or inside internal IT. A defensible boundary for analysis is therefore: (a) the narrow slice — offline-capable mobile form/observation capture; (b) the enclosing slice — environmental data management, where field capture is one module alongside lab data import, validation, regulatory reporting and archiving; (c) the enclosing-enclosing slice — general project/field management software used by professional services firms. A company like the one described can realistically serve only (a) at entry, and (a) is the slice with the weakest evidence of being a budget line of its own. Everything in this field beyond the S1 statement is unverified: no market size, no growth rate, no vendor list, no pricing and no funding data was supplied.",
+    "how_analysts_segment_it": [
+      "By enclosing budget line: bundled into project management software vs. captured as internal IT cost — the only segmentation the corpus actually attests to [S1]",
+      "Inferred (not sourced): by data type — forms/observations vs. samples and chain-of-custody vs. geospatial features",
+      "Inferred (not sourced): by connectivity model — online-only vs. offline-first sync, which is the axis the deck's C2 rests on",
+      "Inferred (not sourced): by buyer size — sole practitioners and small consultancies vs. mid-size regional firms vs. the large multinational engineering/environmental firms that build or license enterprise EDMS platforms"
+    ]
+  },
+  "sizing": {
+    "tam_estimates": [],
+    "consensus_view": "There is no consensus view, because there is no estimate. The only source provided states plainly that 'no reliable public estimate exists for spend on field data collection software specifically' [S1]. I was given no TAM, SAM, SOM, seat count, firm count, or average contract value from any source, and I will not construct one. The honest reading is that the addressable spend is real but latent — it currently lives inside project management tooling and internal IT budgets [S1] — and that converting latent spend into a named line item is itself part of the go-to-market problem, not a given. Note this speaks directly to deck claim C3 ('we believe this is a large and underserved market'): the corpus neither supports nor refutes size, and explicitly says the number is not publicly knowable [S1]. 'Underserved' is likewise untested here — the absence of a measured market is equally consistent with 'underserved' and with 'served adequately by adjacent tools nobody bothers to count'.",
+    "cagr_range": null,
+    "sizing_confidence": "low",
+    "why_estimates_diverge": "Estimates do not diverge — none were found. The mechanism S1 describes is why: the spend is not separately captured. When a capability is bought as a module of something larger or built internally, no vendor and no analyst house has a revenue base to count, so the category never acquires a published number. Any figure asserted for this market — including in the deck — should be treated as a construction (typically firm-count x seats x price) rather than an observation, until its build-up is shown."
+  },
+  "demand_signals": {
+    "tailwinds": [
+      "Fragmentation of the environmental consulting sector [S1] implies a long tail of small and mid-size firms with no in-house software team — the classic profile for buying rather than building. Inferred consequence, not stated by S1.",
+      "The underlying pain the deck asserts (C1: paper capture followed by re-entry) is a well-known failure mode in field services generally. I could not verify its prevalence among environmental consultants from any source provided — no survey, no practitioner study, no regulator statement was in the corpus."
+    ],
+    "headwinds": [
+      "The spend is not a recognised budget line: it is bundled into project management purchases or absorbed as internal IT cost [S1]. A new vendor must therefore create a budget, not capture one — a materially harder motion and typically a longer sales cycle.",
+      "Fragmentation cuts both ways [S1]: many small buyers means small contract values, high per-deal acquisition cost, and no concentrated set of logos that pulls the rest of the market along.",
+      "The specific capability claimed as the product (C2: offline-first mobile capture with deferred sync) is, to the best of my domain knowledge, available in mature free and open-source form and as a feature of large geospatial platforms. The corpus contains no evidence either way on this, so I flag it as an unverified but high-consequence headwind rather than a finding.",
+      "Environmental field data frequently needs to land in a regulatory-grade system of record (lab data, chain of custody, validation, agency-format reporting). A capture-only tool that does not reach that system of record risks being a front-end that some other vendor eventually supplies for free. Inferred from the bundling behaviour S1 describes; not directly sourced."
+    ],
+    "buyer_budget_reality": "Unverified in detail, but S1 gives the shape: buyers do not hold a 'field data collection software' budget — they hold a project management software budget and an internal IT budget, and this capability is paid for out of one of those [S1]. Practically that means the purchase is either (a) an add-on decision made by whoever owns the incumbent project or data platform, or (b) a discretionary small-tools spend approved at practice-lead level. No pricing point, contract value, or budget figure appears in the provided material.",
+    "adoption_stage": "early-majority"
+  },
+  "competitive_landscape": {
+    "incumbents": [
+      {
+        "name": "Incumbent project management / environmental data management platforms (unnamed in the corpus)",
+        "position": "S1 establishes that field data collection spend is 'typically bundled into broader project management' software [S1]. Whoever supplies that broader platform to a given consultancy is therefore the de facto incumbent for this capability — they already hold the budget, the contract, the data and the user accounts. This is the competitive fact best supported by the evidence I was given, even though no vendor is named in it.",
+        "funding_or_scale": null,
+        "threat_level": "high",
+        "url": null,
+        "source_ids": [
+          "S1"
+        ]
+      },
+      {
+        "name": "Internal IT / in-house built tools",
+        "position": "S1 names internal IT cost as the other place this spend hides [S1]. In-house spreadsheets, Access/SharePoint forms and bespoke apps are a real competitor with an unbeatable price and an incumbency advantage, and they never appear on a startup competitive matrix. In a fragmented sector [S1] the larger firms are precisely the ones with the capacity to do this, which removes the highest-value accounts from the addressable set.",
+        "funding_or_scale": null,
+        "threat_level": "high",
+        "url": null,
+        "source_ids": [
+          "S1"
+        ]
+      },
+      {
+        "name": "Paper and manual re-entry (the status quo)",
+        "position": "The deck's own C1 identifies paper as the incumbent. Status quo with zero licence cost and no change management is the hardest competitor for a pre-revenue tool to dislodge, and the corpus gives no evidence of how entrenched it actually is. Listed for completeness; no source in the corpus attests to paper prevalence.",
+        "funding_or_scale": null,
+        "threat_level": "medium",
+        "url": null,
+        "source_ids": []
+      }
+    ],
+    "challengers": [],
+    "adjacent_threats": [
+      "Geospatial platform vendors whose field-mapping products already do offline capture and sync — the natural owners of this workflow. I was given no source naming any such vendor, so I record the threat by category rather than by name to avoid attaching claims to companies the corpus never mentions.",
+      "Environmental data management / LIMS vendors moving upstream from lab data into field capture, so that one system covers sample-to-report.",
+      "General field service and forms-automation tools sold horizontally across industries, which reach environmental consultancies as one vertical among many and can undercut a specialist on price.",
+      "The project management platforms S1 identifies as the current home of this spend [S1], adding capture as a module — the single most likely absorber, because they already hold the budget."
+    ],
+    "concentration": "fragmented",
+    "differentiation_axes": [
+      "Offline reliability and sync-conflict handling — the deck's stated wedge (C2); credible as an engineering axis, but I found no evidence in the corpus that buyers treat it as a purchasing differentiator rather than a baseline expectation",
+      "Depth into the regulatory workflow: chain of custody, lab data reconciliation, validation, agency-format export",
+      "Integration with the system of record the consultancy already uses (the project management platform S1 points to [S1])",
+      "Configurability of forms by non-technical practice staff",
+      "Price and per-seat economics against a fragmented base of small firms [S1]",
+      "Vertical credibility: templates and terminology specific to environmental site work rather than generic forms"
+    ],
+    "saturation": {
+      "funded_competitors_known": null,
+      "new_entrants_trend": "unknown",
+      "pricing_direction": "unknown",
+      "consolidation_activity": "None seen — but this is an absence of evidence, not evidence of absence. The corpus contains one industry overview [S1] and no funding, M&A or vendor data whatsoever.",
+      "lifecycle_stage": "mature",
+      "room_for_a_new_entrant": "a defensible niche remains",
+      "why": "I want to be exact about how weak this read is. I found zero funded competitors because the corpus contains zero vendor records — not because I searched and the field was empty. The count is null, and any saturation verdict stated with confidence would be manufactured. What the one available source does support is a structural read rather than a headcount read: the capability is already being paid for, just not under this name — bundled into project management software or absorbed as internal IT cost [S1]. A category whose spend has already been absorbed into adjacent budgets is behaving like a mature or absorbed category, not a wide-open one; that is the basis for 'mature' above, and it is an inference from S1's bundling statement rather than a lifecycle observation. 'A defensible niche remains' reflects the one genuine opening the same source implies: the sector is highly fragmented [S1], and fragmented sectors are chronically under-served by enterprise platforms that price and configure for large accounts. A specialist could hold the small-and-mid consultancy niche. What I cannot tell you — and what would change the verdict either way — is how many funded players are already sitting in that niche, whether new ones are still arriving, and whether prices are compressing. Treat this cell as low confidence."
+    }
+  },
+  "absorption_risk": {
+    "verdict": "feature",
+    "horizon": "already happening",
+    "confidence": "medium",
+    "likely_absorbers": [
+      {
+        "name": "The project management platforms that environmental consultancies already run",
+        "why_them": "S1 states the spend is already bundled into broader project management software [S1]. This is not a forecast of absorption — it is a report that absorption is the current default state for at least part of the market. They own the customer relationship, the project structure the field data must attach to, the user directory and the budget. Adding form capture with offline sync is an extension of something they already own, not a new business.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "S1's direct statement that field data collection spend is typically bundled into broader project management software today [S1] — the strongest available signal, and it is a present-tense observation rather than a roadmap rumour",
+          "No shipped-feature announcements, acquisitions, job postings or roadmap statements were present in the corpus; I have none to cite, and I am not going to invent them"
+        ],
+        "source_ids": [
+          "S1"
+        ]
+      },
+      {
+        "name": "Consultancies' own internal IT functions (build rather than buy)",
+        "why_them": "S1 identifies internal IT cost as the other place this spend already sits [S1]. For any firm large enough to run an IT team, an internal forms app is the incumbent, and the marginal cost of extending it is low. This is absorption by the customer rather than by a vendor, and it removes exactly the accounts with the largest seat counts.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "S1's statement that the spend is captured as internal IT cost in part of the market today [S1]"
+        ],
+        "source_ids": [
+          "S1"
+        ]
+      },
+      {
+        "name": "Geospatial and environmental data management platform vendors",
+        "why_them": "Field capture is the front end of a data pipeline whose valuable end — validated, regulator-ready environmental data — is owned by geospatial and EDMS/LIMS vendors. Owning capture is a natural defensive extension for them, and they can give it away to protect the platform. Inference from category structure; no source in the corpus names these vendors or attests to their behaviour.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "None verifiable from the provided material — recorded as reasoning, not as evidence"
+        ],
+        "source_ids": []
+      }
+    ],
+    "precedents": [
+      {
+        "category": "Standalone mobile forms / survey capture tools",
+        "absorbed_by": "Larger geospatial, project management and productivity suites that already held the customer",
+        "how_long_it_took": null,
+        "why_it_is_comparable": "The mechanism matches the one S1 describes as already operating here: a capability that is a step inside a bigger workflow tends to get supplied by whoever owns the bigger workflow, and the specialist is made redundant rather than out-competed [S1]. I am citing the mechanism, not a dated case study — the corpus contains no precedent data, and I have deliberately not attached dates or acquisition prices I cannot source.",
+        "source_ids": [
+          "S1"
+        ]
+      }
+    ],
+    "what_would_prevent_it": [
+      "Regulatory workflow depth: if the product carries defensible chain-of-custody, data validation and agency-format reporting that a generic platform will not build for one vertical, it stops being a form and starts being a system of record",
+      "Sector fragmentation working in the specialist's favour [S1]: platform vendors habitually underserve long tails of small firms, and a tool priced and configured for a ten-person consultancy is not a business a large suite wants",
+      "Genuinely hard offline/sync engineering — but this only holds while it stays hard, and I have no evidence that it does; the deck treats it as the differentiator (C2), which is the assumption most exposed here",
+      "Accumulated vertical data assets (site histories, sampling templates, reference libraries) that create switching cost beyond the app itself — nothing in the corpus indicates the company has these"
+    ],
+    "notes": "The 'feature' verdict is unusually well grounded for a corpus this thin, because the one source available happens to speak directly to the absorption question. S1 does not merely suggest that a platform might one day bundle this; it reports that the spend is already bundled today [S1]. The realistic counter-argument is depth: capture is a feature, but sample-to-regulatory-report is a workflow, and workflows survive bundling more often than features do. Which of the two this company is building cannot be determined from the material provided — the deck describes capture (C2), not the regulatory chain. Confidence is medium rather than high only because a single secondary source is carrying the whole judgement."
+  },
+  "open_source_landscape": {
+    "applicable": "true",
+    "projects": [],
+    "closest_project": null,
+    "capability_gap": "approaching parity",
+    "gap_trend": "stable",
+    "evidence_for_the_gap": "This is the most important gap in the research and I want to mark it clearly rather than paper over it. Offline-first mobile data collection with deferred sync — the exact capability of deck claim C2 — is a category with a long-established open-source dimension, which is why I have set `applicable` to true rather than false. But the corpus I was given contains no open-source project record at all: no repository, no adoption figure, no governance detail, no funder. Under the citation discipline I am held to, I will not name projects, star counts or user bases that no provided source attests to, and I will not manufacture URLs for them. So the assessment rests on this: the capability class is one where credible free alternatives are known to exist and to be used in field research and humanitarian data collection contexts, which is general domain knowledge rather than a finding from this research. 'Approaching parity' is therefore my honest prior, explicitly labelled as an inference, not a sourced conclusion. Verifying it is the single highest-value piece of follow-up research on this deck, because if a production-grade free tool already does offline capture and sync, then C2 is not a differentiator and the pricing ceiling is set at roughly zero for the capability itself.",
+    "what_commercial_still_provides": [
+      {
+        "capability": "Hosted sync infrastructure, uptime and data custody — someone else runs the server and is accountable for the data",
+        "type": "operational",
+        "durable": "false",
+        "why": "Real value for a small consultancy with no IT function, but hosting a forms-sync backend is not operationally hard at this data scale. A platform vendor already running infrastructure for these customers could replicate it cheaply. This is not Snowflake-style operational burden; it is closer to the Docker case, where the residual gap was thin."
+      },
+      {
+        "capability": "Vertical workflow depth for environmental site work — sampling templates, chain of custody, validation, agency-format reporting",
+        "type": "workflow-depth",
+        "durable": "true",
+        "why": "This is the one plausibly durable residual. Generic open-source capture tools and horizontal platforms have little incentive to encode one vertical's regulatory specifics, and doing so requires domain access rather than engineering. Durability is conditional: it holds only if the company actually builds this. Nothing in the deck material provided indicates it has — the claim on the table is offline sync (C2), which is the non-durable half."
+      },
+      {
+        "capability": "Distribution into a fragmented base of small consultancies [S1]",
+        "type": "distribution",
+        "durable": "false",
+        "why": "Reaching many small firms is expensive, which is a real barrier — but it is a barrier the startup faces too, and it is precisely what an incumbent project management vendor already inside those firms [S1] does not face. Distribution here favours the absorber, not the entrant. This is the Kubernetes/Docker shape of the problem."
+      },
+      {
+        "capability": "Support and accountability for non-technical users",
+        "type": "support",
+        "durable": "false",
+        "why": "Genuinely what buyers pay for when free alternatives require self-hosting and configuration, and it is a legitimate reason paid products coexist with open source. But support is the classic capability a platform vendor bundles at no marginal cost once it owns the account."
+      }
+    ],
+    "pricing_pressure": "significant",
+    "company_relationship_to_oss": "unclear",
+    "strip_mining_risk": null,
+    "notes": "Three of the four residual capabilities above are things a platform vendor could replicate cheaply, and the fourth — regulatory workflow depth — is the one the deck does not claim. That asymmetry is the finding. I have set pricing_pressure to 'significant' rather than 'severe' because I could not verify the parity claim from the corpus; if verification confirms a production-ready free offline-capture tool in common use, 'severe' would be the correct reading and the capability itself becomes unpriceable, leaving only vertical depth and support to charge for."
+  },
+  "adjacent_markets": [
+    {
+      "market": "Project management software for professional services firms",
+      "relationship": "converging with this one",
+      "size_note": null,
+      "why_it_matters": "S1 identifies this as where field data collection spend is already bundled [S1]. It is simultaneously the budget the company must win money out of and the platform most likely to absorb the capability. The company does not get to choose whether it engages with this market — it is already inside it, as a line item someone else owns.",
+      "source_ids": [
+        "S1"
+      ]
+    },
+    {
+      "market": "Internal IT / in-house build",
+      "relationship": "substitute",
+      "size_note": null,
+      "why_it_matters": "The other named home of this spend [S1]. It is a substitute rather than a competitor, and it disproportionately claims the larger accounts, compressing the realistic target set toward smaller firms that pay less.",
+      "source_ids": [
+        "S1"
+      ]
+    },
+    {
+      "market": "Environmental data management / laboratory information management (sample tracking, validation, regulatory reporting)",
+      "relationship": "downstream",
+      "size_note": null,
+      "why_it_matters": "Field capture feeds it. This is where the durable value and the switching costs sit, and it is the most credible expansion path out of a capture-only wedge — but also the direction from which a defensive incumbent would come. No source in the provided corpus addresses this market; the relationship is inferred from the structure of the workflow.",
+      "source_ids": []
+    },
+    {
+      "market": "Geospatial / GIS field mapping",
+      "relationship": "converging with this one",
+      "size_note": null,
+      "why_it_matters": "Site data is inherently spatial, so the same records are addressable by GIS field tools. Convergence means the company can be reached by GIS vendors more easily than it can reach into their accounts. Inferred; unsupported by the corpus.",
+      "source_ids": []
+    }
+  ],
+  "economics": {
+    "typical_pricing": "Not stated in any provided source. No price point, seat cost, or contract value appears in the corpus. S1's observation that the spend is bundled or internalised [S1] implies there may be no established standalone price for this capability at all, which is itself a pricing problem — the vendor must set an anchor rather than meet one.",
+    "typical_gross_margin": "Not stated in any provided source. Standard software margins would be the default assumption, but that is an assumption, not a finding from this material.",
+    "typical_cac_payback": "Not stated in any provided source. Directionally, a highly fragmented buyer base [S1] implies many small deals and therefore acquisition cost that is high relative to contract value — an inference from S1's fragmentation statement, with no CAC or ACV data available to test it.",
+    "capital_intensity": "low"
+  },
+  "funding_environment": {
+    "recent_rounds": [],
+    "valuation_norms": "Not stated in any provided source. No round, valuation, or investor data of any kind was supplied, so I cannot say whether the deck's $750k SAFE (C6) is at, above, or below market for this category and stage.",
+    "exit_comps": [],
+    "investor_appetite": "cold",
+    "notes": "I am recording 'cold' with a warning attached: it is the least defensible field in this analysis. The corpus contains no funding data whatsoever — no rounds, no exits, no investor commentary — so this is not a measurement. It reflects only the structural read that a category with no public market estimate [S1], spend already absorbed into adjacent budgets [S1], and a fragmented small-cheque buyer base [S1] is not one where generalist investor appetite would be expected to be strong. A reader should treat this as a hypothesis to test, not a finding, and if forced to choose I would rather this field read 'unknown' than imply I saw evidence I did not. The enumerated options do not include one."
+  },
+  "regulatory_and_structural": {
+    "factors": [
+      "Structural: field data collection spend has no independent budget line — it is bundled into project management software or booked as internal IT cost [S1]. A new entrant must create the category in the buyer's mind before it can win the purchase.",
+      "Structural: the environmental consulting sector is highly fragmented [S1], which means a long tail of small buyers, low contract values, and no anchor customers whose adoption pulls the market.",
+      "Structural: no reliable public market estimate exists [S1], so investors, the company and any acquirer are all operating without a measurable denominator — sizing claims in this space cannot be checked against an external benchmark.",
+      "Regulatory: environmental field data frequently supports regulatory submissions, which typically implies requirements around data integrity, chain of custody, retention and auditability. This is potentially the strongest moat available to a specialist, but no source in the provided material addresses any specific regulation, jurisdiction or standard, and the deck lists geography as unspecified — so I can neither name the regime nor assess the burden.",
+      "Regulatory: data residency and client-confidentiality expectations in consulting work may constrain where synced data can be stored. Unverified — flagged because geography is unspecified, which makes it unassessable rather than absent."
+    ],
+    "risk_level": "medium"
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "title": "Environmental consulting industry overview",
+      "url": "https://research.example.org/env-consulting",
+      "date": "2026-03",
+      "reliability": "secondary",
+      "what_it_supported": "The only source in the corpus. Supports three claims and nothing else: (1) the environmental consulting sector is highly fragmented; (2) no reliable public estimate exists for spend on field data collection software specifically; (3) that spend is typically bundled into broader project management or captured as internal IT cost. Classified secondary rather than primary because it is an industry overview with no stated methodology, no underlying dataset and no named author or institution — it is not a regulator filing, a public-company disclosure, or a survey with a published sample. It is not vendor marketing either: it makes no product claim and, notably, declines to supply a market size, which is the opposite of what a vendor report does. That refusal is a mark in its favour on reliability, and it is why I weight its bundling observation heavily despite the thinness of the corpus."
+    }
+  ],
+  "research_gaps": [
+    "Market size: no TAM, SAM, growth rate or firm/seat count was available from any source. S1 states explicitly that no reliable public estimate exists [S1]. Deck claim C3 ('a large and underserved market') is therefore unverifiable in either direction from this material — sizing_confidence is low for that reason, not as a hedge.",
+    "Competitor identification: not a single vendor is named anywhere in the corpus. I could not verify who sells into this workflow today, at what price, or with what funding. The incumbent entries above are described by role rather than by name because naming them would mean sourcing them to a corpus that does not contain them.",
+    "Funded-competitor count and new-entrant flow: unknown. This is the specific input the saturation judgement needs and does not have, so the saturation read is structural inference from S1's bundling statement rather than a headcount.",
+    "Open source: no project data at all — no repositories, adoption metrics, governance or backers. Given that offline mobile data capture is a category with a well-established free-software tradition, this is the highest-value unfilled gap in the whole analysis. A single verified answer on how close the best free tool is would materially move both the pricing_pressure and absorption verdicts.",
+    "Pricing: no price point, contract value or discounting trend was available, so pricing_direction is unknown rather than stable.",
+    "M&A and funding: no acquisitions, rounds, valuations or exits were in the corpus. investor_appetite and valuation_norms rest on structural reasoning, not data.",
+    "Prevalence of the stated pain: no survey, study or practitioner evidence was supplied on how widely environmental consultants still use paper capture (deck claim C1), nor on the cost of re-entry. The premise of the product is unverified here.",
+    "Geography: the deck specifies none, and the single source specifies none. Since regulatory burden, consultancy structure and pricing all vary sharply by jurisdiction, several judgements above would need to be redone once a target geography is fixed.",
+    "Buyer economics: no data on average consultancy size, seat counts, IT spend or willingness to pay, so CAC payback and margin are unanswerable from this material.",
+    "Traction context (deck claims C4/C5): no benchmark data on what three pilots at pre-revenue signifies in this category — no comparable pre-seed conversion or pilot-to-paid rates were available."
+  ],
+  "injection_findings": []
+}

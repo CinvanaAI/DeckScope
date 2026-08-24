@@ -33,13 +33,13 @@ from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 #: The trade is deliberate: a bare `S3` that really was meant as a citation is
 #: now ignored rather than acted on. Under-attributing is recoverable; corrupting
 #: a sentence is not.
-PROSE_CITE_RX = re.compile(r"\[\s*S\d{1,3}(?:\s*[,;]\s*S\d{1,3})*\s*\]", re.I)
+PROSE_CITE_RX = re.compile(r"\[\s*S\d+(?:\s*[,;]\s*S\d+)*\s*\]", re.I)
 
 #: A single S-ID. Used to validate the *contents* of a `source_ids` array, where
 #: the whole string is the reference and no bracket is expected.
-SID_RX = re.compile(r"^\s*S(\d{1,3})\s*$", re.I)
+SID_RX = re.compile(r"^\s*S(\d+)\s*$", re.I)
 
-_SID_IN_GROUP_RX = re.compile(r"S(\d{1,3})", re.I)
+_SID_IN_GROUP_RX = re.compile(r"S(\d+)", re.I)
 
 
 def prose_citations(text: str) -> List[str]:
@@ -159,7 +159,7 @@ class SourceRegistry:
         if not ref:
             return None
         ref = str(ref).strip()
-        if re.fullmatch(r"S\d{1,3}", ref, re.I):
+        if re.fullmatch(r"S\d+", ref, re.I):
             idx = int(ref[1:]) - 1
             return self.sources[idx] if 0 <= idx < len(self.sources) else None
         key = ref.lower()
@@ -465,6 +465,13 @@ def merge_into(target: "SourceRegistry", incoming: "SourceRegistry",
         # ID rather than losing or inventing it.
         if old in incoming.admitted_ids:
             target._admitted.add(src.sid)
+    # And the flag itself. Without it, an incoming registry that built a prompt
+    # and admitted nothing — because nothing fit the budget — left the target
+    # believing no prompt had ever been built, which flips `citable_ids` from
+    # "only what a model saw" back to "everything". That is the widened-trust
+    # bug this flag exists to prevent, reintroduced through the merge.
+    if incoming._prompt_built:
+        target._prompt_built = True
     return remap
 
 

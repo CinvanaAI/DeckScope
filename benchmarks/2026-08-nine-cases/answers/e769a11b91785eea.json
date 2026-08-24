@@ -1,0 +1,350 @@
+{
+  "headline": "Cobalt Survey is an honest six-slide skeleton with no team, no wedge and no market number, selling a capability that the one available source says buyers already pay for inside someone else's budget [S1] — pass on the document, and take a call only if there is a founder worth underwriting behind it.",
+  "verdict": {
+    "call": "PASS",
+    "confidence": "medium",
+    "confidence_rationale": "Two very different confidences are being averaged here. On the deck side I am highly confident: the document names no founder, no competitor, no price, no TAM methodology, no use of funds and no SAFE cap, and at pre-seed with zero revenue the team slide is normally the entire underwriting basis. That is a fact about the artifact, not an inference. On the market side I am weak: the research corpus contains exactly one secondary industry overview [S1] with no stated methodology, no author and a non-institutional URL, and it supplies no market size, no vendor, no price, no funding data and no open-source record. So the negative read on category structure — spend already bundled into project management software or absorbed as internal IT cost [S1], sector highly fragmented [S1] — rests on a single unreplicated source. I am confident the deck cannot be underwritten as written; I am only moderately confident the market is as unattractive as it looks. That is why this is PASS rather than a harder no: the document fails, but the failure is evidentiary, and a thin deck is a recoverable condition in a way a bad market is not."
+  },
+  "scorecard": [
+    {
+      "dimension": "Market size & timing",
+      "score": 3,
+      "weight": 5,
+      "rationale": "The deck offers no TAM, SAM, SOM, growth rate, geography or methodology — the entire market section is the sentence 'We believe this is a large and underserved market.' The independent picture does not rescue it: the only source states that no reliable public estimate exists for spend on field data collection software specifically, because it is typically bundled into broader project management or captured as internal IT cost [S1]. So there is no external denominator to check the claim against, and the structural reason there is none is itself the bad news — a capability whose spend has already been absorbed into adjacent budgets is behaving like a mature or absorbed category rather than an opening one. Score is 3 rather than 1 because the underlying sector is real, countable and fragmented [S1], meaning a bottom-up build (firm count x field staff x seat price) is genuinely available to the founders; they simply did not do it. Weight 5: for a vertical SaaS pre-seed, whether the addressable spend is a real line item is the first-order question, and here the answer is 'not yet a line item at all' [S1].",
+      "evidence": [
+        "Deck market section is a hedged belief with no number and no methodology (slide 4, claim C3); tam_claimed, sam_claimed, som_claimed and growth_rate_claimed are all null and tam_methodology is 'unstated'",
+        "No reliable public estimate exists for spend on field data collection software specifically [S1]",
+        "That spend is typically bundled into broader project management or captured as internal IT cost [S1]",
+        "The environmental consulting sector is highly fragmented [S1]"
+      ],
+      "source_ids": ["S1"]
+    },
+    {
+      "dimension": "Competitive position",
+      "score": 2,
+      "weight": 5,
+      "rationale": "The deck contains no competition slide at all — not a thin one, none. That is different from selectively omitting a rival: there is no positioning claim to assess. The market read makes the omission expensive rather than merely untidy, because the strongest structural fact available is that the capability is already being supplied and paid for from inside adjacent budgets [S1]. Whoever supplies a consultancy's project management platform is the de facto incumbent for field capture — they hold the contract, the project structure the data must attach to, the user directory and the budget [S1] — and the firms large enough to run internal IT are already building it themselves [S1], which removes exactly the accounts with the largest seat counts. Neither competitor appears on a startup matrix, and neither appears in this deck. Score 2, not 1, because sector fragmentation [S1] does leave a genuine long-tail niche that platform vendors habitually underserve. Weight 5: defensibility is the dimension the lens weights most heavily, and this is where the company is most exposed.",
+      "evidence": [
+        "named_competitors is an empty list and positioning_claim is null; the deck has no competition section",
+        "Field data collection spend is typically bundled into broader project management software today — a present-tense observation, not a forecast [S1]",
+        "The other home of the spend is internal IT cost, i.e. build-not-buy at the larger firms [S1]",
+        "Sector fragmentation [S1] leaves a small-and-mid-firm niche that enterprise platforms price and configure past"
+      ],
+      "source_ids": ["S1"]
+    },
+    {
+      "dimension": "Product & moat",
+      "score": 2,
+      "weight": 4,
+      "rationale": "The product claim is one sentence: an offline-first mobile app that syncs when signal returns (slide 3, C2). technical_moat_claimed is explicitly null, and the deck offers no architecture, data model, conflict-resolution approach, platform list, screenshot or build status. Offline capture with deferred sync is the category baseline for field data tools, not a differentiator, and the market analysis flags — as an explicitly labelled inference, with no corpus evidence either way — that credible free and open-source options in this capability class are at or near parity, which would put the pricing ceiling for the capability itself near zero. I am recording that as a high-consequence unverified headwind, not a finding. The one plausibly durable moat in this workflow is vertical regulatory depth: sampling templates, chain of custody, data validation, agency-format reporting. The deck does not claim it. That asymmetry — the durable half unclaimed, the non-durable half presented as the wedge — is the core product finding. Weight 4 rather than 5 because at pre-seed a thin product is normal; what is penalised is the absence of any hypothesis about why this stays hard.",
+      "evidence": [
+        "Sole differentiator listed: 'Offline-first operation (asserted on slide 3; not compared to any alternative in the deck)'; technical_moat_claimed is null; product maturity 'unknown' and demo_evidence null",
+        "Market analysis rates the open-source capability gap 'approaching parity' with gap_trend 'stable' and pricing_pressure 'significant', while stating plainly that the corpus contains no open-source project record at all — an explicit inference, not a sourced conclusion",
+        "Of four residual capabilities a commercial product could still charge for, three (hosted sync, distribution, support) are marked non-durable and only vertical workflow depth is marked durable — and that is the one the deck never claims",
+        "Absorption verdict is 'feature' with horizon 'already happening', grounded in S1's bundling statement [S1]"
+      ],
+      "source_ids": ["S1"]
+    },
+    {
+      "dimension": "Business model",
+      "score": 1,
+      "weight": 3,
+      "rationale": "Every field is null: no pricing, no unit economics, no ACV or ARPU, no CAC, no LTV, no gross margin. There is not even a price hypothesis. This matters more than usual here because the market gives no anchor to default to — no price point, seat cost or contract value appears anywhere in the corpus, and S1's observation that the spend is bundled or internalised [S1] implies there may be no established standalone price for this capability at all. The company would have to set an anchor rather than meet one, into a fragmented base of small firms [S1] where many small deals imply acquisition cost that is high relative to contract value. Nothing in the deck shows the founders have thought about whether ten-person consultancies at plausible seat counts can support a venture-scale outcome. Weight 3: at pre-seed I do not require validated unit economics, only a defensible arithmetic sketch, and there is none.",
+      "evidence": [
+        "business_model: pricing, unit_economics, acv_or_arpu, cac_claimed, ltv_claimed and gross_margin_claimed are all null",
+        "No price point, seat cost or contract value appears in any provided source; typical_pricing and typical_gross_margin are 'not stated'",
+        "Fragmented buyer base [S1] implies many small deals and high CAC relative to contract value — an inference from S1, with no CAC or ACV data available to test it"
+      ],
+      "source_ids": ["S1"]
+    },
+    {
+      "dimension": "Traction vs. stage",
+      "score": 4,
+      "weight": 4,
+      "rationale": "This is the dimension where the deck is treated most fairly. 'No revenue yet' plus 'three pilot customers' is a legitimate pre-seed profile and I do not penalise thin revenue at this stage — I penalise thin evidence of demand, and that is exactly what is missing. 'Pilot' is undefined: paid or unpaid, signed or verbal, in production or evaluating; there are no names, sizes, start dates, scope or conversion terms, and no logos. Three unnamed pilots is therefore an assertion of interest, not a measurement of demand, and it is the single cheapest thing in this deck to have made checkable. Compounding it, the underlying premise — that environmental consultants still capture on paper and re-key later (C1) — is supported by no survey, study or practitioner evidence in the corpus, and no benchmark exists for what three pilots signifies in this category. Score 4 credits the stage-appropriate honesty; the gap is evidentiary, not inflationary.",
+      "evidence": [
+        "'No revenue yet.' (slide 5, C5) and 'Three pilot customers.' (slide 5, C4) — no names, no start dates, no scope, no conversion terms, logos empty",
+        "pipeline, retention, growth and other_metrics are all null or empty",
+        "No survey, study or practitioner evidence on the prevalence of paper capture among environmental consultants was available in the corpus",
+        "No comparable pre-seed pilot-to-paid conversion benchmark exists in the provided material"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Team",
+      "score": 1,
+      "weight": 5,
+      "rationale": "There is no team information of any kind: no founder named, no role, no background, no headcount, no advisors. At pre-seed with no revenue, no pricing and no moat, the team is the asset being underwritten — it is the only thing an investor at this stage is actually buying. Its total absence is not a formatting oversight; it means there is nothing on the table to diligence. This dimension carries weight 5 for precisely the reason the others are discounted: everything else at this stage is a hypothesis, and the founders are the mechanism for resolving hypotheses. A domain-native founder out of an environmental consultancy who has personally re-keyed field notes would change the reading of every other line in this deck; the deck gives no basis to believe or disbelieve that such a person exists.",
+      "evidence": [
+        "team.founders is an empty list; headcount null; notable_advisors empty",
+        "Deck quality notes flag the missing team slide as 'the single most conspicuous gap in the document'",
+        "No founder, company, website or contact detail appears anywhere; company website, location and founded date are all null"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Ask & plan",
+      "score": 3,
+      "weight": 3,
+      "rationale": "Credit where it is due: $750k on a SAFE is a genuine pre-seed number, and it is consistent with the traction shown. There is no stage inflation here — three unpaid-or-unspecified pilots and zero revenue is a pre-seed profile and the ask matches it, which is unusual relative to typical decks. What is missing is everything that makes the number assessable: no use of funds, no milestones, no runway, no valuation cap or discount. I cannot tell what $750k buys, what it proves, or what dilution it costs. Nor can I benchmark it — the corpus contains no round, valuation or investor data of any kind, so I cannot say whether the terms are at, above or below market. Separately, the plan question the deck does not know it has: in a category where a new vendor must create a budget rather than capture one [S1], $750k may be under-scoped for the milestone that matters, which is proving a consultancy will pay a named price out of a named budget.",
+      "evidence": [
+        "'Raising $750k on a SAFE.' (slide 6, C6); valuation, use_of_funds, milestones_promised and runway_claimed are all null or empty",
+        "No round, valuation, exit or investor data was supplied, so the terms cannot be benchmarked; valuation_norms 'not stated in any provided source'",
+        "Spend is not a recognised budget line — a new vendor must create a budget rather than capture one [S1], which lengthens the path to the milestone this round would fund"
+      ],
+      "source_ids": ["S1"]
+    }
+  ],
+  "claim_audit": [
+    {
+      "id": "C1",
+      "claim": "Environmental consultants collect site data on paper and re-enter it later.",
+      "market_evidence": "Nothing in the corpus addresses this. The single source speaks to sector fragmentation, the absence of a public market estimate, and where the spend is booked [S1] — it says nothing about paper prevalence, re-entry cost, or transcription error rates. No survey, practitioner study or regulator statement was supplied. The market analysis lists the pain as a plausible field-services failure mode but explicitly records that it could not verify prevalence among environmental consultants from any source provided.",
+      "assessment": "unverifiable",
+      "delta": "Not a question of degree — there is simply nothing to measure the claim against. The deck offers zero problem evidence (evidence_given is an empty list): no interviews, no survey, no time-and-cost quantification, no citation. The market offers zero counterpart. The gap is that the founding premise of the company is, on this material, an assertion made by the founders about their own customers with no denominator attached — not '30% of firms' or 'X hours per site visit', just a statement.",
+      "so_what": "This is the cheapest claim in the deck to prove and the most damaging one to leave unproven. Three pilot customers are three natural sources of a time-and-cost figure; the failure to extract one from them is either a signal the founders have not run the exercise or a signal the numbers were unimpressive. Either reading is unfavourable. Note also the failure-mode distinction: this is not a wrong claim, it is an unproven one — the pain is entirely plausible, and I would expect a domain founder to be able to evidence it in a single conversation.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C2",
+      "claim": "An offline-first mobile app that syncs when signal returns [is the solution].",
+      "market_evidence": "The corpus names no vendor, no product and no open-source project, so there is no direct evidence on this capability at all. What it does establish structurally is that this capability's spend is already being supplied from inside broader project management software or internal IT budgets [S1] — meaning something is already doing this job in these firms today. The market analysis rates the open-source gap 'approaching parity' with pricing pressure 'significant', while stating clearly that this is an explicitly labelled prior from domain knowledge and not a corpus finding, since no repository, adoption figure or governance record was supplied.",
+      "assessment": "partially-supported",
+      "delta": "As a description of what the product does, the claim is coherent and I have no reason to doubt it. As a differentiator — the role the deck assigns it, since it is the only item in the differentiators list and technical_moat_claimed is null — it sits close to zero distance from the category baseline. Offline capture with deferred sync is what field data tools do; the deck compares it to no alternative and gives no detail on the parts that would actually be hard (conflict resolution, latency, data volume, platform coverage). The delta in concrete terms: the deck presents a table-stakes feature as the wedge, while the market analysis marks three of four residual commercial capabilities as non-durable and the one durable capability — vertical regulatory workflow depth — as something the deck never claims.",
+      "so_what": "If a production-grade free tool already does offline capture and sync, the capability itself is unpriceable and only vertical depth and support remain chargeable. That single verification is the highest-value piece of follow-up on this deck: it moves both the pricing and the absorption reads. Until then, the honest position is that the company has told me what it built but not why anyone cannot get it elsewhere.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/env-consulting"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C3",
+      "claim": "\"We believe this is a large and underserved market.\"",
+      "market_evidence": "The source addresses this claim more directly than any other and refuses it in both directions: no reliable public estimate exists for spend on field data collection software specifically, because it is typically bundled into broader project management or captured as internal IT cost [S1]. No TAM, SAM, SOM, seat count, firm count or average contract value was available from any source. The sector is highly fragmented [S1], which cuts both ways — a long tail of small firms with no in-house software team is the classic buy-not-build profile, but it also means small contract values, high per-deal acquisition cost, and no anchor logos.",
+      "assessment": "unverifiable",
+      "delta": "There is no arithmetic delta to state because neither side supplies a number — the deck's market section is a hedged belief and the independent estimate does not exist [S1]. The substantive delta is directional and concerns the second adjective. 'Underserved' is not neutral against the evidence: the absence of a measured market is equally consistent with 'underserved' and with 'served adequately by adjacent tools nobody bothers to count', and S1's bundling statement is a present-tense report that someone is already being paid for this job [S1]. So the deck's hedge points one way while the one available structural fact leans the other. As written, the sentence is unfalsifiable — the deck's own extraction marks it so — which means it cannot be diligenced, only replaced.",
+      "so_what": "Environmental consulting is a defined, countable industry. A bottom-up build from firm count x field staff x plausible seat price would settle slide 4 in an afternoon, and the failure to attempt it is a signal in itself about how the founders reason. More consequentially, if the spend genuinely has no budget line [S1], the company must create a category in the buyer's mind before it can win a purchase — a materially harder and slower motion than displacing a named incumbent, and one $750k with no stated milestones may not fund.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/env-consulting"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C4",
+      "claim": "\"Three pilot customers.\"",
+      "market_evidence": "No external evidence exists in the corpus — no customer records, no vendor data, no benchmark for what three pilots signifies in this category, and no comparable pre-seed pilot-to-paid conversion rate. The market analysis lists this as an explicit research gap.",
+      "assessment": "unverifiable",
+      "delta": "The claim cannot be moved toward or away from any market figure because there is no figure and no named counterparty. The gap is internal to the deck: 'pilot' is left undefined across every dimension that determines its worth — paid or unpaid, contracted or verbal, in production or evaluating, with or without a conversion path. Three signed paid trials at mid-size regional firms and three friendly acquaintances testing a build are the same sentence on slide 5 and about two orders of magnitude apart in what they prove.",
+      "so_what": "At pre-seed, pilots are the substitute for revenue as evidence of demand, so the definition is the whole claim. This is the single most answerable question in the diligence, and the answer is binary for the investment: paid pilots with named firms and a conversion term make this a company worth meeting despite everything else missing; unpaid evaluations make it a prototype with three friendly readers. Note this is unproven rather than wrong — I have no reason to think the founders are inflating, and the extraction notes the deck shows no stage inflation anywhere.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C5",
+      "claim": "\"No revenue yet.\"",
+      "market_evidence": "No source in the corpus bears on this company's financials; no funding, revenue or company-level data of any kind was supplied.",
+      "assessment": "unverifiable",
+      "delta": "Externally unverifiable, but this is a disclosure against interest — a company has no incentive to understate revenue to an investor — so I treat it as credible at face value and note that doing so is an inference from incentive, not from evidence. Against stage expectation the delta is zero: no revenue at pre-seed is normal and I do not mark it down.",
+      "so_what": "This claim is the deck at its best. It sets the stage honestly, and combined with a $750k ask it means the stage implied by traction and the stage implied by the ask agree — no inflation. The problem this deck has is not that it exaggerates; it is that it supplies almost nothing checkable in either direction.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C6",
+      "claim": "\"Raising $750k on a SAFE.\"",
+      "market_evidence": "No round, valuation, exit or investor data of any kind was supplied, so the amount and instrument cannot be benchmarked against category norms for this stage [no source]. The market analysis records investor_appetite as 'cold' but explicitly warns this is the least defensible field in that document — structural reasoning from the absence of a public market estimate, absorbed spend and a fragmented small-cheque buyer base [S1], not a measurement.",
+      "assessment": "unverifiable",
+      "delta": "No benchmark exists, so I cannot say the ask is high or low. What I can say is that it is incomplete rather than inflated: no valuation cap, no discount, no use of funds, no milestones, no runway. The $750k is therefore assessable neither for dilution nor for whether it funds a defined proof point.",
+      "so_what": "The number is plausible; the plan behind it is absent, and in this particular category that absence is more than cosmetic. If the go-to-market requires creating a budget line that does not currently exist [S1], the milestone that de-risks a seed round is 'a consultancy paid $X out of budget Y', and a partner needs to see that $750k is scoped to reach it. Ask for the cap and the milestone map before anything else on terms.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/env-consulting"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C7",
+      "claim": "The company is at pre-seed stage, deck dated 2026.",
+      "market_evidence": "No source addresses the company. The sole source is dated 2026-03 [S1], which is consistent with a 2026 deck but says nothing about this company.",
+      "assessment": "unverifiable",
+      "delta": "Low-stakes and internally consistent. Worth flagging only that '2026' is unlabelled on slide 1 and was read by the extraction as the deck or round year by inference, not as a stated founding date — so company age, and therefore how long three pilots took to assemble, is unknown.",
+      "so_what": "Minor on its own, but it removes a useful denominator: three pilots in four months and three pilots in three years are very different traction signals, and the deck does not let me tell which it is.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C8",
+      "claim": "Environmental consultancies are the target customer segment.",
+      "market_evidence": "The sector is real and the source characterises it: the environmental consulting sector is highly fragmented [S1], and the spend for this capability sits inside project management software budgets or internal IT cost [S1]. Fragmentation implies a long tail of small and mid-size firms with no in-house software team — the classic buy-rather-than-build profile, though that consequence is an inference and not stated by the source.",
+      "assessment": "partially-supported",
+      "delta": "The segment exists and is coherently chosen; that half is supported. What the deck does not engage is the shape of it. Fragmentation means the realistic target set is small firms with small seat counts and low contract values, while the accounts with the largest seat counts are precisely the ones with the IT capacity to build internally [S1] — so the top of the market is structurally removed from the addressable set. The deck names one segment and no sub-segmentation: no firm-size band, no geography, no wedge workflow.",
+      "so_what": "Choosing environmental consultancies is defensible; the company just has not shown it understands which environmental consultancies it can actually win, or that the winnable ones can pay enough to build a venture outcome. Segment without seat-count-and-price arithmetic is a label, not a strategy — and in a fragmented base [S1] the arithmetic is where this business is made or lost.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/env-consulting"],
+      "evidence_quality": "moderate"
+    }
+  ],
+  "alignment": {
+    "where_deck_matches_market": [
+      "Customer segment is real and correctly characterised as a coherent vertical: the environmental consulting sector exists as a definable industry and is highly fragmented [S1], which is genuinely the profile of a market that buys rather than builds at the small and mid-size end — the one structural point that works in the company's favour.",
+      "The ask is stage-consistent with the traction. Zero revenue and three unpaid-or-unspecified pilots is a pre-seed profile, $750k on a SAFE is a pre-seed ask, and the two agree. There is no stage inflation anywhere in this document, which is rarer than it should be.",
+      "The workflow the deck names — mobile capture of site observations feeding a downstream record — is the workflow the market analysis defines as the category [S1]. The company is pointed at a real job, not an invented one.",
+      "The deck's implicit read that no one has organised this spend is, in a narrow sense, correct: the source confirms there is no separately measurable market for it [S1]. The company and the market agree on the fact; they disagree on whether it is an opportunity or a warning."
+    ],
+    "where_deck_overstates": [
+      "'A large and underserved market' (C3) is stated with no number, no methodology and no source, against a market where no reliable public estimate exists at all [S1] and where the one structural fact available — spend already bundled into project management software or booked as internal IT cost [S1] — cuts against 'underserved' as easily as it supports it. This is the clearest overstatement: not a wrong figure, but a conclusion stated where the evidence supports no conclusion.",
+      "Offline-first sync (C2) is presented as the differentiator when it is the category baseline. It is the only entry in the deck's differentiators list, technical_moat_claimed is null, and the market analysis rates the free-alternative gap as 'approaching parity' with significant pricing pressure — explicitly as a labelled inference, since the corpus contains no open-source record. The deck claims a wedge where the durable value (regulatory workflow depth) sits somewhere it does not claim.",
+      "'Three pilot customers' (C4) is doing traction work that an undefined term cannot carry. Presenting three unnamed, unscoped, possibly-unpaid pilots as the traction slide overstates what has actually been demonstrated about demand.",
+      "By omission rather than assertion, the absence of a competition slide overstates the company's position: it implicitly claims an open field in a category where the budget is already held by whoever supplies the incumbent project or data platform [S1] and where the largest firms build in-house [S1]."
+    ],
+    "where_deck_understates": [
+      "The deck understates its own honesty. Zero stage inflation, an explicit 'no revenue yet', and a modest ask are underwriting positives that the document does nothing to foreground — a partner has to reconstruct them from what is missing.",
+      "Regulatory depth is the strongest asset available to a specialist here and the deck never mentions it. Environmental field data commonly supports regulatory submissions, implying chain-of-custody, validation, retention and auditability requirements — the market analysis names vertical workflow depth as the single durable residual capability that a platform vendor will not build for one vertical. If the company has any of this, it is understating the only thing that would make it defensible; if it does not, that is the risk, not an understatement.",
+      "The size of the round may be understated relative to the job. In a category where a vendor must create a budget rather than capture one [S1], and where the buyer base is fragmented into many small deals [S1], $750k with no stated milestones may not reach the proof point a seed investor will require."
+    ],
+    "blind_spots": [
+      {
+        "what": "There is no 'field data collection software' budget line. The spend is typically bundled into broader project management software or captured as internal IT cost [S1], and no reliable public estimate exists for it [S1]. The deck's market slide assumes a market to be sized; the evidence says the category is not recognised as a purchase by the buyers themselves.",
+        "why_it_matters": "This inverts the go-to-market. The company is not competing for a share of an existing line item — it must persuade a practice lead to create one, or persuade whoever owns the incumbent platform to make room. That is a longer sales cycle, a higher-friction first deal, and a materially different use-of-funds plan than the deck implies by not having one. It is also why 'underserved' cannot be assumed: unmeasured is not the same as unmet.",
+        "source_ids": ["S1"]
+      },
+      {
+        "what": "Absorption is not a future risk — it is the current default state. The source reports in the present tense that this spend is already bundled into project management software [S1], which makes the platform vendors the most likely absorbers of the capability, and the market analysis accordingly returns an absorption verdict of 'feature' with horizon 'already happening'.",
+        "why_it_matters": "A capability that is one step inside a bigger workflow tends to get supplied by whoever owns the bigger workflow, and the specialist is made redundant rather than out-competed. The counter-argument is depth: capture is a feature, but sample-to-regulatory-report is a workflow, and workflows survive bundling. The deck describes capture (C2), not the chain — so on the material provided it is building the half that gets absorbed.",
+        "source_ids": ["S1"]
+      },
+      {
+        "what": "Internal IT build is a first-class competitor and it takes the best accounts. The source names internal IT cost as the other place this spend already sits [S1]; in a fragmented sector [S1] the firms large enough to run an IT team are exactly the ones with the largest seat counts.",
+        "why_it_matters": "It removes the top of the addressable market before the company starts, compressing the realistic target set toward smaller firms with lower contract values and pushing the whole business toward a many-small-deals model with high acquisition cost relative to ACV. That has to be priced into the plan, and there is no plan.",
+        "source_ids": ["S1"]
+      },
+      {
+        "what": "Fragmentation is a headwind as well as a tailwind [S1] — many small buyers means low contract values, high per-deal acquisition cost, and no concentrated set of logos whose adoption pulls the rest of the market along.",
+        "why_it_matters": "The deck has no pricing, no ACV, no CAC and no GTM channel, so it has no answer to the arithmetic that fragmentation forces. Whether this can be a venture-scale outcome depends entirely on seat price times winnable seats, and nobody — company or investor — has done that sum on this material.",
+        "source_ids": ["S1"]
+      },
+      {
+        "what": "Credible free and open-source offline data capture. I must be exact: no source in the corpus attests to this — no repository, no adoption figure, no project name — and I will not manufacture one. The market analysis flags it as a labelled prior from domain knowledge and calls it the highest-value unfilled gap in the research.",
+        "why_it_matters": "If verification confirms a production-grade free tool doing offline capture and deferred sync, the pricing ceiling for the capability itself is roughly zero, C2 stops being a differentiator entirely, and only vertical depth and support remain chargeable. It is the one unanswered question that could move the verdict in either direction, which is why it heads the diligence list rather than the findings list.",
+        "source_ids": []
+      },
+      {
+        "what": "Regulatory and data-integrity requirements for environmental site records — chain of custody, validation, retention, agency-format reporting, and possibly data residency — go entirely unaddressed in the deck, which also specifies no geography.",
+        "why_it_matters": "This cuts both ways and is the most interesting unknown in the file. It is the highest bar a capture-only forms app must clear to be usable as a system of record, and simultaneously the only moat that survives platform bundling. No source in the corpus names a regime or jurisdiction, so I can neither size the burden nor confirm the opportunity — but a founder who cannot discuss it fluently is not a domain founder.",
+        "source_ids": []
+      },
+      {
+        "what": "The deck itself: no team, no competition, no market sizing, no business model, no GTM, no use of funds, no SAFE terms, no product evidence, no contact details. Thirteen missing sections against six slides, four of which are a single sentence.",
+        "why_it_matters": "At pre-seed the document is a work sample. What a founder chooses to make checkable is itself evidence about how they will operate with $750k of someone else's money — and here almost nothing is checkable. This is a blind spot about the company visible in the artifact rather than in the market data.",
+        "source_ids": []
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "The capability is absorbed by the platform that already holds the budget. Field data collection spend is bundled into broader project management software today [S1], so the incumbent supplier can add offline capture as an extension of something it already owns, with the contract, the project structure, the user directory and the account relationship already in hand.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Test whether the company is building capture or a workflow. Ask what happens to the data after sync: does it reach validation, chain of custody and agency-format reporting, or does it hand off to whatever the consultancy already runs? A capture-only product is a front end that an incumbent eventually supplies for free; sample-to-report is a system of record. The founders' answer to 'what do you own that your customers' project platform will not build' decides this."
+    },
+    {
+      "risk": "There is nothing to underwrite. No founder, background, role, headcount or advisor is named anywhere in the deck, at the exact stage where the team is the primary — often the only — underwriting asset.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Trivially resolvable and therefore the first call: get the founder bios and ask whether anyone on the team has personally worked field environmental data collection. Domain nativity is the single fact that would re-read the entire deck. If the team turns out to be strong operators out of environmental consulting, most of the other gaps become fixable in weeks."
+    },
+    {
+      "risk": "The wedge is table stakes and the price of the capability is zero. Offline-first sync (C2) is the category baseline, the deck claims no technical moat, and the free-alternative gap is assessed as approaching parity with significant pricing pressure — an explicit inference, unverified by any source in the corpus.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Verify directly: identify the best free/open-source offline capture tool actually used in field and environmental work, install it, and run one of Cobalt's pilot workflows through it end to end. If it completes the workflow, the differentiator is gone and only vertical depth and support are chargeable. This single test moves both the pricing and absorption reads and should be done before any partner time is spent."
+    },
+    {
+      "risk": "The pilots do not convert because they were never commercial. 'Pilot' is undefined on every dimension that determines its value — paid, contracted, in production, with a conversion term — and no benchmark exists for what three pilots signify in this category.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Ask for the three names, start dates, scope, whether money changed hands, and the written conversion terms; then reference two of them directly. Specifically ask each pilot what they used before, what they would pay, and whose budget it would come from — that last question also tests the budget-line problem [S1] against real buyers."
+    },
+    {
+      "risk": "The economics do not clear venture scale. A highly fragmented buyer base [S1] implies many small deals, low contract values and acquisition cost that is high relative to ACV, while the largest-seat-count firms are removed by internal build [S1] — and the deck contains no pricing, ACV, CAC, margin or channel.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Force the bottom-up build the deck skipped: firm count in the target geography and size band, field staff per firm, plausible seat price, realistic penetration. If the honest ceiling is a good $10-20m revenue business rather than a fund-returner, that is a legitimate answer — it just is not this asset class. Also demand a stated GTM channel; there is currently none."
+    },
+    {
+      "risk": "The company must create a budget line rather than capture one [S1], lengthening the sales cycle beyond what $750k with no stated milestones can fund.",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask for the milestone map: what specifically does $750k prove, by when, and what does the seed round need to see? The proof point that matters is a consultancy paying a named price out of a named budget. Also request the SAFE cap and runway so dilution and duration are assessable."
+    },
+    {
+      "risk": "Regulatory and data-integrity requirements for environmental records raise the bar above a generic forms app — chain of custody, validation, retention, auditability, and possibly data residency — with geography unspecified and no source in the corpus naming any regime.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Fix the target jurisdiction first, then ask the founders to walk through how a sample record survives from field capture to a regulatory submission. Fluency here is both a competence test on the team and the test of whether the only durable moat is available to them."
+    },
+    {
+      "risk": "The entire market read rests on one secondary source. S1 is an industry overview with no stated methodology, no dataset and no named author or institution, and the corpus contains nothing else — no vendor, price, funding, open-source or survey data.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Treat every market conclusion here as provisional and replicate the two load-bearing facts (fragmentation; bundling of the spend) against an independent industry source, ideally a firm-count dataset or a practitioner survey, before this analysis is relied on for a decision. The correct response to thin evidence is lower confidence, not louder conclusions."
+    }
+  ],
+  "questions": [
+    "Who are the founders, and has any of them personally collected environmental field data for a living? This is the one answer that would re-read every other line of the deck.",
+    "Are the three pilots paid? Named firms, start dates, scope, dollars, and written conversion terms — or is 'pilot' being asked to do work it cannot carry?",
+    "When a pilot customer bought, whose budget did it come from — a project management software line, internal IT, or a practice lead's discretionary spend? S1 says this capability has no line of its own [S1]; the pilots are the cheapest available test of whether that is true in practice.",
+    "What does the product do after the data syncs? If it stops at capture it is a feature the incumbent platform can supply [S1]; if it carries chain of custody, validation and agency-format reporting it is a system of record. Which is it, today, in code?",
+    "What is the best free tool that already does offline capture with deferred sync, and what specifically does it fail to do for an environmental consultancy? If the founders cannot answer this instantly, they have not looked.",
+    "What is the price? Not a model — a number, per seat or per site, and what a ten-person consultancy and a hundred-person consultancy each pay in year one.",
+    "What is the bottom-up TAM: firms in the target geography, field staff per firm, seat price, plausible penetration? The refusal to attempt this on slide 4 is itself the question.",
+    "What does $750k buy, by when, and what must be true for a seed investor to fund the next round? Also: what is the SAFE cap?",
+    "Which geography and which regulatory regime? Chain-of-custody and residency requirements vary sharply by jurisdiction and the deck names none.",
+    "Why has no one else already won this niche — and if someone has, who? The deck names no competitor and the research corpus names none either, which is an absence of evidence, not evidence of absence."
+  ],
+  "actions": [
+    {
+      "action": "Request founder bios and a fifteen-minute call before any further work. At pre-seed with this little else on the page, the team is the decision; if the founders are domain-native operators out of environmental consulting, reopen the file, and if there is no credible answer within a week, close it.",
+      "owner": "Deal partner",
+      "priority": "P0"
+    },
+    {
+      "action": "Get the pilot facts in writing: three names, start dates, scope, paid or unpaid, conversion terms — then reference two of the three directly, asking each what they used before, what they would pay, and whose budget it would come from.",
+      "owner": "Deal partner",
+      "priority": "P0"
+    },
+    {
+      "action": "Run the open-source parity test. Identify the leading free offline field-capture tool actually in use, run one Cobalt pilot workflow through it end to end, and document exactly where it fails for an environmental consultancy. This is the highest-value unfilled gap in the research and it decides whether C2 is a wedge or a baseline.",
+      "owner": "Technical diligence / analyst",
+      "priority": "P0"
+    },
+    {
+      "action": "Build the bottom-up market model the deck did not: firm count by size band and geography, field staff per firm, seat price scenarios, penetration. Establish whether a plausible outcome is fund-returning before spending more partner time.",
+      "owner": "Analyst",
+      "priority": "P1"
+    },
+    {
+      "action": "Replicate S1's two load-bearing facts — sector fragmentation and the bundling of field data spend into project management or internal IT [S1] — against at least one independent industry source. The entire market read currently rests on a single unmethodologised secondary overview.",
+      "owner": "Analyst",
+      "priority": "P1"
+    },
+    {
+      "action": "Ask the company for SAFE terms (cap, discount), use of funds, milestone map and runway, and for a stated GTM channel and price point. None of these exist in the deck and all are prerequisites for assessing the ask.",
+      "owner": "Deal partner",
+      "priority": "P1"
+    },
+    {
+      "action": "Map the regulatory chain for the target jurisdiction once geography is fixed — chain of custody, validation, retention, agency reporting formats, data residency — and test whether the product reaches it. This is where the only durable moat lives.",
+      "owner": "Analyst / domain advisor",
+      "priority": "P2"
+    },
+    {
+      "action": "If passing, send a short constructive note naming the three fixes that would earn a second look: name the team, define the pilots, and replace slide 4 with a bottom-up build. The stage-honesty in this deck is worth encouraging.",
+      "owner": "Deal partner",
+      "priority": "P2"
+    }
+  ],
+  "summary": "Cobalt Survey is asking for $750k on a SAFE to build offline-first mobile data capture for environmental consultancies. The deck is six slides, four of them a single sentence, and it does not name a founder, a competitor, a price, a market size, a channel, a milestone or a valuation cap. That is the first finding and it is about the document rather than the market: at pre-seed, with no revenue and no moat, the team is the asset being underwritten, and here there is nothing to underwrite. The company is not overselling — three unspecified pilots and zero revenue is a pre-seed profile, $750k is a pre-seed ask, and the two agree, which is more discipline than most decks show. The problem is not inflation, it is that almost nothing in the document can be checked.\n\nThe independent picture is thin in a way I want to state plainly rather than paper over. The research corpus contains exactly one secondary source [S1], an industry overview with no stated methodology, dataset or named author, and it supports three facts and no others: the environmental consulting sector is highly fragmented; no reliable public estimate exists for spend on field data collection software specifically; and that spend is typically bundled into broader project management software or captured as internal IT cost [S1]. There is no TAM, no growth rate, no vendor name, no price, no funding record and no open-source data anywhere in the material. So where the deck says 'we believe this is a large and underserved market' (C3), I cannot tell it that it is wrong — I can only tell it that the number is not publicly knowable [S1] and that the claim as written is unfalsifiable. Every failure mode in this analysis needs that distinction kept clean: the deck's claims are almost never contradicted, they are unproven (C1, C4) or unverifiable (C3, C5, C6).\n\nWhat the one source does deliver is the most consequential thing it could have. If the spend is already bundled into project management software or booked as internal IT [S1], then this capability is not an unserved need waiting for a vendor — it is a job someone is already being paid to do, under a different name, out of a budget line that does not carry Cobalt's category label. Two things follow. First, the incumbent is whoever supplies a given consultancy's project platform: they hold the contract, the project structure the field data must attach to, the user directory and the money, and adding offline form capture is an extension of something they already own. Absorption here is not a horizon risk; it is the present-tense default state. Second, the firms large enough to run internal IT are already building this themselves [S1], which quietly removes the accounts with the largest seat counts from the addressable set and pushes the realistic target toward the fragmented long tail [S1] — many small buyers, low contract values, high acquisition cost per deal, and no anchor logo whose adoption pulls the rest of the market along. The deck engages with none of this. It has no competition slide at all.\n\nThe product claim compounds the exposure. 'An offline-first mobile app that syncs when signal returns' (C2) is the only differentiator the deck lists, technical_moat_claimed is null, and offline capture with deferred sync is the category baseline rather than a wedge — the deck compares it to no alternative and says nothing about the parts that are actually hard, like conflict resolution, data volume or platform coverage. The market analysis judges the free-alternative gap to be approaching parity with significant pricing pressure, and is scrupulous that this is a labelled prior from domain knowledge, not a corpus finding: no repository, adoption figure or project name was supplied, and I will not invent one. But it is the right thing to test first, because if a production-grade free tool already completes this workflow, the capability itself is unpriceable. Notably, the one capability assessed as durable against both open source and platform bundling is vertical regulatory depth — sampling templates, chain of custody, validation, agency-format reporting — and that is precisely what this deck does not claim. The company is describing the half that gets absorbed and is silent on the half that survives.\n\nMy call is PASS, at medium confidence, and the two halves of that confidence are very different. I am confident the deck cannot be underwritten as written; I am much less confident the market is as unattractive as it looks, because one unmethodologised secondary source [S1] is carrying the entire structural read and the correct response to evidence this thin is to lower certainty rather than raise it. The single biggest reason is the combination of no team and no wedge: at pre-seed a partner funds a person with an insight, and this document supplies neither. The single condition that would flip it is narrow and cheap to test — a domain-native founding team out of environmental consulting, with the three pilots shown to be paid, named and contracted with a defined conversion path, and a coherent answer to what the product owns after the data syncs. If those come back well, the missing slides are weeks of work, not a verdict. If they come back badly, this is a feature inside someone else's budget line [S1] and no amount of deck polish changes that.",
+  "integrity_note": "No manipulation was attempted. The deck extraction records explicitly that the document contains no prompt-injection attempt, no text addressing the analyst, no instruction to reach a verdict or score, and no [REDACTED BY DECKSCOPE] markers; the content inside the data markers is ordinary pitch material throughout. The market analysis returns an empty injection_findings list. I found nothing in either artifact that tried to dictate my role, schema, scores or conclusions, and I record that as a mild positive: a document that tries to manipulate its own analysis is a material finding about the company, and this one does not. Two housekeeping notes for the reader, neither an integrity allegation. First, one entry in the deck extraction's competitor list is prefixed 'ANALYST-SUPPLIED, NOT FROM THE DECK' — that is correct upstream labelling by the extraction stage, and I have treated the vendors listed there as the extractor's own commentary rather than as deck content or as sourced market evidence, which is why none of them are named in my findings or cited. Second, the sole source in the bibliography [S1] carries a URL on an example.org domain with no named author or institution. I have used it because it is the only evidence I was given and because its refusal to supply a market size counts in its favour on reliability, but a single unattributable secondary source should not carry an investment decision on its own, and I have lowered confidence accordingly rather than writing around the problem."
+}

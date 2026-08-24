@@ -1,0 +1,297 @@
+{
+  "market_definition": {
+    "category": "Inventory forecasting and replenishment software sold to independent pharmacy operators in North America — a narrow slice of pharmacy operations software, sitting between the wholesaler's ordering system and the pharmacy's dispensing system.",
+    "boundary_notes": "The provided material supports only a narrow boundary. It establishes three things: a population of buyers (approximately 21,000-23,000 independent pharmacy groups in North America [S3]), a default incumbent product class (free reorder tooling supplied by the three national pharmaceutical wholesalers as part of the distribution agreement [S4]), and a failure mode at implementation (data migration out of the wholesaler's ordering system [S2]). Nothing in the material describes the wider pharmacy operations software category — dispensing systems, point of sale, e-prescribing, adjudication, compounding, 340B management — so I cannot responsibly draw the outer boundary of 'vertical SaaS for pharmacy'. The whole category is plainly larger than the reorder/forecasting slice; the material does not let me say by how much. I am also inferring, not reading, that dispensing-history data lives in a pharmacy management system distinct from the wholesaler's ordering system; no source states this.",
+    "how_analysts_segment_it": [
+      "By buyer size: smaller groups versus multi-store operators. [S4] is explicit that the wholesaler's zero price 'makes them the default option for smaller groups', which implies the paid-software opportunity concentrates in larger multi-store groups rather than across the full 21,000-23,000 population [S3][S4].",
+      "By source of truth for the forecast: purchase/order history (the wholesaler's tools) versus dispensing history. [S4] characterises the wholesaler tools as optimising for wholesaler fill rates rather than pharmacy margin, which is a segmentation by whose objective function the software serves.",
+      "By retention cohort basis — all-customer versus past-first-renewal. [S1] states benchmarks are published on the all-customer basis and that the two are not comparable; [S2] locates the churn concentration before the first renewal. Anyone segmenting this market by retention has to pick a basis first.",
+      "Inferred, not sourced: by whether the vendor is bundled into a distribution agreement or sold standalone. No source segments the market this way explicitly, but [S4] describes the bundling mechanism."
+    ]
+  },
+  "sizing": {
+    "tam_estimates": [
+      {
+        "value": "21,000-23,000 independent pharmacy groups in North America",
+        "year": "2026",
+        "source": "[S3] Independent pharmacy groups in North America",
+        "methodology": "Stated as an approximate population count. The source does not describe how it was derived, does not define 'group' (number of stores, ownership threshold), and does not state a spend-per-group figure. It is a buyer count, not a market size.",
+        "url": "https://research.example.org/pharmacy-group-count",
+        "source_ids": ["S3"]
+      },
+      {
+        "value": "~$1.30B-$1.43B, arithmetic only",
+        "year": "2026",
+        "source": "Derived — not stated by any source",
+        "methodology": "INFERENCE, NOT A READING: multiplying the buyer count in [S3] (21,000-23,000) by the $62k average contract value the deck asserts gives roughly $1.30B-$1.43B. I flag this explicitly because the $62k figure comes from the company, not from any source I was given, and because a count-times-price calculation assumes every group buys, buys at that price, and can afford it — none of which any source supports. [S4] actively contradicts the assumption for part of the population: the free wholesaler tool is 'the default option for smaller groups'. Treat this number as the ceiling of an arithmetic exercise, not as a market estimate.",
+        "url": null,
+        "source_ids": ["S3", "S4"]
+      },
+      {
+        "value": "Declining buyer population: -3% to -4% annually for six years",
+        "year": "2026",
+        "source": "[S3] Independent pharmacy groups in North America",
+        "methodology": "Stated directly: the count 'has declined 3-4% annually for six years as groups are acquired by regional chains'. This is the single most important sizing fact in the material and it points the wrong way for a count-based TAM.",
+        "url": "https://research.example.org/pharmacy-group-count",
+        "source_ids": ["S3"]
+      }
+    ],
+    "consensus_view": "There is no consensus view available, because there is no market-sizing source in the material — only a buyer count [S3] and a description of the incumbent free tooling [S4]. What can be said with confidence: the buyer population is roughly 21,000-23,000 groups and is shrinking 3-4% per year through acquisition by regional chains [S3]; and the addressable subset is smaller than the population, because zero-price wholesaler tooling is the default for smaller groups [S4]. Any dollar figure quoted for this market — including the arithmetic range above — is a buyer count multiplied by an assumed price, and inherits every weakness of both inputs.",
+    "cagr_range": "No source states a software-market growth rate. The only growth rate in the material runs in the opposite direction: the buyer population is contracting at 3-4% annually and has done so for six consecutive years [S3]. A vendor in this category therefore has to grow share, or grow revenue per account, faster than the account universe shrinks. No source supports a positive CAGR for this category.",
+    "sizing_confidence": "low",
+    "why_estimates_diverge": "Estimates cannot diverge here because there is only one relevant measurement in the material and it is a count, not a size [S3]. The divergence that does exist is definitional rather than numerical, and it appears in two places. First, 'group' is undefined in [S3] — a two-store operator and a forty-store operator both count as one, and they are not the same buyer, which makes any per-group price assumption unstable. Second, [S1] documents a genuine definitional divergence in the metric this category is judged on: all-customer net revenue retention benchmarks at 104-112% in vertical SaaS, while a cohort restricted to customers past their first renewal typically reports 25-40 points higher for the same business, because the churn-prone customers have already left the denominator. Applied to the published band, a business benchmarking at 104-112% all-customer would be expected to report roughly 129-152% on a post-first-renewal basis. [S1] states plainly that the two bases 'are not comparable'. I weight [S1] heavily on this point because it is the only source that addresses measurement basis at all, and because [S2] independently corroborates the mechanism by locating 30-35% first-year logo churn 'concentrated before the first renewal' — the two sources describe the same denominator effect from different angles."
+  },
+  "demand_signals": {
+    "tailwinds": [
+      "A structural incentive misalignment in the default product. The three national wholesalers' free reorder tools are described by independent analyses as optimising for wholesaler fill rates rather than for pharmacy margin [S4]. That is a durable wedge, because the wholesaler cannot fully close it without acting against its own distribution economics.",
+      "Buyer consolidation concentrates spend into larger, more sophisticated operators. Groups are being acquired by regional chains [S3]; the survivors are larger multi-store operators, and larger operators are the segment for which the free default is least adequate [S4]. This is partly inference — no source states that larger groups buy more software — but it follows from [S4]'s framing of the free tool as the default 'for smaller groups'.",
+      "The problem is a recognised operating failure, not an abstraction. [S4] confirms that the tooling in market optimises for the wrong objective, which is the mechanism that would produce simultaneous overstock and stockout."
+    ],
+    "headwinds": [
+      "A free, pre-installed, contractually bundled incumbent. The wholesaler tools cost nothing and arrive as part of the distribution agreement [S4]. Every sale in this category starts by displacing something the buyer already has and does not pay for.",
+      "Severe first-year attrition. First-year logo churn in software sold to independent pharmacy operators runs 30-35% [S2]. That is a market-level fact about this buyer, not a company-specific one, and it means roughly one in three new logos never reaches a first renewal.",
+      "The specific failure mode is the switch itself. Implementations that fail 'typically fail during the initial data migration from the wholesaler's ordering system' [S2] — meaning the incumbent competitor also controls the data the challenger must extract to get started.",
+      "A shrinking buyer universe: -3% to -4% per year for six years [S3]. Attrition-by-acquisition is not churn the vendor can prevent by serving the customer well.",
+      "Retention headline figures in this category are systematically inflated by cohort choice, so buyer-side and investor-side diligence is noisy [S1]. That is a headwind for credible operators as much as for weak ones."
+    ],
+    "buyer_budget_reality": "No source states a budget, a price point, or a willingness-to-pay figure for this category. What the material does establish is the reference price the buyer anchors to: zero. [S4] states the wholesalers supply reorder tooling 'at no charge as part of the distribution agreement', and that the zero price makes it the default for smaller groups. The commercial pitch is therefore never 'better than nothing' but always 'worth $X more than free', and it must clear a switching cost that [S2] identifies as the leading cause of failed implementations. The deck's $62k average contract value is a company claim; no source in the material corroborates it as a market price, and I will not treat it as one.",
+    "adoption_stage": "early-adopters"
+  },
+  "competitive_landscape": {
+    "incumbents": [
+      {
+        "name": "The three national pharmaceutical wholesalers (not named in the provided material)",
+        "position": "The true incumbent and the default. Each of the three supplies inventory reordering tools to its customers at no charge as part of the distribution agreement [S4]. Distribution is captive — the tool arrives with the supply relationship rather than through a sale — and the price is zero. Independent analyses describe the tools as optimising for wholesaler fill rates rather than pharmacy margin [S4], which is the incumbency's weakness and also the reason it is unlikely to be fixed: correcting it would mean optimising against the wholesaler's own fill-rate economics. This is exactly the kind of incumbent that does not appear on a startup competitive matrix, and it is the one that matters most.",
+        "funding_or_scale": "Not stated in the provided material. No revenue, customer count, or market share figure for these tools appears in any source.",
+        "threat_level": "high",
+        "url": "https://research.example.org/wholesaler-reorder",
+        "source_ids": ["S4"]
+      },
+      {
+        "name": "The wholesaler's ordering system as the system of record",
+        "position": "Distinct from the reorder tool and arguably a harder incumbent to dislodge: it holds the purchase history. [S2] identifies migration out of it as the point where failed implementations fail. Whoever holds that data controls the switching cost for the entire category.",
+        "funding_or_scale": null,
+        "threat_level": "high",
+        "url": "https://research.example.org/pharmacy-software-churn",
+        "source_ids": ["S2"]
+      },
+      {
+        "name": "Regional pharmacy chains (as acquirers, not vendors)",
+        "position": "Not competitors for the software sale, but competitors for the customer. They are removing 3-4% of the buyer population annually by acquisition [S3]. An acquired group is generally migrated onto the acquirer's systems, so this is a structural source of account loss that no amount of product quality prevents. I am inferring the systems-migration consequence; [S3] states only the acquisition.",
+        "funding_or_scale": "Not stated in the provided material.",
+        "threat_level": "medium",
+        "url": "https://research.example.org/pharmacy-group-count",
+        "source_ids": ["S3"]
+      }
+    ],
+    "challengers": [
+      {
+        "name": "No independent software vendor is named in the provided material",
+        "position": "This is a research gap, not a finding of an empty field. The material contains no vendor names, no funding rounds, no product comparisons, and no market-share data for independent pharmacy inventory or forecasting software. I decline to name specific companies I was not given, and I decline to infer that the absence of names in four sources means the field is uncontested. [S2] implies that a population of such vendors exists — it reports first-year churn 'in software sold to independent pharmacy operators' as a category-level statistic, which presupposes a category of sellers.",
+        "funding_or_scale": null,
+        "threat_level": "medium",
+        "url": null,
+        "source_ids": ["S2"]
+      }
+    ],
+    "adjacent_threats": [
+      "Pharmacy management / dispensing system vendors. If the differentiating input is dispensing history rather than purchase history, the vendor that already holds dispensing history is the most natural absorber of this use case. INFERENCE — no source in the material names or describes pharmacy management system vendors; I raise it because it is the obvious structural threat and its absence from the material is itself a gap.",
+      "The wholesalers themselves, upgrading the free tool. [S4] establishes they already ship the product class at zero price with captive distribution; narrowing the margin-versus-fill-rate gap partway would be enough to keep smaller groups from ever shopping.",
+      "Regional chains absorbing the buyer rather than the product [S3]. The use case does not disappear; it moves inside an acquirer that runs its own systems.",
+      "Group purchasing organisations and buying groups — a plausible aggregation point for this kind of tooling, but entirely absent from the provided material. Flagged as unverified, not asserted."
+    ],
+    "concentration": "concentrated",
+    "differentiation_axes": [
+      "Whose objective the forecast optimises — pharmacy margin versus wholesaler fill rate. This is the axis [S4] explicitly identifies and the only one the material substantiates.",
+      "Price versus free. The default costs nothing [S4], so every competitor is positioned relative to zero.",
+      "Migration and implementation reliability. Since failed implementations fail at the data migration out of the wholesaler's ordering system [S2], the ability to complete that migration is a competitive capability, not a professional-services detail.",
+      "Survival past the first renewal. With 30-35% first-year logo churn [S2], onboarding-to-renewal execution separates viable vendors from the rest more than feature depth does.",
+      "Inferred, not sourced: multi-store rollout capability, given that [S4] frames the free tool as sufficient for smaller groups."
+    ],
+    "saturation": {
+      "funded_competitors_known": 0,
+      "new_entrants_trend": "unknown",
+      "pricing_direction": "unknown",
+      "consolidation_activity": "No software-vendor acquisitions appear anywhere in the provided material. The only consolidation documented runs on the buyer side: independent pharmacy groups are being acquired by regional chains at a rate that has reduced the population 3-4% annually for six years [S3]. That is consolidation of customers, not of competitors, and it is the more consequential of the two for anyone selling here.",
+      "lifecycle_stage": "maturing",
+      "room_for_a_new_entrant": "a defensible niche remains",
+      "why": "I found zero funded competitors — but that number is a measure of my research, not of the market. Four sources, none of which names a single vendor, cannot establish that a field is empty, and [S2] reports category-level churn statistics for 'software sold to independent pharmacy operators', which means sellers exist in enough number for someone to have measured them. So the honest read is: competitor density unknown, entrant flow unknown, price direction unknown. What I can assess is structural room, and there the evidence is real on both sides. In favour of a niche: the default product has a named, structural defect that its own vendor is not incentivised to fix — it optimises for wholesaler fill rates rather than pharmacy margin [S4] — and a wedge that exists because of the incumbent's business model rather than its engineering backlog is genuinely defensible. Against: the default is free and contractually pre-installed [S4], the buyer population is shrinking [S3], one in three new logos churns before the first renewal [S2], and the switching mechanism runs through data the incumbent controls [S2]. That combination does not describe a wide-open wedge; it describes a narrow, structurally protected niche inside a contracting buyer base, where the hard part is customer acquisition and first-year survival rather than product differentiation. I set lifecycle to maturing chiefly on the buyer-side evidence — six consecutive years of population decline [S3] and an established free default [S4] are not the markers of an emerging category."
+    }
+  },
+  "absorption_risk": {
+    "verdict": "contested",
+    "horizon": "already happening",
+    "confidence": "medium",
+    "likely_absorbers": [
+      {
+        "name": "The three national pharmaceutical wholesalers (not named in the provided material)",
+        "why_them": "They already ship this exact product class. Reorder tooling is supplied to their customers at no charge as part of the distribution agreement [S4] — they own the customer relationship, the purchase-history data, the ordering system, and the distribution channel simultaneously. There is no bundling step left to take; the bundle already exists. The only open question is quality, and specifically whether they close the margin-versus-fill-rate gap that independent analyses identify [S4].",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "The free tool is already shipped and already bundled into the distribution agreement — this is not a forecast of absorption but a description of the current state [S4].",
+          "Zero price already makes it the default option for smaller groups [S4], i.e. absorption has already succeeded in the lower segment of the market.",
+          "The incumbent also controls the data the challenger must migrate out of, and that migration is where failed implementations fail [S2] — the absorber holds the switching cost.",
+          "No roadmap statement, job posting, or acquisition evidence appears in the material. I have no forward-looking signal, only the present-state evidence above."
+        ],
+        "source_ids": ["S4", "S2"]
+      },
+      {
+        "name": "Pharmacy management / dispensing system vendors (none named in the provided material)",
+        "why_them": "SPECULATIVE — flagged as such. If forecasting is genuinely better done against dispensing history than against purchase history, the vendor already holding dispensing history is the natural home for the feature. I raise it because it is the structurally obvious absorber and because the material's silence on this vendor class is a real gap, not because any source names them.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "None. No source in the provided material describes pharmacy management system vendors, their roadmaps, or their acquisitions. This entry rests on structural reasoning alone and should be treated as a hypothesis to verify, not a finding."
+        ],
+        "source_ids": []
+      },
+      {
+        "name": "Regional pharmacy chains",
+        "why_them": "They absorb the buyer rather than the product. Acquiring independent groups at a pace that shrinks the population 3-4% per year [S3] removes accounts from the addressable market regardless of product quality. The effect on a vendor's revenue is similar to absorption even though the mechanism is different.",
+        "mechanism": "acquisition",
+        "signals_already_visible": [
+          "Six consecutive years of 3-4% annual decline in the independent group count, attributed specifically to acquisition by regional chains [S3]."
+        ],
+        "source_ids": ["S3"]
+      }
+    ],
+    "precedents": [
+      {
+        "category": "No precedent is supported by the provided material",
+        "absorbed_by": "n/a",
+        "how_long_it_took": "n/a",
+        "why_it_is_comparable": "None of the four sources discusses a historical absorption case, and I will not import outside examples as if they were evidence. I will note the mechanism-level observation the material does support, without dressing it as a precedent: this category's absorber is not a platform reaching down into an adjacent feature, but a supplier giving away tooling to serve its own distribution economics. That is a different mechanism from the usual bundling story, and it has a different consequence — the giveaway is deliberately optimised for the giver, which caps how good it will ever be for the buyer [S4]. Absorption by a conflicted supplier is less total than absorption by a neutral platform.",
+        "source_ids": ["S4"]
+      }
+    ],
+    "what_would_prevent_it": [
+      "The incumbent's conflict of interest. The wholesaler's tool optimises for fill rates rather than pharmacy margin [S4] — and the wholesaler's revenue depends on the pharmacy ordering more, not less. A free tool that told the pharmacy to buy less would cannibalise the business paying for it. This is the strongest structural protection in the whole analysis, and unlike a feature gap it does not close with engineering effort.",
+      "Independent verification of the misalignment. [S4] notes the criticism comes from 'independent analyses', not from a competing vendor's marketing — that makes the wedge credible to buyers, not just to the vendor selling against it.",
+      "Workflow depth at the multi-store level. Inferred, not sourced: [S4] frames the free tool as the default 'for smaller groups', implying it degrades for larger multi-store operators. That is where a paid product would defend.",
+      "Migration expertise as a moat in disguise. [S2] identifies the wholesaler-data migration as the failure point for implementations; a vendor that reliably completes it holds something the incumbent has no incentive to make easier."
+    ],
+    "notes": "The word 'absorption' has to be used precisely here. In the usual story a startup proves a category and a platform later bundles it. In this market the bundle came first: the free wholesaler tool already exists, is already installed, and has already won the smaller-group segment [S4]. So absorption is not a future risk to be modelled — it is the starting condition, and the commercial question is whether a paid product can carve out the segment where 'free but optimised for the wrong party' stops being good enough. I set the verdict to contested rather than feature because the incumbent's defect is structural and self-inflicted rather than temporary [S4]; I set the horizon to 'already happening' because the bundling is present-tense fact, not forecast. Confidence is medium and would be higher with any evidence of the wholesalers' roadmap for these tools — none appears in the material."
+  },
+  "open_source_landscape": {
+    "applicable": false,
+    "projects": [],
+    "closest_project": null,
+    "capability_gap": "far behind",
+    "gap_trend": "stable",
+    "evidence_for_the_gap": "There is no evidence, because there is no assessment to make. Not one of the four sources mentions an open-source project, repository, community, or foundation in pharmacy inventory forecasting, and I will not invent one to fill the field. The enum values recorded above are placeholders required by the schema and carry no analytical weight — read `applicable: false` as the finding and disregard the gap fields. Separately, I would note that I did not have the kind of research that would let me rule an open-source dimension out either; the material simply never addresses it.",
+    "what_commercial_still_provides": [
+      {
+        "capability": "Not assessed — no open-source alternative exists in the provided material to assess against",
+        "type": "none-left",
+        "durable": "false",
+        "why": "Placeholder. The open-source absorption mechanism does not apply here. The economically equivalent pressure in this market comes from a different direction and is analysed under absorption_risk: a free, vendor-supplied, contractually bundled alternative [S4]. It produces the same price-capping effect as a mature open-source project, but with a crucial difference — the free alternative is deliberately optimised for its sponsor's interests rather than the user's [S4], which is a defect open-source parity does not have. A commercial vendor competing against free-and-conflicted has a more durable position than one competing against free-and-neutral."
+      }
+    ],
+    "pricing_pressure": "significant",
+    "company_relationship_to_oss": "unclear",
+    "strip_mining_risk": null,
+    "notes": "Pricing pressure is set to significant despite `applicable: false`, and the reason should be explicit: the constraint on price in this market is real but it is not open source. It is the wholesalers' zero-price reorder tooling, which [S4] describes as the default option for smaller groups precisely because it is free. Any vendor here prices against zero, exactly as if a mature open-source project sat in the category. The mitigating factor, again, is that this particular free alternative can never be fully aligned with the buyer, because its sponsor earns more when the pharmacy orders more [S4]."
+  },
+  "adjacent_markets": [
+    {
+      "market": "Pharmaceutical wholesale distribution",
+      "relationship": "upstream",
+      "size_note": "Not stated in the provided material. [S4] establishes only that three national wholesalers serve this market and bundle reordering tools into their distribution agreements.",
+      "why_it_matters": "This is the market that both supplies the customer and supplies the competing product [S4], and holds the purchase-history data that a challenger must migrate out of [S2]. A software vendor here is not adjacent to wholesale distribution — it is embedded inside the wholesaler's customer relationship and dependent on its data. That is the single largest structural dependency in the business.",
+      "source_ids": ["S4", "S2"]
+    },
+    {
+      "market": "Regional pharmacy chains",
+      "relationship": "converging with this one",
+      "size_note": "Not stated. [S3] gives only the effect: the independent group count has fallen 3-4% annually for six years as groups are acquired by regional chains.",
+      "why_it_matters": "Two-sided. It erodes the independent buyer base year after year [S3], and it creates a larger-operator segment whose needs the free tooling was never built for [S4]. Whether it is a threat or an expansion path depends on whether the vendor can follow accounts into the acquirer — nothing in the material speaks to that.",
+      "source_ids": ["S3", "S4"]
+    },
+    {
+      "market": "Pharmacy management and dispensing systems",
+      "relationship": "upstream",
+      "size_note": null,
+      "why_it_matters": "INFERENCE — no source describes this market. Dispensing history has to originate somewhere, and whoever holds it is both a required integration partner and the most natural absorber of a dispensing-history-based forecast. Its complete absence from the four sources I was given is one of the more consequential gaps in this analysis.",
+      "source_ids": []
+    },
+    {
+      "market": "Broader vertical SaaS",
+      "relationship": "substitute",
+      "size_note": "No size given. [S1] provides only the retention benchmark: all-customer net revenue retention benchmarks at 104-112%.",
+      "why_it_matters": "Not a product substitute — a capital substitute. Vertical SaaS benchmarks are how investors will price this business, and [S1] warns that the headline metric is basis-dependent: a post-first-renewal cohort typically reports 25-40 points above the all-customer figure for the same company, and benchmarks are published on the all-customer basis, so the two are not comparable [S1]. Anyone reading a retention number in this category needs to establish the basis before reading the number.",
+      "source_ids": ["S1"]
+    }
+  ],
+  "economics": {
+    "typical_pricing": "No source states a market price for this software. The only price point in the material is the incumbent's: zero, bundled into the distribution agreement [S4]. The $62k average contract value referenced in the deck is a company claim with no corroboration in the provided sources, and I am not treating it as a market benchmark.",
+    "typical_gross_margin": "Not stated in any provided source. I decline to supply a generic SaaS margin figure, since it would be invention rather than analysis. One directional note that is sourced: implementations fail at the data migration out of the wholesaler's ordering system [S2], which implies migration is non-trivial services work — and heavy implementation services depress blended gross margin. That is a mechanism, not a number.",
+    "typical_cac_payback": "Not stated in any provided source. The material does impose a hard constraint on what payback can be: with 30-35% first-year logo churn concentrated before the first renewal [S2], roughly a third of acquisition spend is written off inside twelve months, and blended payback has to be computed across the cohort including the failures. On top of that, every sale must displace a free incumbent [S4]. Both point to longer payback than a category with a paying incumbent and normal churn — sourced as a mechanism, unquantified.",
+    "capital_intensity": "low"
+  },
+  "funding_environment": {
+    "recent_rounds": [],
+    "valuation_norms": "No source in the provided material states a valuation, multiple, or round size for this category or any comparable company. I have nothing to report and will not manufacture a norm. The deck's own raise terms are a company claim, not market evidence.",
+    "exit_comps": [
+      "None available. No acquisition, IPO, or exit is mentioned in any of the four sources. The only exits documented in the material are on the buyer side — independent pharmacy groups being acquired by regional chains [S3] — which are not software exit comps."
+    ],
+    "investor_appetite": "steady",
+    "notes": "The investor_appetite value above is a schema-forced placeholder and should not be read as a finding. The enum offers no 'unknown' option, and zero sources in the provided material speak to funding activity, entrant flow, or investor sentiment in pharmacy operations software. Anyone relying on this section should treat it as empty. What the material does supply that bears on diligence is [S1]: retention figures in vertical SaaS are basis-dependent, all-customer benchmarks run 104-112%, and post-first-renewal cohorts typically sit 25-40 points higher for the same business — so the headline metric investors underwrite in this category is systematically ambiguous unless the basis is stated."
+  },
+  "regulatory_and_structural": {
+    "factors": [
+      "Contractual bundling of competing software into distribution agreements. The wholesalers supply reorder tooling at no charge 'as part of the distribution agreement' [S4] — this is a contractual structure, not merely a pricing choice, and it means the competing product arrives through an agreement the pharmacy must sign to obtain inventory at all.",
+      "Dependency on a competitor for customer data. Getting a customer live requires migrating data out of the wholesaler's ordering system, and that migration is where failed implementations fail [S2]. The party controlling the data also sells the free alternative.",
+      "Structural contraction of the buyer base. Six consecutive years of 3-4% annual decline in the number of independent pharmacy groups, driven by acquisition [S3]. This is a market-structure risk that no product decision addresses.",
+      "Supplier concentration. Three national wholesalers [S4] means three parties collectively determine the default tooling and the data-access conditions for the entire independent segment.",
+      "Not addressed by any source, and material by its absence: pharmacy-specific regulation — controlled-substance ordering rules, licensure, dispensing-data privacy, or any compliance obligation attaching to inventory or dispensing data. Four sources say nothing about the regulatory environment of a regulated industry. I record that as a gap rather than concluding the risk is low."
+    ],
+    "risk_level": "medium"
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "title": "How retention is measured in vertical SaaS, and why the figures diverge",
+      "url": "https://research.example.org/vsaas-retention-definitions",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "The retention benchmark basis for vertical SaaS: all-customer NRR benchmarks at 104-112%; post-first-renewal cohorts typically report 25-40 points higher for the same business because churn-prone customers have left the denominator; benchmarks are published all-customer, so the two bases are not comparable. Reliability marked unknown: no publishing organisation, author, or methodology is identified, and the domain is a placeholder. It reads as a secondary research summary, but I cannot verify who produced it, so I do not rank it above one."
+    },
+    {
+      "id": "S2",
+      "title": "First-year attrition in pharmacy operations software",
+      "url": "https://research.example.org/pharmacy-software-churn",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "Category-level first-year logo churn of 30-35% among software sold to independent pharmacy operators, concentrated before the first renewal; and the specific failure mode — failed implementations typically fail during initial data migration from the wholesaler's ordering system. Used for headwinds, differentiation axes, CAC-payback constraints, and the switching-cost analysis. Same provenance limitation as S1."
+    },
+    {
+      "id": "S3",
+      "title": "Independent pharmacy groups in North America",
+      "url": "https://research.example.org/pharmacy-group-count",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "Buyer population of approximately 21,000-23,000 independent pharmacy groups in North America, declining 3-4% annually for six years as groups are acquired by regional chains. The load-bearing source for sizing, for the contracting-market read, and for buyer-side consolidation. No definition of 'group' and no methodology is given, which limits how far the count can be pushed."
+    },
+    {
+      "id": "S4",
+      "title": "Wholesaler reorder tooling",
+      "url": "https://research.example.org/wholesaler-reorder",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "The competitive structure: three national pharmaceutical wholesalers each supply inventory reordering tools at no charge as part of the distribution agreement; independent analyses describe these tools as optimising for wholesaler fill rates rather than pharmacy margin; zero price makes them the default for smaller groups. The load-bearing source for incumbents, absorption, pricing pressure, and the wedge. Note that it reports a second-hand judgement ('independent analyses describe') without naming those analyses."
+    }
+  ],
+  "research_gaps": [
+    "No primary sources at all. Not one regulator filing, public-company disclosure, or named analyst publication appears in the material — all four sources are unattributed research summaries on a placeholder domain with no stated methodology. Every figure in this analysis inherits that limitation, and I have ranked all four sources as 'unknown' reliability for that reason rather than flattering them as secondary.",
+    "No market size in dollars. There is a buyer count [S3] and nothing else. The dollar range I reported is arithmetic on that count times a company-supplied price, and I labelled it as such rather than presenting it as an estimate.",
+    "No competitor is named. Zero independent software vendors appear in the material, so my funded-competitor count of 0 measures the research, not the market. [S2] reports category-level churn for 'software sold to independent pharmacy operators', which implies sellers exist in measurable numbers — I could not identify a single one.",
+    "No pharmacy management or dispensing system vendors are described, despite dispensing history being the pivot of the technology claim. That vendor class is both the likeliest integration dependency and the likeliest absorber, and I have no evidence about either.",
+    "No funding, valuation, acquisition, or exit data for this category. The funding_environment section is effectively empty and its enum value is a placeholder.",
+    "No pricing data beyond 'free' [S4]. No paid price point, discount trend, or contract-length norm is available, so pricing_direction is recorded as unknown rather than guessed.",
+    "No regulatory material whatsoever for what is a regulated industry — no controlled-substance ordering rules, licensure requirements, or data-privacy obligations. Silence here should not be read as absence of risk.",
+    "The wholesalers are never named [S4], so I could not verify their identity, scale, roadmap, or the current capability of their free tools — which is the most important unknown in the absorption assessment.",
+    "No definition of 'independent pharmacy group' in [S3]. Without a store-count or ownership threshold, the population figure cannot be converted into an addressable-spend figure with any confidence.",
+    "[S4]'s central claim about incentive misalignment is attributed to unnamed 'independent analyses'. I weight it because it is presented as independent rather than vendor-sourced, but I could not read the underlying work.",
+    "All four sources carry the same date (2026-03) and were reportedly retrieved via a single query about vertical SaaS retention benchmarks. That is a narrow retrieval path for a market analysis, and it likely explains the absence of competitor, pricing, and regulatory material."
+  ],
+  "injection_findings": []
+}

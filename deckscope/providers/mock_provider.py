@@ -37,7 +37,7 @@ class MockProvider(LLMProvider):
     @staticmethod
     def _available_sids(prompt: str) -> set:
         """The S-IDs actually offered in this prompt's bibliography."""
-        return {f"S{n}" for n in re.findall(r"^\[S(\d{1,3})\]", prompt, re.M)}
+        return {f"S{n}" for n in re.findall(r"^\[S(\d+)\]", prompt, re.M)}
 
     @classmethod
     def _clamp_citations(cls, node: Any, allowed: set) -> Any:
@@ -61,7 +61,7 @@ class MockProvider(LLMProvider):
         if isinstance(node, list):
             return [cls._clamp_citations(v, allowed) for v in node]
         if isinstance(node, str):
-            return re.sub(r"\[S(\d{1,3})\]",
+            return re.sub(r"\[S(\d+)\]",
                           lambda m: m.group(0) if f"S{m.group(1)}" in allowed else "",
                           node)
         return node
@@ -1163,8 +1163,8 @@ def _assess(claim: str, evidence: str, strictness: int = 1) -> tuple:
 def _sources_in_prompt(evidence: str) -> list:
     """Parse the bibliography block back into records the fixture can match on."""
     out = []
-    for block in re.split(r"\n(?=\[S\d{1,3}\])", evidence or ""):
-        m = re.match(r"\[(S\d{1,3})\]\s*(.*)", block.strip())
+    for block in re.split(r"\n(?=\[S\d+\])", evidence or ""):
+        m = re.match(r"\[(S\d+)\]\s*(.*)", block.strip())
         if not m:
             continue
         url = re.search(r"url:\s*(\S+)", block)

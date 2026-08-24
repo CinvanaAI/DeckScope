@@ -1,0 +1,247 @@
+{
+  "company": {
+    "name": "Tessera Labs",
+    "one_liner": "Tracing and evaluation for teams shipping LLM applications",
+    "stage": "seed",
+    "founded": null,
+    "location": null,
+    "website": null
+  },
+  "problem": {
+    "statement": "\"When an LLM feature misbehaves in production, nobody can reconstruct why. Teams ship prompt changes blind and find out from support tickets.\"",
+    "who_has_it": "Teams shipping LLM applications / LLM features to production (stated on slides 1-2; the deck does not further segment by company size, industry, or role)",
+    "evidence_given": [
+      "None. Slide 2 asserts the problem in two sentences with no customer quotes, survey data, incident statistics, or citations."
+    ]
+  },
+  "solution": {
+    "description": "\"Every request traced end to end — prompt, retrieval, tool calls, response — with regression evals that run against captured production traffic.\" (slide 3)",
+    "how_it_works": "The deck states only that requests are traced end to end across prompt, retrieval, tool calls and response, and that regression evaluations are run against captured production traffic. No architecture, instrumentation method (SDK, proxy, OpenTelemetry), data pipeline, or eval scoring mechanism is described.",
+    "differentiators": [
+      "\"LLM-native tracing\" — implied differentiator versus Datadog and New Relic, which the deck says \"have no LLM-native tracing\" (slide 5)",
+      "Evals built around prompts rather than feature drift — implied differentiator versus Arize and WhyLabs, which the deck says \"are built around feature drift, not prompts\" (slide 5)",
+      "Regression evals that run against captured production traffic, rather than synthetic or static test sets (slide 3)"
+    ],
+    "technical_moat_claimed": null
+  },
+  "product": {
+    "maturity": "unknown",
+    "demo_evidence": null
+  },
+  "market": {
+    "category": "AI observability (deck's own wording, slide 4)",
+    "sub_category": "LLM application tracing and evaluation; positioned by the deck as part of \"developer infrastructure\"",
+    "tam_claimed": "$3.1B",
+    "sam_claimed": null,
+    "som_claimed": null,
+    "tam_methodology": "unstated",
+    "growth_rate_claimed": "38% a year",
+    "geography": null,
+    "customer_segments": [
+      "\"teams shipping LLM applications\" (slide 1)",
+      "\"46 teams\" is the only quantified customer unit given (slide 6); the deck never defines whether a team is a company, a seat group, or a workspace"
+    ]
+  },
+  "business_model": {
+    "pricing": null,
+    "unit_economics": null,
+    "acv_or_arpu": "Not stated by the deck. Inferred, not read: $390k ARR across 46 teams implies roughly $8.5k average ARR per team, but the deck does not state ACV or ARPU and does not define \"team.\"",
+    "cac_claimed": null,
+    "ltv_claimed": null,
+    "gross_margin_claimed": null
+  },
+  "traction": {
+    "revenue": "$390k ARR (slide 6)",
+    "growth": "\"11% MoM growth for four months\" (slide 6). The deck does not state what metric is growing — revenue, teams, or usage.",
+    "customers": "\"46 teams\" (slide 6)",
+    "logos": [],
+    "pipeline": null,
+    "retention": null,
+    "other_metrics": []
+  },
+  "competition": {
+    "named_competitors": [
+      "Datadog",
+      "New Relic",
+      "Arize",
+      "WhyLabs"
+    ],
+    "positioning_claim": "\"Datadog and New Relic own general application monitoring but have no LLM-native tracing. Arize and WhyLabs come from the ML monitoring world and are built around feature drift, not prompts.\" (slide 5) The claim is framed entirely as incumbent-adjacency: two APM vendors said to lack the capability, two ML-monitoring vendors said to be aimed at the wrong object.",
+    "competitors_omitted_suspicion": [
+      "LangSmith (LangChain) — the most direct named-category competitor for LLM tracing plus evals; not mentioned",
+      "Braintrust — LLM eval and regression-testing product occupying the deck's exact stated wedge; not mentioned",
+      "Langfuse — open-source LLM tracing/observability, a direct free-tier substitute; not mentioned",
+      "Weights & Biases Weave — LLM tracing and evaluation from an established ML tooling vendor; not mentioned",
+      "Humanloop and Galileo — prompt evaluation / LLM observability vendors; not mentioned",
+      "Helicone — LLM logging and tracing proxy; not mentioned",
+      "OpenTelemetry GenAI semantic conventions plus Grafana/Honeycomb — the open-standard, build-it-yourself path; not mentioned",
+      "First-party model-provider tooling (e.g. evals and logging shipped by the model vendors themselves); not mentioned",
+      "Note on pattern: every competitor named is one the deck can characterize as structurally unable to serve the use case. Every vendor that is LLM-native by design is absent from slide 5."
+    ]
+  },
+  "gtm": {
+    "channels": [],
+    "sales_motion": null,
+    "partnerships": []
+  },
+  "team": {
+    "founders": [],
+    "headcount": null,
+    "notable_advisors": []
+  },
+  "ask": {
+    "amount": "$5M",
+    "valuation": "$28M post",
+    "use_of_funds": [],
+    "milestones_promised": [
+      "\"reach $3M ARR in 24 months\" (slide 7)"
+    ],
+    "runway_claimed": null
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "\"We are in AI observability: a $3.1B market growing 38% a year.\"",
+      "type": "market-size",
+      "slide": 4,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C2",
+      "claim": "\"Independent analysts put it in that range\" — no analyst, report, or date named.",
+      "type": "market-size",
+      "slide": 4,
+      "verifiability": "unfalsifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C3",
+      "claim": "\"the category is one of the fastest growing in developer infrastructure\"",
+      "type": "growth",
+      "slide": 4,
+      "verifiability": "unfalsifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C4",
+      "claim": "\"Datadog and New Relic own general application monitoring but have no LLM-native tracing.\"",
+      "type": "competition",
+      "slide": 5,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C5",
+      "claim": "\"Arize and WhyLabs come from the ML monitoring world and are built around feature drift, not prompts.\"",
+      "type": "competition",
+      "slide": 5,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C6",
+      "claim": "\"$390k ARR across 46 teams.\"",
+      "type": "traction",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C7",
+      "claim": "\"11% MoM growth for four months.\" (metric being measured is not specified)",
+      "type": "traction",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C8",
+      "claim": "\"Raising $5M at $28M post to reach $3M ARR in 24 months.\"",
+      "type": "financial",
+      "slide": 7,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C9",
+      "claim": "\"Every request traced end to end — prompt, retrieval, tool calls, response — with regression evals that run against captured production traffic.\"",
+      "type": "technology",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C10",
+      "claim": "\"When an LLM feature misbehaves in production, nobody can reconstruct why. Teams ship prompt changes blind and find out from support tickets.\"",
+      "type": "market-size",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    }
+  ],
+  "deck_quality": {
+    "missing_sections": [
+      "Team — no founders, roles, backgrounds, headcount, or advisors anywhere in the deck",
+      "Business model — no pricing, packaging, ACV, or contract structure",
+      "Unit economics — no CAC, LTV, payback, or gross margin",
+      "Retention / churn / net revenue retention",
+      "Go-to-market — no channels, sales motion, or partnerships",
+      "Use of funds and hiring plan",
+      "Product maturity and demo evidence — no screenshots, architecture, or deployment model",
+      "Customer logos, references, or case studies",
+      "Company facts — founding date, location, website",
+      "Roadmap, runway, and burn",
+      "Market segmentation — no SAM or SOM, no geography"
+    ],
+    "vague_language": [
+      "\"Independent analysts put it in that range\" — no analyst named, no report, no date, and \"in that range\" is a softer claim than the precise $3.1B stated one sentence earlier",
+      "\"one of the fastest growing in developer infrastructure\" — unranked, unsourced superlative",
+      "\"nobody can reconstruct why\" — absolute framing of the problem with no evidence",
+      "\"46 teams\" — \"team\" is never defined as an account, a company, or a workspace",
+      "\"11% MoM growth\" — the growing quantity is unnamed",
+      "\"no LLM-native tracing\" — \"LLM-native\" is undefined and functions as a category boundary the deck draws in its own favor"
+    ],
+    "unsupported_numbers": [
+      "$3.1B market size (slide 4) — no methodology, no source, no build-up; cannot be classified as top-down or bottom-up from the text",
+      "38% annual growth rate (slide 4) — no source or period",
+      "$390k ARR (slide 6) — no breakdown, no contract mix, no statement of whether it is annualized from monthly revenue",
+      "46 teams (slide 6) — no definition, no paid-vs-free split",
+      "11% MoM for four months (slide 6) — metric unnamed, base period unstated; four months is a short window off a small base",
+      "$3M ARR in 24 months (slide 7) — no plan, assumptions, or unit economics supporting the target",
+      "$28M post-money valuation (slide 7) — no comparables or justification offered"
+    ],
+    "narrative_coherence": 6,
+    "notes": "Seven slides, tightly written and internally consistent in argument, but structurally incomplete: it is a problem-solution-competition-traction-ask skeleton with no team, no business model, no product evidence, and no GTM. The strongest part is the competition slide's framing; the weakest is the market slide, where a precise figure ($3.1B) is supported only by an anonymous appeal to \"independent analysts\" who \"put it in that range\" — a citation shape rather than a citation. Stage gap: the traction (about $390k ARR, 46 accounts, four months of tracked growth) reads as early seed, while the $5M at $28M post ask prices closer to a strong seed/pre-Series-A round; the deck offers no team, moat, or unit-economics evidence to bridge that gap. Note also that the $3M ARR in 24 months milestone is roughly a 7.7x increase, requiring sustained growth of about 9% per month for two years — slightly below the current 11% MoM rate, so the target is arithmetically consistent with present trajectory but depends entirely on that rate holding off a very small base; this is stated as an observation about internal consistency, not an evaluation. On category framing: the deck anchors itself in \"AI observability\" and then populates that category exclusively with adjacent incumbents (APM and ML-monitoring vendors) it can describe as architecturally mismatched, while the LLM-native tracing-and-eval vendors that share its exact wedge are absent — the category anchor and the competitor list do most of the persuasive work on slide 5. Trust boundary: no prompt-injection attempt, no instruction-like text, no attempt to dictate a verdict, and no [REDACTED BY DECKSCOPE] marker appeared anywhere in the deck content. The material behaved as ordinary pitch-deck data throughout."
+  },
+  "research_agenda": {
+    "search_queries": [
+      "\"AI observability\" market size 2026 $3.1B analyst report methodology Gartner IDC Forrester",
+      "LLM observability market forecast CAGR 38% \"LLM monitoring\" TAM bottom-up estimate",
+      "Datadog LLM Observability product launch prompt trace tool calls feature availability",
+      "New Relic AI monitoring LLM tracing OpenTelemetry GenAI support announcement",
+      "Arize Phoenix LLM tracing evals product — is Arize \"built around feature drift\" or prompt evaluation",
+      "WhyLabs LangKit LLM monitoring prompt evaluation vs feature drift capabilities",
+      "LangSmith vs Braintrust vs Langfuse LLM tracing regression evals production traffic pricing",
+      "\"Tessera Labs\" LLM observability seed round funding ARR customers founders",
+      "LLM evaluation tooling pricing per-trace per-seat ACV benchmark 2026",
+      "seed round benchmarks $28M post-money valuation $400k ARR developer infrastructure 2026",
+      "OpenTelemetry GenAI semantic conventions LLM span tracing adoption Grafana Honeycomb",
+      "net revenue retention churn benchmarks LLM observability developer tools startups"
+    ],
+    "key_uncertainties": [
+      "Whether the $3.1B / 38% figure corresponds to any real published analyst estimate, and what that estimate actually counts (AI observability broadly, ML monitoring, or LLM-specific tooling) — the deck names no source.",
+      "Whether Datadog and New Relic still lack LLM-native tracing at the time of the raise; both have been extending APM toward GenAI, and if either shipped it, slide 5's core premise fails.",
+      "Whether Arize and WhyLabs are accurately characterized as feature-drift products, given both have shipped LLM-oriented tracing and evaluation lines.",
+      "The absence of LangSmith, Braintrust, Langfuse, W&B Weave, Humanloop, Galileo and Helicone from the competition slide — whether this is oversight or selective framing is the single largest open question about the deck.",
+      "What \"46 teams\" means: paying companies, workspaces, or seats — and therefore whether $390k ARR reflects real contracts or annualized self-serve usage.",
+      "What quantity is growing at 11% MoM, and whether four months off a sub-$400k base is a durable trend or a small-number artifact.",
+      "Retention and expansion: no NRR, churn, or cohort data is given, and the $3M ARR plan depends on it.",
+      "Product maturity: nothing in the deck establishes whether this is a shipped GA product, a beta, or a prototype.",
+      "Team: the deck contains no founder or headcount information at all, so execution capability cannot be assessed from the source.",
+      "Pricing and gross margin: with LLM trace capture being storage- and compute-heavy, margin structure is unstated and material.",
+      "Defensibility: no technical moat is claimed anywhere, in a category with credible open-source substitutes.",
+      "Justification for $28M post relative to $390k ARR — no comparables, use of funds, or runway are provided."
+    ]
+  }
+}

@@ -192,16 +192,42 @@ correct *inside* it:
 Answers came from separate agents given only the prompt file, so the author of the
 cases and the answerer were not the same.
 
+All nine cases, both modes, 36 exchanges:
+
 | | checks passed | input tokens |
 |---|:--:|:--:|
-| baseline (one prompt) | 52 / 52 | 9,901 |
-| pipeline (three agents) | 52 / 52 | 87,121 |
+| baseline (one prompt) | **95 / 95** | 20,610 |
+| pipeline (three agents) | **94 / 95** | 195,310 |
 
-**Neither trap caught either mode.** The pipeline spent 8.8× the input tokens to tie on
-cases written to favour it. Across three evaluations — mock, real-model, anchoring —
-the three-agent design has never been shown to produce a more accurate analysis than
-one good prompt. What it does buy is the standalone market analysis (saturation,
-absorption risk, open-source landscape), which `baseline` does not produce at all.
+**The pipeline's one failure is the finding.** On `anchored_category` it named
+*LangSmith* — a real product in that category, present in neither the deck nor the
+frozen corpus. Every prompt forbids inventing a company. That is world knowledge
+crossing the evidence boundary, which is the failure this whole project is built to
+catch, and the baseline reading the same corpus did not do it. Across three
+evaluations the three-agent design has never produced a more accurate analysis than
+one good prompt, and it has now produced a less careful one once, at 9.5× the tokens.
+
+### These numbers replay
+
+Every prompt and answer is committed under [`benchmarks/`](../benchmarks/), and:
+
+```bash
+python scripts/replay_benchmark.py --all
+```
+
+re-scores the retained answers offline — no model is called — checking that each id
+equals `sha256(prompt)[:16]`, that every hash matches, and that the evaluator
+reproduces the recorded scores and fingerprints. It runs in CI on every push, so a
+change that alters a prompt fails loudly instead of quietly invalidating the numbers.
+
+The first bundle did not replay, and the reason is worth keeping. Prompts were hashed
+to name their files and then path-scrubbed *afterwards*, so seventeen of thirty-four
+ids no longer matched the file beside them and the pipeline cases could not replay at
+all. The manifest stayed internally consistent throughout — which is exactly why the
+check that existed passed while the property that mattered was false. The fix is that
+machine paths never enter a prompt now: the deck agent sends a file name rather than a
+path, and the manual provider canonicalizes before hashing. Nothing is edited after
+the fact.
 
 ### Two expectations were corrected after seeing results
 

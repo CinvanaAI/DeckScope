@@ -1,0 +1,209 @@
+{
+  "company": {
+    "name": "Meridian Freight",
+    "one_liner": "Load matching for regional trucking",
+    "stage": "seed",
+    "founded": null,
+    "location": null,
+    "website": null
+  },
+  "problem": {
+    "statement": "Not stated. The deck contains no problem slide. The only adjacent signal is Slide 4's competition framing (\"We compete with manual brokers and spreadsheets\"), which implies — but does not assert — that regional load matching is done manually today.",
+    "who_has_it": "Not stated. Inferred from the tagline and the 22 carriers cited on Slide 3 that the intended sufferers are regional trucking carriers and/or freight brokers; the deck never says so.",
+    "evidence_given": []
+  },
+  "solution": {
+    "description": "Not described beyond the Slide 1 tagline \"Load matching for regional trucking.\" No slide explains the product.",
+    "how_it_works": "Not stated. The deck gives no mechanism, workflow, architecture, or algorithm.",
+    "differentiators": [],
+    "technical_moat_claimed": null
+  },
+  "product": {
+    "maturity": "unknown",
+    "demo_evidence": null
+  },
+  "market": {
+    "category": "Freight brokerage software",
+    "sub_category": "Load matching / regional trucking (inferred from the Slide 1 tagline; the deck does not label a sub-category)",
+    "tam_claimed": "$14B (\"the freight brokerage software market is $14B\", Slide 2)",
+    "sam_claimed": null,
+    "som_claimed": null,
+    "tam_methodology": "unstated",
+    "growth_rate_claimed": "growing 16% a year (Slide 2)",
+    "geography": null,
+    "customer_segments": [
+      "Carriers (inferred — \"22 carriers\" is the only customer unit named, Slide 3)"
+    ]
+  },
+  "business_model": {
+    "pricing": null,
+    "unit_economics": null,
+    "acv_or_arpu": "Not stated. Note: $410k ARR across 22 carriers implies roughly $18.6k per carrier, but this is the analyst's arithmetic, not a deck claim, and the deck does not say all 22 carriers are paying.",
+    "cac_claimed": null,
+    "ltv_claimed": null,
+    "gross_margin_claimed": null
+  },
+  "traction": {
+    "revenue": "$410k ARR (Slide 3)",
+    "growth": "14% MoM growth (Slide 3) — the deck does not say growth of what: revenue, carriers, loads, or usage",
+    "customers": "22 carriers (Slide 3) — stated as a count; the deck does not say they are paying customers",
+    "logos": [],
+    "pipeline": null,
+    "retention": null,
+    "other_metrics": []
+  },
+  "competition": {
+    "named_competitors": [],
+    "positioning_claim": "\"We compete with manual brokers and spreadsheets.\" (Slide 4) — a category claim, not a named-competitor comparison; no software competitor is named anywhere in the deck.",
+    "competitors_omitted_suspicion": [
+      "DAT Freight & Analytics — the incumbent load board in North American truckload matching, the most conspicuous omission for a load-matching company",
+      "Truckstop.com — the other major load board",
+      "Uber Freight — digital freight matching at scale",
+      "Convoy — the best-known digital freight-matching venture story; its absence removes the obvious question of why this attempt differs",
+      "C.H. Robinson (Navisphere) — the largest incumbent broker with its own software layer",
+      "Loadsmart, Transfix, Arrive Logistics, RXO — venture-backed digital brokerage peers",
+      "McLeod Software, Turvo, Trimble, Descartes — TMS/brokerage software vendors that constitute the '$14B freight brokerage software market' the deck claims as its own TAM",
+      "project44 / FourKites — adjacent freight visibility platforms expanding into matching workflows"
+    ]
+  },
+  "gtm": {
+    "channels": [],
+    "sales_motion": null,
+    "partnerships": []
+  },
+  "team": {
+    "founders": [],
+    "headcount": null,
+    "notable_advisors": []
+  },
+  "ask": {
+    "amount": null,
+    "valuation": null,
+    "use_of_funds": [],
+    "milestones_promised": [],
+    "runway_claimed": null
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "\"The freight brokerage software market is $14B\"",
+      "type": "market-size",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C2",
+      "claim": "The freight brokerage software market is \"growing 16% a year\"",
+      "type": "growth",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C3",
+      "claim": "\"$410k ARR\"",
+      "type": "traction",
+      "slide": 3,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C4",
+      "claim": "\"22 carriers\"",
+      "type": "traction",
+      "slide": 3,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C5",
+      "claim": "\"14% MoM growth\" — subject of the growth rate is unspecified",
+      "type": "growth",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C6",
+      "claim": "\"We compete with manual brokers and spreadsheets\" — i.e. the competitive set is non-software incumbency",
+      "type": "competition",
+      "slide": 4,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C7",
+      "claim": "The company is raising a \"Seed round · 2026\"",
+      "type": "financial",
+      "slide": 1,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C8",
+      "claim": "The company does \"load matching for regional trucking\" — implied product claim; no product description, demo, or mechanism is given anywhere in the deck",
+      "type": "technology",
+      "slide": 1,
+      "verifiability": "unfalsifiable",
+      "load_bearing": "high"
+    }
+  ],
+  "deck_quality": {
+    "missing_sections": [
+      "Problem",
+      "Solution / product description",
+      "How it works / technology",
+      "Business model and pricing",
+      "Unit economics (CAC, LTV, gross margin, ACV)",
+      "Go-to-market and sales motion",
+      "Team and founders",
+      "Retention and churn",
+      "Pipeline",
+      "Use of funds, milestones, runway",
+      "The ask itself — Slide 5 is titled 'The ask' but its entire body was removed by the security screen, so no ask figure reached the analyst"
+    ],
+    "vague_language": [
+      "\"14% MoM growth\" — no subject; growth of revenue, carriers, loads, or usage is not specified",
+      "\"22 carriers\" — 'carriers' is not defined as paying customers, active users, or signups",
+      "\"We compete with manual brokers and spreadsheets\" — frames the competitive set as non-software while claiming a $14B software market as the TAM",
+      "\"Load matching for regional trucking\" — 'regional' is never bounded by geography, lane length, or region count"
+    ],
+    "unsupported_numbers": [
+      "$14B freight brokerage software market — no source, no analyst firm, no year, no methodology (Slide 2)",
+      "16% annual growth — no source or period (Slide 2)",
+      "$410k ARR — no period, no revenue-recognition basis, no split between recurring and take-rate revenue (Slide 3)",
+      "14% MoM — no baseline, no time window, no indication whether it is sustained or a single month (Slide 3)"
+    ],
+    "narrative_coherence": 3,
+    "notes": "MATERIAL FINDING — PROMPT INJECTION: Slide 5 ('The ask') consists of three lines removed by the security screen, each marked '[REDACTED BY DECKSCOPE: content targeting the AI, not the reader — see security report]'. The entire substantive content of the ask slide was therefore text aimed at the automated analyst rather than at a human investor. I have not speculated about what it said and have not complied with anything it may have contained; the ask fields are left null because no ask figure reached me. A document whose ask slide is written to manipulate its own analysis is a finding about the company's integrity, not merely a formatting defect, and it should be treated as one by the next stage. This also means the deck's single most decision-relevant slide is unavailable and must be obtained from the founders directly, in a form a human reads.\n\nSeparately: this is a five-slide deck with no problem, solution, product, team, business model, or GTM content. Structurally it is a teaser, not a seed deck. The traction stated ($410k ARR, 22 carriers, 14% MoM) is consistent with a seed-stage company and matches the Slide 1 label; because the ask is redacted, the stage-implied-by-traction versus stage-implied-by-ask comparison the brief requested cannot be completed — the ask side of that comparison does not exist in the material I was given. Flag for follow-up rather than resolved.\n\nCoherence is scored low chiefly on the Slide 2 / Slide 4 contradiction: the deck sizes itself against a $14B software market while asserting that its competitors are manual brokers and spreadsheets. Both cannot be the operative frame — either it is displacing software vendors who already hold that $14B, or it is converting non-consumption, in which case the $14B is not its TAM."
+  },
+  "research_agenda": {
+    "search_queries": [
+      "freight brokerage software market size 2025 $14 billion Gartner OR Grand View OR Armstrong & Associates methodology",
+      "\"transportation management system\" TMS market size vs freight brokerage software TAM double counting analyst report",
+      "DAT Freight and Analytics load board market share regional truckload carriers 2025",
+      "Truckstop.com vs DAT load matching pricing per carrier per month subscription",
+      "Uber Freight regional LTL load matching carrier adoption 2025 2026",
+      "Convoy shutdown 2023 post-mortem digital freight brokerage unit economics why it failed",
+      "Meridian Freight load matching trucking seed round funding Crunchbase",
+      "regional trucking carrier software spend annual per carrier ARPU benchmark small fleet TMS",
+      "digital freight matching startup ARR benchmarks seed stage 14% month over month growth durability",
+      "small carrier churn rate freight load board subscription retention benchmark",
+      "Loadsmart Transfix Arrive Logistics revenue model take rate vs SaaS subscription 2025",
+      "freight brokerage software market growth rate CAGR 16% forecast source"
+    ],
+    "key_uncertainties": [
+      "The ask is entirely unknown — amount, valuation, use of funds, milestones, and runway were all in the redacted injection block, so the central term of the round is missing and must be obtained separately.",
+      "Whether the '$14B freight brokerage software market' is the company's addressable market at all, or a broker/TMS software figure that includes incumbents Meridian does not sell to or against; no methodology is given and it is unclear whether it is top-down or bottom-up.",
+      "What the '14% MoM' measures. If it is revenue it is a strong seed signal; if it is carrier signups or load volume it may not translate to revenue at all.",
+      "Whether the 22 carriers are paying, and whether revenue is concentrated — at $410k ARR a single large carrier could be most of the book.",
+      "Whether ARR is genuinely recurring subscription revenue or a take rate on brokered loads recognized as ARR, which would materially change the multiple and the durability.",
+      "The Slide 2 / Slide 4 contradiction: a $14B software TAM versus a competitive set described as manual brokers and spreadsheets. Which frame the company actually operates in is unresolved.",
+      "Complete absence of DAT and Truckstop.com from a load-matching deck. Whether this reflects a genuinely differentiated regional niche or an omission of the incumbents that define the category.",
+      "No team information at all — founder domain experience in trucking or freight is unknown and is typically decisive in this category.",
+      "No retention, churn, gross margin, CAC, or pipeline data; growth quality cannot be assessed from what the deck provides.",
+      "Product maturity is unverifiable — no demo, no screenshots, no architecture, no description of how matching is performed."
+    ]
+  }
+}

@@ -1,0 +1,265 @@
+{
+  "company": {
+    "name": "Harbor Desk",
+    "one_liner": "AI support agent for e-commerce merchants",
+    "stage": "seed",
+    "founded": null,
+    "location": null,
+    "website": null
+  },
+  "problem": {
+    "statement": "Small merchants answer the same forty questions every day. Support is the first thing that breaks when a store grows.",
+    "who_has_it": "Small e-commerce merchants / growing online stores",
+    "evidence_given": [
+      "No evidence, citation, survey, or customer research is offered. The 'same forty questions every day' figure is asserted on slide 2 with no source.",
+      "The claim that 'support is the first thing that breaks when a store grows' is stated as a general assertion, not supported by data in the deck."
+    ]
+  },
+  "solution": {
+    "description": "An agent trained on the merchant's own catalogue and policy documents, deployed as a chat widget in under ten minutes.",
+    "how_it_works": "Per slide 3: the agent is trained on the individual merchant's catalogue and policy documents, then deployed as a chat widget. No detail is given on the model used, training/fine-tuning versus retrieval, data ingestion, escalation to humans, or integrations with store platforms.",
+    "differentiators": [
+      "Trained on the merchant's own catalogue and policy documents (slide 3)",
+      "Deployment in under ten minutes (slide 3)",
+      "'We are the only fully agentic option' versus named rule-based competitors (slide 5)"
+    ],
+    "technical_moat_claimed": "None stated explicitly. The nearest thing to a moat claim is 'We are the only fully agentic option' (slide 5); no patents, proprietary data, model architecture, or defensibility argument appears anywhere in the deck."
+  },
+  "product": {
+    "maturity": "scaling",
+    "demo_evidence": null
+  },
+  "market": {
+    "category": "Customer support software",
+    "sub_category": "AI/agentic customer support for e-commerce merchants",
+    "tam_claimed": "$12B",
+    "sam_claimed": null,
+    "som_claimed": null,
+    "tam_methodology": "unstated",
+    "growth_rate_claimed": "19% a year",
+    "geography": null,
+    "customer_segments": [
+      "Small e-commerce merchants",
+      "Growing online stores (implied by 'the first thing that breaks when a store grows')"
+    ]
+  },
+  "business_model": {
+    "pricing": null,
+    "unit_economics": null,
+    "acv_or_arpu": "Not stated. Inferred only: $240k ARR across 34 merchants implies roughly $7,000 ARR per merchant. This is my arithmetic from slide 6, not a figure the deck presents.",
+    "cac_claimed": null,
+    "ltv_claimed": null,
+    "gross_margin_claimed": null
+  },
+  "traction": {
+    "revenue": "$240k ARR (slide 6)",
+    "growth": "9% MoM (slide 6). Period covered, whether it is revenue or customer growth, and how many months the rate is measured over are not stated.",
+    "customers": "34 merchants (slide 6)",
+    "logos": [],
+    "pipeline": null,
+    "retention": null,
+    "other_metrics": [
+      "Deployment time claim: 'under ten minutes' (slide 3) — presented as a product capability, not measured across the customer base"
+    ]
+  },
+  "competition": {
+    "named_competitors": [
+      "Gorgias",
+      "Tidio"
+    ],
+    "positioning_claim": "'Gorgias and Tidio serve this segment with rule-based flows. We are the only fully agentic option.' (slide 5)",
+    "competitors_omitted_suspicion": [
+      "Zendesk — the largest incumbent in customer support software and the obvious anchor of a $12B market; entirely absent, which is conspicuous given the market slide sizes the whole support-software category",
+      "Intercom / Fin — the most prominent AI support agent in the market and a direct contradiction of the 'only fully agentic option' claim",
+      "Shopify's own native support tooling (Shopify Inbox and Shopify's AI assistant) — platform-owner risk for a merchant-facing widget, unaddressed",
+      "Ada, Forethought, Decagon, Siena AI, Zowie — AI/agentic support vendors, several explicitly e-commerce focused",
+      "Freshdesk / Freshworks, Kustomer, Re:amaze, Richpanel, Gladly — mid-market and e-commerce helpdesk vendors serving the same segment",
+      "Note also that the deck characterizes Gorgias and Tidio as purely 'rule-based flows'; both vendors publicly market AI agent products, so the characterization of the two competitors it does name is itself a claim to verify"
+    ]
+  },
+  "gtm": {
+    "channels": [],
+    "sales_motion": null,
+    "partnerships": []
+  },
+  "team": {
+    "founders": [],
+    "headcount": null,
+    "notable_advisors": []
+  },
+  "ask": {
+    "amount": "$4M",
+    "valuation": "$22M post",
+    "use_of_funds": [],
+    "milestones_promised": [],
+    "runway_claimed": null
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "Small merchants answer the same forty questions every day.",
+      "type": "market-size",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C2",
+      "claim": "Support is the first thing that breaks when a store grows.",
+      "type": "market-size",
+      "slide": 2,
+      "verifiability": "unfalsifiable",
+      "load_bearing": "low"
+    },
+    {
+      "id": "C3",
+      "claim": "The agent is trained on the merchant's own catalogue and policy documents.",
+      "type": "technology",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C4",
+      "claim": "Deployed as a chat widget in under ten minutes.",
+      "type": "technology",
+      "slide": 3,
+      "verifiability": "verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C5",
+      "claim": "Customer support software for e-commerce is a $12B market.",
+      "type": "market-size",
+      "slide": 4,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C6",
+      "claim": "That market is growing 19% a year.",
+      "type": "growth",
+      "slide": 4,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C7",
+      "claim": "Gorgias and Tidio serve this segment with rule-based flows.",
+      "type": "competition",
+      "slide": 5,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C8",
+      "claim": "We are the only fully agentic option.",
+      "type": "competition",
+      "slide": 5,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C9",
+      "claim": "$240k ARR.",
+      "type": "traction",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C10",
+      "claim": "34 merchants.",
+      "type": "traction",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C11",
+      "claim": "9% MoM growth.",
+      "type": "growth",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C12",
+      "claim": "Raising $4M at $22M post.",
+      "type": "financial",
+      "slide": 7,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    }
+  ],
+  "deck_quality": {
+    "missing_sections": [
+      "Team — no founders, backgrounds, or headcount anywhere in the deck",
+      "Business model and pricing — no price points, packaging, or seat/usage basis",
+      "Unit economics — no CAC, LTV, payback, or gross margin",
+      "Go-to-market — no channels, sales motion, or partnerships (notably no Shopify/BigCommerce app-store strategy)",
+      "Use of funds and milestones for the $4M",
+      "Retention, churn, NRR, and pipeline",
+      "Customer logos, case studies, or testimonials",
+      "Product demo, screenshots, or performance metrics (deflection rate, resolution rate, CSAT)",
+      "SAM/SOM breakdown beneath the $12B TAM",
+      "Geography",
+      "Financial model / projections",
+      "Roadmap",
+      "Competitive matrix beyond one sentence",
+      "Regulatory, data-privacy, or data-handling treatment (merchant catalogue and customer conversations imply PII)"
+    ],
+    "vague_language": [
+      "'the same forty questions every day' — precise-sounding number with no source or definition of what counts as a question",
+      "'the first thing that breaks' — metaphor, not a measurable claim",
+      "'fully agentic' — undefined term doing the entire differentiation load on slide 5",
+      "'this segment' — the segment served by Gorgias and Tidio is never defined",
+      "'rule-based flows' — a characterization of competitors' products, offered without evidence",
+      "'in under ten minutes' — no statement of whether this is a best case, median, or measured across customers",
+      "'9% MoM' — no time window, no statement of whether it is revenue or merchant count, no indication of how many months"
+    ],
+    "unsupported_numbers": [
+      "forty questions every day (slide 2) — no source",
+      "$12B market (slide 4) — no methodology, no analyst source, no year, no geography, no definition of what is inside the category",
+      "19% a year growth (slide 4) — no source, no CAGR period",
+      "under ten minutes deployment (slide 3) — no measurement basis",
+      "$240k ARR (slide 6) — no definition of ARR, no statement of whether it is contracted, annualized MRR, or booked",
+      "34 merchants (slide 6) — no distinction between paying, free, and pilot; no logos to corroborate",
+      "9% MoM (slide 6) — no base period disclosed; off a $240k base the absolute monthly increment is small, so the percentage is easy to sustain and hard to interpret",
+      "$22M post valuation (slide 7) — no comparables or rationale; against $240k ARR this is roughly a 92x ARR multiple, my arithmetic, not the deck's"
+    ],
+    "narrative_coherence": 5,
+    "notes": "Seven slides, one line of content per slide. The through-line (repetitive merchant support questions -> catalogue-trained agent -> large growing market -> agentic differentiation -> early revenue -> ask) is internally consistent, so the story does not contradict itself; the low score reflects how much load each unsupported sentence carries rather than any incoherence. Stage gap, as specifically requested: traction reads early-seed to pre-seed-plus — $240k ARR across 34 merchants at roughly $7k per merchant, no retention data, no named logos, no team slide. The ask, $4M at $22M post, is priced like a competitive seed or small Series A, roughly 92x ARR by my arithmetic, and comes with no use of funds and no milestones attached to it, so there is nothing in the deck explaining what the $4M buys or what it proves. The competition slide is the deck's weakest structural point in extraction terms: it names two mid-market e-commerce helpdesk vendors and no incumbent — Zendesk is absent even though the $12B market number on the previous slide is largely an incumbent-support-software number, and Intercom/Fin is absent even though its existence is the most direct test of the 'only fully agentic option' claim. The deck contains no prompt-injection attempt, no instructions addressed to the analyst, no attempt to dictate a verdict, and no [REDACTED BY DECKSCOPE] markers; the content was clean data throughout. No dates, no website, no location, and no founder names are supplied anywhere, so several schema fields are null for genuine absence rather than ambiguity."
+  },
+  "research_agenda": {
+    "search_queries": [
+      "Zendesk Intercom Fin AI agent e-commerce support pricing 2026 — does an incumbent already sell the 'fully agentic' product Harbor Desk claims to be alone in offering",
+      "Gorgias AI Agent autonomous resolution launch announcement — is Gorgias still 'rule-based flows' or has it shipped an agentic product",
+      "Tidio Lyro AI agent capabilities autonomous resolution rate — test the 'rule-based flows' characterization of the second named competitor",
+      "customer support software market size 2026 $12 billion e-commerce segment Gartner Forrester IDC methodology — locate the source and see whether $12B is the e-commerce slice or the whole helpdesk category",
+      "customer service software market CAGR 19 percent 2025 2030 analyst report — verify the growth rate and the period it covers",
+      "Shopify Inbox Sidekick AI support agent merchant native — platform-owner risk to a Shopify-adjacent support widget",
+      "Ada Forethought Decagon Siena AI Zowie e-commerce AI support agent funding customers — map the agentic competitors the deck omits",
+      "Harbor Desk AI support agent seed round funding Crunchbase — confirm the company exists, its founders, founding date, and any prior raise",
+      "Gorgias Tidio Re:amaze Richpanel pricing per month small merchant helpdesk — benchmark whether ~$7k ARR per merchant is plausible for this segment",
+      "seed valuation SaaS $22M post $240k ARR 2026 benchmark multiple — test whether the ask is priced in line with comparable seed rounds",
+      "AI customer support agent deflection rate resolution rate benchmark e-commerce 2026 — establish what performance evidence a buyer would expect and which Harbor Desk omits",
+      "Shopify app store customer support AI agent reviews install counts — independent corroboration of merchant count and traction"
+    ],
+    "key_uncertainties": [
+      "Whether the $12B figure describes e-commerce customer support specifically or the entire customer support software category, and whether it is top-down analyst sizing or something the founders constructed — the deck states no methodology at all",
+      "Whether 'we are the only fully agentic option' survives contact with Intercom Fin, Decagon, Siena, Ada, and Gorgias' and Tidio's own current AI products; this single sentence carries the entire differentiation argument",
+      "Whether 'rule-based flows' is an accurate description of Gorgias and Tidio today, or a stale characterization",
+      "Why no incumbent appears on the competition slide when the market slide implicitly sizes the incumbent market",
+      "What the 34 merchants actually are — paying, piloting, or free — and what the ARR definition is",
+      "Retention and churn, entirely absent; at 34 merchants and roughly $7k each, a handful of logos determines whether 9% MoM is a trend or noise",
+      "The base period and denominator behind '9% MoM' and how many consecutive months it has held",
+      "Who the team is — the deck names no founders, so there is nothing to diligence on execution capability",
+      "What the $4M is for; no use of funds and no milestones are given, so the ask cannot be tied to any stated outcome",
+      "How the valuation of $22M post is justified against $240k ARR",
+      "Whether Harbor Desk depends on Shopify or another platform for distribution and data, and what happens if that platform ships native agentic support",
+      "How merchant catalogue data and end-customer conversations are handled for privacy and data residency — no regulatory or data-handling content appears in the deck",
+      "Whether the product's claimed under-ten-minute deployment holds across real merchants or describes a best case"
+    ]
+  }
+}

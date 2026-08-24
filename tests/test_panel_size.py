@@ -5,6 +5,7 @@ letters running out at "Panelist H" rather than from anything true about panels.
 The limit is now the user's budget, stated plainly before they spend it.
 """
 import sys
+import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -20,7 +21,9 @@ def _cfg():
                       / "deckscope" / "examples" / "sample_deck.md"),
         lenses=[Lens.parse("investor")], provider=ProviderConfig(name="mock"),
         research=ResearchConfig(name="none"),
-        output=OutputConfig(formats=["json"], out_dir="/tmp/_panelsize"),
+        output=OutputConfig(formats=["json"],
+                            out_dir=str(Path(tempfile.gettempdir())
+                                        / "_panelsize")),
         cache_dir=None, verbose=False)
 
 

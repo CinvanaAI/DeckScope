@@ -23,17 +23,25 @@ class OpenAIProvider(LLMProvider):
     default_base = "https://api.openai.com/v1"
     key_env = "OPENAI_API_KEY"
     key_required = True
-    #: A hard-coded catalogue ages faster than releases do, and this one had
-    #: drifted: it still recommended `gpt-4o` as the strong option and offered
-    #: `o4-mini`, which OpenAI retired in February 2026. The health check meant a
-    #: user usually discovered that as a failure rather than as a wrong answer,
-    #: but a setup wizard that recommends a dead model is not release-ready.
-    #: Treat every name here as perishable and check `catalog_url` when one
-    #: fails; `deckscope models --check` probes them rather than trusting this.
+    #: Only IDs with a first-party model page, and deliberately few.
+    #:
+    #: This list has now been wrong twice in a row, in both possible directions.
+    #: First it kept recommending models the provider had retired. Then, fixing
+    #: that, it offered `gpt-5.2-mini` and `gpt-5.2-nano` — names produced by
+    #: pattern-matching on `gpt-5.2` rather than read from the docs, where the
+    #: small variants are `gpt-5-mini` and `gpt-5-nano`. Two of the three models
+    #: the setup wizard offered did not exist, and a retired-model message
+    #: helpfully redirected users to one of them.
+    #:
+    #: The lesson is not "try harder to keep the list current". A hard-coded
+    #: catalogue is a maintenance promise nobody keeps, so this one is short,
+    #: conservative, and no longer the primary answer: `available_models()` asks
+    #: the provider what it actually serves, and `deckscope models --check`
+    #: probes before recommending.
     catalog = [
         ("gpt-5.2", "Strong general analysis — recommended"),
-        ("gpt-5.2-mini", "Faster and cheaper"),
-        ("gpt-5.2-nano", "Cheapest, for high-volume work"),
+        ("gpt-5-mini", "Faster and cheaper"),
+        ("gpt-5-nano", "Cheapest, for high-volume work"),
     ]
     #: Model-name prefixes that reject temperature/top_p. The reasoning families
     #: run their own sampling policy and return an error if one is supplied.
@@ -48,9 +56,9 @@ class OpenAIProvider(LLMProvider):
     #: `o3-mini` in particular was in this catalogue and in the docs long after
     #: it stopped answering.
     retired_models = {
-        "o4-mini": "gpt-5.2-mini",     # retired February 2026
-        "o3-mini": "gpt-5.2-mini",
-        "o1-mini": "gpt-5.2-mini",
+        "o4-mini": "gpt-5-mini",       # retired February 2026
+        "o3-mini": "gpt-5-mini",
+        "o1-mini": "gpt-5-mini",
         "o1-preview": "gpt-5.2",
         "gpt-4.5-preview": "gpt-5.2",  # retired June 2026
         "gpt-4-vision-preview": "gpt-5.2",
@@ -80,6 +88,33 @@ class OpenAIProvider(LLMProvider):
                 f"{self.name}: '{self.model}' has been retired by the provider and no "
                 f"longer answers. Use '{retired[self.model]}' instead, or pick a current "
                 f"model from {getattr(self, 'catalog_url', 'the provider docs')}.")
+
+    def available_models(self) -> Optional[list]:
+        """What this endpoint actually serves, asked rather than assumed.
+
+        Every OpenAI-shaped API exposes `GET /v1/models`, so the shipped
+        catalogue can stop being the source of truth for anything that has a
+        key configured. Returns None when it cannot be determined — no key, no
+        network, or an endpoint that does not implement the route — because
+        "could not ask" and "serves nothing" are different answers and the
+        caller must not confuse them.
+        """
+        if not self.api_key and self.key_required:
+            return None
+        try:
+            from ._http import get_json
+
+            data = get_json(f"{self.base_url}/models",
+                            {"Authorization": f"Bearer {self.api_key}"}
+                            if self.api_key else {},
+                            timeout=min(self.config.timeout, 20))
+        except Exception:  # noqa: BLE001 - an unavailable listing is not an error
+            return None
+        rows = data.get("data") if isinstance(data, dict) else None
+        if not isinstance(rows, list):
+            return None
+        return sorted({str(r.get("id")) for r in rows
+                       if isinstance(r, dict) and r.get("id")})
 
     def complete(self, system, messages, *, max_tokens=None, temperature=None,
                  tools=None) -> Completion:

@@ -1,0 +1,293 @@
+{
+  "company": {
+    "name": "Quarry Data",
+    "one_liner": "Data catalog and lineage for regulated manufacturers",
+    "stage": "series-a",
+    "founded": null,
+    "location": null,
+    "website": null
+  },
+  "problem": {
+    "statement": "\"When a regulator asks a manufacturer to show where a batch record came from, the answer takes weeks and three people. Lineage exists in nobody's head and in nobody's system.\"",
+    "who_has_it": "Regulated manufacturers responding to regulator requests about batch record provenance (deck implies GxP environments, per slide 5)",
+    "evidence_given": [
+      "None. The 'weeks and three people' figure is asserted on slide 2 with no source, sample, customer count, or methodology attached.",
+      "No customer quotes, survey data, regulatory citations, or audit-cycle benchmarks are provided anywhere in the deck."
+    ]
+  },
+  "solution": {
+    "description": "\"Automated lineage capture across MES, LIMS and the data warehouse, with validation evidence an auditor will accept without a bespoke report.\" (slide 3)",
+    "how_it_works": "Deck states only that lineage capture is automated across MES, LIMS and the data warehouse. No architecture, connector list, deployment model, or description of how validation evidence is generated is given.",
+    "differentiators": [
+      "Ships validation evidence for GxP environments, which the deck says Collibra and Alation do not do today (slide 5)",
+      "Auditor-acceptable evidence 'without a bespoke report' (slide 3)",
+      "Coverage spanning MES, LIMS and the data warehouse rather than warehouse-only lineage (slide 3)"
+    ],
+    "technical_moat_claimed": "No technical moat is claimed. The deck explicitly disclaims durability of its differentiator: the GxP validation-evidence advantage is 'where we win and also where we are one roadmap item from being matched' (slide 5)."
+  },
+  "product": {
+    "maturity": "scaling",
+    "demo_evidence": null
+  },
+  "market": {
+    "category": "Data catalog and metadata management",
+    "sub_category": "Deployments in regulated manufacturing (GxP environments; MES/LIMS/data-warehouse lineage)",
+    "tam_claimed": "$2.4B (data catalog and metadata management market, slide 4)",
+    "sam_claimed": "roughly $310M (deployments in regulated manufacturing, slide 4)",
+    "som_claimed": null,
+    "tam_methodology": "unstated",
+    "growth_rate_claimed": "24% a year (slide 4, applied to the $2.4B market)",
+    "geography": null,
+    "customer_segments": [
+      "Regulated manufacturers (28 named as customers by count only, slide 6)",
+      "GxP-regulated environments (slide 5)"
+    ]
+  },
+  "business_model": {
+    "pricing": null,
+    "unit_economics": null,
+    "acv_or_arpu": "Not stated. INFERRED, not read: $4.2M ARR across 28 manufacturers implies roughly $150K average ARR per customer. The deck does not state ACV or ARPU.",
+    "cac_claimed": null,
+    "ltv_claimed": null,
+    "gross_margin_claimed": "79% (slide 6)"
+  },
+  "traction": {
+    "revenue": "$4.2M ARR (slide 6)",
+    "growth": "5% MoM growth for twelve months (slide 6)",
+    "customers": "28 manufacturers (slide 6)",
+    "logos": [],
+    "pipeline": null,
+    "retention": "Net revenue retention 118% (slide 6)",
+    "other_metrics": [
+      "Gross margin 79% (slide 6)"
+    ]
+  },
+  "competition": {
+    "named_competitors": [
+      "Collibra",
+      "Alation"
+    ],
+    "positioning_claim": "\"Collibra and Alation are the established catalog vendors and both are credible in large enterprises. Neither ships validation evidence for GxP environments today, which is where we win and also where we are one roadmap item from being matched.\" (slide 5) The deck concedes both competitor credibility and the fragility of its own wedge.",
+    "competitors_omitted_suspicion": [
+      "Atlan and data.world — frequently cited modern catalog vendors in the same category the deck sizes at $2.4B, neither mentioned",
+      "Informatica (Cloud Data Governance and Catalog / Enterprise Data Catalog) — a large incumbent in metadata management, not named",
+      "Microsoft Purview — bundled catalog/lineage that often sets the price floor in enterprise deals, not named",
+      "Databricks Unity Catalog and Snowflake Horizon — warehouse-native lineage that could subsume the 'data warehouse' leg of the claimed coverage, not named",
+      "IBM Manta and Octopai — lineage-specialist vendors closest to the actual product claim, not named",
+      "GxP/validation-side incumbents such as Veeva, MasterControl, Sparta Systems (TrackWise) and Tulip — the vendors most likely to already own auditor-facing validation evidence in regulated manufacturing, not named",
+      "MES/LIMS platform vendors themselves (e.g. Rockwell, AVEVA, Siemens Opcenter, LabWare, LabVantage, STARLIMS) — the systems the product integrates with and the most obvious source of native lineage, not named",
+      "Life-sciences consultancies and CSV/CSA validation services firms, which are the incumbent substitute for the 'weeks and three people' status quo described on slide 2"
+    ]
+  },
+  "gtm": {
+    "channels": [],
+    "sales_motion": null,
+    "partnerships": []
+  },
+  "team": {
+    "founders": [],
+    "headcount": null,
+    "notable_advisors": []
+  },
+  "ask": {
+    "amount": "$18M (slide 7)",
+    "valuation": "$110M post (slide 7)",
+    "use_of_funds": [],
+    "milestones_promised": [],
+    "runway_claimed": null
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "\"When a regulator asks a manufacturer to show where a batch record came from, the answer takes weeks and three people.\"",
+      "type": "market-size",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C2",
+      "claim": "\"Lineage exists in nobody's head and in nobody's system\" — i.e. no existing system captures this lineage today.",
+      "type": "competition",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C3",
+      "claim": "Automated lineage capture across MES, LIMS and the data warehouse.",
+      "type": "technology",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C4",
+      "claim": "Product produces \"validation evidence an auditor will accept without a bespoke report.\"",
+      "type": "regulatory",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C5",
+      "claim": "\"The data catalog and metadata management market is $2.4B\".",
+      "type": "market-size",
+      "slide": 4,
+      "verifiability": "verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C6",
+      "claim": "That market is \"growing 24% a year\".",
+      "type": "growth",
+      "slide": 4,
+      "verifiability": "verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C7",
+      "claim": "Serviceable segment — \"deployments in regulated manufacturing, which we size at roughly $310M\". No methodology given for the $310M; the word 'roughly' is the founders' own hedge.",
+      "type": "market-size",
+      "slide": 4,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C8",
+      "claim": "\"Collibra and Alation are the established catalog vendors and both are credible in large enterprises.\"",
+      "type": "competition",
+      "slide": 5,
+      "verifiability": "verifiable",
+      "load_bearing": "low"
+    },
+    {
+      "id": "C9",
+      "claim": "\"Neither ships validation evidence for GxP environments today.\"",
+      "type": "competition",
+      "slide": 5,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C10",
+      "claim": "Company is \"one roadmap item from being matched\" on its differentiator — a self-disclosed durability limit on the moat.",
+      "type": "competition",
+      "slide": 5,
+      "verifiability": "unfalsifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C11",
+      "claim": "\"$4.2M ARR across 28 manufacturers.\"",
+      "type": "traction",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C12",
+      "claim": "\"5% MoM growth for twelve months.\"",
+      "type": "growth",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C13",
+      "claim": "\"Net revenue retention 118%.\"",
+      "type": "traction",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C14",
+      "claim": "\"Gross margin 79%.\"",
+      "type": "financial",
+      "slide": 6,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C15",
+      "claim": "\"Raising $18M at $110M post.\"",
+      "type": "financial",
+      "slide": 7,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C16",
+      "claim": "Company self-identifies as \"Series A · 2026\" on the title slide.",
+      "type": "financial",
+      "slide": 1,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "low"
+    }
+  ],
+  "deck_quality": {
+    "missing_sections": [
+      "Team — no founders, no roles, no backgrounds, no headcount, no advisors anywhere in seven slides",
+      "Business model — no pricing, no ACV, no contract structure, no unit economics (CAC, LTV, payback)",
+      "Go-to-market — no channels, no sales motion, no partnerships, no explanation of how 28 manufacturers were acquired",
+      "Use of funds and milestones — the ask slide is one sentence with no allocation, no runway, no plan for what the $18M buys",
+      "Product evidence — no screenshots, demo, architecture, connector list, or deployment detail",
+      "Customer logos or named references — customers are given only as a count",
+      "Company facts — no founding date, no location, no website",
+      "Financials beyond gross margin — no burn, no cash position, no P&L, no CAC payback",
+      "Roadmap — notable given slide 5 pivots the entire competitive argument on 'one roadmap item'",
+      "Regulatory detail — no citation of the specific standards (21 CFR Part 11, Annex 11, GAMP 5) the validation-evidence claim would rest on"
+    ],
+    "vague_language": [
+      "\"roughly $310M\" (slide 4) — the SAM is explicitly approximated with no derivation",
+      "\"validation evidence an auditor will accept\" (slide 3) — 'an auditor' is unnamed and 'accept' is undefined; no regulator, standard, or completed audit is cited",
+      "\"credible in large enterprises\" (slide 5) — qualitative characterization of competitors",
+      "\"which is where we win\" (slide 5) — asserts win rate without any win/loss data",
+      "\"one roadmap item from being matched\" (slide 5) — unfalsifiable and unquantified as to time",
+      "\"weeks and three people\" (slide 2) — a specific-sounding figure with no sampling behind it",
+      "\"28 manufacturers\" — segment, size, and geography of these customers are undefined"
+    ],
+    "unsupported_numbers": [
+      "$2.4B data catalog and metadata management market — no analyst source or year named (slide 4)",
+      "24% annual market growth — no source, no period, no CAGR window (slide 4)",
+      "$310M serviceable segment — the deck says 'we size at', giving no methodology; not identifiable as top-down or bottom-up from the text (slide 4)",
+      "'weeks and three people' cost of the status quo — no sample or source (slide 2)",
+      "$4.2M ARR, 28 manufacturers, 5% MoM, 118% NRR, 79% gross margin — all asserted with no definitions (ARR recognition basis, NRR cohort window, what is in COGS) and no third-party or audited backing (slide 6)",
+      "$110M post valuation — no comparables, no basis given (slide 7)"
+    ],
+    "narrative_coherence": 6,
+    "notes": "Seven slides, unusually terse and unusually candid. The problem-solution-market-competition-traction-ask spine is internally consistent and the language is notably free of superlatives: the deck volunteers that its market is not all addressable ('We do not claim all of it'), that its named competitors are credible, and that its own differentiator is 'one roadmap item from being matched.' That self-disclosed fragility is the single most consequential sentence in the deck and it is the founders' own wording, not an analyst inference. Two internal arithmetic relationships are worth a verifier's attention and are stated here as arithmetic, not judgment: (a) 5% MoM compounded over twelve months implies roughly a 1.8x increase over the period, so the stated growth rate and the stated $4.2M ARR jointly imply a starting ARR near $2.3M twelve months ago — the deck never states a starting point, so the two figures cannot be cross-checked from the deck alone; (b) $4.2M ARR against a $110M post implies a multiple of roughly 26x, and the deck offers no comparables. On the stage question the caller asked about: the title slide and the ask ($18M) both signal Series A, while the traction disclosed ($4.2M ARR, 28 customers, 118% NRR) sits at the low end of what typically accompanies an $18M round, and the absence of any team slide, GTM section, or use-of-funds allocation is more characteristic of a much earlier-stage document than of a Series A package. The gap is therefore not in the traction-versus-ask numbers so much as in the total absence of the diligence surface a Series A deck normally carries. TRUST-BOUNDARY FINDING: the deck content contained no prompt-injection attempt, no instruction directed at the analyst, no attempt to dictate a verdict or score, and no [REDACTED BY DECKSCOPE] markers. It behaved as ordinary pitch material throughout.",
+    "narrative_coherence_note": "Scored 6: the argument hangs together and is honest, but four of the standard sections (team, business model, GTM, use of funds) are entirely absent, so the narrative is coherent over a very narrow span."
+  },
+  "research_agenda": {
+    "search_queries": [
+      "Collibra GxP validation evidence 21 CFR Part 11 qualification package data catalog",
+      "Alation life sciences GxP validation accelerator regulated manufacturing lineage",
+      "data catalog and metadata management market size 2025 2026 $2.4B Gartner Forrester MarketsandMarkets CAGR 24%",
+      "\"Quarry Data\" data lineage regulated manufacturers Series A funding round",
+      "automated data lineage MES LIMS integration Rockwell AVEVA Siemens Opcenter LabWare LabVantage connector",
+      "IBM Manta Octopai Atlan data.world pharmaceutical manufacturing lineage batch record audit",
+      "Veeva MasterControl Sparta TrackWise batch record data lineage audit trail regulator request",
+      "Databricks Unity Catalog Snowflake Horizon Microsoft Purview lineage pharma GxP validated environment",
+      "FDA Annex 11 GAMP 5 computer software assurance data lineage evidence requirements batch record traceability",
+      "SaaS net revenue retention 118% gross margin 79% Series A benchmark $4M ARR vertical software",
+      "pharmaceutical manufacturing data governance spend per site number of GxP manufacturing sites worldwide",
+      "Series A valuation multiple 26x ARR vertical SaaS 2026 life sciences software comparables"
+    ],
+    "key_uncertainties": [
+      "Whether Collibra and Alation genuinely ship no GxP validation evidence today — the entire competitive wedge (C9) rests on this, and both vendors have life-sciences practices and partner-delivered validation packages that the deck does not address.",
+      "How durable the wedge is given the founders' own statement that they are 'one roadmap item from being matched' — the deck gives no timeline, no patent, no data advantage, and no switching-cost argument to bound that risk.",
+      "The derivation of the 'roughly $310M' serviceable segment: whether it is a percentage cut of the $2.4B top-down or built up from site counts and per-site spend. The deck's wording ('we size at') does not disclose which, and the SAM is the number the round's return math depends on.",
+      "What 'validation evidence an auditor will accept' means concretely — which standards, which regulator, and whether any customer has actually passed an inspection using the product. No audit outcome is cited.",
+      "Whether the 28 manufacturers are GxP-regulated pharma/biotech or a broader mix of manufacturers, and their concentration: at ~$150K implied average ARR, a small number of large accounts could dominate the $4.2M.",
+      "Definitional integrity of the traction metrics — ARR recognition basis, whether 118% NRR includes or excludes churned logos, and what sits in COGS behind the 79% gross margin. Vertical software with heavy validation/implementation services often carries lower true gross margin.",
+      "Reconciliation of 5% MoM for twelve months with the $4.2M endpoint, since no starting ARR is given and the two figures cannot be checked against each other from the deck.",
+      "Depth and cost of MES/LIMS integration — whether lineage capture is genuinely automated across heterogeneous plant systems or requires per-site professional services, which would bear directly on the margin and scalability claims.",
+      "Who the team is. A Series A ask of $18M with zero founder, headcount, or advisor information leaves the execution risk entirely unassessed, and regulated-manufacturing software is a domain where founder background is normally decisive.",
+      "What the $18M is for. With no use of funds, no milestones, and no runway stated, there is no basis to judge whether the raise is sized to a plan or to a valuation.",
+      "Whether MES/LIMS platform vendors or warehouse-native catalogs (Unity Catalog, Purview) will bundle this capability, which would compress the category from both ends.",
+      "Support for the $110M post — no comparables, growth-adjusted multiples, or prior-round history are provided anywhere in the deck."
+    ]
+  }
+}

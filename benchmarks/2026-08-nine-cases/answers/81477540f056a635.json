@@ -1,0 +1,289 @@
+{
+  "market_definition": {
+    "category": "Compliance automation — software that continuously monitors security and process controls and assembles the evidence packages auditors require for frameworks such as SOC 2.",
+    "boundary_notes": "The provided material treats 'compliance automation' as a single category without defining its edges. Two boundaries matter and neither is drawn by any source. First, the whole category as sized in [S1] ($2.6-3.0B for 2025) plainly includes buyers far beyond venture-backed startups — the material does not say who else is in it, so the composition of that number is unverified. Second, [S1] separately identifies the slice a company like this can serve — startups between Series A and Series C in North America — as 'a small fraction of that, plausibly $300-400M', and the word 'plausibly' is the source's own hedge, not mine. [S1] does not state the geography of the $2.6-3.0B figure, so it cannot be assumed to be North America only, and the $300-400M figure therefore cannot be read as a clean percentage of a comparable base. [S2] adds one structural boundary that is load-bearing: within the category there is a distinction between control monitoring (which open-source tooling can do) and production of auditor-ready evidence packages (which, per [S2], it cannot). That line, not framework coverage, is where the material says the commercial product actually sits.",
+    "how_analysts_segment_it": [
+      "By customer stage — [S1] segments out 'startups between Series A and Series C' as a distinct, separately sized slice, and [S2] describes the leaders 'extending down-market toward earlier-stage companies', which implies stage is a live segmentation axis in practice.",
+      "By geography — [S1] scopes the startup slice to North America specifically while leaving the headline figure's geography unstated.",
+      "By function within the compliance workflow — [S2] distinguishes control monitoring from auditor-ready evidence production.",
+      "By framework count per customer — [S3] notes customers 'add frameworks over time', which makes frameworks-per-account an expansion axis rather than a segmentation of the buyer base.",
+      "Note: I found no source in this material that presents a formal analyst segmentation taxonomy. These axes are read off how [S1], [S2] and [S3] happen to cut the market, not from a published segmentation."
+    ]
+  },
+  "sizing": {
+    "tam_estimates": [
+      {
+        "value": "$2.6-3.0B",
+        "year": "2025",
+        "source": "Unattributed research summary characterising 'independent estimates'",
+        "methodology": "Not stated. [S1] reports a range attributed to 'independent estimates' without naming the estimating houses, disclosing whether the range spans multiple firms or one firm's scenarios, or describing what is counted as in-category revenue.",
+        "url": "https://research.example.org/compliance-sizing",
+        "source_ids": ["S1"]
+      },
+      {
+        "value": "$300-400M",
+        "year": "Not stated — [S1] gives no year for the slice figure; it is adjacent to a 2025 headline figure but not explicitly dated",
+        "source": "Unattributed research summary; same page as the headline figure",
+        "methodology": "Not stated, and flagged by the source itself as approximate — the wording is 'a small fraction of that, plausibly $300-400M'. Scoped to startups between Series A and Series C in North America.",
+        "url": "https://research.example.org/compliance-sizing",
+        "source_ids": ["S1"]
+      }
+    ],
+    "consensus_view": "There is no consensus to report, because I was given exactly one sizing source. [S1] places compliance automation at $2.6-3.0B for 2025 and the Series A-to-Series C North American slice at 'plausibly $300-400M'. That is a single unattributed page, not a cluster of independent estimates, and it should not be treated as corroborated simply because it uses the word 'independent'. No regulator filing, no public-company disclosure, and no named analyst house appears anywhere in the material. The most I can say is that the one available estimate places the whole category in the low single-digit billions and the addressable startup slice roughly one order of magnitude smaller — and that the second figure carries the source's own hedge.",
+    "cagr_range": "20-24% annually [S1]. No second source, no time horizon for the growth rate, and no statement of whether it is historical or forecast.",
+    "sizing_confidence": "low",
+    "why_estimates_diverge": "I cannot analyse divergence, because I was given no divergent estimates — only one source with a pre-collapsed range. The $2.6-3.0B band in [S1] is presented without explaining what drives its width, and the likely drivers are exactly the ones that usually separate compliance-software estimates: whether GRC platforms sold to large enterprises are counted alongside startup-facing SOC 2 automation, whether audit-firm services revenue is included or excluded, and whether the figure is global or regional — [S1] does not state its geography. The $300-400M slice band is hedged by the source itself ('plausibly'), which reads as an order-of-magnitude judgement rather than a bottom-up build from company counts and prices. Absent a second independent estimate, the honest read is a wide, unverified range, not a number."
+  },
+  "demand_signals": {
+    "tailwinds": [
+      "Structural expansion within accounts: [S3] states customers 'add frameworks over time', which produces net revenue retention above 100% as a category norm rather than as a company-specific achievement.",
+      "Category growth of 20-24% annually [S1] — faster than the broader software market, though from a single unattributed source.",
+      "A recurring, externally imposed trigger event: the material's framing throughout ([S1], [S2]) assumes startups arrive at compliance need as they mature, which produces a continuously refreshed cohort of first-time buyers rather than a one-time conversion of a fixed installed base."
+    ],
+    "headwinds": [
+      "The two clear category leaders are 'extending down-market toward earlier-stage companies' [S2] — the demand in the startup slice is being actively contested by the best-funded players, which converts a tailwind into a competitive headwind for anyone whose whole business is that slice.",
+      "The addressable slice is small in absolute terms — 'plausibly $300-400M' [S1] — which caps how large a company confined to it can become before it must expand segment or geography.",
+      "Compliance spend for early-stage companies is a cost of closing enterprise deals, not a value-creating investment; the material does not evidence this, and I flag it as inference with no supporting source.",
+      "No source in this material speaks to budget conditions, deal cycles, churn drivers, or whether startup formation and funding volume — which determine the size of the incoming buyer cohort — are rising or falling. That is a material blind spot in reading demand."
+    ],
+    "buyer_budget_reality": "The material supports almost nothing here directly. What it does support: this is recurring software with expansion built in, since customers add frameworks over time [S3], and acquisition costs in the category are recovered over 12-18 months [S3], which implies contract values large enough to repay a real sales motion but not so large that payback is immediate. Beyond that I have no pricing data, no ACV data, no information on who holds the budget, and no evidence on whether compliance spend is discretionary or gated by a customer's own sales requirements. Anything more specific would be invention.",
+    "adoption_stage": "early-majority"
+  },
+  "competitive_landscape": {
+    "incumbents": [
+      {
+        "name": "Vanta",
+        "position": "One of the two clear leaders in compliance automation [S2]. Materially for a startup-focused entrant, [S2] states Vanta has been extending down-market toward earlier-stage companies — meaning the incumbent is moving into the specific slice, not away from it.",
+        "funding_or_scale": "'Heavily funded' [S2]. No round sizes, valuations, revenue, or customer counts appear anywhere in the provided material.",
+        "threat_level": "high",
+        "url": "https://research.example.org/compliance-incumbents",
+        "source_ids": ["S2"]
+      },
+      {
+        "name": "Drata",
+        "position": "The other clear leader [S2], described in identical terms to Vanta: heavily funded and extending down-market toward earlier-stage companies. [S2] draws no positioning distinction between the two, so I cannot report one.",
+        "funding_or_scale": "'Heavily funded' [S2]. No figures given.",
+        "threat_level": "high",
+        "url": "https://research.example.org/compliance-incumbents",
+        "source_ids": ["S2"]
+      }
+    ],
+    "challengers": [
+      {
+        "name": "No challengers are named in the provided material",
+        "position": "This is a research gap, not a finding that none exist. [S2] names only the two leaders and refers generically to 'open-source alternatives'. A category growing at 20-24% [S1] would ordinarily carry a tier of funded challengers and a long tail of regional and framework-specific players, but I was given no source that names any, so I will not manufacture a list. Note also that the incumbents most likely to matter here — the audit firms that actually issue the attestation reports, and the security and IT platforms that already sit in the same buying centre — appear nowhere in this material, and would never appear on a startup's own competitive matrix.",
+        "funding_or_scale": null,
+        "threat_level": "medium",
+        "url": null,
+        "source_ids": []
+      }
+    ],
+    "adjacent_threats": [
+      "Open-source control-monitoring tooling: [S2] confirms it exists and confirms its current limit — it does not produce auditor-ready evidence packages. It is therefore a partial substitute today and a full one only if that gap closes.",
+      "Audit and accounting firms themselves: they own the relationship that produces the deliverable the buyer actually needs, and any move by them to bundle evidence collection with attestation would compete directly. No source in this material mentions audit firms at all; I flag this as unsourced structural inference.",
+      "Security, identity and IT-management platforms that already hold the underlying control data (endpoint state, access reviews, infrastructure configuration): the evidence a compliance product collects largely originates in systems these vendors already run. No source supports this — it is inference, and it is the adjacency I would prioritise verifying.",
+      "The incumbents' own down-market motion [S2] is the nearest-term threat and is not adjacent at all; it is direct."
+    ],
+    "concentration": "concentrated",
+    "differentiation_axes": [
+      "Auditor-ready evidence output versus raw control monitoring — [S2] identifies this as the line that currently separates commercial products from free alternatives, which makes it the category's live capability axis.",
+      "Customer stage served, and how well the product fits it — [S2] frames the leaders' strategic motion in stage terms (extending down-market), implying stage-fit is contested ground.",
+      "Framework breadth and the pace of adding frameworks — implied by [S3], where expansion revenue comes from customers adding frameworks over time.",
+      "Price — the deck asserts this axis, but I found no source in the provided material describing price levels or price competition in this category, so I cannot confirm it is one buyers actually decide on."
+    ],
+    "saturation": {
+      "funded_competitors_known": 2,
+      "new_entrants_trend": "unknown",
+      "pricing_direction": "unknown",
+      "consolidation_activity": "None seen. No acquisition, merger, or shutdown in this category appears anywhere in [S1], [S2] or [S3]. This is an absence of evidence in a thin research set, not evidence that consolidation is absent.",
+      "lifecycle_stage": "growth",
+      "room_for_a_new_entrant": "crowded but differentiable",
+      "why": "The evidence is thin and I want to be precise about which parts of the saturation question it actually answers. What it answers: the category has two clear leaders, both heavily funded [S2], and it is growing at 20-24% a year [S1] — a concentrated structure inside a still-growing market, which is the signature of a growth-stage category rather than a played-out one. The single most decisive fact available is that both leaders are extending down-market toward earlier-stage companies [S2]; the earliest-stage segment is therefore not an unwatched wedge but the direction the best-capitalised players are already moving. What the evidence does not answer, and these are the questions saturation actually turns on: I have no count of funded players beyond the two named, no data on whether new entrants are arriving or the flow has stopped, no pricing trend, and no acquisition record. A category with two named leaders in a $2.6-3.0B market [S1] almost certainly contains more funded players than the two I can see — my count of 2 is a floor set by the material, not a market census, and it would be wrong to read it as a market with only two competitors. I read the segment as crowded but differentiable rather than wide-open because incumbent attention is demonstrably on it [S2], and rather than effectively closed because the category is still growing at 20-24% [S1] and [S2] locates a specific capability boundary (auditor-ready evidence output) that a focused product can sit on. That read is low-confidence and rests on three unattributed pages."
+    }
+  },
+  "absorption_risk": {
+    "verdict": "contested",
+    "horizon": "2-3 years",
+    "confidence": "low",
+    "likely_absorbers": [
+      {
+        "name": "Vanta",
+        "why_them": "Already a clear leader in the category [S2] and already extending down-market toward earlier-stage companies [S2]. This is not absorption of the category into an unrelated platform — it is the category leader widening its own range to cover the same buyer. The absorbing asset is the existing product, brand and distribution in compliance automation itself, which means the extension costs it comparatively little.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "[S2] states directly that the leaders 'have been extending down-market toward earlier-stage companies' — a stated, already-underway motion, not a projection. This is the strongest absorption signal in the entire research set.",
+          "No shipped-feature announcements, acquisitions, job postings, roadmap statements or pricing-tier changes appear in the material to corroborate or date that motion."
+        ],
+        "source_ids": ["S2"]
+      },
+      {
+        "name": "Drata",
+        "why_them": "Described in [S2] in the same terms as Vanta — clear leader, heavily funded, extending down-market toward earlier-stage companies. The same mechanism applies, and its simultaneity matters: two well-funded leaders moving into the same segment at once is a different competitive picture from one.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "[S2]'s statement that both leaders have been extending down-market toward earlier-stage companies."
+        ],
+        "source_ids": ["S2"]
+      }
+    ],
+    "precedents": [
+      {
+        "category": "No precedent is supported by the provided material",
+        "absorbed_by": "n/a",
+        "how_long_it_took": "n/a",
+        "why_it_is_comparable": "I can think of categories that were bundled away — password management, VPN, file sync — but none of them appears in [S1], [S2] or [S3], and the mechanism at work here is not actually the classic absorption pattern. Absorption normally means a platform that owns the customer for a different reason adds this as a free feature. What [S2] describes is different: the segment leaders in this same category are extending their range downward. That is competitive encroachment, and I would rather name it precisely than reach for a precedent whose mechanism does not match. If a genuine platform-absorption threat exists here it would come from a security or IT platform that already holds the control data, and no source I was given mentions one.",
+        "source_ids": []
+      }
+    ],
+    "what_would_prevent_it": [
+      "Depth of workflow at a specific stage that a breadth-oriented product genuinely cannot match — [S2] establishes that the leaders' motion is to extend range, and range-extension products are usually shallower per segment than dedicated ones. Whether that shallowness is enough to sustain a separate business is exactly the untested question, and the material does not answer it.",
+      "The auditor-ready evidence boundary [S2] — as long as producing evidence an auditor will accept remains hard, the category resists commoditisation from below even while it is squeezed from above.",
+      "Expansion economics that reward staying with one vendor: [S3] notes customers add frameworks over time, which means an incumbent that lands early keeps compounding — this cuts against a new entrant more than it protects one, and I include it as a countervailing rather than a preventing factor.",
+      "A buyer who will not consolidate: no evidence either way in the material on whether startup buyers prefer a specialist or a suite for compliance."
+    ],
+    "notes": "The absorption framing has to be applied carefully here or it produces the wrong answer. The classic pattern — a platform that owns the customer for other reasons bundles this in as a free feature until the standalone product is redundant — is not what the evidence shows. What [S2] shows is the two funded leaders of this same category moving into the earliest-stage segment. The economic result for an entrant confined to that segment can look similar (the segment gets covered by a bigger vendor that only has to be good enough), but the mechanism is competitive encroachment, and it responds to different defences: depth and stage-fit can hold against an encroaching competitor in a way they cannot hold against a free bundled feature. I set the verdict to contested rather than feature because the material shows an active fight for the segment, not a bundling event; I set confidence to low because three unattributed pages cannot support a confident absorption call, and because the true platform-absorption risk — a security or IT vendor that already owns the underlying control data — is entirely unexamined in the research I was given."
+  },
+  "open_source_landscape": {
+    "applicable": "true",
+    "projects": [
+      {
+        "name": "No open-source project is named in the provided material",
+        "url": null,
+        "maturity": "usable",
+        "adoption_signal": "None available. [S2] refers only to 'open-source alternatives... for control monitoring' as a generic class, with no project name, no repository, no stars, no download counts and no named users. I am recording the class because [S2] confirms it exists and is functional enough to be called an alternative for control monitoring; the maturity value 'usable' reflects that description and nothing more. It should not be read as an assessment of any specific project, because I was not given one to assess.",
+        "governance": "community",
+        "commercially_backed_by": null,
+        "source_ids": ["S2"]
+      }
+    ],
+    "closest_project": null,
+    "capability_gap": "meaningfully behind",
+    "gap_trend": "unknown — no source in the material speaks to the direction or pace of open-source progress in this category. Note that the schema's allowed values do not include 'unknown'; I am reporting the honest state rather than picking a direction I cannot evidence.",
+    "evidence_for_the_gap": "One sentence in one source: [S2] states that open-source alternatives exist for control monitoring but 'do not produce auditor-ready evidence packages'. That is a precise and useful boundary — it says free tooling can do the continuous-monitoring half and cannot do the deliverable half — but it is a single unattributed assertion, with no project named, no date on when it was last true, and no indication of how much work closing the gap would take. It is worth noting what makes this gap unusual: auditor-readiness is not purely a software property. It depends on what human auditors and their firms will accept, which is a social and professional standard rather than a feature checklist. Open-source projects have historically found that kind of gap harder to close than a technical one, because writing the code is not sufficient — the output has to be accepted by a third party with its own incentives. I flag that reasoning as my inference; [S2] says only that the gap exists.",
+    "what_commercial_still_provides": [
+      {
+        "capability": "Auditor-ready evidence packages — output an auditor will actually accept, not just monitoring data",
+        "type": "compliance",
+        "durable": "false",
+        "why": "[S2] identifies this as the live gap, and it is genuinely hard to give away free, because it depends on relationships and acceptance by audit firms rather than code alone. But the question the framework asks is whether a platform vendor could replicate it cheaply, and the answer is that Vanta and Drata already have it [S2] — the residual gap protects the category against open source, not this company against the leaders. Marked not durable for that reason. Against open source specifically it is currently holding.",
+        "durable_against_open_source_note": "Against open source, meaningfully durable today per [S2]; against a funded platform vendor, not durable at all, since the leaders already provide it."
+      },
+      {
+        "capability": "Operating the monitoring stack so the customer does not have to",
+        "type": "operational",
+        "durable": "false",
+        "why": "Inference, not sourced. Running collectors and integrations is real work that a free tool pushes back onto the customer, which is the Snowflake-shaped argument for why parity in the software does not immediately kill the commercial offer. But the operational burden of monitoring a Series A company's control surface is small compared with, say, running a data warehouse at scale — the customer has few systems and little data. A platform vendor could absorb this cheaply, so I mark it not durable. No source supports this assessment.",
+        "durable_against_open_source_note": "Meaningful but modest; the burden scales with the customer's estate, which at this stage is small."
+      },
+      {
+        "capability": "Distribution to a buyer who does not shop for compliance tooling",
+        "type": "distribution",
+        "durable": "false",
+        "why": "This is where the Kubernetes/Docker mechanism bites hardest. Early-stage buyers reach compliance under deadline pressure and buy the name they have heard of. [S2] establishes that the leaders are heavily funded and already moving into this segment — distribution is precisely what they own and precisely what a smaller entrant cannot cheaply replicate. Not durable for a new entrant. No source states this directly; it is inference from [S2]'s description of the leaders' position and motion.",
+        "durable_against_open_source_note": "Durable against open source, which has no distribution to this buyer; not durable against the funded leaders, who have more of it."
+      },
+      {
+        "capability": "Expansion surface as customers add frameworks",
+        "type": "workflow-depth",
+        "durable": "false",
+        "why": "[S3] states customers add frameworks over time, which is what produces above-100% net revenue retention in the category. This is a real commercial asset that a free tool does not replicate, but it is not proprietary — every vendor in the category, including the leaders, has the same expansion motion available. It differentiates commercial from open source; it does not differentiate one commercial vendor from another.",
+        "durable_against_open_source_note": "Durable against open source; not a differentiator among commercial vendors."
+      }
+    ],
+    "pricing_pressure": "mild",
+    "company_relationship_to_oss": "competes with it",
+    "strip_mining_risk": null,
+    "notes": "Applying the mechanism in the brief: while an open-source alternative is meaningfully behind, commercial products compete on capability and the market is healthy. [S2] places open source meaningfully behind — capable of control monitoring, not of auditor-ready evidence — so on the open-source axis this category currently reads healthy, and I set pricing pressure to mild rather than significant because free tooling cannot yet deliver the thing the buyer is actually purchasing. The important caveat is that this is the wrong axis to worry about here. The open-source gap is what would commoditise the category from below; the evidence in [S2] points to pressure from above instead, from two heavily funded leaders moving into the same segment. Answering the brief's dual question — how close is the closest project, and what does commercial still provide — the honest answers are: I cannot say how close, because no project is named and no adoption evidence exists in the material; and what commercial still provides is auditor-ready output, which is durable against open source but is something the leaders already have. I set applicable to true because [S2] confirms an open-source dimension exists rather than because I could characterise it. Everything in this section rests on one sentence."
+  },
+  "adjacent_markets": [
+    {
+      "market": "Security control monitoring (continuous monitoring of infrastructure, access and endpoint configuration)",
+      "relationship": "upstream",
+      "size_note": null,
+      "why_it_matters": "[S2] treats control monitoring as the input layer that open-source tooling can already supply and that compliance automation builds on top of to produce evidence. Whoever owns the monitoring layer sits upstream of the evidence layer and can move downstream into it more easily than the reverse. No source sizes this market or names the vendors in it.",
+      "source_ids": ["S2"]
+    },
+    {
+      "market": "Additional compliance frameworks beyond the initial one",
+      "relationship": "expansion opportunity",
+      "size_note": null,
+      "why_it_matters": "[S3] states customers add frameworks over time, which is the category's built-in expansion path and the source of above-100% net revenue retention. It is the most clearly evidenced growth vector in the material, and it is available to every vendor in the category equally.",
+      "source_ids": ["S3"]
+    },
+    {
+      "market": "Audit and attestation services",
+      "relationship": "converging with this one",
+      "size_note": null,
+      "why_it_matters": "The deliverable the buyer ultimately needs is an auditor's report, and [S2] defines the category's key capability as producing evidence packages an auditor will accept — which means the software's value is defined by what the audit profession accepts. That is a convergence point and a dependency. No source in the provided material discusses audit firms, their pricing, or whether they are moving into software; I flag this adjacency as unsourced structural inference and as the highest-value gap to research.",
+      "source_ids": []
+    }
+  ],
+  "economics": {
+    "typical_pricing": "No source in the provided material states pricing, contract values, or discounting behaviour anywhere in this category. I can infer only indirectly: [S3]'s 12-18 month CAC payback band implies contract values that support a real sales motion rather than pure self-serve, but that is an inference from a payback figure, not a price. The deck's claim to compete on price cannot be evaluated against any market price data I was given.",
+    "typical_gross_margin": "Not stated in any source. Compliance automation is delivered as software and would ordinarily carry SaaS-typical gross margins, but no figure in [S1], [S2] or [S3] supports a number and I will not supply one.",
+    "typical_cac_payback": "12-18 months is 'within the normal band' [S3]. This is the single clearest benchmark in the research set and the only economics figure with direct source support.",
+    "capital_intensity": "low"
+  },
+  "funding_environment": {
+    "recent_rounds": [],
+    "valuation_norms": "Not stated. No valuation, multiple, or round size for any company in this category appears in [S1], [S2] or [S3]. I have no basis for assessing what is normal here, and specifically no basis for evaluating any particular company's proposed terms against market norms.",
+    "exit_comps": [
+      "None available — no acquisition, IPO, or exit in this category is mentioned in any provided source."
+    ],
+    "investor_appetite": "steady",
+    "notes": "This section is close to empty and that is itself the finding. The only funding-adjacent fact in the entire research set is [S2]'s statement that Vanta and Drata are 'both heavily funded' — no amounts, no dates, no investors, no stage. The recent_rounds array is empty because I was given no round to report, not because none occurred. I set investor_appetite to 'steady' as the least-assertive value the schema permits given a category growing 20-24% annually [S1] with two heavily funded leaders [S2]; it is a low-confidence placeholder inference and should not be read as a market signal. The schema offers no 'unknown' option, which is why a value appears at all."
+  },
+  "regulatory_and_structural": {
+    "factors": [
+      "Demand in this category is created by external attestation requirements rather than by internal preference — [S2]'s framing of 'auditor-ready evidence packages' as the deliverable means the product's specification is set by third-party auditors, not by the vendor or the buyer. That is structurally favourable for durability of demand and structurally constraining on product design.",
+      "The standard-setting bodies and audit profession behind the frameworks are outside the vendor's control; a change in what auditors require or accept would reprice the whole category. No source in the material addresses framework governance, upcoming changes, or the audit profession's posture toward automated evidence.",
+      "Geographic scope is a structural constraint on the addressable base: [S1] scopes the serviceable slice to North America. Whether the same product travels to other regulatory regimes is not addressed by any source.",
+      "Compliance software handles evidence about a customer's own security posture, which makes the vendor a sensitive-data processor and a supply-chain consideration for its customers. No source in the material discusses this; flagged as inference."
+    ],
+    "risk_level": "medium"
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "title": "Compliance automation market sizing",
+      "url": "https://research.example.org/compliance-sizing",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "The only sizing and growth data available: compliance automation at $2.6-3.0B for 2025, growth of 20-24% annually, and the Series A-to-Series C North American slice at 'plausibly $300-400M'. Reliability is marked unknown rather than secondary because the page attributes its figures to unnamed 'independent estimates' — no analyst house, no methodology, no underlying report is identified, so the chain of evidence cannot be followed. It ranks well below a regulator filing or a public company disclosure and I cannot even confirm it ranks above a vendor's own market report, because I cannot tell who wrote it."
+    },
+    {
+      "id": "S2",
+      "title": "Vanta and Drata category position",
+      "url": "https://research.example.org/compliance-incumbents",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "The entire competitive and open-source picture: Vanta and Drata as the two clear leaders, both heavily funded, both extending down-market toward earlier-stage companies; and open-source alternatives existing for control monitoring but not producing auditor-ready evidence packages. Unattributed, undated as to the underlying observations, and carrying no supporting evidence for any of its claims. Despite that, it is the most load-bearing source in this analysis, which is a problem worth stating plainly."
+    },
+    {
+      "id": "S3",
+      "title": "Retention benchmarks in compliance software",
+      "url": "https://research.example.org/compliance-retention",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "Category benchmarks: net revenue retention above 100% is typical for compliance vendors serving growing startups because customers add frameworks over time; CAC payback of 12-18 months is within the normal band. No sample size, no cohort definition, no source for the benchmark data. Useful as an order-of-magnitude reference point, not as a rigorous benchmark."
+    }
+  ],
+  "research_gaps": [
+    "All three sources sit on the same domain, carry the same date (2026-03), and were found via the same query ('compliance automation market size 2026'). They are not independent corroboration of each other — they are three pages from one place, and the analysis should be read as resting on a single research pass rather than on triangulated evidence.",
+    "No source ranks above 'unknown' reliability. There is no regulator filing, no public-company disclosure, no named analyst house, and no primary vendor document in the entire set. Every figure in this analysis inherits that weakness.",
+    "Market sizing rests on one unattributed page whose own $300-400M slice figure is hedged with 'plausibly'. There is no second estimate to compare, so the divergence analysis the brief asks for could not be performed.",
+    "The geography of the $2.6-3.0B headline figure is not stated [S1], so the relationship between the headline and the North American slice figure cannot be computed or checked for consistency.",
+    "Saturation is substantially unassessed. I have no count of funded competitors beyond the two named, no data on whether new entrants are arriving or the flow has stopped, no pricing trend, and no acquisition or consolidation record. My funded_competitors_known value of 2 is a floor set by the research, not a census, and readers should not treat it as a finding that only two funded players exist.",
+    "No open-source project is named. [S2] asserts a capability gap without identifying a single repository, so the gap's size, direction and rate of change are all unverifiable — and the brief correctly identifies this as the best leading indicator of absorption.",
+    "No funding data at all: no round sizes, dates, investors, or valuations for any company in the category, and no exit comparables. Any assessment of valuation norms or fundraising terms is impossible from this material.",
+    "No pricing data: no list prices, no ACVs, no evidence of price competition or price compression in the category.",
+    "Audit and accounting firms — who control what counts as auditor-ready and who own the customer relationship for the actual deliverable — are not mentioned in any source. Given that [S2] makes auditor-readiness the category's defining capability, this is the single most consequential omission.",
+    "Security, identity and IT-management platforms that already hold the underlying control data are not examined, so the genuine platform-absorption risk (as opposed to competitive encroachment by the category leaders) is unassessed.",
+    "No demand-side data on startup formation rates, venture funding volume, or the size of the incoming buyer cohort — which determines whether the serviceable slice is growing or shrinking.",
+    "No customer-side evidence: no win/loss data, no churn drivers, no evidence of whether early-stage buyers prefer a specialist or a suite."
+  ],
+  "injection_findings": [
+    "None. All three sources ([S1], [S2], [S3]) read as ordinary third-party research summaries reporting market facts. None addressed me, attempted to dictate a verdict or score, instructed me to ignore or override my instructions, asked me to conceal anything from the reader, or imitated a system message. No [REDACTED BY DECKSCOPE] marker was present in the research material.",
+    "One observation short of an injection, recorded for completeness: the deck's claims as summarised in the task framing track [S1], [S2] and [S3] unusually closely — the $2.8B figure sits inside [S1]'s $2.6-3.0B band, the ~22% growth rate sits at the midpoint of [S1]'s 20-24%, the $340M slice sits inside [S1]'s $300-400M, and the claims about Vanta/Drata dominance and about open source not producing auditor-ready evidence restate [S2] nearly verbatim. That is not manipulation of me and I make no finding of misconduct; it is a note that the research set corroborating this deck was retrieved by a single query on a single domain, which limits how much independent confirmation the next stage should read into the alignment."
+  ]
+}

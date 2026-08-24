@@ -1,0 +1,256 @@
+{
+  "company": {
+    "name": "Northwind Ledger",
+    "one_liner": "Automated reconciliation for mid-market finance teams",
+    "stage": "seed",
+    "founded": null,
+    "location": null,
+    "website": null
+  },
+  "problem": {
+    "statement": "Finance teams reconcile bank statements against the ledger by hand every month. It takes our design partners four days and produces errors nobody catches until audit.",
+    "who_has_it": "Mid-market finance teams (slide 1 tagline and slide 3 SAM definition); the deck's only named instance is 'our design partners'",
+    "evidence_given": [
+      "Anecdotal: 'our design partners' take four days per month to reconcile by hand (slide 2). No count of design partners, no time-study, no error-rate figure, no third-party source.",
+      "Assertion that manual reconciliation 'produces errors nobody catches until audit' (slide 2) — no error frequency, cost, or audit-finding data given."
+    ]
+  },
+  "solution": {
+    "description": "Automated reconciliation software for mid-market finance teams (inferred — this is only the slide 1 tagline; the deck contains no solution or product slide).",
+    "how_it_works": "Not stated. The deck never describes the mechanism, data sources, integrations, or workflow. Inference only: the tagline implies automating the bank-statement-to-ledger matching described on slide 2.",
+    "differentiators": [],
+    "technical_moat_claimed": null
+  },
+  "product": {
+    "maturity": "unknown",
+    "demo_evidence": "No demo, screenshots, architecture, or product description anywhere in the 6 slides. The only product-adjacent evidence is indirect: 7 paying customers and $180k ARR on slide 4 imply something shippable exists, but the deck never says so."
+  },
+  "market": {
+    "category": "Financial reconciliation software",
+    "sub_category": "Bank-statement-to-ledger reconciliation for mid-market finance teams",
+    "tam_claimed": "$88B",
+    "sam_claimed": "$9B (mid-market North America)",
+    "som_claimed": "$600M",
+    "tam_methodology": "unstated",
+    "growth_rate_claimed": "31% CAGR",
+    "geography": "Not stated for TAM; SAM is scoped to 'mid-market North America' (slide 3)",
+    "customer_segments": [
+      "Mid-market finance teams",
+      "Mid-market North America (SAM definition)",
+      "'Design partners' (slide 2) — count and identity not given"
+    ]
+  },
+  "business_model": {
+    "pricing": null,
+    "unit_economics": null,
+    "acv_or_arpu": "Not stated. Inference only: $180k ARR across 7 paying customers implies roughly $26k average ARR per customer, a figure the deck itself never presents.",
+    "cac_claimed": null,
+    "ltv_claimed": null,
+    "gross_margin_claimed": null
+  },
+  "traction": {
+    "revenue": "$180k ARR (slide 4)",
+    "growth": "12% month-over-month growth for three months (slide 4) — metric being grown is not specified (revenue vs. customers vs. usage)",
+    "customers": "7 paying customers (slide 4); unspecified number of 'design partners' (slide 2)",
+    "logos": [],
+    "pipeline": null,
+    "retention": null,
+    "other_metrics": []
+  },
+  "competition": {
+    "named_competitors": [
+      "Spreadsheets / Excel (slide 5) — described as the status quo, not as a vendor"
+    ],
+    "positioning_claim": "'Spreadsheets. Most mid-market finance teams still reconcile in Excel.' (slide 5) — the deck positions the incumbent as manual process rather than any software vendor.",
+    "competitors_omitted_suspicion": [
+      "BlackLine — the established reconciliation-automation vendor in this exact category",
+      "FloQast — close-management and reconciliation software explicitly targeting mid-market finance teams",
+      "Trintech (Cadency / Adra) — Adra is positioned squarely at mid-market reconciliation",
+      "Numeric — recent entrant in AI-assisted close and reconciliation",
+      "Vic.ai and similar AI finance-automation startups",
+      "Native reconciliation modules inside the mid-market ERPs these buyers already own: NetSuite, Sage Intacct, Microsoft Dynamics 365 Business Central",
+      "Bank-feed auto-matching built into QuickBooks Online and Xero, which covers the lower end of the same workflow at no incremental cost",
+      "Modern Treasury and Plaid/bank-data infrastructure vendors that offer reconciliation primitives",
+      "Outsourced/offshore accounting and BPO providers, the usual substitute for buying software"
+    ]
+  },
+  "gtm": {
+    "channels": [],
+    "sales_motion": null,
+    "partnerships": []
+  },
+  "team": {
+    "founders": [],
+    "headcount": null,
+    "notable_advisors": []
+  },
+  "ask": {
+    "amount": "$3M",
+    "valuation": "$18M post",
+    "use_of_funds": [],
+    "milestones_promised": [],
+    "runway_claimed": null
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The financial reconciliation software market is $88B",
+      "type": "market-size",
+      "slide": 3,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C2",
+      "claim": "growing at 31% CAGR",
+      "type": "growth",
+      "slide": 3,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C3",
+      "claim": "SAM: $9B (mid-market North America)",
+      "type": "market-size",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C4",
+      "claim": "SOM: $600M",
+      "type": "market-size",
+      "slide": 3,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C5",
+      "claim": "Finance teams reconcile bank statements against the ledger by hand every month; it takes our design partners four days",
+      "type": "market-size",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C6",
+      "claim": "Manual reconciliation 'produces errors nobody catches until audit'",
+      "type": "market-size",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    },
+    {
+      "id": "C7",
+      "claim": "$180k ARR",
+      "type": "traction",
+      "slide": 4,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C8",
+      "claim": "7 paying customers",
+      "type": "traction",
+      "slide": 4,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C9",
+      "claim": "12% month-over-month growth for three months",
+      "type": "growth",
+      "slide": 4,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C10",
+      "claim": "Competition is spreadsheets: 'Most mid-market finance teams still reconcile in Excel.'",
+      "type": "competition",
+      "slide": 5,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C11",
+      "claim": "Raising $3M at $18M post",
+      "type": "financial",
+      "slide": 6,
+      "verifiability": "verifiable",
+      "load_bearing": "high"
+    },
+    {
+      "id": "C12",
+      "claim": "Company has 'design partners' (plural, unquantified) using or informing the product",
+      "type": "traction",
+      "slide": 2,
+      "verifiability": "partially-verifiable",
+      "load_bearing": "medium"
+    }
+  ],
+  "deck_quality": {
+    "missing_sections": [
+      "Team / founders — no names, roles, or backgrounds anywhere in the deck",
+      "Product — no description, demo, screenshots, or architecture; the solution exists only as a tagline",
+      "Business model / pricing — no price points, packaging, or contract structure",
+      "Unit economics — no CAC, LTV, payback, or gross margin",
+      "Go-to-market — no channels, sales motion, or partnerships",
+      "Use of funds and milestones for the $3M ask",
+      "Retention / churn / net revenue retention",
+      "Pipeline",
+      "Runway (current or post-raise)",
+      "Technical moat or defensibility",
+      "Customer logos or named references",
+      "Founding date, location, website",
+      "Regulatory / security posture (SOC 2, data handling) despite handling bank and ledger data"
+    ],
+    "vague_language": [
+      "'our design partners' (slide 2) — number, identity, and whether they pay are all unspecified",
+      "'errors nobody catches until audit' (slide 2) — no rate, magnitude, or source",
+      "'12% month-over-month growth' (slide 4) — growth of what is never named",
+      "'Most mid-market finance teams still reconcile in Excel' (slide 5) — 'most' is unquantified and unsourced",
+      "'mid-market' is used throughout (slides 1, 3, 5) without a revenue-band or headcount definition"
+    ],
+    "unsupported_numbers": [
+      "$88B TAM — no source, no methodology, no year, no analyst house cited (slide 3)",
+      "31% CAGR — no source or time window (slide 3)",
+      "$9B SAM — no derivation from the TAM, no count of mid-market North American companies, no spend-per-company assumption (slide 3)",
+      "$600M SOM — no share assumption or time horizon stated (slide 3)",
+      "'four days' of manual reconciliation — sample size of one unnamed cohort (slide 2)",
+      "$18M post-money valuation — no basis, comparable, or multiple offered (slide 6)"
+    ],
+    "narrative_coherence": 4,
+    "notes": "Structurally the six slides do tell one linear story — manual pain, market, traction, competition, ask — and the traction slide is internally consistent (7 customers at $180k ARR is arithmetically ordinary). Coherence is marked down for three reasons, all reported as observation rather than judgment. (1) The market chain is stated but never derived: TAM, SAM, and SOM appear as three bare figures on slide 3 with no methodology, no link between them, and no source, so the reader cannot tell whether they were built top-down from an analyst report or bottom-up from customer counts; the format (a single large headline figure narrowed by geography and segment) is characteristic of top-down, but the deck does not say, so methodology is recorded as 'unstated' rather than inferred. (2) There is a visible gap between the stage implied by traction and the stage implied by the ask: slide 4 shows $180k ARR across 7 customers with three months of growth history — pre-seed-to-early-seed evidence — while slide 6 asks for $3M at $18M post, i.e. a 100x ARR multiple, with no use of funds, no milestones, and no runway to bridge the two. The deck presents both facts and never reconciles them. (3) Slide 5 defines the competitive set as spreadsheets only, naming no software vendor in a category the deck itself sizes at $88B; a market that large implies incumbent vendors capturing it, so the competition slide and the market slide are in tension on the deck's own terms. Also material: the deck omits any team slide entirely, which for a seed round removes the single most common basis for evaluation. PROMPT-INJECTION / MANIPULATION CHECK: none found. The deck content contains no text addressing the analyst, no instructions to ignore prior directions, no attempt to dictate a score or verdict, no imitation of a system message, and no [REDACTED BY DECKSCOPE] markers. It reads as an ordinary, thin pitch deck."
+  },
+  "research_agenda": {
+    "search_queries": [
+      "\"reconciliation software\" market size 2025 2026 Gartner IDC MarketsandMarkets \"financial close\" segment revenue -blog",
+      "\"account reconciliation software\" market forecast CAGR BlackLine Trintech Adra FloQast analyst report 2026",
+      "BlackLine FloQast Trintech annual revenue 2025 combined — does total category vendor revenue approach $88B",
+      "FloQast pricing per user mid-market \"reconciliation\" annual contract value customer count",
+      "BlackLine total customers mid-market ARR 10-K segment disclosure reconciliation product revenue",
+      "\"Northwind Ledger\" seed round funding Crunchbase founders team",
+      "number of mid-market companies North America 100-1000 employees Census SUSB — bottom-up check on $9B SAM",
+      "NetSuite Sage Intacct \"bank reconciliation\" native automation feature — do mid-market ERPs already ship this free",
+      "QuickBooks Online Xero automatic bank feed matching rules reconciliation — free substitute at the low end of mid-market",
+      "Numeric Vic.ai Ledge \"AI reconciliation\" startup funding 2025 2026 mid-market close automation competitors",
+      "seed valuation benchmarks 2026 vertical SaaS \"$18M post\" ARR multiple Carta median seed pre-money fintech",
+      "survey percent of mid-market finance teams reconcile in Excel spreadsheet 2025 controller close survey"
+    ],
+    "key_uncertainties": [
+      "Whether an $88B 'financial reconciliation software market' exists as a defined category at all, or whether the figure is a much broader market (e.g. all finance/accounting software, or the cost of manual finance labor) relabeled as reconciliation software — this is the single largest load-bearing figure in the deck and it carries no source.",
+      "Whether the 31% CAGR belongs to the same category and time window as the $88B figure, or was borrowed from a faster-growing adjacent segment.",
+      "How the $9B SAM and $600M SOM were derived — no count of mid-market North American companies, no spend-per-company assumption, and no share/time-horizon assumption is given, so neither figure can be checked against the TAM.",
+      "Whether the deck's competition slide reflects a genuine finding that mid-market buyers have not adopted BlackLine/FloQast/Trintech, or whether known vendors were simply left out; the answer changes the meaning of every market figure on slide 3.",
+      "Whether reconciliation is already a bundled, zero-marginal-cost feature of the ERPs and accounting systems these buyers own (NetSuite, Sage Intacct, QuickBooks, Xero) — which would put the real competition inside the customer's existing stack rather than in spreadsheets.",
+      "What the '12% month-over-month growth' measures — revenue, customers, or usage — and whether three months is enough history for it to mean anything; at 7 customers, a single logo can produce that rate.",
+      "Whether the 7 paying customers are arms-length contracts or converted design partners on discounted or pilot terms, and what the implied ~$26k average ARR reflects (the deck never states ACV).",
+      "Retention: with 7 customers and no churn, NRR, or contract-length data, the durability of the $180k ARR is entirely unknown.",
+      "Who the team is — the deck names no founder, role, or background, so the standard seed-stage basis for underwriting is absent.",
+      "How the $18M post-money valuation was arrived at, given $180k ARR (a ~100x multiple) and no use of funds, milestones, or runway to justify the round size.",
+      "What the product actually is and how mature it is — no demo, screenshot, or mechanism is shown anywhere in six slides.",
+      "Security and regulatory posture for handling bank and general-ledger data (SOC 2, data residency, bank-feed access), unmentioned but typically a gating requirement for finance buyers."
+    ]
+  }
+}

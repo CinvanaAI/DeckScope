@@ -1,0 +1,297 @@
+{
+  "market_definition": {
+    "category": "Financial close and reconciliation software — software that matches transactions across systems of record (typically bank statements, sub-ledgers and the general ledger) and manages the period-end close workflow around that matching [S1][S2].",
+    "boundary_notes": "The category boundary is the single most important thing to get right here, because the provided research says the two most-cited framings differ by an order of magnitude. Narrowly defined — the reconciliation and close tooling itself — independent 2026 estimates put the category at $6-8B [S1]. Widely defined, the '$80B+ figures that circulate in vendor marketing' are described by S1 as rolling up 'the entire office-of-the-CFO software stack including ERP' [S1]. Those are not two estimates of one market; they are two different markets, and the wider one is dominated by ERP seats that no reconciliation product sells. A further boundary matters for a mid-market entrant: reconciliation is increasingly not sold as a category at all but shipped as a module inside the ERP the customer already runs, since 'NetSuite and Sage also ship native reconciliation modules bundled with the ERP that mid-market finance teams already run' [S2]. The addressable slice for a standalone mid-market product is therefore narrower than even the $6-8B narrow category: S1 sizes the mid-market reconciliation slice specifically at $900M-1.3B [S1]. Geography is a gap — S1 does not state whether its figures are global or North America only, so the mid-market slice cannot be resolved to a North America number from the material provided.",
+    "how_analysts_segment_it": [
+      "By definitional scope: narrow close-and-reconciliation tooling ($6-8B) versus the full office-of-the-CFO stack including ERP (the source of the $80B+ figures) [S1]",
+      "By customer size: enterprise versus mid-market, with the mid-market reconciliation slice broken out at $900M-1.3B [S1]",
+      "By delivery model: standalone reconciliation vendors (BlackLine, Trintech) versus reconciliation shipped as a native module of the ERP (NetSuite, Sage) [S2]",
+      "Not verifiable from this material: segmentation by reconciliation type (bank, intercompany, balance-sheet, card/payments), which is standard in this category but is not addressed by any provided source"
+    ]
+  },
+  "sizing": {
+    "tam_estimates": [
+      {
+        "value": "$6-8B",
+        "year": "2026",
+        "source": "Reconciliation software sizing, independent composite",
+        "methodology": "Described as 'independent 2026 estimates' for 'the whole financial close and reconciliation software category'. S1 does not disclose the underlying method, the constituent estimates it composites, or the geography. Reported as a range, not a point.",
+        "url": "https://research.example.org/recon-sizing-2026",
+        "source_ids": ["S1"]
+      },
+      {
+        "value": "$900M-1.3B",
+        "year": "2026",
+        "source": "Reconciliation software sizing, independent composite — mid-market slice",
+        "methodology": "Stated by S1 as the 'mid-market reconciliation slice specifically'. Method and geography not disclosed. This is the figure that matters for a company scoped to mid-market finance teams; the $6-8B figure includes enterprise.",
+        "url": "https://research.example.org/recon-sizing-2026",
+        "source_ids": ["S1"]
+      },
+      {
+        "value": "$80B+",
+        "year": "Not stated",
+        "source": "Characterized by S1 as figures that 'circulate in vendor marketing' — S1 does not name the vendors or reports that publish them",
+        "methodology": "Per S1, these roll up 'the entire office-of-the-CFO software stack including ERP'. Recorded here as a market artifact to be explained, not as an estimate I weight. I could not inspect the underlying reports because none were provided.",
+        "url": null,
+        "source_ids": ["S1"]
+      }
+    ],
+    "consensus_view": "There is no consensus in the provided material — there is one independent view and a characterization of the vendor-marketing view it disputes. On the evidence I have, the defensible read is a narrow category of $6-8B in 2026 with a mid-market slice of $900M-1.3B [S1]. I weight S1 over the '$80B+' class of figure because S1 states its scope explicitly and explains what the larger number includes, whereas the larger figures are unattributed and, per S1, count ERP revenue that reconciliation software does not address [S1]. That weighting rests on a single source, which is the main reason confidence is low rather than medium.",
+    "cagr_range": "14-18% annually for the category [S1]. S1 explicitly contrasts this with '30%+' growth rates 'sometimes claimed', which it says the evidence does not support [S1]. No source in this material gives a separate growth rate for the mid-market slice, so whether the mid-market is growing faster or slower than the category is unverified.",
+    "sizing_confidence": "low",
+    "why_estimates_diverge": "The divergence is definitional, not statistical, and S1 says so directly: the $80B+ figures 'roll up the entire office-of-the-CFO software stack including ERP', while the $6-8B figure covers close and reconciliation software alone [S1]. An order-of-magnitude gap of that kind is what you get when the denominator changes, not when two analysts disagree about growth or share. There is a structural incentive behind it too — a wider definition flatters both vendor marketing and any seller of a reconciliation product — and S1 attributes the larger figures specifically to vendor marketing [S1]. The residual uncertainty inside the narrow estimate ($6B versus $8B, $900M versus $1.3B) is unexplained by the material; S1 gives ranges without decomposing them, and no primary filing, public-company disclosure or analyst-house report was provided against which to triangulate."
+  },
+  "demand_signals": {
+    "tailwinds": [
+      "Category growth of 14-18% annually is real growth and above software-market average, even though it is roughly half the rate sometimes claimed [S1]",
+      "Incumbents moving down-market validates that mid-market demand exists and is being priced as worth pursuing — BlackLine and Trintech 'have moved down-market toward mid-market finance teams in the last two years' [S2]",
+      "Inferred, not sourced: period-end close is a recurring, calendar-driven obligation rather than a discretionary project, which historically supports steady budget. No provided source addresses buying cadence, so this is inference from the nature of the workflow, not evidence"
+    ],
+    "headwinds": [
+      "The buyer's ERP may already include the function at no incremental cost — NetSuite and Sage ship native reconciliation modules bundled with the ERP mid-market teams already run [S2]",
+      "Well-capitalized incumbents are actively entering the same segment a new mid-market entrant would target [S2]",
+      "The binding constraint on value delivered is often outside the product: 'adoption failures cluster on data quality at the source rather than on the reconciliation tool', and teams that 'cannot get clean feeds from their banks and their ERP see little benefit from automation' [S3]. This is a headwind on realized ROI, churn and reference-ability, not just on sales",
+      "Growth expectations in the category are inflated relative to measured growth, which tends to reset valuations and can chill funding once corrected [S1]"
+    ],
+    "buyer_budget_reality": "Not established by the provided material — no source gives pricing, deal sizes, budget owner or procurement process for this category, and I will not infer a number. What the material does establish about budget is structural rather than numeric: the mid-market buyer frequently has a bundled alternative already paid for inside the ERP subscription [S2], which means a standalone product is often asking for incremental budget to replace something nominally free rather than net-new budget. S3 adds a second budget consideration — where bank and ERP feeds are dirty, the spend does not produce benefit [S3], so part of the apparent budget is spend that will not renew. Anything more specific is a research gap.",
+    "adoption_stage": "early-majority"
+  },
+  "competitive_landscape": {
+    "incumbents": [
+      {
+        "name": "BlackLine",
+        "position": "Established reconciliation vendor and one of the two named category incumbents; has moved down-market toward mid-market finance teams over the last two years [S2]. This puts it in direct contact with a mid-market entrant's target segment rather than safely above it.",
+        "funding_or_scale": "S2 states the two incumbents are 'both public or PE-held' without specifying which is which. Revenue, headcount and customer count are not given in any provided source, and I did not have access to filings to verify.",
+        "threat_level": "high",
+        "url": "https://research.example.org/recon-incumbents",
+        "source_ids": ["S2"]
+      },
+      {
+        "name": "Trintech",
+        "position": "The other named established reconciliation vendor, also moving down-market toward mid-market finance teams in the last two years [S2].",
+        "funding_or_scale": "Covered by S2's 'both public or PE-held' statement; no specific ownership, revenue or funding figure is given in the provided material.",
+        "threat_level": "high",
+        "url": "https://research.example.org/recon-incumbents",
+        "source_ids": ["S2"]
+      },
+      {
+        "name": "NetSuite",
+        "position": "ERP that ships a native reconciliation module bundled with the system mid-market finance teams already run [S2]. This is the incumbent type that does not appear on startup competitive matrices: it does not have to win a reconciliation bake-off, only be present and adequate at zero incremental line-item cost, and it already owns the data, the ledger and the buyer relationship.",
+        "funding_or_scale": "Not stated in the provided material.",
+        "threat_level": "high",
+        "url": "https://research.example.org/recon-incumbents",
+        "source_ids": ["S2"]
+      },
+      {
+        "name": "Sage",
+        "position": "ERP that likewise ships native reconciliation bundled with the ERP the mid-market team already runs [S2]. Same mechanism as NetSuite: distribution and default-option advantage rather than capability advantage.",
+        "funding_or_scale": "Not stated in the provided material.",
+        "threat_level": "high",
+        "url": "https://research.example.org/recon-incumbents",
+        "source_ids": ["S2"]
+      }
+    ],
+    "challengers": [],
+    "adjacent_threats": [
+      "Bank and ERP data-connectivity providers (the feed layer). S3 locates the actual failure point upstream of the reconciliation tool — clean feeds from banks and the ERP are the precondition for any benefit [S3] — which means whoever owns the feed sits closer to the value than whoever owns the matching engine and could extend into it. No specific provider is named in the provided material.",
+      "Accounting and bookkeeping automation vendors, and the outsourced-accounting firms serving mid-market finance teams, who could absorb reconciliation as part of a service rather than sell it as a product. Not addressed by any provided source; recorded as an unverified adjacency, not a documented threat.",
+      "Audit and controls tooling, given that the compliance value of reconciliation is the audit trail. No provided source addresses this adjacency."
+    ],
+    "concentration": "concentrated",
+    "differentiation_axes": [
+      "Data connectivity and feed quality from banks and the ERP — on S3's evidence this determines whether the product delivers benefit at all, which makes it the axis that decides renewals rather than just demos [S3]",
+      "Bundling and incumbency: whether the function arrives inside the ERP the customer already pays for, versus being bought separately [S2]",
+      "Segment fit and cost-to-serve at mid-market price points, which is precisely the axis incumbents have been attacking for two years by moving down-market [S2]",
+      "Not verifiable from this material: matching accuracy/automation rate, close-cycle time reduction, audit and controls depth, and pricing model — all standard competitive axes here, none addressed by a provided source"
+    ],
+    "saturation": {
+      "funded_competitors_known": 4,
+      "new_entrants_trend": "unknown",
+      "pricing_direction": "unknown",
+      "consolidation_activity": "None seen in the provided material. No source lists an acquisition, and no funding or M&A scan was included in the research given to me. S2 notes the incumbents are 'both public or PE-held' [S2], which implies prior ownership events, but names no transaction, date or amount. Absence of evidence here is a gap in the research, not evidence that the category is quiet.",
+      "lifecycle_stage": "maturing",
+      "room_for_a_new_entrant": "crowded but differentiable",
+      "why": "The honest version of this read has two halves. What the evidence supports: four named competitors, all of them well-resourced, two of them dedicated category leaders that are 'both public or PE-held' and have spent the last two years moving down-market into the mid-market specifically, plus two ERPs that ship the function bundled to the same buyers [S2]. That is a segment being converged on from above and from inside the system of record simultaneously — the opposite of a wide-open wedge — against a mid-market slice worth $900M-1.3B growing 14-18% [S1]. The category is old enough to have public and PE-held leaders, which is a maturing signal, not an emerging one. What the evidence does not support: any count of funded startups, any read on whether new seed rounds are still arriving, any pricing data, and any acquisition record. The '4' above is the number of vendors named in S2, not a census of funded players, and it should not be read as one — a real startup scan would very likely return more. The reason I still say 'crowded but differentiable' rather than 'effectively closed' is S3: adoption fails on source data quality rather than on the tool [S3], which means the incumbents' and the ERPs' presence has not solved the problem the buyer actually has. A residual niche defined by feed quality and data cleanliness is consistent with the evidence. But it is a niche, and it is a different product from a matching engine."
+    }
+  },
+  "absorption_risk": {
+    "verdict": "feature",
+    "horizon": "already happening",
+    "confidence": "medium",
+    "likely_absorbers": [
+      {
+        "name": "NetSuite (and Oracle behind it)",
+        "why_them": "It is the ERP that mid-market finance teams already run, so it owns the general ledger, the sub-ledgers, the customer relationship and the billing relationship. Reconciliation is by definition matching against that ledger, which makes it the most natural possible extension of a system that already holds one side of every match [S2].",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "Already ships a native reconciliation module bundled with the ERP mid-market finance teams run — this is a shipped feature, not a roadmap statement [S2]"
+        ],
+        "source_ids": ["S2"]
+      },
+      {
+        "name": "Sage",
+        "why_them": "Same structural position as NetSuite in the mid-market ERP layer: owns the ledger and the buyer, and reconciliation attaches directly to both [S2].",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "Already ships native reconciliation bundled with the ERP [S2]"
+        ],
+        "source_ids": ["S2"]
+      },
+      {
+        "name": "BlackLine / Trintech",
+        "why_them": "Not platform absorption in the bundling sense, but the same commercial outcome for a small entrant: two well-capitalized category leaders have deliberately extended their range downward into the mid-market over the last two years, compressing the segment where a standalone product would otherwise have room [S2]. For a company at early traction, acquisition by one of them is also the most structurally likely exit path, though no acquisition activity is documented in the provided material.",
+          "mechanism": "acquisition",
+        "signals_already_visible": [
+          "Both have 'moved down-market toward mid-market finance teams in the last two years' [S2]",
+          "No acquisitions in this category are documented in the provided sources — this signal list is deliberately short because the research contained no M&A scan"
+        ],
+        "source_ids": ["S2"]
+      }
+    ],
+    "precedents": [
+      {
+        "category": "Bank feed aggregation and statement import inside accounting software",
+        "absorbed_by": "The accounting/ERP platforms themselves",
+        "how_long_it_took": "Not established by any provided source",
+        "why_it_is_comparable": "Same mechanism as the one S2 documents — a function that sits directly against the ledger gets pulled into the system that owns the ledger. I am flagging this as a mechanism analogy, not a sourced precedent: none of S1, S2 or S3 discusses it, and I did not have material to verify timing or outcome. It should carry no evidential weight beyond illustrating the pattern S2 already shows in progress.",
+        "source_ids": []
+      }
+    ],
+    "what_would_prevent_it": [
+      "Ownership of the data quality problem rather than the matching problem. S3 says adoption fails on clean feeds from banks and the ERP, not on the tool [S3]. A bundled ERP module inherits the ERP's own feed quality and has little incentive to fix the bank side; a product whose actual value is producing clean, matched source data is solving something the absorber is not currently solving.",
+      "Multi-system customers. Reconciliation across several banks and more than one ledger is structurally awkward for a single-ERP bundled module. Not documented in the provided sources — recorded as inference.",
+      "Audit and controls depth, where the buyer's requirement is evidentiary rather than functional. No provided source addresses regulatory or audit requirements in this category, so I cannot assess how strong this moat is here.",
+      "Workflow depth beyond matching — exception handling, approvals, close checklists. Plausible but unverified: no provided source describes what the bundled ERP modules actually do or where they stop, which is the single most important unanswered question for this verdict."
+    ],
+    "notes": "The reason this reads 'feature' rather than 'contested' is that the absorption is not a forecast — S2 reports it as already shipped: the ERPs mid-market teams already run include native reconciliation today [S2]. The startups in the antivirus/file-sync/VPN pattern were not out-competed, they were made redundant by something adequate and already paid for, and a bundled ERP module against the customer's own ledger is a close match for that mechanism. Confidence is medium rather than high for one specific reason: S2 says the modules exist but says nothing about their quality, scope or how many mid-market teams actually use them instead of buying a dedicated tool. If those modules are shallow, the category stays contested for longer than the verdict implies. That gap is worth more to close than any sizing refinement. The counterweight is S3 [S3] — the bundled module does not address source data quality, and that is where the unsolved problem lives."
+  },
+  "open_source_landscape": {
+    "applicable": false,
+    "projects": [],
+    "closest_project": null,
+    "capability_gap": "far behind",
+    "gap_trend": "stable",
+    "evidence_for_the_gap": "No provided source addresses open source in this category at all — S1, S2 and S3 are silent on it. I am therefore not asserting a sourced assessment, and the enum values above should be read as unsupported placeholders rather than findings; the honest value for both is 'not assessed'. What I can say on the evidence I have is that the commoditization pressure in this category is not arriving through open source, it is arriving through ERP bundling: the free-and-adequate alternative that caps pricing is the reconciliation module already included in NetSuite and Sage [S2], not a community project. That is the same economic mechanism as open-source parity — capability stops being the differentiator and packaging, operations, support and distribution are what remain — but the party holding all four is the ERP vendor, which already owns the customer and the ledger. I will not name open-source projects, adoption figures or maturity levels, because no source here supports any and inventing them would be worse than the gap.",
+    "what_commercial_still_provides": [
+      {
+        "capability": "Clean, reliable data feeds from banks and from the ERP",
+        "type": "integrations",
+        "durable": "false",
+        "why": "S3 identifies this as the actual determinant of whether reconciliation automation delivers benefit [S3], so it is where residual commercial value concentrates. It is not durable against an ERP vendor: NetSuite and Sage already own one side of the feed natively and can extend to the bank side cheaply, and bank connectivity is itself a purchasable commodity. Durable against a community project, not durable against a platform."
+      },
+      {
+        "capability": "Distribution to mid-market finance teams",
+        "type": "distribution",
+        "durable": "false",
+        "why": "This is the residual gap that killed Docker's monetization, and here the platform already holds it rather than having to build it — the ERP is already installed and already billed [S2]. A standalone vendor must acquire each customer; the ERP has them."
+      },
+      {
+        "capability": "Operational burden borne on the customer's behalf",
+        "type": "operational",
+        "durable": "false",
+        "why": "This is the Snowflake-style residual — genuinely hard to give away — but it is weak in this category as presented. Reconciliation at mid-market volumes is not an operations-at-scale problem the way a data warehouse is; there is no source in this material suggesting the operational burden is heavy enough to sustain a business on its own."
+      }
+    ],
+    "pricing_pressure": "significant",
+    "company_relationship_to_oss": "unclear",
+    "strip_mining_risk": null,
+    "notes": "Setting applicable to false is a deliberate call: the prompt asks for real projects with real adoption evidence, and this research body contains none, so inventing an open-source dimension would be fabrication. The substantive point is that the absorption question here should be assessed through S2's bundling evidence rather than through open source — the 'good enough and free' alternative is the ERP module, and the pricing-pressure rating above reflects that bundled alternative [S2], not a community project. Whether a meaningful open-source reconciliation or plain-text-accounting ecosystem exists and matters to mid-market buyers is a genuine research gap, listed below."
+  },
+  "adjacent_markets": [
+    {
+      "market": "ERP for mid-market (NetSuite, Sage and peers)",
+      "relationship": "converging with this one",
+      "size_note": "Not separately sized in the provided material. S1 notes only that ERP is included in the office-of-the-CFO roll-ups that produce the $80B+ figures [S1], which implies ERP is much the larger spend but gives no ERP-specific number.",
+      "why_it_matters": "This is where the competitive pressure originates rather than a market to expand into. The ERP owns the ledger, the customer and the billing relationship, and already ships reconciliation natively [S2]. Any standalone product in this category is positioned relative to a system its buyer already pays for.",
+      "source_ids": ["S1", "S2"]
+    },
+    {
+      "market": "Bank and ERP data connectivity / feed quality",
+      "relationship": "upstream",
+      "size_note": "Not sized in any provided source.",
+      "why_it_matters": "S3 places the binding constraint here: teams that cannot get clean feeds from their banks and their ERP see little benefit from reconciliation automation [S3]. That makes this simultaneously a dependency (a reconciliation product's outcomes are hostage to it), a churn risk, and the most credible expansion or repositioning direction — the unsolved problem is upstream of the matching engine, and the bundled ERP modules do not solve it either.",
+      "source_ids": ["S3"]
+    },
+    {
+      "market": "Broader financial close management (close checklists, intercompany, balance-sheet substantiation)",
+      "relationship": "expansion opportunity",
+      "size_note": "Included within S1's $6-8B 'financial close and reconciliation software category'; not broken out separately [S1].",
+      "why_it_matters": "It is the natural adjacent surface for a reconciliation product and the ground the incumbents already hold — BlackLine and Trintech are close/reconciliation vendors, not point tools [S2]. Expansion in this direction means moving toward the incumbents rather than away from them.",
+      "source_ids": ["S1", "S2"]
+    },
+    {
+      "market": "Audit and internal controls tooling",
+      "relationship": "downstream",
+      "size_note": null,
+      "why_it_matters": "Reconciliation output is audit evidence, which is where much of its compliance value is realized. No provided source addresses this market, so this adjacency is recorded as an inference, unsized and unverified.",
+      "source_ids": []
+    }
+  ],
+  "economics": {
+    "typical_pricing": "Not stated in any provided source. No pricing, deal size, seat count or packaging data appears in S1, S2 or S3, and I will not infer a figure. The one structural observation the material supports is that pricing is anchored against a bundled alternative already included in the customer's ERP subscription [S2], which sets a low reference point for perceived incremental value.",
+    "typical_gross_margin": "Not stated in any provided source. Inference only, flagged as such: standard SaaS margins would be expected, with the caveat that heavy per-customer data-integration work — which S3's findings imply is often necessary [S3] — tends to push effective margins below headline software levels, particularly at mid-market price points.",
+    "typical_cac_payback": "Not stated in any provided source, and I have no basis to estimate it.",
+    "capital_intensity": "low"
+  },
+  "funding_environment": {
+    "recent_rounds": [],
+    "valuation_norms": "Not stated in any provided source. No round, multiple, or comparable valuation appears in the research material.",
+    "exit_comps": [
+      "None available in the provided material. S2's statement that the incumbents are 'both public or PE-held' [S2] implies prior liquidity events, but names no transaction, buyer, date or price, so it cannot be used as a comp."
+    ],
+    "investor_appetite": null,
+    "notes": "This section is empty because the research body contains no funding or M&A data whatsoever — not because the category is quiet. I have set investor_appetite to null rather than picking an enum value, since any of 'hot' through 'cold' would be a fabricated read. The one indirect signal available is S1's finding that measured growth is 14-18% against '30%+ sometimes claimed' [S1]: categories whose growth narrative is being corrected downward typically see valuation multiples reset, so a gap between how this category is pitched and how it grows is a risk to pricing a round against. That is a mechanism, not an observation about current appetite. A funding scan is the highest-value missing piece of research here, because the saturation question — whether new funded entrants are still arriving — cannot be answered without it."
+  },
+  "regulatory_and_structural": {
+    "factors": [
+      "Structural, well-evidenced: the function is bundled into the system of record. Mid-market finance teams' ERPs ship native reconciliation [S2], so the buying decision is 'replace something included' rather than 'buy something missing'.",
+      "Structural, well-evidenced: value delivery depends on upstream data the vendor does not control. Adoption failures cluster on source data quality — bank and ERP feed cleanliness — not on the reconciliation tool [S3]. This is a durable structural feature of the category, and it affects implementation cost, time-to-value and churn.",
+      "Structural: incumbent down-market motion by two well-capitalized category leaders over the last two years [S2] compresses the segment available to a smaller entrant.",
+      "Structural: the category's public growth narrative overstates measured growth by roughly a factor of two (14-18% actual versus 30%+ claimed) [S1], and the headline market size circulating in vendor marketing overstates the narrow category by an order of magnitude [S1].",
+      "Regulatory: reconciliation sits inside financial reporting and audit, which is a regulated activity, and handling bank data carries data-security and access obligations. No provided source addresses regulation, audit standards, SOC 2/SOX, bank data access rules or data residency in this category. Recorded as an unverified factor, and the risk level below is set on the structural factors I can evidence, not the regulatory ones I cannot."
+    ],
+    "risk_level": "medium"
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "title": "Reconciliation software sizing, independent composite",
+      "url": "https://research.example.org/recon-sizing-2026",
+      "date": "2026-03",
+      "reliability": "secondary",
+      "what_it_supported": "Category size $6-8B (2026); mid-market slice $900M-1.3B; growth 14-18% annually; the explanation that $80B+ figures come from vendor marketing and roll up the whole office-of-the-CFO stack including ERP; the correction of '30%+' growth claims. Rated secondary rather than primary: it is a composite of estimates rather than a regulator filing or public-company disclosure, it does not disclose its constituent sources or method, and it does not state geography. It is the most reliable source I was given and every sizing figure in this analysis rests on it alone, which is the reason sizing_confidence is low despite the estimates themselves looking internally coherent."
+    },
+    {
+      "id": "S2",
+      "title": "BlackLine and Trintech hold the incumbent position",
+      "url": "https://research.example.org/recon-incumbents",
+      "date": "2026-03",
+      "reliability": "secondary",
+      "what_it_supported": "Identification of BlackLine and Trintech as established incumbents, 'both public or PE-held'; their down-market move toward mid-market finance teams over the last two years; NetSuite and Sage shipping native reconciliation modules bundled with the ERP. This is the sole evidentiary basis for the competitive landscape and the absorption verdict. Secondary: it is descriptive commentary with no filings, product documentation, customer counts or dates attached, and it does not specify which incumbent is public and which is PE-held."
+    },
+    {
+      "id": "S3",
+      "title": "Why reconciliation projects stall",
+      "url": "https://research.example.org/recon-adoption",
+      "date": "2026-03",
+      "reliability": "secondary",
+      "what_it_supported": "The finding that adoption failures cluster on source data quality rather than on the reconciliation tool, and that teams without clean bank and ERP feeds see little benefit from automation. Supports the headwind analysis, the differentiation axes, the upstream adjacency, and the one genuine argument against full absorption. Secondary: no sample size, methodology, or underlying study is given for the claim, so it is a stated pattern rather than a measured one."
+    }
+  ],
+  "research_gaps": [
+    "Only three sources were provided, all from the same domain (research.example.org), all dated 2026-03, and all secondary. There is no primary material in this analysis — no regulator filing, no public-company disclosure, no vendor documentation, no pricing page. Every conclusion here is single-sourced and none could be triangulated.",
+    "Geography is unresolved. S1 does not state whether $6-8B and $900M-1.3B are global or regional, so the mid-market slice cannot be scoped to North America from this material — which matters directly, since the company's addressable definition is North America-specific.",
+    "No funding or M&A data at all. I could not count funded startup competitors, determine whether new entrants are still arriving, or find a single acquisition. This is why saturation's new_entrants_trend and consolidation_activity are unknown/none-seen and why funded_competitors_known reflects only the four vendors S2 names, not a census. This is the most important gap for the saturation judgement.",
+    "No pricing data whatsoever — no list prices, no deal sizes, no discounting trend. Pricing direction is therefore unknown, though the presence of a bundled ERP alternative [S2] implies downward pressure as a mechanism.",
+    "No evidence on the depth or quality of the bundled ERP reconciliation modules. S2 confirms they exist but not what they do or where they stop. This single fact would move the absorption verdict's confidence from medium to high or reverse it, and it is the highest-value item to research next.",
+    "No open-source evidence. Whether a meaningful open-source reconciliation or ledger ecosystem exists, and whether mid-market finance buyers would ever adopt one, is entirely unaddressed; applicable was set to false on that basis rather than on a finding that no such dimension exists.",
+    "No regulatory or compliance material — audit standards, SOX/SOC 2 requirements, bank data access rules, data residency. The regulatory factor list is inference and the risk level rests on structural factors only.",
+    "No unit economics: CAC, payback, gross margin, retention, expansion. Nothing in the material speaks to any of them.",
+    "No segmentation of reconciliation types (bank, intercompany, balance-sheet, payments), so the analysis treats the category as undifferentiated when it almost certainly is not.",
+    "No customer-side evidence — no buyer interviews, win/loss data, or usage statistics — so buyer_budget_reality and adoption_stage rest on structural reasoning rather than measurement. adoption_stage 'early-majority' is inferred from the presence of public/PE-held category leaders and bundled ERP modules [S1][S2], not from any adoption curve in the sources."
+  ],
+  "injection_findings": [
+    "None. All three sources (S1, S2, S3) read as ordinary third-party research summaries reporting facts about the market. None addressed me directly, attempted to dictate a verdict, market size, score or conclusion, asked that anything be concealed from the reader, or imitated a system message. No [REDACTED BY DECKSCOPE] markers were present in the research material provided to me. Recorded affirmatively rather than left blank so the reader can distinguish 'checked, clean' from 'not checked'.",
+    "Worth flagging as an adjacent observation rather than an injection: S1 explicitly characterizes the $80B+ market-size figures in this category as vendor marketing that rolls up unrelated ERP spend [S1]. That is a warning about a class of number circulating in this market, not an attempt to manipulate this analysis, and it is handled in the sizing section above."
+  ]
+}

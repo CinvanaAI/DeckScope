@@ -1,0 +1,396 @@
+{
+  "headline": "Tessera's $3.1B market is real but it is not the market Tessera sells into — the slice a prompt-tracing tool can actually serve is $180-260M and decelerating because the model providers now ship the capability free [S2][S3], and the deck's competition slide names four vendors while omitting every one of them.",
+  "verdict": {
+    "call": "LEAN NO",
+    "confidence": "medium",
+    "confidence_rationale": "The structural read is consistent across three of four sources and rests on shipped-product behaviour rather than forecast: model providers ship tracing and evals free [S3], Datadog bundles it into APM rather than selling it [S4], two ML-monitoring vendors shipped competing products in 2025 [S4], and the independent slice's growth more than halved with a source attributing the fall to exactly that cause [S2]. That is a coherent, decision-relevant picture. Confidence is held at medium rather than high because every one of those sources sits on a single domain, is dated 2026-03, names no analyst, discloses no methodology, and is not a primary filing or disclosure — so I can rank none of them and have weighted all four equally. Two further limits: nothing in the bibliography sizes the residual niche that would be Tessera's actual market [S3], and nothing in it speaks to Tessera itself — the traction, team and product claims are unverifiable from this material rather than refuted by it."
+  },
+  "scorecard": [
+    {
+      "dimension": "Market size & timing",
+      "score": 3,
+      "weight": 5,
+      "rationale": "The deck's $3.1B / 38% is close to a real number [S1] attached to the wrong denominator. S1's envelope explicitly counts model monitoring, feature drift and data-quality tooling for traditional ML, 'where the great majority of the spend still sits', and S1 itself warns the headline growth rate 'is carried by the established ML monitoring segment and does not describe every slice within it' [S1]. The slice Tessera's product actually sits in is sized separately at $180-260M in 2026, growing 20-25% after exceeding 60% in 2024 [S2]. Timing is the harder problem than size: the deceleration is attributed to model providers shipping the capability natively [S2], which means the curve bent for a structural reason that has not reversed.",
+      "evidence": [
+        "Broad envelope $3.0-3.4B in 2026 growing 35-40% [S1]",
+        "LLM application tracing and evaluation slice $180-260M in 2026 [S2]",
+        "Slice growth decelerated from above 60% in 2024 to 20-25% through 2025-2026 [S2]",
+        "S1's own caution that the headline rate does not describe every slice within the envelope [S1]"
+      ],
+      "source_ids": ["S1", "S2"]
+    },
+    {
+      "dimension": "Competitive position",
+      "score": 3,
+      "weight": 5,
+      "rationale": "Slide 5's two load-bearing competitive claims are both undermined by the one source that speaks to them. Datadog added LLM observability to its APM suite during 2025 [S4], and Arize and WhyLabs both shipped LLM tracing products in the same period [S4] — so the four vendors the deck picked as structurally unable to serve the use case have, per the only evidence available, all moved. More damaging than the errors is the selection: the deck's competitive set contains no LLM-native vendor and, critically, no model provider, when S3 identifies OpenAI's and Anthropic's in-platform tracing as free and as covering 'the single-provider case that describes most early-stage LLM applications' [S3]. A competitive slide that omits the free substitute occupying the majority of its own customer profile is not a mapping error; it is the argument.",
+      "evidence": [
+        "Datadog added LLM observability to APM during 2025, bundled for existing customers rather than sold separately [S4]",
+        "Arize and WhyLabs shipped LLM tracing products during 2025 [S4]",
+        "OpenAI and Anthropic ship request tracing and evaluation dashboards in-platform at no additional cost [S3]",
+        "Deck's slide 5 names only Datadog, New Relic, Arize and WhyLabs; no model provider and no LLM-native vendor appears"
+      ],
+      "source_ids": ["S3", "S4"]
+    },
+    {
+      "dimension": "Product & moat",
+      "score": 3,
+      "weight": 4,
+      "rationale": "The deck claims no technical moat anywhere, and the market evidence does not supply one on its behalf. S3 names exactly two conditions under which an independent tool retains an advantage — applications spanning several model providers, and buyers needing retention and access controls the platforms do not offer [S3] — and neither is durable against Datadog, which is provider-neutral by construction and ships retention tiers and access control as core APM infrastructure [S4]. The one axis that could be defensible is the deck's own wedge, regression evaluation against captured production traffic, but S3 confirms the platforms ship 'evaluation dashboards' without describing either side's depth [S3], so I cannot establish that Tessera's loop exceeds a free alternative. The deck does not help: no architecture, no instrumentation method, no eval scoring mechanism, no screenshots.",
+      "evidence": [
+        "Independent tools retain an advantage for multi-provider applications and retention/access-control needs [S3]",
+        "Datadog is provider-neutral and already bundles LLM observability into an APM contract [S4]",
+        "Deck states no technical moat and gives no architecture, instrumentation method or eval mechanism (slide 3)",
+        "Neither S3 nor any other source characterises evaluation depth on either side"
+      ],
+      "source_ids": ["S3", "S4"]
+    },
+    {
+      "dimension": "Business model",
+      "score": 2,
+      "weight": 3,
+      "rationale": "The deck states no pricing, packaging, ACV, gross margin, CAC or payback. That is a gap at any stage, but it is acute here because the sourced reference price for the adjacent alternative is zero from two directions at once: no additional cost in the model platform [S3], and no incremental charge inside an existing Datadog contract [S4]. A trace-capture product also carries storage and retention cost that scales with volume, and S3's reference to retention controls suggests retention is a live variable [S3] — so margin is both unstated and structurally uncertain. No source in the bibliography gives a price point, contract value or margin for any vendor in this category, so I cannot benchmark; I can only observe that the deck has to justify itself against free rather than against a competing invoice. Weight 3 rather than 5 because a seed company is not expected to have settled pricing — but it is expected to know what it is priced against.",
+      "evidence": [
+        "Model providers charge nothing additional for tracing and evaluation dashboards [S3]",
+        "Datadog's LLM observability is bundled for existing customers rather than sold separately [S4]",
+        "Deck states no pricing, unit economics, gross margin, CAC or LTV",
+        "No source in the bibliography states a price point or contract value for any vendor"
+      ],
+      "source_ids": ["S3", "S4"]
+    },
+    {
+      "dimension": "Traction vs. stage",
+      "score": 6,
+      "weight": 5,
+      "rationale": "$390k ARR across 46 accounts with 11% MoM for four months is a respectable seed signal in absolute terms and I do not discount it. I discount the denominators. 'Team' is never defined as a company, workspace or seat group, so $390k could be 46 contracted companies or 46 self-serve workspaces annualised from a month of usage — materially different businesses. The growing quantity in '11% MoM' is unnamed. Four months off a sub-$400k base is a short window on a small number. No source in the bibliography speaks to Tessera, so none of this is contradicted — it is unverifiable, and the deck supplies no retention, churn or NRR to make it self-supporting. Scored on the seed standard: evidence of demand, not scale of revenue. The revenue is there; the evidence that it is durable demand rather than early trial is not.",
+      "evidence": [
+        "$390k ARR across 46 teams; 11% MoM for four months (slide 6)",
+        "Deck never defines 'team' and never names the metric growing at 11%",
+        "No retention, churn, NRR, cohort or logo data anywhere in the deck",
+        "No source in the provided bibliography references Tessera Labs"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Team",
+      "score": 2,
+      "weight": 5,
+      "rationale": "The deck contains no founders, roles, backgrounds, headcount or advisors — not a thin team slide, no team slide. At seed, where the check is underwritten on people more than on numbers, this is the single most consequential omission in the document. I am scoring evidence, not capability: this is a 2 because nothing is knowable, and I would revise it on a single conversation. But it cannot be scored higher on what was submitted, and an investment committee cannot act on it. Weight 5 because for a seed company selling into a category under documented absorption pressure [S2][S3][S4], the whole case rests on whether this specific team can find and hold the narrow residual before the absorbers close it.",
+      "evidence": [
+        "No founders, roles, backgrounds, headcount or advisors anywhere in the seven slides",
+        "No company founding date, location or website",
+        "Category is under active absorption, raising the premium on execution and speed [S2][S3][S4]"
+      ],
+      "source_ids": ["S2", "S3", "S4"]
+    },
+    {
+      "dimension": "Ask & plan",
+      "score": 3,
+      "weight": 4,
+      "rationale": "$5M at $28M post on $390k ARR is roughly a 72x ARR multiple, offered with no comparables, no use of funds, no hiring plan, no runway and no burn. I cannot benchmark that against the market: the bibliography contains no funding round, valuation, multiple or exit anywhere [no source], so I am judging structure, not price level. The $3M ARR in 24 months milestone is about 7.7x, needing roughly 9% MoM sustained for two years — arithmetically consistent with the current 11% but requiring that rate to hold for six times longer than it has been observed, in a slice whose own growth fell from above 60% to 20-25% [S2]. $3M would be roughly 1-2% of the 2026 slice [S2], which is achievable in principle; the plan for reaching it is simply absent.",
+      "evidence": [
+        "$5M at $28M post against $390k ARR (slide 7); no comparables offered",
+        "$3M ARR in 24 months implies ~9% MoM sustained for 24 months versus four months observed",
+        "Servable slice growing 20-25% through 2025-2026 [S2]",
+        "No use of funds, hiring plan, runway or burn stated"
+      ],
+      "source_ids": ["S2"]
+    }
+  ],
+  "claim_audit": [
+    {
+      "id": "C1",
+      "claim": "\"We are in AI observability: a $3.1B market growing 38% a year.\"",
+      "market_evidence": "S1 puts AI observability at $3.0-3.4B in 2026 growing 35-40% annually, so $3.1B and 38% both fall inside the sourced ranges [S1]. But S1 defines that boundary as counting 'model monitoring, feature drift detection and data-quality tooling for traditional machine learning, which is where the great majority of the spend still sits', and cautions that 'the headline growth rate is carried by the established ML monitoring segment and does not describe every slice within it' [S1]. S2 sizes tracing and evaluation tooling for LLM applications specifically at $180-260M in 2026, growing 20-25% after exceeding 60% in 2024 [S2].",
+      "assessment": "partially-supported",
+      "delta": "The numbers are accurate; the category label is not. Deck claims a $3.1B market growing 38%; the slice a prompt-and-trace product for LLM applications actually serves is $180-260M growing 20-25% [S2] — roughly 12-17x smaller and growing at about half to two-thirds the claimed rate. And the direction differs: the envelope's 35-40% is stable [S1] while the slice's rate more than halved in two years [S2]. Not a disputed estimate — a nesting error, since S2 is a subset of S1 and S1 flags the problem itself.",
+      "so_what": "This is the deck's foundational claim and the one that most changes the investment case. A $3.1B market growing 38% supports a venture-scale outcome; a $180-260M slice decelerating to 20-25%, of which only an unsized residue is addressable once free platform tracing is netted out [S3], may not. The claim is defensible as written and misleading as used.",
+      "source_ids": ["S1", "S2"],
+      "sources": [
+        "https://research.example.org/ai-observability-sizing",
+        "https://research.example.org/llm-tracing-slice"
+      ],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C2",
+      "claim": "\"Independent analysts put it in that range\" — no analyst, report, or date named.",
+      "market_evidence": "S1 is itself described as a composite of unnamed 'independent 2026 estimates' with no analyst house, report title or methodology disclosed [S1], and its range does contain $3.1B. So a source of the shape the deck gestures at exists — but it is exactly as unattributed as the deck's own appeal, and the market analysis flags all four sources as sitting on one domain, dated 2026-03, with no named authorship and no primary document among them.",
+      "assessment": "unverifiable",
+      "delta": "No delta can be computed: the claim has no referent. The most that can be said is that an unattributed composite consistent with the figure exists [S1], which neither confirms the deck consulted anything nor establishes that any named analyst house published it. 'In that range' is also a softer claim than the precise $3.1B asserted one sentence earlier — the imprecision is doing hedging work.",
+      "so_what": "This is a citation shape rather than a citation, and it is load-bearing for the deck's largest number. It is a two-minute diligence item: ask which report. If the answer is a broad AI-observability composite, C1's nesting error is confirmed as the deck's method rather than an accident.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/ai-observability-sizing"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C3",
+      "claim": "\"the category is one of the fastest growing in developer infrastructure\"",
+      "market_evidence": "No source in the bibliography ranks categories within developer infrastructure or offers any comparison set, so the superlative cannot be tested as stated. What the sources do show cuts against the spirit of it for the relevant slice: growth in LLM application tracing and evaluation fell from above 60% in 2024 to 20-25% through 2025 and 2026 [S2]. For the broad envelope, 35-40% [S1] is high but unranked against anything.",
+      "assessment": "unverifiable",
+      "delta": "Unfalsifiable as written — no ranking exists in the material. Directionally, the deck implies acceleration while the only sourced rate for its own slice records a halving [S2]. I record this as an unverifiable claim whose implied direction is contradicted, not as a contradicted claim.",
+      "so_what": "Low weight on its own, but it is the third consecutive slide-4 statement that borrows the envelope's dynamics for the slice. The pattern, not the sentence, is the finding.",
+      "source_ids": ["S1", "S2"],
+      "sources": [
+        "https://research.example.org/ai-observability-sizing",
+        "https://research.example.org/llm-tracing-slice"
+      ],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C4",
+      "claim": "\"Datadog and New Relic own general application monitoring but have no LLM-native tracing.\"",
+      "market_evidence": "S4 states Datadog added LLM observability to its APM suite during 2025, 'bundled for existing customers rather than sold separately' [S4]. New Relic is not mentioned in any source in this bibliography, and the market analysis notes Datadog is the only APM vendor covered [S4], so the incumbent list is acknowledged to be incomplete.",
+      "assessment": "contradicted",
+      "delta": "Half the claim is directly contradicted and half is unverifiable. Deck says Datadog has no LLM-native tracing; S4 records Datadog shipping LLM observability in 2025 [S4]. The pricing detail widens the gap rather than narrowing it: bundled at no incremental charge to an installed base is a harder competitor than a separately sold product would be. On New Relic I can say nothing — no source addresses it, and absence from a four-source bibliography is not evidence of absence from the market.",
+      "so_what": "This is a load-bearing premise of the entire competition slide, and the more the deck is right that Datadog 'owns general application monitoring', the worse it is for Tessera that Datadog now ships the feature into that ownership for free. Founders should be asked whether slide 5 is out of date or selectively framed; the answer distinguishes a stale deck from a stale argument.",
+      "source_ids": ["S4"],
+      "sources": ["https://research.example.org/ml-monitoring-vendors"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C5",
+      "claim": "\"Arize and WhyLabs come from the ML monitoring world and are built around feature drift, not prompts.\"",
+      "market_evidence": "S4 confirms the lineage — both are named as coming from ML monitoring — and simultaneously records that both 'shipped LLM tracing products during 2025' [S4]. No source describes the depth or design of those products, so whether they are prompt-native or drift monitoring retrofitted to LLM workloads cannot be determined from this material.",
+      "assessment": "partially-supported",
+      "delta": "The premise is right and the conclusion drawn from it is stale. The deck treats lineage as destiny; S4 shows both vendors acting against that destiny within a single year [S4]. The deck's characterisation may still be true of product depth — that is genuinely unverifiable here — but 'built around feature drift, not prompts' can no longer be asserted as a categorical fact about what they sell.",
+      "so_what": "Two vendors with existing enterprise AI-monitoring relationships are now selling into Tessera's use case from a warm contract. Even if their tracing is shallower, they compete for the budget line before Tessera gets to compete on the product.",
+      "source_ids": ["S4"],
+      "sources": ["https://research.example.org/ml-monitoring-vendors"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C6",
+      "claim": "\"$390k ARR across 46 teams.\"",
+      "market_evidence": "No source in the bibliography references Tessera Labs, and none provides customer counts, contract values or ARR benchmarks for any vendor in this category. There is nothing in the market evidence that either supports or contradicts this figure.",
+      "assessment": "unverifiable",
+      "delta": "No external comparison is possible. The gap that matters is internal: 'team' is never defined as a company, workspace or seat group, so the same $390k could represent 46 contracted companies (implying ~$8.5k ACV — inferred arithmetic, not stated by the deck) or 46 self-serve workspaces annualised from recent monthly usage. The deck also does not say whether the figure is contracted or annualised, or what the paid-versus-free split is.",
+      "so_what": "This is a data-room question, not a market question, and it is answerable in one call. Until the denominator is defined, the number cannot be weighed — and under the lens applied here, a metric without a denominator gets no credit beyond its floor.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C7",
+      "claim": "\"11% MoM growth for four months.\" (metric being measured is not specified)",
+      "market_evidence": "No source speaks to Tessera's growth. The only relevant market context is directional: growth in the servable slice decelerated from above 60% in 2024 to 20-25% through 2025 and 2026 [S2], and the deceleration is attributed to model providers shipping the capability natively rather than to demand weakening [S2].",
+      "assessment": "unverifiable",
+      "delta": "Cannot be checked externally. Two internal problems: the growing quantity is unnamed (revenue, accounts and usage would each mean something different), and four months off a sub-$400k base is a short window on a small number. Sustained 11% MoM would be roughly 250% annually, far above the slice's 20-25% [S2] — not impossible for a small vendor taking share, but it is a claim about share capture in a decelerating slice, which the deck does not acknowledge it is making.",
+      "so_what": "If the 11% is revenue and the accounts are companies, this is the strongest fact in the deck and it partly offsets the market read. If it is usage or workspace signups, it is close to noise. The deck's refusal to name the metric is what forces this to be scored at its floor rather than its ceiling.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/llm-tracing-slice"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C8",
+      "claim": "\"Raising $5M at $28M post to reach $3M ARR in 24 months.\"",
+      "market_evidence": "The bibliography contains no funding round, valuation, multiple, comparable transaction or exit for any company in this category [no source], so the price cannot be benchmarked against the market. What the market does bound is the plan: $3M ARR would be roughly 1-2% of the $180-260M 2026 slice [S2] — attainable in principle — but the slice is growing 20-25% [S2] while the plan requires roughly 9% MoM (~180% annually) sustained for 24 months, i.e. continuous share capture against free platform substitutes [S3] and a bundled APM offer [S4].",
+      "assessment": "unverifiable",
+      "delta": "On valuation, no delta is computable and I will not manufacture one. On the milestone: the target is arithmetically consistent with the four observed months but requires that rate to hold six times longer than it has been demonstrated, in a market whose own growth rate halved for a structural reason [S2]. The deck offers no use of funds, hiring plan, unit economics or runway to bridge that.",
+      "so_what": "The stage gap is the practical issue. The evidence presented — no team, no product proof, no GTM, no retention — is early-seed evidence; $5M at $28M post prices a strong seed. Absent the missing sections, the round is being asked for on the strength of a category claim that C1 shows to be the wrong category.",
+      "source_ids": ["S2", "S3", "S4"],
+      "sources": [
+        "https://research.example.org/llm-tracing-slice",
+        "https://research.example.org/native-tracing",
+        "https://research.example.org/ml-monitoring-vendors"
+      ],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C9",
+      "claim": "\"Every request traced end to end — prompt, retrieval, tool calls, response — with regression evals that run against captured production traffic.\"",
+      "market_evidence": "S3 confirms OpenAI and Anthropic ship request tracing and evaluation dashboards in-platform at no additional cost, covering the single-provider case that 'describes most early-stage LLM applications' [S3], and names multi-provider spans and retention/access controls as the conditions under which independent tools retain an advantage [S3]. No source characterises the depth of anyone's evaluation capability — the platforms' or an independent vendor's.",
+      "assessment": "unverifiable",
+      "delta": "The capability description is plausible and unremarkable; what cannot be established is whether it exceeds a free alternative. If regression evaluation against captured production traffic is a genuine development loop rather than a dashboard, it is the most defensible ground in the category. If the platforms' 'evaluation dashboards' [S3] already approximate it, the deck's central differentiator is matched at zero price. The material does not settle this, and the deck offers no architecture, instrumentation method or scoring mechanism that would let me judge.",
+      "so_what": "This is the highest-value diligence item in the whole file, because it is the one place where the absorption argument could be defeated on the merits rather than deferred. A live demo comparing the eval loop against a model provider's console would resolve it in an hour.",
+      "source_ids": ["S3"],
+      "sources": ["https://research.example.org/native-tracing"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C10",
+      "claim": "\"When an LLM feature misbehaves in production, nobody can reconstruct why. Teams ship prompt changes blind and find out from support tickets.\"",
+      "market_evidence": "Demand for the capability is corroborated: S2 attributes the slice's deceleration 'to model providers shipping tracing and evaluation natively rather than to weakening demand for the capability itself' [S2], and incumbent entry from three directions in one year [S3][S4] is itself evidence buyers are asking. But the absolute framing is contradicted by the same evidence — tracing and evaluation dashboards ship free inside the platforms most early-stage LLM applications already use [S3], so 'nobody can reconstruct why' is not true as stated.",
+      "assessment": "partially-supported",
+      "delta": "The problem is real; the vacuum is not. The deck describes an unserved need, while the sources describe a need that is served by default, free, in the console the developer already has open [S3]. That is the difference between a greenfield and a displacement sale, and the deck is priced and argued as the former.",
+      "so_what": "It reframes the whole GTM question the deck never addresses: Tessera is not teaching buyers a new need, it is asking them to pay for something they are already getting. That is a much harder motion and it needs a GTM slide, which the deck does not have.",
+      "source_ids": ["S2", "S3", "S4"],
+      "sources": [
+        "https://research.example.org/llm-tracing-slice",
+        "https://research.example.org/native-tracing",
+        "https://research.example.org/ml-monitoring-vendors"
+      ],
+      "evidence_quality": "moderate"
+    }
+  ],
+  "alignment": {
+    "where_deck_matches_market": [
+      "The $3.1B figure and 38% growth rate both sit inside S1's ranges of $3.0-3.4B and 35-40% for 2026 [S1] — the arithmetic is not invented, only misapplied.",
+      "The underlying demand is genuine: S2 explicitly attributes the slice's slowdown to native provider tooling 'rather than to weakening demand for the capability itself' [S2], which corroborates the deck's problem statement as a real need.",
+      "The lineage half of C5 is confirmed — Arize and WhyLabs do come from the ML monitoring world [S4].",
+      "The deck's implicit premise that general application monitoring and LLM tracing are different objects is consistent with S1's boundary discussion, which separates ML monitoring and data-quality tooling from LLM application tracing [S1][S2].",
+      "Choosing prompt-and-trace as the wedge points at the right two differentiators, even if unknowingly: S3 names multi-provider coverage and retention/access controls as exactly where independent tools retain an advantage [S3]."
+    ],
+    "where_deck_overstates": [
+      "Market size by roughly 12-17x: $3.1B claimed [S1] versus a $180-260M servable slice [S2], before netting out the single-provider applications the platforms already cover free [S3].",
+      "Growth: 38% claimed [S1, envelope] versus 20-25% for the slice, down from above 60% in 2024 [S2] — and the deck asserts the category is accelerating while the sourced trend is a halving.",
+      "Competitive whitespace: 'Datadog and New Relic... have no LLM-native tracing' is contradicted for Datadog, which shipped it in 2025 and bundles it [S4]; 'Arize and WhyLabs... built around feature drift, not prompts' is undercut by both shipping LLM tracing in 2025 [S4].",
+      "Problem severity: 'nobody can reconstruct why' overstates a gap that free in-platform tracing already fills for the single-provider case describing most early-stage LLM applications [S3].",
+      "Implied stage: $5M at $28M post is priced above what the presented evidence — no team, no product proof, no retention, no GTM — supports.",
+      "'Independent analysts put it in that range' overstates the deck's own epistemic position: it names no analyst, report or date [S1 is itself an unattributed composite]."
+    ],
+    "where_deck_understates": [
+      "Its own strongest asset: $390k ARR with 11% MoM for four months is a real seed signal, and the deck buries it under undefined denominators ('teams', unnamed growth metric) that force a diligent reader to discount it.",
+      "The two sourced structural advantages it actually has — multi-provider coverage and retention/access controls [S3] — are never claimed anywhere in the deck, even though they are precisely the ground the absorbers cannot easily take from an independent vendor.",
+      "Evaluation depth as a differentiator: regression evals against captured production traffic is mentioned once on slide 3 and never developed, when it is the one axis the research cannot rule out as defensible [S3].",
+      "The adjacent expansion path: S1 places 'the great majority' of the $3.0-3.4B envelope's spend in ML monitoring [S1], and S4 shows that segment's vendors moving toward LLM workloads [S4] — movement in the other direction is a real expansion story the deck never tells.",
+      "Compliance and governance framing: trace contents carry prompts, retrieved documents and responses, which is why retention and access control appear as purchase criteria at all [S3]; the deck never positions against a governed buyer."
+    ],
+    "blind_spots": [
+      {
+        "what": "Model providers are the competition, and they are free. OpenAI and Anthropic both ship request tracing and evaluation dashboards inside their developer platforms at no additional cost, covering the single-provider case that 'describes most early-stage LLM applications' [S3]. The deck's competition slide contains no model provider at all.",
+        "why_it_matters": "This is the most important omission in the document. The free alternative sits in the request path, in the console the developer already has open, from the vendor they already pay — and it covers the majority of the profile a seed-stage company sells to first. It sets the price ceiling at zero for most of Tessera's likely funnel and it explains the deceleration in C1's real market [S2]. A competitive analysis that omits it is not describing the market the company operates in.",
+        "source_ids": ["S3", "S2"]
+      },
+      {
+        "what": "The deceleration and its cause. Growth in the LLM tracing and evaluation slice fell from above 60% in 2024 to 20-25% through 2025 and 2026, attributed specifically to model providers shipping the capability natively rather than to demand weakening [S2].",
+        "why_it_matters": "The deck's timing argument depends on entering a fast-accelerating category. The only sourced rate for its actual category records the opposite, and the cause is structural rather than cyclical — it will not revert on its own. This is the difference between being early and being late.",
+        "source_ids": ["S2"]
+      },
+      {
+        "what": "Datadog's pricing decision, not just its product. S4 records that Datadog's LLM observability is 'bundled for existing customers rather than sold separately' [S4].",
+        "why_it_matters": "The pricing posture is more diagnostic than the feature. Bundling means the capability is being used to defend an APM suite rather than to open a revenue line, which is the classic signature of a feature being absorbed into a platform. It also means Tessera competes against zero incremental cost inside a contract the buyer has already signed, with the agent already deployed.",
+        "source_ids": ["S4"]
+      },
+      {
+        "what": "The real addressable market is a residue, and nobody has sized it. S3 establishes that independent tools retain an advantage only for multi-provider applications and buyers needing retention and access controls the platforms do not offer [S3]; no source states what share of LLM applications are multi-provider or whether that share is rising.",
+        "why_it_matters": "This is the single number that would most determine whether the business is worth building, and it is missing from both the deck and the research. The deck sells a $3.1B category; the defensible framing is a niche within a $180-260M slice [S2][S3]. A founder who could size that residue credibly would have a far stronger and more honest pitch than the one presented.",
+        "source_ids": ["S3", "S2"]
+      },
+      {
+        "what": "Convergence is arriving from two independent directions at once — upstream from the model platforms [S3] and sideways from APM and ML monitoring [S4] — within roughly a single year.",
+        "why_it_matters": "The deck's competition slide is built on the premise that incumbents are structurally mismatched to the use case. Three established vendors from two different lineages shipping competing products in 2025 [S4] is the opposite premise, and it means there is no direction from which the absorption pressure is absent.",
+        "source_ids": ["S3", "S4"]
+      },
+      {
+        "what": "The open-source substitute path is entirely unexamined — by the deck and by the research alike. Not one of the four sources mentions a project, repository, license or adoption metric.",
+        "why_it_matters": "For a category demonstrably under absorption pressure, a free self-hostable alternative at or near parity would materially worsen the pricing read, and its absence would materially improve it. Neither document establishes which. I flag it as an unresolved gap rather than assuming either way, and it should be a named diligence workstream.",
+        "source_ids": []
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Absorption: the capability becomes a free feature of the model platforms and a bundled span type inside APM, leaving no standalone product to sell.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Not a forecast — already happening [S2][S3][S4]. Test it directly: pull the account list and classify what share of the $390k ARR comes from multi-provider applications or from buyers with retention/access-control requirements the platforms do not meet [S3]. If that share is small, the revenue sits in the part of the market being absorbed. Also ask which accounts, if any, have already been offered Datadog's bundled LLM observability and what happened."
+    },
+    {
+      "risk": "The market claim is the wrong category, and the founders may not know it. $3.1B [S1] is the envelope; $180-260M [S2] is the slice.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask the founders to size their market bottom-up: number of applications that are multi-provider or governance-constrained, times a stated price. If they can do it and the answer is credible, the error was presentational. If they defend the $3.1B, it is a judgment problem about the market they are in."
+    },
+    {
+      "risk": "Selective competitor framing. Every vendor on slide 5 is one the deck can describe as structurally mismatched; every LLM-native vendor and both model providers are absent [S3].",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Ask one open question with no prompting: 'Who else does this?' The completeness and speed of the answer separates a founder with a stale deck from one whose thesis depends on the omission. This is a character and judgment test as much as a market one."
+    },
+    {
+      "risk": "Price compression toward zero. The reference alternative costs nothing from the model provider [S3] and nothing incremental from Datadog [S4], while trace capture carries real storage and retention cost.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Request the price list, discounting history, and gross margin including storage and retention cost at current volumes. Ask what happened in the last three deals where a customer raised the free alternative."
+    },
+    {
+      "risk": "Traction quality: '46 teams' and '11% MoM' may not mean what a reader assumes, and no retention data exists to test durability.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Define 'team'; separate paid from free; obtain monthly cohort retention, logo churn and net revenue retention for the four growth months and the periods before them. Confirm whether ARR is contracted or annualised from monthly usage."
+    },
+    {
+      "risk": "Team is entirely unknown — no founders, backgrounds, or headcount anywhere in the deck.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Trivially resolved by a first meeting, and this risk should not be over-weighted as a company risk. But it cannot be resolved from the submitted material, and no committee should price a seed round without it."
+    },
+    {
+      "risk": "The market picture itself may be wrong. All four sources sit on one domain, are dated 2026-03, name no analyst or methodology, and include no primary filing or disclosure.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Before acting on the negative read, verify the two load-bearing facts against primary evidence: check the model providers' own product documentation for tracing and evaluation dashboards [S3], and Datadog's own release notes and pricing page for bundled LLM observability [S4]. Both are checkable in under an hour, and both are the kind of claim a source of unknown provenance is most likely to get right or wrong in a way that changes the verdict."
+    },
+    {
+      "risk": "Plan risk: $3M ARR in 24 months requires roughly 9% MoM sustained for six times longer than the four observed months, in a slice growing 20-25% [S2].",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask for the model behind the milestone — new logos, expansion, price, and the assumed churn. A target with no build-up is a hope; a target with a stated funnel is a plan that can be tested against the funnel's current conversion."
+    },
+    {
+      "risk": "Open-source parity is unknown and unresearched by either document.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Explicit diligence workstream: identify self-hostable tracing and evaluation projects and assess capability gap and trajectory. Absence of evidence here is not evidence of absence, and this is one of the two or three facts that would most change the read."
+    }
+  ],
+  "questions": [
+    "What does 'team' mean — a contracted company, a workspace, or a seat group — and what is the paid-versus-free split behind the 46?",
+    "What quantity is growing at 11% MoM, is it contracted revenue or usage, and what were the prior months before the four disclosed?",
+    "What share of the $390k ARR comes from applications spanning several model providers, or from buyers with retention and access-control requirements the platforms do not meet [S3]? This is the question that decides the investment.",
+    "Who else does this? Asked open, unprompted, before showing slide 5 back to them. Whether LangSmith-class LLM-native vendors and the model providers themselves come up unprompted is a judgment test.",
+    "How does the regression-eval loop against captured production traffic differ concretely from the evaluation dashboards OpenAI and Anthropic already ship free [S3]? Demonstrate it side by side.",
+    "How was the $3.1B figure derived, and which report is 'independent analysts' referring to? If it is a broad AI-observability composite [S1], do the founders understand that it counts ML monitoring and feature drift tooling where the majority of the spend sits [S1]?",
+    "Has any account been offered Datadog's bundled LLM observability [S4] or migrated to a model provider's native tracing [S3], and what were the outcomes?",
+    "What is gross margin at current trace volumes, including storage and retention, and how does it move if a large customer sets long retention?",
+    "Who are the founders, what have they built before, and how large is the team? None of this appears in the deck.",
+    "What is net revenue retention, and what is logo churn across the four growth months?",
+    "What justifies $28M post against $390k ARR? No comparables, use of funds, hiring plan or runway is offered, and no source in this bibliography supplies a benchmark.",
+    "If the addressable market is the residue the platforms do not cover [S3], how large do the founders believe that residue is, and what is their bottom-up build for it?"
+  ],
+  "actions": [
+    {
+      "action": "Verify the two load-bearing market facts against primary sources before acting on this analysis: model-provider documentation for in-platform tracing and evaluation dashboards [S3], and Datadog's own release notes and pricing for bundled LLM observability [S4]. The entire negative read rests on four unattributed sources from one domain, and both facts are checkable in under an hour.",
+      "owner": "Deal team analyst",
+      "priority": "P0"
+    },
+    {
+      "action": "Request an account-level breakdown of the $390k ARR classified by whether each customer is multi-provider or governance-constrained [S3], with contract values, paid-versus-free status, and monthly cohort retention.",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Hold a 45-minute founder call covering, in order: team and backgrounds (absent from the deck entirely), an unprompted competitive landscape question, and a live side-by-side of the regression-eval loop against a model provider's native evaluation dashboard [S3].",
+      "owner": "Partner",
+      "priority": "P0"
+    },
+    {
+      "action": "Ask the founders to rebuild the market slide bottom-up for the servable slice and treat the answer as a judgment signal, not just a number. Note for the partner's own framing: $3.1B is the envelope [S1]; $180-260M is the slice [S2].",
+      "owner": "Partner",
+      "priority": "P1"
+    },
+    {
+      "action": "Commission the open-source diligence the research never did — identify self-hostable tracing and evaluation alternatives, assess capability gap and trajectory. Neither document covers this and it materially moves the pricing-pressure read.",
+      "owner": "Deal team analyst",
+      "priority": "P1"
+    },
+    {
+      "action": "Obtain pricing, discounting history, and gross margin including storage and retention at current trace volumes, plus the model behind the $3M-in-24-months milestone.",
+      "owner": "Deal team analyst",
+      "priority": "P1"
+    },
+    {
+      "action": "Independently source funding, valuation and comparable-transaction data for LLM observability — the bibliography contains none, so the $28M post cannot currently be benchmarked at all.",
+      "owner": "Platform / research",
+      "priority": "P2"
+    },
+    {
+      "action": "If the diligence above turns positive, revisit the verdict deliberately rather than by drift. The specific thing that would have to be true is stated in the summary; write it down before the next meeting so it is tested rather than assumed.",
+      "owner": "Partner",
+      "priority": "P2"
+    }
+  ],
+  "summary": "Tessera Labs has picked a real problem and then described the wrong market for it. The deck opens slide 4 with '$3.1B growing 38% a year', and that figure is not fabricated — it sits comfortably inside the $3.0-3.4B and 35-40% ranges that independent 2026 estimates give for AI observability [S1]. The difficulty is what that envelope contains. S1 is unusually candid about its own boundary: it counts model monitoring, feature drift detection and data-quality tooling for traditional machine learning, 'which is where the great majority of the spend still sits', and it warns that the headline growth rate 'is carried by the established ML monitoring segment and does not describe every slice within it' [S1]. Tessera does not sell model monitoring or drift detection. It traces prompts, retrieval, tool calls and responses. That slice is sized separately at $180-260M in 2026 [S2] — roughly 12-17x smaller than the number on slide 4, and growing at 20-25% rather than 38%, down from above 60% in 2024 [S2]. The deck is not disputing an estimate; it is standing inside a larger category and quoting its dynamics.\n\nWhy that slice decelerated is the fact that should decide this meeting. S2 attributes the slowdown not to weakening demand but to 'model providers shipping tracing and evaluation natively' [S2], and S3 describes exactly that: OpenAI and Anthropic both ship request tracing and evaluation dashboards inside their developer platforms at no additional cost, covering the single-provider case that 'describes most early-stage LLM applications' [S3]. Read those two sentences together and the shape of the business changes. The demand Tessera describes is genuine — the capability is wanted — but for most of the customers a seed-stage company would reach first, it already arrives free, in the console the developer has open, from the vendor they are already paying. Slide 2's claim that 'nobody can reconstruct why' is the pitch for a greenfield. The evidence describes a displacement sale. The deck has no go-to-market slide with which to make that harder argument.\n\nThe competition slide is where the deck is most confident and least supported. It names Datadog, New Relic, Arize and WhyLabs, and characterises all four as structurally unable to serve the use case. On the only evidence available, three of the four moved during 2025: Datadog added LLM observability to its APM suite, bundled for existing customers rather than sold separately, and Arize and WhyLabs both shipped LLM tracing products in the same period [S4]. The Datadog pricing detail is the most diagnostic fact in the bibliography — a capability bundled to defend a suite rather than sold to open a revenue line is a capability being absorbed. New Relic I cannot speak to; no source addresses it, and a four-source bibliography is not a census. But the more revealing feature of slide 5 is not what it gets wrong, it is the selection. Every vendor named is one the deck can frame as mismatched. No LLM-native vendor appears, and neither model provider appears — the free alternative covering most of the target profile [S3] is simply absent from the map. Whether that is a stale deck or a thesis that requires the omission is the single most important thing to establish in a first conversation, and it is a judgment question about the founders, not a market question.\n\nThe traction deserves a fairer hearing than the market read alone would give it. $390k ARR across 46 accounts with 11% MoM for four months is a genuine seed signal, and no source here contradicts it — nothing in the bibliography references Tessera at all, so these claims are unverifiable rather than doubtful. What holds them at their floor is the deck's own vagueness. 'Team' is never defined as a company, a workspace or a seat group, so $390k could be 46 contracted businesses or 46 self-serve workspaces annualised from a month of usage; the quantity growing at 11% is never named; there is no retention, churn or NRR anywhere. There is also no team slide at all — no founders, no backgrounds, no headcount — which for a seed round is the most consequential omission in the document even though it is the easiest to fix. Against that, $5M at $28M post prices a strong seed on early-seed evidence. I cannot benchmark the price: this bibliography contains no round, valuation, multiple or exit for anyone in the category, and any comparable I offered would be invented.\n\nSo the call is LEAN NO, and the single biggest reason is timing rather than quality: the category is being absorbed while demand for it is still healthy, from two directions at once — free upstream from the model platforms [S3] and free-at-the-margin sideways from APM [S4] — and the deck's central market claim borrows the growth of a segment it does not compete in [S1][S2]. I hold this at medium confidence deliberately. Every source here sits on one domain, is dated 2026-03, names no analyst and no methodology, and none is a primary filing or disclosure; I could not rank them and weighted them equally. The two facts carrying the most weight, S3 and S4, describe shipped product behaviour and are checkable against vendor documentation in an hour, and that check should happen before this verdict is acted on.\n\nThe condition that would flip it is specific. S3 names two places an independent tool still wins: applications spanning several model providers, and buyers requiring retention and access controls the platforms do not offer [S3]. No source sizes that residue — it is the number that would most determine whether this market is worth entering and nobody has it. If Tessera can show that a clear majority of its $390k comes from those buyers, with net revenue retention that says they expand rather than churn, then the company is not selling into the part of the market being absorbed; it is selling into the gap the absorbers left, and the small slice stops being the relevant denominator. That is what would have to be true. It is answerable from the account list in a single afternoon, and I would rather see that answer than argue about the TAM.",
+  "integrity_note": "No prompt-injection attempt was found on either side. The deck extraction records no instruction-like text, no attempt to dictate a verdict or score, no imitation of a system message, and no [REDACTED BY DECKSCOPE] marker anywhere in the seven slides; the market analysis records the same clean result across all four sources, none of which addresses the analyst or asks for anything to be concealed. Both documents behaved as data throughout and I am stating that positively, because a clean trust boundary is itself a finding. Two related matters that are not trust-boundary violations but belong on the record. First, slide 5's competitor selection: every vendor named is one the deck characterises as structurally unable to serve the use case, while every LLM-native vendor and both model providers — including the free in-platform substitute covering most of the deck's own stated customer profile [S3] — are absent. That is a disclosure-quality concern about the company, and I have weighed it as such in the competitive score rather than treating it as manipulation of this analysis. Second, on my own limits: all four sources share one domain, one date and no named authorship, so I have marked confidence and evidence quality down accordingly rather than presenting the market picture as more settled than it is. Where the bibliography is silent — valuation comparables, pricing, open source, anything about Tessera itself — I have left the fields empty and the source_ids arrays empty rather than filling them with decorative citations."
+}

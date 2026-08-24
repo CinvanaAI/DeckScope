@@ -8,14 +8,14 @@ version = "0.0.0.dev0"   # unreleased; see README
 description = "An agentic framework that analyzes a pitch deck, researches its market, and compares the two."
 readme = "README.md"
 requires-python = ">=3.9"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "CinvanaAI" }]
 keywords = ["pitch deck", "venture capital", "market research", "agents", "llm",
             "due diligence", "prompt injection", "mcp"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Financial and Insurance Industry",
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Topic :: Office/Business :: Financial :: Investment",
   "Topic :: Text Processing :: Markup",

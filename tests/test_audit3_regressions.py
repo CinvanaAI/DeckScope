@@ -797,15 +797,25 @@ def test_the_acceptance_script_refuses_to_run_inside_a_checkout():
     assert "only meaningful outside a source checkout" in text
     assert "exit 2" in text
 
-    # Executable half: only where a POSIX shell actually exists.
+    # Executable half: only where a POSIX shell can actually run this script.
+    #
+    # Checking `shutil.which("bash")` was not enough. Windows runners have a
+    # `bash` on PATH — Git Bash, or the WSL stub — which fails before reaching
+    # the guard, so the test asserted exit 2 against a shell that had exited 1
+    # for an unrelated reason. Probe the shell with something trivial first, and
+    # only trust its exit codes if it passes.
     if not shutil.which("bash"):
         return
     try:
-        proc = subprocess.run(["bash", str(script), sys.executable],
-                              cwd=str(root), capture_output=True, text=True)
-    except OSError:
+        probe = subprocess.run(["bash", "-c", "exit 7"],
+                               capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
         return
-    assert proc.returncode == 2
+    if probe.returncode != 7:
+        return                              # not a shell whose exit codes mean anything
+    proc = subprocess.run(["bash", str(script), sys.executable],
+                          cwd=str(root), capture_output=True, text=True)
+    assert proc.returncode == 2, f"got {proc.returncode}: {proc.stdout[-300:]}"
     assert "only meaningful outside a source checkout" in proc.stdout
 
 
@@ -836,5 +846,6 @@ def test_ci_installs_the_built_wheel_somewhere_with_no_source():
     ci = (Path(__file__).resolve().parent.parent
           / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
     assert "python -m build --wheel" in ci
-    assert "/tmp/elsewhere" in ci, "the installed CLI must run outside the checkout"
+    assert "/tmp/elsewhere" in ci, (  # posix-ci-only: asserts on a Linux job
+        "the installed CLI must run outside the checkout")
     assert "--trials 0" in ci, "CI must prove a vacuous run fails"

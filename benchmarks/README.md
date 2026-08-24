@@ -1,75 +1,83 @@
 # Benchmark artifacts
 
 Every real-model number quoted in the README and in `docs/EVALUATION.md` was produced
-by one of the runs in this directory, and everything needed to check it is here: the
-exact prompt each agent was given, the exact answer it returned, the hash of both, the
+by the run in this directory, and everything needed to check it is here: the exact
+prompt each answerer was given, the exact answer it returned, the hash of both, the
 scores, and the per-case output fingerprints.
 
-This exists because a benchmark result with no retained artifacts is a claim, not
-evidence. The numbers may well be right; without the prompts and answers nobody can
-tell, and a project whose whole subject is traceable evidence should not ask to be taken
-on trust about its own measurements.
+**They replay.** Not "the manifest agrees with itself" — the committed answers are fed
+back through the evaluator and must reproduce the recorded scores and fingerprints:
+
+```bash
+python scripts/replay_benchmark.py --all
+```
+
+That calls no model, runs offline, and runs in CI on every push. If a change to
+DeckScope alters a prompt, the replay misses the cache and fails, which is the point:
+the retained numbers stop describing the code the moment the code moves.
+
+## Why the first bundle did not replay
+
+Worth recording, because the failure was subtle and the fix is structural.
+
+The first attempt hashed each prompt to name its file, then scrubbed machine paths out
+of the prompt text *afterwards*. Seventeen of thirty-four ids therefore no longer
+equalled the hash of the file beside them, and the pipeline cases — the ones whose
+prompts contained the deck's path — could not replay at all. The manifest was
+internally consistent the whole time, which is precisely why the check that existed
+(`does the file match its recorded hash?`) passed while the property that mattered
+(`is this the prompt the pipeline generates?`) was false.
+
+The fix is not to scrub more carefully. It is that **machine-specific paths never
+enter a prompt**: the deck agent sends the file's name rather than its path, and the
+manual provider canonicalizes any that slip through *before* hashing, writing or
+sending. Prompts are portable by construction, so nothing has to be edited after the
+fact — and `scripts/replay_benchmark.py` checks `id == sha256(prompt)[:16]` directly
+rather than trusting the manifest.
 
 ## What is here
 
 ```
-benchmarks/
-  2026-08-original-five/     the five original cases, pipeline vs baseline
-  2026-08-anchoring-four/    the four anchoring cases, pipeline vs baseline
-    prompts/<id>.txt         exactly what was sent, byte for byte
-    answers/<id>.json        exactly what came back
-    result.json              scores, token counts, verdicts, fingerprints, and a
-                             sha256 of every prompt and answer above
+benchmarks/2026-08-nine-cases/
+  prompts/<id>.txt     exactly what was sent, byte for byte
+  answers/<id>.json    exactly what came back
+  result.json          scores, token counts, verdicts, fingerprints, generation
+                       conditions, and a sha256 of every prompt and answer
 ```
 
-The `<id>` is the first 16 hex characters of the sha256 of the prompt text, which is
-also how the `manual` provider caches answers. So an id in `result.json` can be
-recomputed from the prompt file, and a prompt file cannot be silently edited without the
-manifest disagreeing with it.
+`<id>` is the first 16 hex characters of the sha256 of the prompt text, which is also
+how the `manual` provider keys its answer cache.
 
 ## Results
 
-| run | mode | checks | input tokens |
-|---|---|:--:|:--:|
-| original five | baseline | 43 / 43 | 10,709 |
-| original five | pipeline | 43 / 43 | 64,515 |
-| anchoring four | baseline | 52 / 52 | 9,901 |
-| anchoring four | pipeline | 52 / 52 | 87,121 |
+Nine cases, both modes, 36 exchanges.
 
-Both modes pass everything in both runs. The pipeline spends six to nine times the input
-tokens to draw level. See [docs/EVALUATION.md](../docs/EVALUATION.md) for what that does
-and does not establish.
+| mode | checks | input tokens |
+|---|:--:|:--:|
+| baseline (one prompt) | **95 / 95** | 20,610 |
+| pipeline (three agents) | **94 / 95** | 195,310 |
 
-## Reproducing
+The pipeline's one failure is worth reading rather than rounding away. On
+`anchored_category` it named **LangSmith** — a real product in the category, which
+appears in neither the deck nor the frozen corpus. Every prompt says: *never invent a
+number, a date, a company, or a URL.* This is world knowledge leaking past the
+evidence boundary, and it is the failure mode this project exists to catch. The
+baseline, working from the same corpus, did not do it.
 
-Answers are cached by prompt content, so re-running scores the retained answers without
-calling any model. From a checkout:
-
-```bash
-export DECKSCOPE_MANUAL_DIR=$PWD/benchmarks/2026-08-anchoring-four
-export DECKSCOPE_MANUAL_INTERACTIVE=0
-deckscope eval --provider manual --mode pipeline baseline \
-  --only anchored_category anchored_denominator anchored_comparison_set frame_holds \
-  --save rescored.json
-```
-
-The spool expects `asked/<id>.prompt.txt` and `answers/<id>.txt`; the directories here
-are named `prompts/` and `answers/*.json` for legibility, so copy or symlink them into
-that layout first. A prompt that does not match byte-for-byte will miss the cache and
-block waiting for a new answer — which is the point. It means the pipeline changed, and
-the old numbers no longer describe it.
+So on the only run where either mode failed anything, the mode that failed was the
+expensive one, at 9.5× the input tokens.
 
 ## Caveats that belong with these numbers
 
 - **The cases are one author's**, and that author's bias ran toward the pipeline
-  winning. A tie is therefore the informative direction.
-- **The original five were answered by the same agent that operated the harness.** That
-  is not a blind evaluation and is the likeliest reason for a clean sweep. The anchoring
-  four were answered by separate agents given only their own prompt file, which fixes the
-  answering half of the problem and not the authoring half.
+  winning. A tie — or a loss — is therefore the informative direction.
+- **Answering was independent; authoring was not.** Each exchange was answered by a
+  separate agent given only its own prompt file. The cases and their planted answers
+  were still written by the operator of the harness.
 - **Token counts are character-based estimates** from the manual provider, consistent
   across modes but not billing figures.
 - **Nine constructed cases are a smoke test, not a benchmark.** Harder cases from a
   second author remain the most valuable contribution this project could receive.
-- **Absolute paths were scrubbed** from the prompt files before they were committed;
-  nothing else in them was altered, and the hashes are of the scrubbed text.
+- **No paths were scrubbed after the fact.** The bundle generator refuses to write a
+  prompt containing a machine path, so if one ever appears the pipeline gets fixed
+  rather than the artifact.

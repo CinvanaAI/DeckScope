@@ -1,0 +1,305 @@
+{
+  "market_definition": {
+    "category": "Observability tooling for AI systems, which the provided research splits into two very different things: (a) the broad 'AI observability' envelope — model monitoring, feature drift detection and data-quality tooling for traditional machine learning [S1]; and (b) tracing and evaluation tooling for LLM applications specifically [S2]. A product that traces prompt, retrieval, tool calls and response and runs regression evals against captured production traffic sits in (b), not (a).",
+    "boundary_notes": "The boundary is the single most consequential fact in this market and the sources are explicit about it. S1 states the $3.0-3.4B figure 'counts model monitoring, feature drift detection and data-quality tooling for traditional machine learning, which is where the great majority of the spend still sits' [S1]. S1 further cautions that 'the headline growth rate is carried by the established ML monitoring segment and does not describe every slice within it' [S1]. S2 sizes the LLM-application tracing and evaluation slice separately at $180-260M in 2026 [S2] — roughly 6-8% of the broad envelope (arithmetic mine, from the S1 and S2 ranges). So the broad category and the servable slice differ by more than an order of magnitude, and they are moving in opposite directions: the envelope grows 35-40% [S1] while the slice decelerated to 20-25% [S2]. A second boundary question the research does not settle: whether 'AI observability' is a durable category at all or a temporary label for capability that lands inside APM suites [S4] and model-provider developer platforms [S3].",
+    "how_analysts_segment_it": [
+      "Model monitoring / feature drift detection / data-quality tooling for traditional ML — the majority of current spend inside the broad envelope [S1]",
+      "Tracing and evaluation tooling for LLM applications — sized separately at $180-260M in 2026 [S2]",
+      "By delivery vehicle rather than capability: native-in-model-platform (free, single-provider) [S3] versus bundled-into-APM (Datadog, sold to existing customers) [S4] versus independent tool (multi-provider, retention/access-control requirements) [S3]",
+      "The provided material offers no geographic, vertical or company-size segmentation; that cut could not be verified"
+    ]
+  },
+  "sizing": {
+    "tam_estimates": [
+      {
+        "value": "$3.0-3.4B",
+        "year": "2026",
+        "source": "AI observability sizing, independent composite [S1]",
+        "methodology": "Described only as 'independent 2026 estimates' composited; no analyst house, no report name, no bottom-up or top-down method disclosed. The stated scope is broad and includes model monitoring, feature drift detection and data-quality tooling for traditional ML [S1].",
+        "url": "https://research.example.org/ai-observability-sizing",
+        "source_ids": ["S1"]
+      },
+      {
+        "value": "$180-260M",
+        "year": "2026",
+        "source": "The LLM application tracing slice, sized separately [S2]",
+        "methodology": "Not disclosed. S2 states only that tracing and evaluation tooling for LLM applications 'specifically' is estimated at this figure [S2]. No basis, sample or vendor-revenue roll-up is given.",
+        "url": "https://research.example.org/llm-tracing-slice",
+        "source_ids": ["S2"]
+      }
+    ],
+    "consensus_view": "There is no single number for this market, and reporting one would be an error. The defensible reading of the two available sources: the broad AI observability envelope is $3.0-3.4B in 2026 [S1], but the slice a prompt-and-trace tool for LLM applications can actually serve is $180-260M in 2026 [S2] — and even that slice is not fully addressable, because S3 states model providers cover the single-provider case free of charge, which 'describes most early-stage LLM applications' [S3]. The servable share is therefore the multi-provider case plus applications needing retention and access controls the platforms do not offer [S3]; the research does not quantify how large that residue is.",
+    "cagr_range": "20-40%, depending entirely on which boundary is drawn. Broad envelope: 35-40% annually [S1]. LLM tracing slice: above 60% in 2024, decelerating to 20-25% through 2025 and 2026 [S2]. These are not two estimates of one number — they measure different things, and S1 itself warns that the headline rate 'is carried by the established ML monitoring segment and does not describe every slice within it' [S1].",
+    "sizing_confidence": "low",
+    "why_estimates_diverge": "The divergence is definitional, not methodological disagreement. S1 and S2 do not contradict each other; S2 is a subset of S1, and S1 explicitly flags that its own envelope contains slices with different dynamics [S1]. Averaging them would produce a meaningless number. Separately, confidence is low for a reason that has nothing to do with the divergence: all four sources are undated-methodology composites on a single research domain (research.example.org), none is a regulator filing, a public-company disclosure, or an attributed analyst report, and none names the analysts behind it. S1 is self-described as a 'composite'. Every figure here rests on a source of unverifiable provenance, and I weight all four equally because I have no basis to rank them against each other."
+  },
+  "demand_signals": {
+    "tailwinds": [
+      "The underlying capability is not in question — S2 attributes the slice's growth deceleration 'to model providers shipping tracing and evaluation natively rather than to weakening demand for the capability itself' [S2]. Demand for the function is intact; the willingness to pay a third party for it is what changed.",
+      "A structural gap independent tools retain: applications spanning several model providers, and applications requiring retention and access controls the model platforms do not offer [S3]. This is the clearest sourced demand pocket for a non-platform vendor.",
+      "The broad envelope is still growing 35-40% annually [S1], which sustains buyer attention and budget lines labelled 'AI observability' even where the spend lands with ML monitoring vendors.",
+      "Incumbent entry is itself a demand signal: Datadog would not have added LLM observability to APM [S4] and Arize and WhyLabs would not have shipped LLM tracing products during 2025 [S4] if buyers were not asking for the capability."
+    ],
+    "headwinds": [
+      "The primary substitute is free. OpenAI and Anthropic ship request tracing and evaluation dashboards inside their developer platforms at no additional cost [S3]. A free in-path alternative from the vendor the customer is already paying caps what anyone else can charge.",
+      "That free alternative covers the majority of the likely early customer base: S3 states the single-provider case 'describes most early-stage LLM applications' [S3] — which is precisely the profile of a young company's first customers.",
+      "Growth in the servable slice has more than halved in two years, from above 60% in 2024 to 20-25% through 2025 and 2026 [S2].",
+      "Datadog's LLM observability is 'bundled for existing customers rather than sold separately' [S4] — a zero-marginal-price offer to a base that already has the buyer relationship and the agent deployed.",
+      "Two ML-monitoring incumbents with existing enterprise footprints (Arize, WhyLabs) shipped LLM tracing during 2025 [S4], closing the lineage gap from the other direction.",
+      "Nothing in the research establishes a switching cost, data network effect or regulatory requirement that would hold a customer to an independent tool once a bundled one is adequate."
+    ],
+    "buyer_budget_reality": "Not directly evidenced — no source in the provided material states a budget, a contract size, a price point or a procurement pattern. What can be inferred (and I flag this as inference, not reading): the buyer's realistic alternatives are $0 from the model provider they already pay [S3] and $0 incremental from the APM vendor they already pay [S4], which means an independent tool has to be justified against free rather than against a competing invoice. The sourced conditions under which a buyer would still pay are multi-provider applications and retention/access-control requirements the platforms do not meet [S3]. Whether such buyers constitute a budget large enough to build on is exactly what the research does not say.",
+    "adoption_stage": "early-majority"
+  },
+  "competitive_landscape": {
+    "incumbents": [
+      {
+        "name": "OpenAI (developer platform)",
+        "position": "Ships request tracing and evaluation dashboards inside its developer platform at no additional cost, covering the single-provider case that 'describes most early-stage LLM applications' [S3]. Not a competitor in the conventional sense — it is the supplier of the thing being observed, distributing the observability for free in the same console the developer already has open. This is the kind of incumbent that would never appear on a startup competitive matrix and is the most important entry on this list.",
+        "funding_or_scale": null,
+        "threat_level": "high",
+        "url": "https://research.example.org/native-tracing",
+        "source_ids": ["S3"]
+      },
+      {
+        "name": "Anthropic (developer platform)",
+        "position": "Same posture as OpenAI: request tracing and evaluation dashboards shipped in-platform at no additional cost, covering the single-provider case [S3].",
+        "funding_or_scale": null,
+        "threat_level": "high",
+        "url": "https://research.example.org/native-tracing",
+        "source_ids": ["S3"]
+      },
+      {
+        "name": "Datadog",
+        "position": "Added LLM observability to its APM suite during 2025, 'bundled for existing customers rather than sold separately' [S4]. Owns the general application-monitoring relationship, the agent, the data pipeline and the existing contract; the LLM trace is one more span type in a system the customer already runs.",
+        "funding_or_scale": "Not stated in the provided material [no source]",
+        "threat_level": "high",
+        "url": "https://research.example.org/ml-monitoring-vendors",
+        "source_ids": ["S4"]
+      }
+    ],
+    "challengers": [
+      {
+        "name": "Arize",
+        "position": "From the ML monitoring lineage; shipped an LLM tracing product during 2025 [S4]. The research does not describe its LLM tracing product's depth, so I cannot verify whether the product is drift-oriented or genuinely prompt-native — only that it exists and shipped in 2025 [S4].",
+        "funding_or_scale": "Not stated in the provided material [no source]",
+        "threat_level": "high",
+        "url": "https://research.example.org/ml-monitoring-vendors",
+        "source_ids": ["S4"]
+      },
+      {
+        "name": "WhyLabs",
+        "position": "From the ML monitoring lineage; shipped an LLM tracing product during 2025 [S4]. Same verification limit as Arize.",
+        "funding_or_scale": "Not stated in the provided material [no source]",
+        "threat_level": "medium",
+        "url": "https://research.example.org/ml-monitoring-vendors",
+        "source_ids": ["S4"]
+      }
+    ],
+    "adjacent_threats": [
+      "APM and general application-monitoring suites beyond Datadog — the provided research names only Datadog [S4], but the mechanism it describes (LLM observability as a bundled addition to an existing APM suite) is not Datadog-specific. I could not verify any other APM vendor's position from the material given.",
+      "Model-provider developer platforms as a whole [S3] — they sit upstream of every request and can observe it at zero marginal cost.",
+      "ML monitoring / feature drift / data-quality vendors moving downstream into LLM workloads, which S4 documents two of doing in a single year [S4].",
+      "Not verifiable from this material: cloud hyperscalers, CI/CD and evaluation-harness vendors, and agent frameworks that could ship tracing natively. Their absence from this list reflects the research, not the market."
+    ],
+    "concentration": "consolidating",
+    "differentiation_axes": [
+      "Multi-provider coverage — the explicitly sourced advantage independent tools retain when an application spans several model providers [S3]",
+      "Retention and access controls the model platforms do not offer [S3] — the second explicitly sourced advantage, and the one that points at regulated or enterprise buyers",
+      "Lineage and data model: prompt-native tracing versus feature-drift monitoring retrofitted to LLM workloads — the distinction S4 implies by noting Arize and WhyLabs come from ML monitoring and 'shipped LLM tracing products during 2025' [S4], though the research does not assess how well the retrofit worked",
+      "Bundling and incumbency: whether the capability arrives free inside something the customer already buys [S3][S4] rather than being sold on its merits",
+      "Evaluation depth — regression evals against captured production traffic. The research confirms model providers ship 'evaluation dashboards' [S3] but does not describe their depth, so I cannot say whether this is a real axis or a closed one."
+    ],
+    "saturation": {
+      "funded_competitors_known": 3,
+      "new_entrants_trend": "unknown",
+      "pricing_direction": "compressing",
+      "consolidation_activity": "No acquisitions in this category appear anywhere in the provided material. What S4 documents is the other route to consolidation: incumbents building the capability in-house and bundling it (Datadog into APM; Arize and WhyLabs extending from ML monitoring) rather than buying it [S4]. Absence of M&A evidence here is a limitation of four sources, not proof that none occurred.",
+      "lifecycle_stage": "maturing",
+      "room_for_a_new_entrant": "a defensible niche remains",
+      "why": "The count of three is the number of funded commercial players the provided research actually names as having LLM tracing in market — Arize, WhyLabs and Datadog [S4] — excluding OpenAI and Anthropic, which compete but are not funded entrants in this category [S3]. It is a floor set by a four-source bibliography, not a census; treating it as the market's true population would be wrong. The saturation read does not rest on that count. It rests on three harder facts: growth in the servable slice fell from above 60% in 2024 to 20-25% through 2025-2026 [S2]; the deceleration is attributed specifically to model providers shipping the capability natively, not to demand weakening [S2]; and within a single year (2025) three established vendors from two different lineages shipped competing products, one of them bundled at no incremental price [S3][S4]. That is the signature of a maturing category, not an open wedge — a capability being absorbed while demand for it is still healthy. Pricing direction is marked compressing as an inference, not a reading: no source states a price, but a free in-platform substitute [S3] and a free-to-existing-customers bundle [S4] cap the ceiling by construction. New-entrant trend is genuinely unknown — the material contains no funding data, no company formation data and no seed-round evidence in either direction, and I will not infer 'slowing' from silence. The niche that remains is precisely the one S3 names: multi-provider applications and buyers needing retention and access controls the platforms do not offer [S3]. It is real and sourced. It is also narrow and, critically, unsized by any source available to me."
+    }
+  },
+  "absorption_risk": {
+    "verdict": "feature",
+    "horizon": "already happening",
+    "confidence": "medium",
+    "likely_absorbers": [
+      {
+        "name": "OpenAI and Anthropic (model-provider developer platforms)",
+        "why_them": "They sit in the request path already. Every prompt, response and latency figure passes through their infrastructure before any third-party SDK sees it, so tracing is a byproduct of serving the request rather than a product they must build a pipeline for. They also own the developer account, the billing relationship and the console the developer already has open.",
+        "mechanism": "model-vendor native feature",
+        "signals_already_visible": [
+          "Both 'ship request tracing and evaluation dashboards inside their developer platforms at no additional cost' — shipped, not announced [S3]",
+          "Coverage explicitly extends to 'the single-provider case that describes most early-stage LLM applications' [S3] — i.e. the free feature already covers the majority of the likely customer profile",
+          "S2 attributes the entire deceleration of the independent slice, from above 60% to 20-25%, to exactly this dynamic [S2] — the absorption is already showing up in the market's growth rate"
+        ],
+        "source_ids": ["S2", "S3"]
+      },
+      {
+        "name": "Datadog",
+        "why_them": "Owns general application monitoring: the agent on the host, the trace pipeline, the retention tier, the dashboards, the alerting and the enterprise contract. An LLM span is a new span type inside a system the customer already runs and already pays for, which makes this the cheapest possible extension for them and the hardest to compete with on price.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "Added LLM observability to its APM suite during 2025 [S4]",
+          "'Bundled for existing customers rather than sold separately' [S4] — the pricing decision is the strongest signal here: it means the feature is being used to defend the suite, not to open a revenue line, which is the classic absorption posture"
+        ],
+        "source_ids": ["S4"]
+      },
+      {
+        "name": "Arize and WhyLabs",
+        "why_them": "They already own the AI-monitoring buyer inside enterprises that ran ML before LLMs, along with the data-quality and drift surface that sits next to it. Extending an existing AI observability contract to cover LLM workloads is a smaller ask than adding a new vendor.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "Both 'shipped LLM tracing products during 2025' [S4]"
+        ],
+        "source_ids": ["S4"]
+      }
+    ],
+    "precedents": [
+      {
+        "category": "The provided research contains no historical precedent cases",
+        "absorbed_by": "n/a",
+        "how_long_it_took": "n/a",
+        "why_it_is_comparable": "I was asked to cite precedents only where the mechanism genuinely matches, and to cite by source ID. No source in this bibliography discusses any prior absorbed category, so any precedent I named — however apt the analogy might feel — would rest on no source and could not be cited. I am recording that as a gap rather than importing an uncited comparison. The absorption case above stands on direct evidence from S2, S3 and S4 and does not need an analogy to carry it.",
+        "source_ids": []
+      }
+    ],
+    "what_would_prevent_it": [
+      "Multi-provider applications — S3 states independent tools retain an advantage where an application spans several model providers [S3]. No single model vendor has an incentive to trace a competitor's calls well, which makes this the one structural gap the model-provider mechanism cannot close. It does not, however, protect against Datadog, which is provider-neutral by construction [S4].",
+      "Retention and access controls the model platforms do not offer [S3] — a compliance and data-governance surface. This is the more durable of the two, because it involves obligations a platform must design for rather than a feature it can ship. But S4's bundle already competes here, since APM suites carry retention tiers and access control natively.",
+      "Workflow depth beyond the trace itself — regression evaluation against captured production traffic as a development loop rather than a dashboard. Whether this is genuinely deeper than what S3 calls the platforms' 'evaluation dashboards' [S3] cannot be determined from the provided material; the sources do not describe either side's evaluation depth.",
+      "A buyer who will not consolidate — not evidenced anywhere in this material, in either direction."
+    ],
+    "notes": "This is the strongest-evidenced finding in the analysis and it does not require speculation. Absorption here is not a forecast; it is a documented event with a measurable consequence. Two of the three largest model providers ship the capability free [S3], the leading APM vendor ships it bundled [S4], two ML monitoring vendors ship it as an extension [S4] — all within roughly one year — and the independent slice's growth rate fell by more than half over the same period, with a source attributing the fall to precisely this cause [S2]. Confidence is held at medium rather than high only because the entire case rests on four sources of unverifiable provenance from a single domain, with no primary filing or disclosure among them. The residual for an independent vendor is real but narrow and unsized: multi-provider coverage and retention/access controls [S3]. A company in this position is not selling into an open category; it is selling into the gap that the absorbers have left, and the value of the business is bounded by how large and how durable that gap is — a question no source here answers."
+  },
+  "open_source_landscape": {
+    "applicable": true,
+    "projects": [],
+    "closest_project": null,
+    "capability_gap": null,
+    "gap_trend": null,
+    "evidence_for_the_gap": "There is no evidence, because the provided research contains none. Not one of the four sources mentions an open-source project, a repository, a license, a foundation, a star count or a download figure. I am setting `applicable` to true rather than false because doing otherwise would assert something the material does not support — that this category has no meaningful open-source dimension — and that assertion would be at least as unfounded as inventing a project. The honest position is that the OSS dimension of this market was not researched. `capability_gap` and `gap_trend` are null for the same reason: the enums offer no 'unknown' value, and picking one would manufacture an assessment out of nothing. Naming specific projects from general knowledge would violate the instruction to cite every claim by source ID and to state no figure I did not see in the material, so I have named none. This is a significant research gap, because for a category under active absorption the open-source position is one of the two or three facts that would most change the read.",
+    "what_commercial_still_provides": [
+      {
+        "capability": "Multi-provider trace coverage across several model vendors in one application",
+        "type": "integrations",
+        "durable": false,
+        "why": "Sourced directly: S3 states independent tools retain an advantage where an application spans several model providers [S3]. But it is not durable against a platform vendor — Datadog is provider-neutral by design and already bundles LLM observability into APM [S4], so a neutral incumbent replicates this cheaply. It is durable only against the model providers themselves, who lack the incentive to instrument competitors well."
+      },
+      {
+        "capability": "Retention and access controls the model platforms do not offer",
+        "type": "compliance",
+        "durable": false,
+        "why": "Sourced: S3 names this as the second advantage independent tools retain [S3]. It is more durable than the first against model vendors, since retention policy and access control are governance commitments rather than features. But an APM suite already ships retention tiers and role-based access as core infrastructure [S4], so a platform vendor replicates it at close to zero cost. Durable against the upstream absorber, not against the sideways one."
+      },
+      {
+        "capability": "Evaluation depth — regression evaluation run against captured production traffic",
+        "type": "workflow-depth",
+        "durable": false,
+        "why": "Marked not durable with low conviction, and I want to be explicit that this is a judgement made against missing evidence rather than from it. S3 confirms model providers ship 'evaluation dashboards' [S3] but describes neither side's depth. If the commercial offering's evaluation loop is materially deeper than a dashboard, this would be the most defensible remaining ground in the whole category. The research does not let me establish that, and a capability that cannot be shown to exceed a free alternative should not be scored as durable by default."
+      }
+    ],
+    "pricing_pressure": "significant",
+    "company_relationship_to_oss": "unclear",
+    "strip_mining_risk": null,
+    "notes": "One important qualification on `pricing_pressure`. That field is defined around a credible free alternative capping what anyone can charge, and such an alternative demonstrably exists here [S3][S4] — but it is not an open-source one. It is proprietary software given away by vendors who monetize elsewhere: model providers bundling tracing into the inference relationship [S3] and Datadog bundling it into an APM contract [S4]. Economically the effect on price is the same as commoditization by open source, and arguably worse for an independent vendor: an open-source project must still be operated by the customer, which leaves an operational gap to sell into, whereas a hosted free feature inside a platform the customer already uses leaves no such gap. I have marked the pressure significant rather than severe because S3 identifies two conditions — multi-provider spans, and retention/access controls — under which buyers still have a reason to pay [S3]. Whether an actual open-source project also competes here is unknown and unresearched, and if one exists at or near parity the pressure would be worse than this rating."
+  },
+  "adjacent_markets": [
+    {
+      "market": "ML monitoring, feature drift detection and data-quality tooling for traditional machine learning",
+      "relationship": "converging with this one",
+      "size_note": "Not sized on its own by any source, but S1 states it holds 'the great majority' of the spend inside the $3.0-3.4B envelope and that the envelope's 35-40% growth 'is carried by' this segment [S1].",
+      "why_it_matters": "Convergence is running toward the LLM slice, not away from it: Arize and WhyLabs shipped LLM tracing products during 2025 [S4], bringing established AI-monitoring buyer relationships with them. This is where most of the category's money currently sits [S1], so it is simultaneously the largest expansion opportunity for an LLM-native vendor and the direction the best-funded competition is arriving from.",
+      "source_ids": ["S1", "S4"]
+    },
+    {
+      "market": "APM / general application monitoring",
+      "relationship": "converging with this one",
+      "size_note": "Not sized in the provided material [no source]",
+      "why_it_matters": "Datadog added LLM observability to its APM suite in 2025 and bundled it for existing customers rather than selling it separately [S4]. LLM tracing is being defined as a span type inside application monitoring rather than as a separate purchase, which is the mechanism by which a category stops being a category.",
+      "source_ids": ["S4"]
+    },
+    {
+      "market": "Model-provider developer platforms",
+      "relationship": "upstream",
+      "size_note": "Not sized in the provided material [no source]",
+      "why_it_matters": "Upstream in the literal sense — the request passes through them first. They already ship tracing and evaluation dashboards free [S3], which makes this both the source of the category's demand and the source of its price ceiling. Any independent vendor's addressable market is defined as the residue of what these platforms do not cover.",
+      "source_ids": ["S3"]
+    }
+  ],
+  "economics": {
+    "typical_pricing": "Not stated in any provided source. No source gives a price point, contract value, seat price, per-trace rate or discount pattern for any vendor in this category. Two structural facts about price are sourced: the model providers charge nothing additional for tracing and evaluation dashboards [S3], and Datadog's LLM observability is bundled for existing customers rather than sold separately [S4]. Both set a reference price of zero for the adjacent alternative; neither tells us what independent vendors actually charge.",
+    "typical_gross_margin": "Not stated in any provided source [no source]. Not inferable with any rigour — trace-ingestion products carry storage and retention costs that vary by orders of magnitude with data volume and retention policy, and S3's reference to retention controls [S3] suggests retention is a live variable here, but the material gives no basis for a number.",
+    "typical_cac_payback": "Not stated in any provided source [no source]. Worth noting what the sources do imply about acquisition difficulty rather than its cost: an independent vendor must displace a free in-platform default [S3] and a free-to-existing-customers bundle [S4], which raises the sales burden relative to a category sold on capability alone. That is a qualitative inference, not a payback figure.",
+    "capital_intensity": "medium"
+  },
+  "funding_environment": {
+    "recent_rounds": [],
+    "valuation_norms": "Not stated in any provided source. The bibliography contains no funding round, no valuation, no multiple and no comparable transaction for any company in this category [no source]. Any valuation benchmark I offered would be fabricated.",
+    "exit_comps": [
+      "None available. No source in the provided material references an acquisition, an IPO or any other exit in this category — and S4 documents incumbents building the capability internally rather than acquiring it [S4], which if representative would mean fewer acquirers competing for assets in this space, not more. That inference rests on a single data point and should be treated as weak."
+    ],
+    "investor_appetite": "cooling",
+    "notes": "IMPORTANT CAVEAT ON `investor_appetite`: no source in this bibliography contains any funding, valuation or investor-sentiment data whatsoever. The schema offers no 'unknown' option, so I have selected the value most consistent with the market facts I do have — growth in the servable slice more than halving [S2], free native substitutes from model providers [S3], and incumbent bundling [S4] — but this is an inference from market structure, not a reading of any investor behaviour, and it should carry no weight against actual funding data. If the next stage has access to round-level evidence, that evidence should override this field entirely. The same applies to `valuation_norms` and `exit_comps`, which are empty because the research is empty on those points."
+  },
+  "regulatory_and_structural": {
+    "factors": [
+      "Data governance over trace contents: traces of LLM applications carry prompts, retrieved documents and responses, which is why retention and access controls appear as a purchasing consideration at all. S3 identifies these as an area where independent tools retain an advantage over model platforms [S3] — implying buyers with governance obligations that the platforms' defaults do not satisfy. The sources do not name any specific regime, jurisdiction or standard.",
+      "Structural rather than regulatory, but the dominant force in this market: the observability layer is owned by the supplier of the workload being observed [S3]. A vendor whose product depends on instrumenting another company's API is exposed to that company's product decisions, and S2 records what happened when those decisions were made [S2].",
+      "Second structural dependency: the general application-monitoring vendor that owns the agent and the pipeline can add a span type at near-zero cost [S4], which means the category faces platform pressure from two independent directions at once rather than one.",
+      "No source addresses AI-specific regulation, audit or record-keeping requirements that might mandate independent observability. If such requirements exist and would favour a third-party system of record, that would materially change the read — and it is unresearched here."
+    ],
+    "risk_level": "medium"
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "title": "AI observability sizing, independent composite",
+      "url": "https://research.example.org/ai-observability-sizing",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "The broad envelope: $3.0-3.4B in 2026 growing 35-40% annually; that the boundary includes model monitoring, feature drift and data-quality tooling for traditional ML where 'the great majority of the spend still sits'; and the analyst caution that the headline growth rate is carried by the established ML monitoring segment and does not describe every slice. Reliability marked unknown, not secondary: it is self-described as a composite of unnamed 'independent 2026 estimates' with no analyst house, report title or methodology disclosed. It is the weakest kind of sizing source — a number without a parent — though its explicit self-qualification about boundary and growth attribution is the most analytically useful content in the whole bibliography."
+    },
+    {
+      "id": "S2",
+      "title": "The LLM application tracing slice, sized separately",
+      "url": "https://research.example.org/llm-tracing-slice",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "The servable slice: $180-260M in 2026; deceleration from above 60% growth in 2024 to 20-25% through 2025 and 2026; and the causal attribution of that deceleration to model providers shipping tracing and evaluation natively rather than to weakening demand. No methodology or authorship given. The causal attribution is the single most decision-relevant sentence in the bibliography and rests on one unattributed source, which is why sizing_confidence is low despite the specificity of the numbers."
+    },
+    {
+      "id": "S3",
+      "title": "Model providers ship tracing and evals in-platform",
+      "url": "https://research.example.org/native-tracing",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "That OpenAI and Anthropic both ship request tracing and evaluation dashboards inside their developer platforms at no additional cost; that this covers the single-provider case describing most early-stage LLM applications; and that independent tools retain an advantage for multi-provider applications and where retention and access controls are needed. This is the source doing the most work in the absorption and open-source-substitute sections. It reports shipped product behaviour rather than an estimate, which makes it more checkable than S1 or S2 in principle — though it is unattributed and I could not verify it against any vendor documentation, since I was restricted to the provided material."
+    },
+    {
+      "id": "S4",
+      "title": "ML monitoring vendors and the LLM workload",
+      "url": "https://research.example.org/ml-monitoring-vendors",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "That Arize and WhyLabs, both from the ML monitoring lineage, shipped LLM tracing products during 2025; that Datadog added LLM observability to its APM suite in the same period; and that Datadog's is bundled for existing customers rather than sold separately. Supports the competitive landscape, the bundling mechanism and the consolidating read. The pricing detail — bundled, not sold separately — is the most diagnostically valuable fact in the source."
+    }
+  ],
+  "research_gaps": [
+    "Source provenance is the overarching gap. All four sources sit on one domain (research.example.org), all are dated 2026-03, none names an author, analyst house, methodology or underlying dataset, and none is a primary document — no regulator filing, no public-company disclosure, no vendor financial statement. I could not rank them by reliability as instructed because they are indistinguishable in provenance, so I have weighted them equally and marked all four 'unknown'. Every figure in this analysis inherits that limitation.",
+    "The open-source dimension is entirely unresearched. No project, repository, license, foundation, adoption metric or governance model appears in any source. For a category demonstrably under absorption pressure this is the most consequential gap in the file: an open-source tracing standard or project at or near parity would change the pricing-pressure and absorption reads materially, in either direction depending on where it sits.",
+    "No pricing data of any kind — no list prices, contract values, per-seat or per-trace rates, discounting behaviour or renewal economics for any vendor. The 'compressing' pricing direction is an inference from the existence of free substitutes [S3][S4], not a measurement.",
+    "No funding or M&A data. No rounds, valuations, multiples, acquisitions or exits are recorded anywhere in the bibliography, which leaves the entire funding_environment section inferential and the exit picture blank.",
+    "The count of funded competitors is a floor, not a census. Three named vendors [S4] is what a four-source bibliography surfaced; the true population of funded LLM observability companies is very likely larger, and the new-entrant trend — accelerating, slowing or stopped — is completely unevidenced. This directly limits confidence in the saturation read.",
+    "The size and durability of the residual niche is unquantified. S3 establishes that multi-provider applications and retention/access-control requirements are where independent tools retain an advantage [S3] but does not size that segment, state what share of LLM applications are multi-provider, or say whether that share is rising as applications mature. This is the single number that would most determine whether this market is worth entering, and no source provides it.",
+    "Evaluation depth is undescribed on both sides. S3 confirms model providers ship 'evaluation dashboards' [S3] but neither S3 nor any other source characterises their sophistication, nor the sophistication of independent alternatives. Whether regression evaluation against captured production traffic is genuinely differentiated or already matched free cannot be determined from this material.",
+    "No geographic, vertical or company-size segmentation. Geography was specified as unspecified and the research does nothing to fill that in — no regional sizing, no evidence on whether demand or competitive intensity differs by market.",
+    "No customer-side evidence: no buyer surveys, win/loss data, churn rates, net revenue retention, deployment counts or references. Demand is characterised entirely through vendor and analyst behaviour, never through buyers.",
+    "No regulatory research. Whether any AI governance, audit or record-keeping regime creates a requirement for independent observability — which would be one of the few durable defences against absorption — is unexamined.",
+    "Datadog is the only APM vendor covered [S4]. Other general application-monitoring vendors' positions on LLM observability are unverified, so the incumbent list is certainly incomplete."
+  ],
+  "injection_findings": [
+    "None. All four sources in the research block report facts about the market and none addresses the analyst, attempts to dictate a conclusion, score or verdict, imitates a system message, or asks for anything to be concealed. No [REDACTED BY DECKSCOPE] markers were present in the material provided to me. Worth stating positively for the record, since a clean trust boundary is itself a finding: nothing in this bibliography attempted to manipulate its own analysis."
+  ]
+}
