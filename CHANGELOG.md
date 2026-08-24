@@ -6,6 +6,48 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ## [Unreleased]
 
+### Changed — the architecture claim, measured against a real model
+
+Every number this project had ever reported about its own design came from the
+`mock` provider, which is a fixture. The question the README leads with — is the
+three-agent pipeline better than one prompt? — appeared to need an API key and
+money to answer, so it went unanswered through four audits.
+
+It did not need either. The `manual` provider already spooled prompts to a
+directory; it just could not survive being stopped, because answers were keyed by
+step number and thrown away when the process ended.
+
+- **Answers are now cached by prompt content.** Identity is a hash of the prompt
+  text, so re-running replays what has already been answered and stops at the
+  first genuinely new question. Close the terminal and come back tomorrow. An
+  identical prompt issued twice — which a panel does routinely — is asked once.
+- **Non-interactive spool mode**, configurable from the environment because
+  `deckscope eval` builds its own `ProviderConfig` and has nowhere to thread
+  `extra` through. Any script or agent that can watch a directory can drive the
+  whole pipeline with no API key.
+- **An unanswered prompt raises instead of returning `""`.** The empty string fed
+  the JSON repair loop and surfaced three retries later as a parse failure, which
+  describes the wrong problem.
+- **Token usage is reported and labelled `estimated`.** Reporting nothing made
+  every manual run cost zero, which flatters exactly the modes that are expensive.
+- **The truncated-answer guard was `min(poll, 1.0)`**, so a fast poll shrank it to
+  nothing. It is now a wall-clock settle window, and it is documented as
+  best-effort — renaming a finished file into place is the reliable protocol.
+
+**The result.** Pipeline and baseline, all five cases, a real frontier model:
+both passed 43 of 43 checks, every dimension at 1.000, with the pipeline spending
+64,515 input tokens against the baseline's 10,709. The modes produced genuinely
+different analyses, so the tie was measured rather than manufactured.
+
+That is a finding about the suite, not a vindication of the architecture. **A
+capable model saturates these five cases**, and a benchmark nothing fails cannot
+rank anything — so the mock says the pipeline buys nothing and the real model says
+the suite cannot tell. README, `docs/EVALUATION.md` and `docs/PANEL.md` now say
+so. Two caveats are recorded with the number: the model answering was the same
+agent operating the harness, which is not a blind evaluation, and five constructed
+cases are a smoke test. Harder cases from a second author are now the most
+valuable contribution this project could receive.
+
 ### Fixed (fourth audit) — the evidence ledger
 
 This audit found the most serious defect this product can have, and it was real.

@@ -143,6 +143,42 @@ deckscope eval --provider anthropic --model claude-sonnet-5 --trials 3 \
                --save results/sonnet5.json
 ```
 
+### Without an API key
+
+You do not need one. The `manual` provider's spool mode writes each prompt to a
+directory and waits for an answer file, so any assistant you already pay for — or any
+script or agent — can drive the suite. Answers are cached by prompt content, so the
+run resumes if you stop.
+
+```bash
+export DECKSCOPE_MANUAL_DIR=/tmp/spool
+export DECKSCOPE_MANUAL_INTERACTIVE=0
+deckscope eval --provider manual --mode pipeline baseline --only inflated_tam \
+               --save results/real.json
+```
+
+Run one case per process against a shared spool if you want them to present their
+prompts in parallel rather than one at a time; `DECKSCOPE_MANUAL_TAG` labels each run's
+files. Pipeline and baseline across all five cases is about 15 exchanges answered
+breadth-first.
+
+### The result of doing that
+
+Both modes passed **43 of 43 checks** — every dimension at 1.000 — while the pipeline
+spent 64,515 input tokens against the baseline's 10,709. The modes produced genuinely
+different analyses, so the comparison was informative and the tie was measured.
+
+The finding is about the suite rather than the architecture: **a capable model
+saturates these five cases**, and a benchmark nothing fails cannot rank anything. Read
+alongside the mock result, where the pipeline also ties, there is still no evidence
+that the three-agent design earns its cost.
+
+Two caveats belong with that number. The model answering the prompts was the same agent
+operating the harness, which is not a blind evaluation and is the likeliest explanation
+for a clean sweep. And five constructed cases are a smoke test. **The most valuable
+contribution to this project right now is harder cases from a second author** — ones
+where a competent analyst would plausibly get it wrong.
+
 ---
 
 ## What this does not establish

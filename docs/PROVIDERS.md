@@ -237,6 +237,39 @@ named file, and press Enter.
 Slow, and it needs you present for three to five steps. But it costs nothing beyond a
 subscription you already have, and it works with assistants that have no API.
 
+**Answers are cached by prompt content.** Close the terminal halfway through and run the
+same command tomorrow: every prompt you already answered replays instantly and DeckScope
+stops at the first genuinely new one. Identity comes from a hash of the prompt text
+rather than a step counter, so an identical prompt issued twice — which happens whenever
+a panel convenes several panelists on the same deck — is only asked of you once. Answers
+live in `<exchange_dir>/answers/`; delete one to be asked again.
+
+### Spool mode — driving DeckScope from a script or an agent
+
+The same mechanism without the prompts to press Enter. DeckScope writes
+`asked/<hash>.prompt.txt`, blocks until `answers/<hash>.txt` appears, and continues.
+Anything that can watch a directory can drive the entire pipeline this way with no API
+key at all.
+
+```bash
+export DECKSCOPE_MANUAL_DIR=/tmp/spool
+export DECKSCOPE_MANUAL_INTERACTIVE=0      # no keyboard at the other end
+export DECKSCOPE_MANUAL_TIMEOUT=3600       # how long to wait for each answer
+export DECKSCOPE_MANUAL_TAG=run-1          # labels files when several runs share a spool
+deckscope eval --provider manual --mode pipeline baseline
+```
+
+The environment is read as well as the config because `deckscope eval` builds its own
+provider configuration and has nowhere to thread `extra` through.
+
+An unanswered prompt is an error, never an empty completion — an empty string would flow
+into the JSON repair loop and surface three retries later as a parse failure, which
+describes the wrong problem. Token counts in this mode are character-based estimates and
+are labelled `estimated`; every mode is estimated the same way, so cost comparisons
+between modes hold, but nobody should quote them as billing figures.
+
+This mode is how the real-model evaluation in [PANEL.md](PANEL.md) was run.
+
 ---
 
 ## mock — the offline demo

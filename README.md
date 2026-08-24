@@ -720,11 +720,12 @@ Worth reading before you trust anything it produces.
   snippets, an injection further down the page is not seen.
 - **It cannot see injections inside images.** Text rendered into a picture is never
   extracted, so it is never scanned.
-- **The three-agent design is measurable now, and the first measurement does not
-  favour it.** `deckscope eval --mode pipeline baseline panel` scores all three
-  architectures against decks whose correct answers are known, because the decks and
-  their evidence were authored together. On the five shipped cases, driven by the
-  built-in mock:
+- **The three-agent design is measurable now, and it has still not been shown to
+  help.** `deckscope eval --mode pipeline baseline panel` scores the architectures
+  against decks whose correct answers are known, because the decks and their evidence
+  were authored together. There are two results, and they fail in opposite directions.
+
+  Under the built-in `mock` provider, on the five shipped cases:
 
   | | claim accuracy | relative input cost |
   |---|:--:|:--:|
@@ -732,21 +733,35 @@ Worth reading before you trust anything it produces.
   | pipeline (three agents) | 0.368 | 1.0× |
   | panel (three panelists) | 0.211 | 3.0× |
 
-  **The pipeline ties the single-prompt baseline exactly.** The three-agent
-  architecture — the thing this README leads with — buys nothing measurable here
-  while costing five times the tokens.
+  The pipeline ties the baseline exactly. But the mock is a fixture shipped for offline
+  testing, so those are properties of the fixture rather than of any model.
 
-  Two things stop that from being a verdict. It is the *mock* provider, a fixture
-  shipped for offline testing, so these are properties of that fixture and not of any
-  real model. And five constructed cases is a smoke test rather than a benchmark. But
-  the tie is not an artifact of a blind instrument: the same suite separates the panel
-  by 15 points, and the run reports whether the modes produced genuinely different
-  analyses, so a delta of zero means the modes agreed rather than that nothing was
-  compared. Run it against your own provider before believing any of it — and if the
-  pipeline still ties, the honest conclusion is that the architecture is unearned.
+  Driven by a **real frontier model** through the `manual` provider's spool mode, on
+  the same five cases:
 
-  The planted answers are also one author's judgement, so a second contributor would
-  improve the suite more than a hundred more cases from the same one.
+  | | checks passed | input tokens | output tokens |
+  |---|:--:|:--:|:--:|
+  | baseline (one prompt) | 43 / 43 | 10,709 | 22,038 |
+  | pipeline (three agents) | 43 / 43 | 64,515 | 46,803 |
+
+  Every dimension came back at 1.000 for both. Claim accuracy, blind-spot recall,
+  citation integrity, fabrication, calibration, verdict and injection detection: 86
+  checks, zero failures, in both architectures. The two modes produced genuinely
+  different analyses — the run fingerprints them and reported the comparison as
+  informative — so this is a tie that was measured, not a tie by construction.
+
+  **The honest reading is that the suite has no headroom, not that the pipeline is
+  vindicated.** A benchmark a capable model saturates cannot rank architectures: the
+  pipeline spent 6× the input tokens to reach the same ceiling the baseline reached.
+  So the mock says the pipeline buys nothing and the real model says the suite cannot
+  tell. Neither supports the architecture, and until harder cases exist, running
+  `--mode baseline` is the defensible default.
+
+  Two further caveats on that run, both load-bearing. The model answering the prompts
+  was the same agent operating the harness, which is not a blind evaluation and is the
+  most likely reason for a clean sweep. And five constructed cases whose answers are
+  one author's judgement is a smoke test, not a benchmark — a second contributor
+  writing harder cases would improve this more than a hundred more from the same one.
 - **The panel is not fully independent.** Panelists use separate models and separate
   research calls, but the research agenda is derived from one deck-extraction pass and
   they often retrieve overlapping sources. It is role-separated analysis with model

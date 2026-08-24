@@ -313,6 +313,20 @@ Note also that the pipeline ties the baseline exactly. The panel's advantage her
 not evidence for the three-agent design; if anything it suggests whatever helps comes
 from *disagreement between analysts*, not from splitting one analyst into three roles.
 
+### The same suite, driven by a real model
+
+The pipeline and baseline have since been run against a real frontier model, through
+the `manual` provider's spool mode (see [PROVIDERS.md](PROVIDERS.md#bring-your-own-model-manual)),
+which needs no API key. Both modes passed **43 of 43 checks** — every dimension at
+1.000 — while the pipeline spent 6× the input tokens. The modes produced genuinely
+different analyses, so the tie was measured rather than manufactured.
+
+That does not settle the question in the pipeline's favour. It says the suite has no
+headroom: a capable model saturates it, and a benchmark everything passes cannot rank
+anything. The panel has not yet been run this way; doing so would take roughly 90
+exchanges rather than 15, and there is little point until the cases are hard enough to
+separate the two modes that have already been measured.
+
 You can also run the control on your own decks:
 
 ```bash
