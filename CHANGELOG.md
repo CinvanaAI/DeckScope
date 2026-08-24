@@ -42,11 +42,62 @@ different analyses, so the tie was measured rather than manufactured.
 That is a finding about the suite, not a vindication of the architecture. **A
 capable model saturates these five cases**, and a benchmark nothing fails cannot
 rank anything — so the mock says the pipeline buys nothing and the real model says
-the suite cannot tell. README, `docs/EVALUATION.md` and `docs/PANEL.md` now say
-so. Two caveats are recorded with the number: the model answering was the same
-agent operating the harness, which is not a blind evaluation, and five constructed
-cases are a smoke test. Harder cases from a second author are now the most
-valuable contribution this project could receive.
+the suite cannot tell.
+
+### Added — anchoring cases, and a verdict on the three-agent design
+
+Four cases were then written to attack the pipeline's one structural claim.
+Isolation is the entire argument for three agents: the market pass never sees the
+deck's claims as authoritative, so it should resist the deck's *framing*
+contaminating how the evidence is read. The original five never tested that —
+they all have the shape "deck says X, corpus says not-X, spot it", which is
+reading comprehension, and any capable model passes it.
+
+- `anchored_category` — a market figure that is accurate for a category the
+  company does not serve. The corpus confirms $3.1B/38% for AI observability
+  broadly; the slice this company sells into is $180-260M and decelerating.
+- `anchored_denominator` — 131% NRR "among customers past their first renewal",
+  phrasing that reads as precision rather than as a caveat, compared against
+  all-customer benchmarks. It also contains a claim the deck gets *right*, so a
+  reflexively contradicting analysis cannot pass.
+- `anchored_comparison_set` — a real win rate against a competitive set that
+  appears in a minority of actual buying decisions.
+- `frame_holds` — the control, and the reason the set means anything: a deck whose
+  framing is correct, where contradicting it is the failure.
+
+Answers came from separate agents given only the prompt file, so the author of the
+cases and the answerer were different.
+
+**Result: both modes passed 52 of 52, with the pipeline spending 8.8× the input
+tokens (87,121 against 9,901).** Neither trap caught either mode, on cases written
+to favour the pipeline.
+
+Across three evaluations the three-agent design has never separated from a single
+prompt on any measured dimension. The README now says so. What the pipeline does
+buy is the standalone market analysis — saturation, absorption risk, open-source
+landscape — which `baseline` does not produce at all; `--mode` help now states
+that trade explicitly rather than presenting three agents as simply better.
+
+### Added — `tests/test_suite_integrity.py`
+
+A case has to be checkable before it can check anything, and two expectations were
+wrong in ways that would have read as analysis defects:
+
+- `must_not_fabricate` contained `"Series B"`, so a correct analysis failed the
+  fabrication check for asking "what would make this a Series B rather than a
+  bridge?". The new guard rejects generic vocabulary — and caught the same latent
+  defect in the original `inflated_tam` case, which had `"Series C"` and `"IPO"`
+  sitting there waiting to fire on a correct analysis.
+- The control demanded a positive verdict. Two independent analyses split between
+  YES WITH CONDITIONS and a LEAN NO argued on price; competent readers can differ
+  there, so pinning it scored taste rather than accuracy. Only `PASS` is excluded
+  now, and the control's teeth are its claim expectations.
+
+Both corrections were made after seeing results and are recorded as such, in the
+changelog and in `docs/EVALUATION.md`, because the alternative is quietly tuning a
+fixture until it agrees. The suite also now enforces that every blind spot exists
+in its corpus and is absent from its deck, that claim patterns compile, and that
+assessment and verdict labels are ones the scorer understands.
 
 ### Fixed (fourth audit) — the evidence ledger
 

@@ -321,11 +321,23 @@ which needs no API key. Both modes passed **43 of 43 checks** — every dimensio
 1.000 — while the pipeline spent 6× the input tokens. The modes produced genuinely
 different analyses, so the tie was measured rather than manufactured.
 
-That does not settle the question in the pipeline's favour. It says the suite has no
-headroom: a capable model saturates it, and a benchmark everything passes cannot rank
-anything. The panel has not yet been run this way; doing so would take roughly 90
-exchanges rather than 15, and there is little point until the cases are hard enough to
-separate the two modes that have already been measured.
+That did not settle the question in the pipeline's favour — it said the suite had no
+headroom. Four harder **anchoring cases** were then written to attack the pipeline's
+one structural claim, isolation, and answered by separate agents that saw only the
+prompt. Both modes passed 52 of 52 while the pipeline spent 8.8× the input tokens. See
+[EVALUATION.md](EVALUATION.md#the-anchoring-cases).
+
+So across three evaluations the three-agent pipeline has never separated from a single
+prompt on any measured dimension. What it buys is the standalone market analysis, not
+accuracy.
+
+The panel has not been run this way. It would take roughly 90 exchanges rather than 15,
+and the case for spending them is weak while the two cheaper modes still cannot be told
+apart — if splitting one analyst into three roles buys nothing, the prior on nine roles
+across three panelists is not encouraging. The interesting version of the panel
+experiment is different: use genuinely different *models*, since the mock result hinted
+that whatever helps comes from disagreement between analysts rather than from role
+separation.
 
 You can also run the control on your own decks:
 

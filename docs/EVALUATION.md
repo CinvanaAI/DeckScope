@@ -168,16 +168,61 @@ Both modes passed **43 of 43 checks** — every dimension at 1.000 — while the
 spent 64,515 input tokens against the baseline's 10,709. The modes produced genuinely
 different analyses, so the comparison was informative and the tie was measured.
 
-The finding is about the suite rather than the architecture: **a capable model
-saturates these five cases**, and a benchmark nothing fails cannot rank anything. Read
-alongside the mock result, where the pipeline also ties, there is still no evidence
-that the three-agent design earns its cost.
+The finding was about the suite rather than the architecture: **a capable model
+saturates those five cases**, and a benchmark nothing fails cannot rank anything.
 
-Two caveats belong with that number. The model answering the prompts was the same agent
-operating the harness, which is not a blind evaluation and is the likeliest explanation
-for a clean sweep. And five constructed cases are a smoke test. **The most valuable
-contribution to this project right now is harder cases from a second author** — ones
-where a competent analyst would plausibly get it wrong.
+### The anchoring cases
+
+Four harder cases were then written to attack the pipeline's one structural claim.
+Isolation is the entire argument for three agents — the market pass never sees the
+deck's claims as authoritative, so it should resist the deck's *framing* contaminating
+how the evidence is read. The original five never tested that: they all have the shape
+"deck says X, corpus says not-X, spot it", which is reading comprehension.
+
+Each anchoring case supplies a frame that is plausible and wrong, with evidence that is
+correct *inside* it:
+
+| case | the frame | why a single pass may keep it |
+|---|---|---|
+| `anchored_category` | "we are in AI observability, $3.1B growing 38%" | the corpus confirms that figure — for a category the company does not sell into. The real slice is $180-260M and decelerating. |
+| `anchored_denominator` | "131% NRR among customers past their first renewal" | reads as precision, not as a caveat. Benchmarks are all-customer; the comparable figure is ordinary. |
+| `anchored_comparison_set` | "we win 7 of 10 head-to-head against the two specialist vendors" | probably true, and measured against a set that appears in a minority of real decisions. |
+| `frame_holds` (control) | the deck's framing is **correct** | contradicting it is the failure. Without this, "always say contradicted" would pass the other three. |
+
+Answers came from separate agents given only the prompt file, so the author of the
+cases and the answerer were not the same.
+
+| | checks passed | input tokens |
+|---|:--:|:--:|
+| baseline (one prompt) | 52 / 52 | 9,901 |
+| pipeline (three agents) | 52 / 52 | 87,121 |
+
+**Neither trap caught either mode.** The pipeline spent 8.8× the input tokens to tie on
+cases written to favour it. Across three evaluations — mock, real-model, anchoring —
+the three-agent design has never been shown to produce a more accurate analysis than
+one good prompt. What it does buy is the standalone market analysis (saturation,
+absorption risk, open-source landscape), which `baseline` does not produce at all.
+
+### Two expectations were corrected after seeing results
+
+Recorded because the alternative is quietly tuning a fixture until it agrees.
+
+* `must_not_fabricate` contained `"Series B"`, and a correct analysis failed the
+  fabrication check for asking *"what would make this a Series B rather than a
+  bridge?"*. That entry punished ordinary vocabulary rather than an invented fact.
+  A guard now rejects generic terms, and it caught the same latent defect in the
+  original `inflated_tam` case, which had `"Series C"` and `"IPO"` waiting to fire.
+* The control demanded a positive verdict. The two independent analyses split — YES
+  WITH CONDITIONS against a LEAN NO argued on price, 26× ARR for a $310M segment whose
+  differentiator sits on both incumbents' roadmaps. Competent readers can differ there,
+  so pinning it scored taste. Only `PASS` is now excluded, and the control's real teeth
+  are its claim expectations: marking a correct market figure contradicted.
+
+Both fixes are enforced in `tests/test_suite_integrity.py`, which checks that a case is
+checkable before it is allowed to check anything.
+
+**The most valuable contribution to this project remains harder cases from a second
+author** — ones where a competent analyst would plausibly get it wrong.
 
 ---
 

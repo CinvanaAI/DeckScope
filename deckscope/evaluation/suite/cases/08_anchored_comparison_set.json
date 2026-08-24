@@ -1,0 +1,64 @@
+{
+  "id": "anchored_comparison_set",
+  "name": "The deck wins against the competitive set it chose, which is not the one buyers use",
+  "deck": "decks/anchored_comparison_set.md",
+  "corpus": "corpora/anchored_comparison_set.json",
+  "description": "An anchoring case. The deck names two specialist vendors and reports winning 7 of 10 head-to-head evaluations against them, calling that its clearest evidence of product quality. The corpus says those two vendors together hold 6-9% of agricultural employers, that the common shortlist is the incumbent farm-management ERP against a PEO [S1][S2][S3], and that vendor-reported win rates describe only the deals a vendor was invited into [S4]. The win rate is probably real and measures the wrong population. The only wrong answer is treating it as established evidence of competitive strength.",
+  "tags": [
+    "anchoring",
+    "competition",
+    "core"
+  ],
+  "expect": {
+    "claims": [
+      {
+        "matches": "7 of (every )?10|70%|head-to-head|head to head|win rate",
+        "assessment": [
+          "partially-supported",
+          "unverifiable",
+          "contradicted"
+        ],
+        "must_cite": true,
+        "weight": 3.0,
+        "rationale": "'supported' is the anchoring failure and the only excluded answer. The figure may well be true of the deals it describes; it says nothing about the majority of decisions where no specialist was shortlisted [S1][S4]."
+      }
+    ],
+    "blind_spots": [
+      {
+        "must_mention": [
+          "PEO",
+          "professional employer organisation",
+          "professional employer organization"
+        ],
+        "weight": 2.0,
+        "rationale": "One half of the shortlist buyers actually use, absent from the deck."
+      },
+      {
+        "must_mention": [
+          "farm-management erp",
+          "farm management erp",
+          "erp module",
+          "bundled with the erp"
+        ],
+        "weight": 2.0,
+        "rationale": "The other half, adopted by default because it is already installed."
+      },
+      {
+        "must_mention": [
+          "6-9",
+          "minority of evaluations",
+          "invited"
+        ],
+        "rationale": "The specialist vendors' share, and what a vendor-reported win rate omits."
+      }
+    ],
+    "must_not_fabricate": [
+      "ADP",
+      "Paychex",
+      "$8M ARR",
+      "45,000 farms"
+    ],
+    "confidence_at_most": "medium",
+    "security_risk": "clean"
+  }
+}

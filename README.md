@@ -750,18 +750,46 @@ Worth reading before you trust anything it produces.
   different analyses — the run fingerprints them and reported the comparison as
   informative — so this is a tie that was measured, not a tie by construction.
 
-  **The honest reading is that the suite has no headroom, not that the pipeline is
-  vindicated.** A benchmark a capable model saturates cannot rank architectures: the
-  pipeline spent 6× the input tokens to reach the same ceiling the baseline reached.
-  So the mock says the pipeline buys nothing and the real model says the suite cannot
-  tell. Neither supports the architecture, and until harder cases exist, running
-  `--mode baseline` is the defensible default.
+  A benchmark a capable model saturates cannot rank architectures, so four harder
+  cases were written to attack the pipeline's one structural claim. Isolation is the
+  whole argument for three agents: the market pass never sees the deck's claims as
+  authoritative, so it should resist the deck's *framing* contaminating how the
+  evidence is read. Nothing in the original five put pressure on that.
 
-  Two further caveats on that run, both load-bearing. The model answering the prompts
-  was the same agent operating the harness, which is not a blind evaluation and is the
-  most likely reason for a clean sweep. And five constructed cases whose answers are
-  one author's judgement is a smoke test, not a benchmark — a second contributor
-  writing harder cases would improve this more than a hundred more from the same one.
+  The **anchoring cases** each supply a plausible frame that is wrong, with evidence
+  that is correct inside it — a market figure that is accurate for a category the
+  company does not serve; a retention number measured on a denominator the benchmark
+  does not use; a win rate that is real against a competitive set buyers do not use.
+  A fourth case is the control: a deck whose framing is *right*, where contradicting
+  it is the failure. Each was answered by separate agents that saw only the prompt,
+  so the author of the cases and the answerer were different.
+
+  | | checks passed | input tokens |
+  |---|:--:|:--:|
+  | baseline (one prompt) | 52 / 52 | 9,901 |
+  | pipeline (three agents) | 52 / 52 | 87,121 |
+
+  **Neither trap caught either mode, and the pipeline cost 8.8× the input tokens to
+  tie.** These are cases written specifically to favour the three-agent design, and
+  it did not separate. Taken with the two earlier results, the position is settled
+  enough to state plainly: **the three-agent pipeline has never been shown to produce
+  a more accurate analysis than one good prompt.**
+
+  What it does buy is content, not accuracy. The pipeline is the only mode that
+  produces the standalone market analysis — saturation, absorption risk, the
+  open-source landscape, adjacent markets — because those come from a pass that
+  studies the market on its own terms. If you want that artifact, the cost is
+  justified. If you want the deck-versus-market comparison, `--mode baseline` gets
+  the same measured quality for roughly a sixth of the tokens.
+
+  Caveats that belong with these numbers. The cases are still one author's, and that
+  author's bias ran *toward* the pipeline winning — which is why a tie is the
+  informative direction. Two expectations were corrected after the first scoring
+  (a `must_not_fabricate` entry that punished ordinary vocabulary, and a control
+  verdict that encoded taste rather than accuracy); both fixes are recorded in
+  `tests/test_suite_integrity.py`, which now also catches the same latent defect in
+  the original five cases. Nine constructed cases remain a smoke test, not a
+  benchmark.
 - **The panel is not fully independent.** Panelists use separate models and separate
   research calls, but the research agenda is derived from one deck-extraction pass and
   they often retrieve overlapping sources. It is role-separated analysis with model

@@ -158,8 +158,12 @@ def build_parser() -> argparse.ArgumentParser:
                      help="Years for the comparison (default 5)")
     run.add_argument("--mode", default="pipeline",
                      choices=["pipeline", "baseline", "both"],
-                     help="pipeline = three isolated agents (default); "
-                          "baseline = one prompt; both = run each and compare")
+                     help="pipeline = three isolated agents, and the only mode "
+                          "that produces the standalone market analysis "
+                          "(saturation, absorption risk, open-source landscape); "
+                          "baseline = one prompt, ~1/6 the input tokens, and "
+                          "scores the same on every measured dimension; "
+                          "both = run each and compare")
     run.add_argument("--config", default=None, help="Use a specific config file")
 
     panel = sub.add_parser(

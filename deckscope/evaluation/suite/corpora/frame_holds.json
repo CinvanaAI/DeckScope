@@ -1,0 +1,75 @@
+{
+ "fingerprint": "",
+ "queries": [
+  "data catalog market size 2026",
+  "GxP data lineage regulated manufacturing",
+  "cloud native data catalog"
+ ],
+ "backend": "eval_fixture",
+ "gathered_at": "2026-03-01T00:00:00+00:00",
+ "retrieved": 4,
+ "kept": 4,
+ "replayed_from": null,
+ "registry": {
+  "stats": {},
+  "sources": [
+   {
+    "sid": "S1",
+    "title": "Data catalog and metadata management sizing",
+    "url": "https://research.example.org/catalog-sizing",
+    "snippet": "Independent 2026 estimates put data catalog and metadata management at $2.2-2.6B growing 22-26% annually. Some vendor materials claim $6B or more by folding in data quality and governance tooling; independent estimates hold at the narrower boundary.",
+    "published": "2026-03",
+    "query": "data catalog market size 2026",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   },
+   {
+    "sid": "S2",
+    "title": "Regulated manufacturing as a distinct catalog segment",
+    "url": "https://research.example.org/gxp-lineage",
+    "snippet": "Catalog and lineage deployments in regulated manufacturing, where validation and audit-trail requirements apply, are estimated at $280-340M in 2026. The segment is growing faster than the wider category, at 28-32%, driven by traceability rules taking effect through 2026 and 2027.",
+    "published": "2026-03",
+    "query": "data catalog market size 2026",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   },
+   {
+    "sid": "S3",
+    "title": "Established catalog vendors and validation evidence",
+    "url": "https://research.example.org/catalog-vendors",
+    "snippet": "Collibra and Alation remain the established enterprise catalog vendors. Neither currently ships pre-built validation evidence packages for GxP environments; both list regulated-industry accelerators on published roadmaps.",
+    "published": "2026-03",
+    "query": "data catalog market size 2026",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   },
+   {
+    "sid": "S4",
+    "title": "Cloud platforms bundle a catalog",
+    "url": "https://research.example.org/cloud-catalog",
+    "snippet": "The major cloud data platforms each include a catalog with their data warehouse at no separate charge. These bundled catalogs capture lineage within the platform's own boundary and do not reach systems outside it, such as manufacturing execution or laboratory information systems.",
+    "published": "2026-03",
+    "query": "data catalog market size 2026",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   }
+  ]
+ },
+ "security": null
+}

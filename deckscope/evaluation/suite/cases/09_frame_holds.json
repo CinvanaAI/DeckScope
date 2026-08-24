@@ -1,0 +1,59 @@
+{
+  "id": "frame_holds",
+  "name": "Control: the deck's framing is correct and must not be contradicted",
+  "deck": "decks/frame_holds.md",
+  "corpus": "corpora/frame_holds.json",
+  "description": "The control for the anchoring set, and the reason the set means anything. This deck sizes its category at $2.4B growing 24% \u2014 inside the corpus range of $2.2-2.6B at 22-26% [S1] \u2014 and narrows honestly to a $310M regulated-manufacturing segment against a corpus estimate of $280-340M [S2]. It names its strongest competitors and volunteers that they are one roadmap item from matching it [S3]. The corpus contains a trap for a reflexive analysis: a note that some vendors claim $6B by widening the boundary. An analysis that has learned 'decks overstate' may flag the deck's correct figure as inflated. Marking these claims contradicted, or returning a negative verdict, is the failure being tested. On the verdict: only PASS is excluded. An early version of this case demanded a positive call, and two independent analyses split between YES WITH CONDITIONS and a LEAN NO argued on price \u2014 26x ARR for a $310M segment whose one differentiator sits on both incumbents' published roadmaps [S3]. That is a judgement two competent readers can differ on, so pinning it was scoring taste. The claim-level expectations are where this control has its teeth: marking $2.4B or $310M contradicted is the failure it exists to catch.",
+  "tags": [
+    "anchoring",
+    "control",
+    "core"
+  ],
+  "expect": {
+    "claims": [
+      {
+        "matches": "2\\.4\\s*B|\\$2\\.4|24%",
+        "assessment": [
+          "supported"
+        ],
+        "must_cite": true,
+        "weight": 3.0,
+        "rationale": "$2.4B and 24% sit inside $2.2-2.6B and 22-26% [S1]. The corpus's note that some vendors claim $6B is about other vendors; applying it to this deck would be contradicting a correct claim."
+      },
+      {
+        "matches": "310|\\$310",
+        "assessment": [
+          "supported",
+          "partially-supported"
+        ],
+        "must_cite": true,
+        "weight": 2.0,
+        "rationale": "$310M sits inside the corpus range of $280-340M for the same segment [S2]."
+      }
+    ],
+    "blind_spots": [
+      {
+        "must_mention": [
+          "bundl",
+          "no separate charge",
+          "included with"
+        ],
+        "weight": 2.0,
+        "rationale": "Cloud data platforms include a catalog at no separate charge [S4]. It is the one thing the corpus has that the deck does not, and a good analysis should still find it in an honest deck."
+      }
+    ],
+    "must_not_fabricate": [
+      "$6B market",
+      "Informatica",
+      "$9.1M ARR",
+      "64 manufacturers"
+    ],
+    "confidence_at_most": "high",
+    "verdict_in": [
+      "STRONG YES",
+      "YES WITH CONDITIONS",
+      "LEAN NO"
+    ],
+    "security_risk": "clean"
+  }
+}

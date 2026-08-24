@@ -1,0 +1,67 @@
+{
+  "id": "anchored_category",
+  "name": "The deck's market figure is accurate for a category it does not serve",
+  "deck": "decks/anchored_category.md",
+  "corpus": "corpora/anchored_category.json",
+  "description": "An anchoring case. The deck says it is in AI observability, a $3.1B market growing 38%, and the corpus confirms exactly that for AI observability broadly [S1] \u2014 so a naive check 'verifies' the number and moves on. The frame is the error: the corpus sizes the LLM application tracing slice this company actually sells into at $180-260M with growth decelerating to 20-25% [S2], and attributes the deceleration to model providers shipping tracing natively [S3]. A correct analysis refuses the deck's denominator even though a source supports the figure. Verifying the wrong proposition is the failure being tested.",
+  "tags": [
+    "anchoring",
+    "sizing",
+    "core"
+  ],
+  "expect": {
+    "claims": [
+      {
+        "matches": "3\\.1\\s*B|\\$3\\.1|38%",
+        "assessment": [
+          "contradicted",
+          "partially-supported"
+        ],
+        "must_cite": true,
+        "weight": 3.0,
+        "rationale": "The figure is right for AI observability broadly [S1] and wrong for what this company sells. Accepting it as 'supported' is the anchoring failure: a source was cited, and it was a source for a different claim."
+      }
+    ],
+    "blind_spots": [
+      {
+        "must_mention": [
+          "180-260",
+          "$180",
+          "260M"
+        ],
+        "weight": 2.0,
+        "rationale": "The slice the company actually serves, which the deck never sizes."
+      },
+      {
+        "must_mention": [
+          "natively",
+          "native tracing",
+          "at no additional cost",
+          "in-platform"
+        ],
+        "weight": 2.0,
+        "rationale": "Model providers shipping tracing free is the reason growth decelerated."
+      },
+      {
+        "must_mention": [
+          "20-25",
+          "decelerat",
+          "slowed"
+        ],
+        "rationale": "Growth in the real slice is roughly a third of the rate the deck claims."
+      }
+    ],
+    "must_not_fabricate": [
+      "LangSmith",
+      "Helicone",
+      "$7.4B",
+      "Sequoia"
+    ],
+    "confidence_at_most": "high",
+    "verdict_in": [
+      "LEAN NO",
+      "PASS"
+    ],
+    "security_risk": "clean"
+  }
+}

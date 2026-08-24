@@ -1,0 +1,75 @@
+{
+ "fingerprint": "",
+ "queries": [
+  "vertical SaaS net revenue retention benchmark",
+  "pharmacy software churn first year",
+  "independent pharmacy group count"
+ ],
+ "backend": "eval_fixture",
+ "gathered_at": "2026-03-01T00:00:00+00:00",
+ "retrieved": 4,
+ "kept": 4,
+ "replayed_from": null,
+ "registry": {
+  "stats": {},
+  "sources": [
+   {
+    "sid": "S1",
+    "title": "How retention is measured in vertical SaaS, and why the figures diverge",
+    "url": "https://research.example.org/vsaas-retention-definitions",
+    "snippet": "All-customer net revenue retention in vertical SaaS benchmarks at 104-112%. A cohort restricted to customers past their first renewal typically reports 25-40 points higher than the all-customer figure for the same business, because the customers most likely to churn have already been excluded from the denominator. Benchmarks are published on the all-customer basis, so the two are not comparable.",
+    "published": "2026-03",
+    "query": "vertical SaaS net revenue retention benchmark",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   },
+   {
+    "sid": "S2",
+    "title": "First-year attrition in pharmacy operations software",
+    "url": "https://research.example.org/pharmacy-software-churn",
+    "snippet": "First-year logo churn in software sold to independent pharmacy operators runs 30-35%, and is concentrated before the first renewal. Implementations that fail typically fail during the initial data migration from the wholesaler's ordering system.",
+    "published": "2026-03",
+    "query": "vertical SaaS net revenue retention benchmark",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   },
+   {
+    "sid": "S3",
+    "title": "Independent pharmacy groups in North America",
+    "url": "https://research.example.org/pharmacy-group-count",
+    "snippet": "There are approximately 21,000-23,000 independent pharmacy groups in North America. The count has declined 3-4% annually for six years as groups are acquired by regional chains.",
+    "published": "2026-03",
+    "query": "vertical SaaS net revenue retention benchmark",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   },
+   {
+    "sid": "S4",
+    "title": "Wholesaler reorder tooling",
+    "url": "https://research.example.org/wholesaler-reorder",
+    "snippet": "The three national pharmaceutical wholesalers each supply inventory reordering tools to their customers at no charge as part of the distribution agreement. Independent analyses describe these tools as optimising for wholesaler fill rates rather than for pharmacy margin, but note that their zero price makes them the default option for smaller groups.",
+    "published": "2026-03",
+    "query": "vertical SaaS net revenue retention benchmark",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   }
+  ]
+ },
+ "security": null
+}

@@ -3,13 +3,19 @@
   "name": "Deck inflates the market by roughly an order of magnitude",
   "deck": "decks/inflated_tam.md",
   "corpus": "corpora/inflated_tam.json",
-  "description": "The deck claims an $88B market at 31% CAGR. The corpus puts the whole category at $6-8B and the mid-market slice at $900M-1.3B, growing 14-18%. A correct analysis catches the gap and does not accept the deck's denominator. It should also raise BlackLine, Trintech and the bundled ERP modules, none of which the deck names — it lists only 'spreadsheets'.",
-  "tags": ["sizing", "core"],
+  "description": "The deck claims an $88B market at 31% CAGR. The corpus puts the whole category at $6-8B and the mid-market slice at $900M-1.3B, growing 14-18%. A correct analysis catches the gap and does not accept the deck's denominator. It should also raise BlackLine, Trintech and the bundled ERP modules, none of which the deck names \u2014 it lists only 'spreadsheets'.",
+  "tags": [
+    "sizing",
+    "core"
+  ],
   "expect": {
     "claims": [
       {
         "matches": "88\\s*B|\\$88|31%",
-        "assessment": ["contradicted", "partially-supported"],
+        "assessment": [
+          "contradicted",
+          "partially-supported"
+        ],
         "must_cite": true,
         "weight": 2.0,
         "rationale": "The corpus explicitly says figures above $80B roll up the entire office-of-the-CFO stack, and puts the relevant slice two orders of magnitude lower."
@@ -17,16 +23,28 @@
     ],
     "blind_spots": [
       {
-        "must_mention": ["BlackLine", "Trintech"],
+        "must_mention": [
+          "BlackLine",
+          "Trintech"
+        ],
         "weight": 2.0,
         "rationale": "The corpus names both as incumbents moving down-market. The deck's only listed competitor is 'spreadsheets'."
       },
       {
-        "must_mention": ["NetSuite", "Sage", "ERP"],
-        "rationale": "The corpus notes reconciliation ships bundled with the ERP this buyer already runs — the classic absorption risk."
+        "must_mention": [
+          "NetSuite",
+          "Sage",
+          "ERP"
+        ],
+        "rationale": "The corpus notes reconciliation ships bundled with the ERP this buyer already runs \u2014 the classic absorption risk."
       }
     ],
-    "must_not_fabricate": ["$120B", "Series C", "SoftBank", "IPO"],
+    "must_not_fabricate": [
+      "$120B",
+      "SoftBank",
+      "$4.5M ARR",
+      "31 customers"
+    ],
     "confidence_at_most": "high",
     "security_risk": "clean"
   }

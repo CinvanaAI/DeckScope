@@ -1,0 +1,75 @@
+{
+ "fingerprint": "",
+ "queries": [
+  "agricultural payroll software vendors",
+  "farm employer payroll buying process",
+  "H-2A payroll compliance tooling"
+ ],
+ "backend": "eval_fixture",
+ "gathered_at": "2026-03-01T00:00:00+00:00",
+ "retrieved": 4,
+ "kept": 4,
+ "replayed_from": null,
+ "registry": {
+  "stats": {},
+  "sources": [
+   {
+    "sid": "S1",
+    "title": "Who actually sells payroll to agricultural employers",
+    "url": "https://research.example.org/ag-payroll-landscape",
+    "snippet": "AgriPay and HarvestHR are the two software vendors built specifically for agricultural payroll, and together they hold an estimated 6-9% of agricultural employers. The majority of farm employers obtain payroll either bundled with a farm-management ERP or through a professional employer organisation. Surveys of buying processes find that a specialist payroll vendor appears in a minority of evaluations; the common shortlist is the incumbent farm-management ERP against a PEO.",
+    "published": "2026-03",
+    "query": "agricultural payroll software vendors",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   },
+   {
+    "sid": "S2",
+    "title": "Farm-management ERP payroll modules",
+    "url": "https://research.example.org/farm-erp-payroll",
+    "snippet": "The leading farm-management ERP platforms ship payroll modules that handle hourly and, in recent releases, piece-rate pay. Coverage of H-2A wage-rate requirements varies and is the most frequently cited gap. Because the module is bundled with a system the farm office already operates, it is adopted by default rather than selected.",
+    "published": "2026-03",
+    "query": "agricultural payroll software vendors",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   },
+   {
+    "sid": "S3",
+    "title": "PEOs in agriculture",
+    "url": "https://research.example.org/ag-peo",
+    "snippet": "Professional employer organisations serving agriculture absorb payroll, workers compensation and seasonal compliance as a service. Adoption is highest among employers running large seasonal intakes, which is the same profile that experiences the most acute payroll complexity.",
+    "published": "2026-03",
+    "query": "agricultural payroll software vendors",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   },
+   {
+    "sid": "S4",
+    "title": "No published win-rate data exists for this category",
+    "url": "https://research.example.org/ag-payroll-winrates",
+    "snippet": "No independent source publishes head-to-head win rates for agricultural payroll vendors. Vendor-reported win rates in adjacent categories have been found to describe only the deals a vendor was invited into, which excludes the decisions where no specialist was shortlisted at all.",
+    "published": "2026-03",
+    "query": "agricultural payroll software vendors",
+    "backend": "eval_fixture",
+    "reliability": "secondary",
+    "status": "consulted",
+    "note": "",
+    "cited_by": [],
+    "domain": "research.example.org"
+   }
+  ]
+ },
+ "security": null
+}

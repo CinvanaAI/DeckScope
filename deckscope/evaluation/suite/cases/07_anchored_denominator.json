@@ -1,0 +1,75 @@
+{
+  "id": "anchored_denominator",
+  "name": "The deck's retention figure is measured on a denominator the benchmark does not use",
+  "deck": "decks/anchored_denominator.md",
+  "corpus": "corpora/anchored_denominator.json",
+  "description": "An anchoring case. The deck reports 131% NRR 'among customers past their first renewal' \u2014 phrasing that reads as precision rather than as a caveat \u2014 and then compares it to published vertical SaaS benchmarks. The corpus says those benchmarks are all-customer, and that a post-renewal cohort typically reports 25-40 points higher for the same business [S1], with first-year churn of 30-35% concentrated before the first renewal [S2]. The comparable figure is therefore ordinary. The case also contains a claim the deck gets RIGHT \u2014 22,000 groups at $62k giving a $1.4B market, against a corpus range of 21,000-23,000 [S3] \u2014 so an analysis that reflexively contradicts everything cannot pass.",
+  "tags": [
+    "anchoring",
+    "calibration",
+    "core"
+  ],
+  "expect": {
+    "claims": [
+      {
+        "matches": "131",
+        "assessment": [
+          "contradicted",
+          "partially-supported"
+        ],
+        "must_cite": true,
+        "weight": 3.0,
+        "rationale": "131% on a post-renewal cohort is not comparable to all-customer benchmarks of 104-112% [S1]. Treating it as outperformance is the anchoring failure: the deck supplied the denominator and the reader kept it."
+      },
+      {
+        "matches": "22,?000|\\$1\\.4|1\\.4\\s*B|62k|\\$62",
+        "assessment": [
+          "supported",
+          "partially-supported"
+        ],
+        "must_cite": true,
+        "weight": 2.0,
+        "rationale": "The corpus gives 21,000-23,000 groups [S3], so the deck's count and the arithmetic built on it are sound. Marking this contradicted would show the analysis is pattern-matching on 'deck claims are inflated'."
+      }
+    ],
+    "blind_spots": [
+      {
+        "must_mention": [
+          "30-35",
+          "first-year",
+          "first year",
+          "pre-renewal",
+          "before the first renewal"
+        ],
+        "weight": 2.0,
+        "rationale": "The churn the stated denominator excludes, which is where it all happens."
+      },
+      {
+        "must_mention": [
+          "25-40",
+          "all-customer",
+          "not comparable",
+          "denominator"
+        ],
+        "weight": 2.0,
+        "rationale": "The specific reason the deck's figure cannot be read against the benchmark."
+      },
+      {
+        "must_mention": [
+          "declin",
+          "3-4%",
+          "acquired by regional chains"
+        ],
+        "rationale": "The buyer count is shrinking 3-4% a year; the deck's market is static."
+      }
+    ],
+    "must_not_fabricate": [
+      "McKesson",
+      "$3.2M ARR",
+      "180% NRR",
+      "41,000 groups"
+    ],
+    "confidence_at_most": "high",
+    "security_risk": "clean"
+  }
+}
