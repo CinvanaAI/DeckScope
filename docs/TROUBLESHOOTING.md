@@ -162,7 +162,7 @@ that way isn't trustworthy evidence. The bibliography lists which and why.
 ## Panel
 
 **"A panel needs at least two AI connections"**
-Pass two or more: `--panel anthropic:claude-sonnet-5 openai:gpt-4o`, or save a default
+Pass two or more: `--panel anthropic:claude-sonnet-5 openai:gpt-5.2`, or save a default
 with `deckscope setup`.
 
 **One panelist failed**
@@ -208,7 +208,7 @@ Usually the model. Move up a tier. Then raise `--max-queries` — the market hal
 good as the evidence it found.
 
 **Numbers seem wrong**
-Check the References section: every figure is traceable to a numbered source. If the
+Check the References section: a figure is either traceable to a numbered source or marked unsourced. If the
 source is labelled `vendor-marketing`, that's the report telling you to discount it. If a
 claim shows *"none cited"*, no source supported it.
 

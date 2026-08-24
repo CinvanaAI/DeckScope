@@ -1,0 +1,303 @@
+{
+  "market_definition": {
+    "category": "Data catalog and metadata management — software that inventories data assets, captures lineage between them, and governs their use. Within it, a narrower slice: catalog and lineage deployments in regulated manufacturing, where validation and audit-trail requirements apply [S2].",
+    "boundary_notes": "The boundary is contested and the contest is financially material. Independent 2026 estimates hold to a narrow boundary — catalog and metadata management proper — and land at $2.2-2.6B [S1]. Vendor materials reach $6B or more by folding in data quality tooling and governance tooling [S1]; that is a boundary choice, not a growth observation, and it roughly doubles the number. A second boundary question is where the catalog sits: the major cloud data platforms each ship a catalog with their warehouse at no separate charge, and those bundled catalogs capture lineage only within the platform's own boundary, not into manufacturing execution or laboratory information systems [S4]. So there is effectively a free in-platform layer and a paid cross-boundary layer, and only the second is an addressable software market. The regulated-manufacturing slice is reported as a distinct, separately sized segment at $280-340M in 2026, growing 28-32%, faster than the wider category [S2]. Nothing in the provided material sizes the market by geography; the company's geography is unspecified, so all figures here should be read as global unless a source says otherwise, and none do.",
+    "how_analysts_segment_it": [
+      "Narrow boundary (catalog + metadata management only) versus wide boundary (plus data quality and governance tooling) — $2.2-2.6B versus $6B+ [S1]",
+      "By vertical, where regulated manufacturing is treated as a distinct segment defined by validation and audit-trail requirements [S2]",
+      "By deployment locus: catalogs bundled with a cloud data platform at no separate charge versus independent cross-system catalogs [S4]",
+      "By lineage reach: lineage confined to the platform's own boundary versus lineage that crosses into MES/LIMS and other operational systems [S4]"
+    ]
+  },
+  "sizing": {
+    "tam_estimates": [
+      {
+        "value": "$2.2-2.6B",
+        "year": "2026",
+        "source": "Aggregated independent 2026 estimates as reported in the research pack (publisher not named)",
+        "methodology": "Not disclosed. Reported as 'independent 2026 estimates' at the narrower category boundary, excluding data quality and governance tooling [S1].",
+        "url": "https://research.example.org/catalog-sizing",
+        "source_ids": ["S1"]
+      },
+      {
+        "value": "$6B or more",
+        "year": "Not stated; presented as a forward figure ('by $6B or more')",
+        "source": "Vendor materials, as characterized by S1 — no individual vendor is named",
+        "methodology": "Explicitly a boundary expansion: folds data quality and governance tooling into the category [S1]. This is the wide-boundary number and should not be compared like-for-like against the $2.2-2.6B figure.",
+        "url": "https://research.example.org/catalog-sizing",
+        "source_ids": ["S1"]
+      },
+      {
+        "value": "$280-340M",
+        "year": "2026",
+        "source": "Aggregated estimate for catalog and lineage deployments in regulated manufacturing (publisher not named)",
+        "methodology": "Not disclosed. Scoped to deployments 'where validation and audit-trail requirements apply'; growth attributed to traceability rules taking effect through 2026 and 2027 [S2]. This is a segment estimate, not a serviceable-market calculation for any one vendor.",
+        "url": "https://research.example.org/gxp-lineage",
+        "source_ids": ["S2"]
+      }
+    ],
+    "consensus_view": "At the narrow boundary the independent estimates are tight: $2.2-2.6B in 2026, growing 22-26% annually [S1]. The regulated-manufacturing slice is roughly an eighth of that, $280-340M, growing faster at 28-32% [S2]. The only wide divergence in the pack is definitional rather than empirical — $6B+ appears only in vendor materials and only by absorbing adjacent tooling [S1]. I weight the narrow figure more heavily because S1 itself attributes the wide figure to vendor marketing and states that independent estimates hold at the narrower boundary; a source that reports both and names one as vendor-sourced is telling you which to trust. Note that $280-340M is the size of the whole regulated-manufacturing catalog/lineage segment across all vendors including incumbents and free bundled catalogs — a new entrant's serviceable share of it is smaller and no source in this pack quantifies that share.",
+    "cagr_range": "22-26% for the overall category [S1]; 28-32% for the regulated-manufacturing segment [S2]",
+    "sizing_confidence": "low",
+    "why_estimates_diverge": "Two distinct mechanisms. First, boundary: the $2.2-2.6B versus $6B+ gap is created by folding data quality and governance tooling into the count, not by disagreement about how much catalog software is being bought [S1]. Averaging these would produce a meaningless number — they are measuring different things. Second, the far larger uncertainty here is provenance rather than divergence: all four sources are unattributed research notes on a single placeholder-looking domain (research.example.org), none names its publisher, none discloses methodology, none is a regulator filing or a public-company disclosure, and none is a named analyst house. The internal ranges are narrow, but narrow ranges from unverifiable sources do not earn high confidence. Hence low."
+  },
+  "demand_signals": {
+    "tailwinds": [
+      "Traceability rules taking effect through 2026 and 2027 are named as the specific driver of the regulated segment's 28-32% growth — a dated, external, non-discretionary trigger rather than a general digitization narrative [S2]",
+      "The regulated-manufacturing segment is growing faster than the category it sits inside, 28-32% versus 22-26% [S1][S2], which is the signature of a compliance-driven rather than efficiency-driven purchase",
+      "Bundled platform catalogs stop at the platform boundary and do not reach manufacturing execution or laboratory information systems [S4] — this leaves a real, structurally-created gap that free tooling does not currently close",
+      "Validation and audit-trail requirements define the segment [S2], which tends to make the buyer risk-driven and less price-sensitive than a productivity buyer"
+    ],
+    "headwinds": [
+      "Every major cloud data platform includes a catalog with the warehouse at no separate charge [S4]. A free default sets the reference price for the base capability and forces any paid product to justify itself entirely on what the free one cannot do",
+      "Both established enterprise vendors already list regulated-industry accelerators on published roadmaps [S3]. The differentiating capability in this segment is on the incumbents' announced plans, not merely conceivable for them",
+      "The regulated segment is $280-340M [S2] — roughly an eighth of a category already served by vendors with enterprise footprints [S3]. Small absolute segment, well-resourced adjacent competitors",
+      "Regulatory-driven demand is date-dependent: if traceability deadlines in 2026-2027 [S2] are the driver, some of the 28-32% is a compliance pull-forward whose durability past those dates no source addresses"
+    ],
+    "buyer_budget_reality": "No source in this pack states a budget figure, an average contract value, a procurement cycle, or a willingness-to-pay for any vendor in this category. What can be said from the material: the base catalog capability has a $0 reference price inside the cloud data platforms [S4], so paid budget must be justified on cross-boundary lineage and validation evidence rather than on cataloging itself; and the segment is defined by validation and audit-trail obligations [S2], which typically routes spend through quality/compliance rather than a discretionary data-team line. Both of those are inferences from S2 and S4, not stated figures. Everything quantitative about buyer budgets in this market is a research gap.",
+    "adoption_stage": "early-majority"
+  },
+  "competitive_landscape": {
+    "incumbents": [
+      {
+        "name": "Collibra",
+        "position": "Named as one of the two established enterprise catalog vendors [S3]. Does not currently ship pre-built validation evidence packages for GxP environments, but lists regulated-industry accelerators on a published roadmap [S3]. Its position in this niche is therefore 'absent today, announced for the future' — which is a materially different competitive posture from 'not interested'.",
+        "funding_or_scale": null,
+        "threat_level": "high",
+        "url": "https://research.example.org/catalog-vendors",
+        "source_ids": ["S3"]
+      },
+      {
+        "name": "Alation",
+        "position": "The other established enterprise catalog vendor [S3]. Same posture: no pre-built GxP validation evidence packages today, regulated-industry accelerators on the published roadmap [S3].",
+        "funding_or_scale": null,
+        "threat_level": "high",
+        "url": "https://research.example.org/catalog-vendors",
+        "source_ids": ["S3"]
+      },
+      {
+        "name": "The major cloud data platforms (unnamed in the source)",
+        "position": "The incumbent that would not appear on a startup competitive matrix, because it does not sell a catalog — it gives one away. Each major cloud data platform ships a catalog with its warehouse at no separate charge [S4]. It wins the in-warehouse lineage use case by default and by price, and loses only where lineage must cross out of the platform into MES or LIMS [S4]. S4 names no individual platform, so I cannot attribute this to a specific vendor.",
+        "funding_or_scale": "Not stated in the material; these are described only as 'the major cloud data platforms' [S4]",
+        "threat_level": "high",
+        "url": "https://research.example.org/cloud-catalog",
+        "source_ids": ["S4"]
+      }
+    ],
+    "challengers": [],
+    "adjacent_threats": [
+      "Cloud data platforms extending bundled lineage past their own boundary. The only thing S4 identifies as keeping them out of the MES/LIMS use case is reach, not capability or licensing [S4] — a connector programme, not a re-architecture",
+      "MES and LIMS vendors themselves. They already own the systems that hold batch records and already operate under the same validation regime; lineage out of their own system is a natural extension. No source in this pack discusses them, so this is flagged as an inference and a research gap, not an evidenced threat",
+      "Data quality and governance vendors, whose tooling is already being counted inside the wide-boundary $6B+ definition of this category [S1] — a sign those adjacent products are being positioned as covering the same buyer need",
+      "Computerized-system-validation and quality-management vendors, who already sell auditor-accepted validation documentation into exactly this buyer. Inference — no source in the pack covers this space"
+    ],
+    "concentration": "concentrated",
+    "differentiation_axes": [
+      "Lineage reach across system boundaries — specifically whether lineage extends beyond the data platform into manufacturing execution and laboratory systems [S4]",
+      "Pre-built validation evidence for GxP environments, which no established vendor currently ships [S3]",
+      "Price against a free bundled default: whether the product does something the no-cost platform catalog cannot [S4]",
+      "Vertical specificity — whether the product is a general catalog or one shaped to validation and audit-trail requirements [S2]",
+      "Enterprise credibility and installed footprint, which S3 attributes to the two established vendors [S3]"
+    ],
+    "saturation": {
+      "funded_competitors_known": 2,
+      "new_entrants_trend": "unknown",
+      "pricing_direction": "compressing",
+      "consolidation_activity": "None seen. No acquisition, merger, or exit in this category appears anywhere in the provided material.",
+      "lifecycle_stage": "growth",
+      "room_for_a_new_entrant": "crowded but differentiable",
+      "why": "Two funded named competitors is all the research supports — Collibra and Alation [S3] — plus an unspecified number of major cloud data platforms shipping catalogs for free [S4]. That is a genuinely thin count, but it is thin because the research is thin, not demonstrably because the market is empty: the pack contains no funding-round data, no entrant timeline, and no acquisition record, so I cannot distinguish 'few players' from 'few players surveyed'. new_entrants_trend is unknown for exactly that reason and should not be read as 'stopped'. Pricing is called compressing on direct evidence: the base capability is bundled at no separate charge by every major cloud data platform [S4], which is the strongest form of price compression there is — a free substitute for the core function. That compression does not yet extend to cross-boundary lineage into MES/LIMS, which the free catalogs do not reach [S4], nor to GxP validation evidence, which neither established vendor ships [S3]. Lifecycle is growth on the 22-26% and 28-32% rates [S1][S2]. 'Crowded but differentiable' rather than 'a defensible niche remains' because the one axis that differentiates here — regulated-industry capability — sits on both incumbents' published roadmaps [S3]; a differentiator your two largest competitors have already announced is a lead, not a moat."
+    }
+  },
+  "absorption_risk": {
+    "verdict": "contested",
+    "horizon": "2-3 years",
+    "confidence": "medium",
+    "likely_absorbers": [
+      {
+        "name": "Collibra",
+        "why_them": "Already the established enterprise catalog vendor with the buyer relationship and the surrounding product [S3]. Adding GxP validation evidence is a content-and-packaging addition on top of a catalog they already sell, not a new product line.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "Regulated-industry accelerators listed on a published roadmap [S3]",
+          "Absence of GxP validation evidence today is described as a current-state fact, not a strategic exclusion [S3]"
+        ],
+        "source_ids": ["S3"]
+      },
+      {
+        "name": "Alation",
+        "why_them": "Same structural position as Collibra — established enterprise catalog vendor, existing large-enterprise footprint, the validation layer would attach to a catalog the customer already owns [S3].",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "Regulated-industry accelerators listed on a published roadmap [S3]"
+        ],
+        "source_ids": ["S3"]
+      },
+      {
+        "name": "The major cloud data platforms",
+        "why_them": "They already give the catalog away with the warehouse [S4], so they own the customer, the storage, the compute and the price floor. The only thing they do not have is lineage reach outside their own boundary [S4] — and reach is an integration problem, which is the cheapest kind of gap for a platform vendor to close.",
+        "mechanism": "bundle into an existing suite",
+        "signals_already_visible": [
+          "Catalog already shipped with the data warehouse at no separate charge [S4]",
+          "Existing lineage capture, currently scoped to the platform's own boundary [S4] — the capability exists, only its reach is limited"
+        ],
+        "source_ids": ["S4"]
+      }
+    ],
+    "precedents": [
+      {
+        "category": "Standalone data cataloging as a paid product, versus the catalog bundled with the data warehouse",
+        "absorbed_by": "The major cloud data platforms",
+        "how_long_it_took": "Not stated in the material; S4 describes the bundling as an accomplished present-day fact, not a transition in progress [S4]",
+        "why_it_is_comparable": "This is not an analogy — it is the same category, already partly absorbed. The base cataloging function has already been made free inside the platforms [S4]. What remains paid is the residue the free version does not reach. That makes this the most relevant precedent available and it is drawn from the research rather than from outside knowledge.",
+        "source_ids": ["S4"]
+      },
+      {
+        "category": "Antivirus, file sync, VPN, screen sharing and password management",
+        "absorbed_by": "Operating-system and productivity-suite vendors",
+        "how_long_it_took": "Not established by any source provided to me",
+        "why_it_is_comparable": "Mechanism match is partial and I want to be explicit about that. It matches on the free-default dynamic — a platform that already owns the customer ships a good-enough version at no marginal price [S4]. It matches poorly on the compliance dimension: none of those categories required a vendor to produce evidence an external auditor would accept, which is a durability factor this category has and they did not [S2][S3]. Offered as illustration of the mechanism only. No source in this pack supports these precedents; the empty source array is accurate.",
+        "source_ids": []
+      }
+    ],
+    "what_would_prevent_it": [
+      "A regulatory moat with real substance: if validation evidence must be produced, maintained and re-qualified under audit rather than merely generated once, the ongoing obligation is harder for a platform vendor to bundle than a feature is [S2]. Whether it works that way is not established by any source here",
+      "Cross-boundary reach into MES and LIMS staying genuinely hard. S4 says bundled catalogs 'do not reach' those systems [S4] but does not say why, so I cannot tell whether the barrier is engineering effort, vendor access, per-system certification, or simply lack of priority. That distinction decides whether this is a moat or a backlog item",
+      "A buyer who will not consolidate — regulated manufacturers may deliberately keep validation evidence with a vendor separate from the platform being validated. Inference; no source addresses buyer consolidation behaviour",
+      "Depth of workflow in the batch-record and audit path, if the product becomes the system of record for evidence rather than a report generator. No source speaks to this"
+    ],
+    "notes": "The honest reading is 'contested', not 'feature' and not 'product'. Two independent absorption paths are already visible in evidence rather than speculation: the incumbents have regulated-industry accelerators on published roadmaps [S3], and the platforms have already made the base capability free [S4]. That is more absorption signal than most categories show. What holds it back from a 'feature' verdict is that the specific thing being sold here — validation evidence an auditor accepts, and lineage that crosses into MES and LIMS — is precisely what nobody currently ships [S3][S4]. So the risk is real and near-dated, but not yet realized. The 2-3 year horizon comes from the roadmap language in S3; roadmap items are typically nearer than three years but S3 gives no date, so this is a judgement, not a reading. Confidence is medium rather than high because the pack contains no acquisition history, no product-release timeline, and no way to tell whether 'accelerators on a roadmap' means a shipping quarter or a marketing slide."
+  },
+  "open_source_landscape": {
+    "applicable": true,
+    "projects": [],
+    "closest_project": null,
+    "capability_gap": null,
+    "gap_trend": null,
+    "evidence_for_the_gap": "There is none, and that is the finding. Data cataloging, metadata management and lineage is a category with a well-known open-source dimension, so setting applicable to false would misdescribe the territory. But not one of the four sources provided mentions an open-source project, by name or generically — no repository, no adoption figure, no governance model, no commercial backer. I will not name projects or estimate a parity gap from memory, because I was instructed to name real projects with real adoption evidence and to never state a figure I did not see in the provided material. capability_gap and gap_trend are therefore null rather than guessed at; a fabricated enum value here would be worse than an admitted hole. This is the single largest gap in the research pack, and because open-source parity is the leading indicator of absorption in this category, its absence weakens the absorption read above more than any other missing item.",
+    "what_commercial_still_provides": [
+      {
+        "capability": "Lineage that crosses outside the data platform's own boundary — into manufacturing execution and laboratory information systems",
+        "type": "integrations",
+        "durable": "false",
+        "why": "This is the one gap the research positively establishes: bundled platform catalogs capture lineage within the platform's boundary and do not reach MES or LIMS [S4]. But integration reach is the cheapest category of gap for a platform vendor to close — it is connector engineering against systems the platform already sits beside, and the lineage capture machinery already exists [S4]. Durable only for as long as it stays un-prioritized."
+      },
+      {
+        "capability": "Pre-built validation evidence packages for GxP environments",
+        "type": "compliance",
+        "durable": "false",
+        "why": "Genuinely unmet today — neither established vendor ships it [S3]. But S3 says both list regulated-industry accelerators on published roadmaps [S3], which is close to the definition of non-durable: the gap is not structural, it is a backlog position. Durability would depend on whether auditor acceptance requires accumulated qualification history and customer-specific re-validation rather than a shipped artifact, and no source in this pack establishes that either way."
+      },
+      {
+        "capability": "Enterprise credibility and installed footprint in large enterprises",
+        "type": "distribution",
+        "durable": "true",
+        "why": "S3 attributes established-vendor status in enterprise accounts to Collibra and Alation [S3]; S4 shows the cloud platforms arriving pre-installed alongside the warehouse [S4]. Distribution is the one thing on this list a platform vendor cannot be said to need to replicate — it is what they already have, and it is what a new entrant must build. This entry is durable in favour of the incumbents, not in favour of a new entrant."
+      }
+    ],
+    "pricing_pressure": "significant",
+    "company_relationship_to_oss": "unclear",
+    "strip_mining_risk": null,
+    "notes": "Pricing pressure is set to significant on the strength of S4 alone — a free bundled catalog from every major cloud data platform [S4] caps what anyone can charge for the base function just as effectively as a mature open-source project would, and arguably more so, since it arrives pre-installed and operated. It is short of severe only because the free option demonstrably does not reach MES or LIMS [S4] and does not carry GxP validation evidence [S3], leaving priced room in exactly the slice this company occupies. Read the pressure as: the free substitute here is a platform bundle rather than an open-source project, and the standard open-source-parity mechanism is running through a commercial vendor instead of a repository. company_relationship_to_oss is 'unclear' because no source states it and I have no deck material on the company's build. strip_mining_risk is null for the same reason — it only applies to companies built on open source, and nothing establishes that this one is."
+  },
+  "adjacent_markets": [
+    {
+      "market": "Cloud data warehouse platforms",
+      "relationship": "converging with this one",
+      "size_note": "Not sized in the provided material",
+      "why_it_matters": "The catalog is already inside the warehouse purchase at no separate charge [S4]. This is the market that sets the price floor and owns the customer relationship; a catalog vendor competes with it on every deal whether or not it appears on the matrix.",
+      "source_ids": ["S4"]
+    },
+    {
+      "market": "Data quality and governance tooling",
+      "relationship": "converging with this one",
+      "size_note": "Not separately sized; S1 indicates that folding it in takes the combined figure from $2.2-2.6B to $6B or more [S1], which implies the adjacent tooling is larger than the catalog category itself",
+      "why_it_matters": "Vendors are already marketing across the boundary [S1], which means buyers are being offered these as one purchase. Expansion opportunity in one direction, competitive encroachment in the other.",
+      "source_ids": ["S1"]
+    },
+    {
+      "market": "Manufacturing execution systems and laboratory information management systems (MES/LIMS)",
+      "relationship": "upstream",
+      "size_note": "Not sized in the provided material",
+      "why_it_matters": "These are the systems the paid lineage use case has to reach, and the reason the free bundled catalog is insufficient [S4]. They are upstream as data sources and, plausibly, competitors — their vendors already operate inside the same validation regime. No source in this pack covers MES/LIMS vendors' own lineage or catalog ambitions, so their posture is unknown.",
+      "source_ids": ["S4"]
+    },
+    {
+      "market": "Regulatory traceability compliance in manufacturing",
+      "relationship": "upstream",
+      "size_note": "Drives the $280-340M regulated-manufacturing catalog and lineage segment and its 28-32% growth [S2]",
+      "why_it_matters": "Demand in this slice is created by rules taking effect through 2026 and 2027 [S2], not by buyer preference. That makes the addressable market a function of the regulatory calendar — it can expand faster than software markets normally do, and it can also flatten once a compliance deadline passes.",
+      "source_ids": ["S2"]
+    }
+  ],
+  "economics": {
+    "typical_pricing": "Not stated by any source. The only pricing fact in the pack is structural and it is a zero: the major cloud data platforms include a catalog with the data warehouse at no separate charge [S4]. No source gives a list price, an average contract value, a seat or consumption model, or a discount norm for Collibra, Alation, or any regulated-industry deployment.",
+    "typical_gross_margin": "Not stated by any source in the pack. No margin figure for any vendor in this category appears in S1-S4.",
+    "typical_cac_payback": "Not stated by any source. The pack contains no sales-cycle, CAC, payback or retention benchmark for this category. Regulated buyers with validation requirements [S2] would conventionally be expected to have longer cycles, but that is general reasoning, not something the material supports.",
+    "capital_intensity": "low"
+  },
+  "funding_environment": {
+    "recent_rounds": [],
+    "valuation_norms": "Not established. No source in this pack reports a valuation, revenue multiple, or round for any company in this category.",
+    "exit_comps": [],
+    "investor_appetite": null,
+    "notes": "This is a complete blank in the research, not a considered 'cooling' or 'steady' read. The four sources cover sizing [S1], segment sizing [S2], vendor capability [S3] and platform bundling [S4] — none touches financing, valuation, or exits. I have set investor_appetite to null rather than choosing an enum value, because every available value would assert something no source supports. Without funding data I also cannot answer the saturation question properly: whether new funded entrants are still arriving is exactly what a round-by-round record would show, and there isn't one."
+  },
+  "regulatory_and_structural": {
+    "factors": [
+      "Traceability rules taking effect through 2026 and 2027 are the named driver of segment growth [S2] — regulation here is primarily a demand creator, with dated triggers",
+      "Validation and audit-trail requirements are what define the regulated-manufacturing segment as distinct from the wider catalog market [S2]; they are the boundary condition of the segment's existence",
+      "Auditor acceptance is the real gating standard: the capability at issue is evidence an auditor will accept, and no established vendor ships pre-built validation evidence packages for GxP environments today [S3]",
+      "Structural, not regulatory, but decisive: the base catalog function has a $0 price inside the major cloud data platforms [S4], and cross-boundary lineage into MES/LIMS is the only part of the function they do not cover",
+      "Deadline dependency: if compliance dates through 2026-2027 [S2] pull demand forward, the 28-32% rate may not describe the post-deadline market. No source addresses what happens after"
+    ],
+    "risk_level": "medium"
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "title": "Data catalog and metadata management sizing",
+      "url": "https://research.example.org/catalog-sizing",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "Category size of $2.2-2.6B in 2026 and 22-26% annual growth at the narrow boundary; the existence of $6B+ vendor claims produced by folding in data quality and governance tooling. Marked unknown rather than secondary because no publisher, author, or methodology is named and the host domain is a placeholder — the note reports on independent estimates without identifying them, so its reliability cannot be assessed. It is used here as the best available figure, not a verified one."
+    },
+    {
+      "id": "S2",
+      "title": "Regulated manufacturing as a distinct catalog segment",
+      "url": "https://research.example.org/gxp-lineage",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "The $280-340M 2026 estimate for catalog and lineage deployments in regulated manufacturing, the 28-32% segment growth rate, and the attribution of that growth to traceability rules taking effect through 2026 and 2027. Same provenance problem as S1: no named publisher, no methodology, no citation to a regulator or filing behind the traceability claim."
+    },
+    {
+      "id": "S3",
+      "title": "Established catalog vendors and validation evidence",
+      "url": "https://research.example.org/catalog-vendors",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "Collibra and Alation as the established enterprise catalog vendors; that neither currently ships pre-built GxP validation evidence packages; and that both list regulated-industry accelerators on published roadmaps. The roadmap claim is the most consequential fact in the pack for absorption risk, and it is the one I would most want to verify against the vendors' own published materials — the source refers to published roadmaps but does not link or quote them."
+    },
+    {
+      "id": "S4",
+      "title": "Cloud platforms bundle a catalog",
+      "url": "https://research.example.org/cloud-catalog",
+      "date": "2026-03",
+      "reliability": "unknown",
+      "what_it_supported": "That major cloud data platforms each include a catalog with their data warehouse at no separate charge, and that those bundled catalogs capture lineage only within the platform boundary and do not reach MES or LIMS. Names no individual platform, which limits how specifically the competitive threat can be described."
+    }
+  ],
+  "research_gaps": [
+    "Source provenance overall. All four sources sit on one placeholder-style domain (research.example.org), none names a publisher, author or methodology, and none is a primary document. There is no regulator filing, no public-company disclosure, no named analyst house, and no vendor's own financial statement anywhere in the pack. Every figure in this analysis inherits that weakness, which is why sizing_confidence is low despite the estimate ranges themselves being narrow.",
+    "The open-source dimension is entirely absent. Not one project, adoption figure, or governance model appears in the material, in a category that certainly has open-source metadata and lineage tooling. This is why capability_gap and gap_trend are null. Because open-source parity is the strongest leading indicator of absorption, this gap materially limits confidence in the absorption verdict.",
+    "No funding, valuation, acquisition or exit data of any kind. This blocks the saturation assessment: with no round history I cannot tell whether new funded entrants are arriving, slowing, or stopped, and new_entrants_trend is set to unknown for that reason rather than because the flow has demonstrably halted.",
+    "Competitor count is almost certainly understated. Two named vendors [S3] plus unnamed cloud platforms [S4] is what the research contains, not what the market contains. No source surveys smaller or specialist catalog/lineage vendors, and none surveys vendors selling specifically into GxP.",
+    "No pricing, contract value, gross margin, sales cycle, CAC or retention benchmark for this category anywhere in the pack — the entire economics section rests on absence.",
+    "Why bundled catalogs do not reach MES and LIMS is unexplained [S4]. Whether that is an engineering barrier, a certification barrier, a vendor-access barrier or simple deprioritization determines whether cross-boundary lineage is a moat or a quarter of connector work, and it is the single most decision-relevant unknown here.",
+    "The specific traceability rules driving 2026-2027 demand are not named, dated, or cited to any regulator [S2], so their scope, jurisdictions and enforcement dates cannot be checked.",
+    "What 'validation evidence an auditor will accept' actually requires is never defined by any source — whether it is a document artifact, an ongoing qualification process, or something re-established per customer. This determines whether the compliance capability is durable or replicable, and I have marked it non-durable on the roadmap evidence in S3 while flagging that the underlying question is unresolved.",
+    "No geographic breakdown. The company's geography is unspecified and no source segments the market by region, so all figures are treated as undifferentiated global totals.",
+    "No source addresses MES/LIMS vendors' own ambitions in lineage or cataloging, despite their being the most naturally positioned adjacent absorbers of this use case."
+  ],
+  "injection_findings": []
+}

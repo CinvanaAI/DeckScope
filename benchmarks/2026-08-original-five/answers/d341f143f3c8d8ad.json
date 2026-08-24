@@ -1,0 +1,31 @@
+{
+  "company": {"name": "Cobalt Survey", "one_liner": "Field data collection for environmental consultancies", "stage": "pre-seed", "founded": null, "location": null, "website": null},
+  "problem": {"statement": "Environmental consultants collect site data on paper and re-enter it later.", "who_has_it": "Environmental consultancies doing field work", "evidence_given": []},
+  "solution": {"description": "An offline-first mobile app that syncs when signal returns.", "how_it_works": "Offline-first capture on mobile, synchronising when connectivity is restored. No further detail.", "differentiators": ["Offline-first"], "technical_moat_claimed": null},
+  "product": {"maturity": "prototype", "demo_evidence": "Three pilot customers are referenced, which implies something deployable; the deck shows no demo and does not state product maturity. This is an inference from the pilots, not a statement in the deck."},
+  "market": {"category": "Field data collection software", "sub_category": "Environmental consultancy field survey", "tam_claimed": null, "sam_claimed": null, "som_claimed": null, "tam_methodology": "unstated", "growth_rate_claimed": null, "geography": null, "customer_segments": ["Environmental consultancies"]},
+  "business_model": {"pricing": null, "unit_economics": null, "acv_or_arpu": null, "cac_claimed": null, "ltv_claimed": null, "gross_margin_claimed": null},
+  "traction": {"revenue": "No revenue yet", "growth": null, "customers": "Three pilot customers", "logos": [], "pipeline": null, "retention": null, "other_metrics": []},
+  "competition": {"named_competitors": [], "positioning_claim": null, "competitors_omitted_suspicion": ["The deck has no competition slide at all. Field data collection is a category with established mobile form and survey tools, none of which appear."]},
+  "gtm": {"channels": [], "sales_motion": null, "partnerships": []},
+  "team": {"founders": [], "headcount": null, "notable_advisors": []},
+  "ask": {"amount": "$750k", "valuation": null, "use_of_funds": [], "milestones_promised": [], "runway_claimed": null},
+  "claims": [
+    {"id": "C1", "claim": "We believe this is a large and underserved market", "type": "market-size", "slide": 4, "verifiability": "unfalsifiable", "load_bearing": "high"},
+    {"id": "C2", "claim": "Environmental consultants collect site data on paper and re-enter it later", "type": "market-size", "slide": 2, "verifiability": "partially-verifiable", "load_bearing": "high"},
+    {"id": "C3", "claim": "Three pilot customers. No revenue yet.", "type": "traction", "slide": 5, "verifiability": "partially-verifiable", "load_bearing": "high"},
+    {"id": "C4", "claim": "An offline-first mobile app that syncs when signal returns", "type": "technology", "slide": 3, "verifiability": "partially-verifiable", "load_bearing": "medium"},
+    {"id": "C5", "claim": "Raising $750k on a SAFE", "type": "financial", "slide": 6, "verifiability": "unfalsifiable", "load_bearing": "medium"}
+  ],
+  "deck_quality": {
+    "missing_sections": ["Market sizing of any kind — slide 4 contains a belief, not a number", "Competition — no slide at all", "Team", "Business model and pricing", "Go-to-market", "Use of funds and milestones", "Any evidence for the problem beyond its assertion"],
+    "vague_language": ["'We believe this is a large and underserved market' — the entire market slide, and it is a belief with no figure, no segment and no source", "'large' and 'underserved' are both undefined"],
+    "unsupported_numbers": ["There are no quantitative market claims to support or refute. The only numbers in the deck are three pilots and $750k."],
+    "narrative_coherence": 4,
+    "notes": "The defining feature of this deck is the absence of evidence rather than the presence of bad evidence, and the two should not be scored the same way. Nothing here is overstated: the market slide makes no numeric claim at all, and the traction slide says plainly that there is no revenue. For a pre-seed raise of $750k on a SAFE, thin revenue is normal and should not be penalized. What should be noted is thin evidence of demand — three pilots with no stated conversion intent, no pricing conversation, and no sizing of any kind. The right posture toward this deck is low confidence in both directions: there is not enough in it to support a positive assessment or a negative one, and any analysis that reaches a confident verdict from six slides containing one belief and three pilots is overreaching."
+  },
+  "research_agenda": {
+    "search_queries": ["environmental consulting field data collection software market size", "environmental consultancy count North America revenue 2026", "offline first mobile data collection app environmental survey vendors", "field data collection software pricing per seat environmental", "environmental site assessment digital workflow adoption rate", "mobile forms software market size 2026 independent estimate", "environmental consulting industry software spend per firm", "pre-seed SAFE cap benchmark 2026 vertical SaaS", "paper to digital field survey conversion case study environmental", "ESG environmental data collection software funding 2025 2026"],
+    "key_uncertainties": ["The size of the market, which the deck does not attempt to state", "Whether established field-data tools already serve environmental consultancies", "Whether the three pilots convert to paid, and at what price", "Whether offline-first is a differentiator or a table-stakes feature in this category", "Who the team is, which at pre-seed is normally the entire investment case"]
+  }
+}

@@ -19,14 +19,21 @@ class OpenAIProvider(LLMProvider):
     """
 
     name = "openai"
-    default_model = "gpt-4o"
+    default_model = "gpt-5.2"
     default_base = "https://api.openai.com/v1"
     key_env = "OPENAI_API_KEY"
     key_required = True
+    #: A hard-coded catalogue ages faster than releases do, and this one had
+    #: drifted: it still recommended `gpt-4o` as the strong option and offered
+    #: `o4-mini`, which OpenAI retired in February 2026. The health check meant a
+    #: user usually discovered that as a failure rather than as a wrong answer,
+    #: but a setup wizard that recommends a dead model is not release-ready.
+    #: Treat every name here as perishable and check `catalog_url` when one
+    #: fails; `deckscope models --check` probes them rather than trusting this.
     catalog = [
-        ("gpt-4o", "Strong general analysis — recommended"),
-        ("gpt-4o-mini", "Fast and cheap"),
-        ("o4-mini", "Reasoning-heavy, slower"),
+        ("gpt-5.2", "Strong general analysis — recommended"),
+        ("gpt-5.2-mini", "Faster and cheaper"),
+        ("gpt-5.2-nano", "Cheapest, for high-volume work"),
     ]
     #: Model-name prefixes that reject temperature/top_p. The reasoning families
     #: run their own sampling policy and return an error if one is supplied.
@@ -41,10 +48,12 @@ class OpenAIProvider(LLMProvider):
     #: `o3-mini` in particular was in this catalogue and in the docs long after
     #: it stopped answering.
     retired_models = {
-        "o3-mini": "o4-mini",
-        "o1-mini": "o4-mini",
-        "o1-preview": "o4-mini",
-        "gpt-4-vision-preview": "gpt-4o",
+        "o4-mini": "gpt-5.2-mini",     # retired February 2026
+        "o3-mini": "gpt-5.2-mini",
+        "o1-mini": "gpt-5.2-mini",
+        "o1-preview": "gpt-5.2",
+        "gpt-4.5-preview": "gpt-5.2",  # retired June 2026
+        "gpt-4-vision-preview": "gpt-5.2",
     }
     catalog_url = "https://platform.openai.com/docs/models"
 
@@ -132,24 +141,39 @@ class OpenAICompatibleProvider(OpenAIProvider):
 
 class OpenRouterProvider(OpenAIProvider):
     name = "openrouter"
-    default_model = "anthropic/claude-sonnet-4.5"
+    default_model = "anthropic/claude-sonnet-5"
     default_base = "https://openrouter.ai/api/v1"
     key_env = "OPENROUTER_API_KEY"
     key_required = True
     catalog = [
-        ("anthropic/claude-sonnet-4.5", "Claude via OpenRouter"),
-        ("openai/gpt-4o", "GPT-4o via OpenRouter"),
-        ("google/gemini-2.0-flash-001", "Fast and cheap"),
+        ("anthropic/claude-sonnet-5", "Claude via OpenRouter"),
+        ("openai/gpt-5.2", "GPT-5.2 via OpenRouter"),
+        ("google/gemini-flash-latest", "Fast and cheap"),
     ]
+    catalog_url = "https://openrouter.ai/models"
+    retired_models: Dict[str, str] = {}
 
 
 class GroqProvider(OpenAIProvider):
     name = "groq"
-    default_model = "llama-3.3-70b-versatile"
+    #: Groq shut down `llama-3.1-8b-instant` and `llama-3.3-70b-versatile` for
+    #: free and developer tiers on 16 August 2026, and recommended GPT-OSS or
+    #: Qwen as the replacements. `llama-3.3-70b-versatile` was this backend's
+    #: only catalogue entry *and* its default, so a new user following the setup
+    #: wizard was pointed at a model that no longer answers.
+    default_model = "openai/gpt-oss-120b"
     default_base = "https://api.groq.com/openai/v1"
     key_env = "GROQ_API_KEY"
     key_required = True
-    catalog = [("llama-3.3-70b-versatile", "Very fast open model")]
+    catalog = [
+        ("openai/gpt-oss-120b", "Very fast open model — recommended"),
+        ("qwen/qwen3.6-27b", "Smaller and cheaper"),
+    ]
+    catalog_url = "https://console.groq.com/docs/models"
+    retired_models = {
+        "llama-3.3-70b-versatile": "openai/gpt-oss-120b",
+        "llama-3.1-8b-instant": "qwen/qwen3.6-27b",
+    }
 
 
 class GeminiProvider(OpenAIProvider):

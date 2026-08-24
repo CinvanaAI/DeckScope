@@ -53,10 +53,13 @@ def test_dependency_free_providers_are_ready_without_a_probe():
 
 
 def test_a_retired_model_is_named_and_redirected():
-    cap = av.inspect("openai", "o3-mini")
+    from deckscope.providers.openai_provider import OpenAIProvider
+
+    name, replacement = sorted(OpenAIProvider.retired_models.items())[0]
+    cap = av.inspect("openai", name)
     assert cap.state == av.RETIRED
     assert not cap.usable
-    assert "o4-mini" in cap.fix
+    assert replacement in cap.fix
 
 
 # ================================================= cached probes and rotation
@@ -72,8 +75,8 @@ def _probe_record(fingerprint, ok=True, error=""):
 def test_a_successful_probe_makes_it_ready_and_marked_live():
     os.environ["OPENAI_API_KEY"] = "sk-a"
     try:
-        probes = {"openai:gpt-4o": _probe_record(av.credential_fingerprint("openai"))}
-        cap = av.inspect("openai", "gpt-4o", probes)
+        probes = {"openai:gpt-5.2": _probe_record(av.credential_fingerprint("openai"))}
+        cap = av.inspect("openai", "gpt-5.2", probes)
         assert cap.state == av.READY
         assert cap.verified_live
     finally:
@@ -84,12 +87,12 @@ def test_rotating_the_key_invalidates_a_cached_pass():
     """Otherwise a pass earned by an old key vouches for a new one."""
     os.environ["OPENAI_API_KEY"] = "sk-old"
     old = av.credential_fingerprint("openai")
-    probes = {"openai:gpt-4o": _probe_record(old)}
-    assert av.inspect("openai", "gpt-4o", probes).state == av.READY
+    probes = {"openai:gpt-5.2": _probe_record(old)}
+    assert av.inspect("openai", "gpt-5.2", probes).state == av.READY
 
     os.environ["OPENAI_API_KEY"] = "sk-new"
     try:
-        assert av.inspect("openai", "gpt-4o", probes).state == av.UNVERIFIED
+        assert av.inspect("openai", "gpt-5.2", probes).state == av.UNVERIFIED
     finally:
         _clear("OPENAI_API_KEY")
 
@@ -99,7 +102,7 @@ def test_an_expired_probe_is_not_trusted():
     try:
         stale = _probe_record(av.credential_fingerprint("openai"))
         stale["epoch"] = 0          # 1970
-        assert av.inspect("openai", "gpt-4o", {"openai:gpt-4o": stale}).state \
+        assert av.inspect("openai", "gpt-5.2", {"openai:gpt-5.2": stale}).state \
             == av.UNVERIFIED
     finally:
         _clear("OPENAI_API_KEY")
@@ -110,7 +113,7 @@ def test_a_failed_probe_reports_the_reason_rather_than_hiding_it():
     try:
         rec = _probe_record(av.credential_fingerprint("openai"), ok=False,
                             error="401 invalid x-api-key")
-        cap = av.inspect("openai", "gpt-4o", {"openai:gpt-4o": rec})
+        cap = av.inspect("openai", "gpt-5.2", {"openai:gpt-5.2": rec})
         assert cap.state == av.FAILED
         assert "401" in cap.reasons[0]
         assert not cap.usable

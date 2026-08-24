@@ -125,7 +125,7 @@ deckscope run deck.pdf --format docx pdf
 **Run a panel of AIs that argue with each other:**
 
 ```bash
-deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-4o
+deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-5.2
 ```
 
 Where two independent models disagree is where your own diligence should start.

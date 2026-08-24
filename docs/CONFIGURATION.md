@@ -80,11 +80,12 @@ security:
 
 # ---------------------------------------------------------------- panel
 panel:
-  members: [anthropic:claude-sonnet-5, openai:gpt-4o]
+  members: [anthropic:claude-sonnet-5, openai:gpt-5.2]
   rounds: 1
 
 # ----------------------------------------------------------------- misc
-cache_dir: .deckscope_cache    # null disables caching
+cache_dir: null               # null disables caching; omit for the
+                              # per-user application-data directory
 verbose: true
 ```
 

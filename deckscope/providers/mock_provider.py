@@ -154,12 +154,45 @@ class MockProvider(LLMProvider):
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         if "chair of a panel" in system:
-            body = json.dumps(_CONSENSUS)
+            body = json.dumps(self._clamp_citations(
+                self._consensus(joined), self._available_sids(joined)))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
         body = json.dumps({"note": "mock", "echo": joined[:200]})
         return Completion(text=body, model=self.model,
                           usage=self._usage(system, messages, body))
+
+    def _consensus(self, prompt: str = "") -> dict:
+        """The chair's synthesis, about the deck the panel actually read.
+
+        This returned a fixed fixture — claims about a $47B TAM — no matter
+        which deck the panel had analyzed. Exactly the defect already fixed in
+        the revise path: the panel's headline artifact described a different
+        company, so scoring it produced 0.000 on claim accuracy and looked like a
+        result about panels rather than a property of the fixture. The chair now
+        derives its claim rows from the same assessment the comparison uses, so
+        the consensus is at least about the right deck.
+        """
+        import copy
+
+        out = copy.deepcopy(_CONSENSUS)
+        audit = _claim_audit_for(prompt, strictness=1)
+        if audit:
+            out["claim_consensus"] = [{
+                "id": row.get("id"),
+                "claim": row.get("claim"),
+                "assessments": {"Panelist A": row.get("assessment"),
+                                "Panelist B": row.get("assessment")},
+                "consensus": row.get("assessment"),
+                "confidence": row.get("evidence_quality") or "medium",
+                "source_ids": list(row.get("source_ids") or []),
+                "note": row.get("so_what") or "",
+            } for row in audit]
+            # The panel's call has to match the analysis it just summarised, or
+            # the consensus disagrees with its own claim rows.
+            verdict = out.setdefault("consensus_verdict", {})
+            verdict["call"] = self._compare(prompt).get("verdict", {}).get("call")
+        return out
 
     def _compare(self, prompt: str = "") -> dict:
         """A copy of the base comparison, nudged so panelists actually differ."""

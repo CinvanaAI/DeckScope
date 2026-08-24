@@ -18,7 +18,8 @@ echo     2. Install DeckScope into its own private folder
 echo     3. Put shortcuts on your Desktop
 echo     4. Walk you through setup, step by step
 echo.
-echo   Nothing outside this folder and your Desktop is changed.
+echo   Outside this folder it adds Desktop shortcuts and a settings
+echo   folder at %%APPDATA%%\DeckScope for your config, keys and cache.
 echo.
 pause
 

@@ -48,4 +48,5 @@ Full threat model, every detection, and the limits in
 
 ## Supported versions
 
-The latest release. This is a young project; please upgrade before reporting.
+There is no tagged release yet. The supported version is the current `main`;
+please pull before reporting, and include the commit you were on.

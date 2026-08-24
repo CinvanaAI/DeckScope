@@ -31,14 +31,20 @@ The installer will:
 
 1. **Find Python.** If it isn't installed, it opens the download page and tells you which
    checkbox matters.
-2. **Create a private environment** inside the folder (`.venv/`). Nothing outside that
-   folder and your Desktop is modified — DeckScope cannot interfere with other Python
-   software on your machine.
+2. **Create a private environment** inside the folder (`.venv/`), so DeckScope cannot
+   interfere with other Python software on your machine.
 3. **Install DeckScope** and the packages it needs to read PowerPoint, PDF and Word files
    and to write Excel and PDF reports. A minute or two the first time.
 4. **Add Desktop shortcuts** — **DeckScope** (opens the app window) and **DeckScope
    Setup** (re-runs configuration).
 5. **Run the setup wizard** — six questions in plain language.
+
+**What it touches outside the folder.** Desktop shortcuts, and a settings directory
+(`%APPDATA%\DeckScope` on Windows, `~/.config/deckscope` elsewhere) holding your
+config, your saved keys and the cache. On macOS and Linux the installer may also add
+a `deckscope` symlink under `~/.local/bin` or `/usr/local/bin` so the command works
+from any terminal. Everything is listed under
+[Where things live](#where-things-live) and removed by the uninstall steps.
 
 When it finishes, double-click **DeckScope** on your Desktop any time.
 
@@ -155,9 +161,12 @@ those are blocked, use a local model (`--provider openai_compatible`) or copy-pa
 
 DeckScope runs fully offline with a local model and no web research:
 
+DeckScope is not published to PyPI yet, so build the wheel from a checkout first.
+
 ```bash
-# On a connected machine:
-pip download deckscope[all] -d ./wheels
+# On a connected machine, in a DeckScope checkout:
+python -m build --outdir ./wheels                  # the DeckScope wheel itself
+pip download ".[all]" -d ./wheels                  # and its dependencies
 
 # Move ./wheels across, then:
 pip install --no-index --find-links ./wheels deckscope[all]
@@ -187,7 +196,7 @@ DeckScope will not produce a confident-looking market view it cannot support.
 | Settings | `%APPDATA%\DeckScope\config.yaml` | `~/.config/deckscope/config.yaml` |
 | API keys | `%APPDATA%\DeckScope\.env` | `~/.config/deckscope/.env` (mode 0600) |
 | Reports | `Documents\DeckScope Reports` | `~/Documents/DeckScope Reports` |
-| Cache | `.deckscope_cache/` in your working folder | same |
+| Cache | `%APPDATA%\DeckScope\cache` | `~/.config/deckscope/cache` |
 
 Override the settings location with the `DECKSCOPE_HOME` environment variable — useful
 for keeping several profiles.

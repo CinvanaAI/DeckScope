@@ -28,12 +28,29 @@ import re
 from dataclasses import dataclass, field, asdict
 from typing import Any, Dict, List, Optional, Tuple
 
+from ..sources import CITATION_SECTIONS
 from .cases import EvalCase
 
-#: Bare [S3] / S3 citations written into prose rather than a source_ids list.
-#: Same shape as deckscope.sources.CITE_RX; kept local so the scorer does not
-#: depend on the module it is grading.
-INLINE_CITE_RX = re.compile(r"\bS(\d{1,3})\b")
+#: Bracketed [S3] citations written into prose rather than a `source_ids` list.
+#:
+#: Deliberately duplicated from `deckscope.sources` rather than imported: a
+#: scorer that shares its definition of "a citation" with the code it grades
+#: cannot catch that code widening the definition. The two must agree, so a test
+#: asserts they do — but they agree by being checked, not by being the same
+#: object.
+#:
+#: It requires the bracket for the same reason the runtime does. The previous
+#: form matched any S-token, so a report saying "Amazon S3" was scored as
+#: carrying a citation, and `citation_integrity` was measuring prose accidents.
+INLINE_CITE_RX = re.compile(r"\[\s*S\d{1,3}(?:\s*[,;]\s*S\d{1,3})*\s*\]", re.I)
+_SID_RX = re.compile(r"S(\d{1,3})", re.I)
+
+
+def _inline_sids(text: str) -> List[str]:
+    out: List[str] = []
+    for group in INLINE_CITE_RX.findall(text or ""):
+        out.extend(f"S{n}" for n in _SID_RX.findall(group))
+    return out
 
 CONFIDENCE_ORDER = {"low": 1, "medium": 2, "high": 3}
 
@@ -104,7 +121,9 @@ def _report_text(result: Any, lens: str) -> str:
     """Everything the analysis said, as one searchable string."""
     comparison = (result.comparisons or {}).get(lens, {})
     parts = [json.dumps(comparison, default=str)]
-    for extra in ("market", "opportunity", "discovery_delta"):
+    for extra in CITATION_SECTIONS:
+        if extra == "comparisons":
+            continue                  # the lens under test is already included
         value = getattr(result, extra, None)
         if value:
             parts.append(json.dumps(value, default=str))
@@ -194,12 +213,21 @@ def score_case(case: EvalCase, result: Any, *, mode: str, lens: str = "investor"
             for item in node:
                 found.extend(_walk_source_ids(item))
         elif isinstance(node, str):
-            found.extend(f"S{n}" for n in INLINE_CITE_RX.findall(node))
+            found.extend(_inline_sids(node))
         return found
 
-    cited_anywhere = _walk_source_ids(getattr(result, "comparisons", None)
-                                      or {"claim_audit": audit})
-    cited_anywhere.extend(_walk_source_ids(getattr(result, "market", None) or {}))
+    # Every section that can carry a citation, not the two somebody listed. The
+    # comment above used to say "the whole report" while the code checked
+    # `comparisons` and `market` only, so a dangling citation in the opportunity
+    # or cold-discovery output scored a clean 1.000 on citation_integrity — a
+    # gate reporting success over ground it never walked.
+    cited_anywhere: List[str] = []
+    for section in CITATION_SECTIONS:
+        payload = getattr(result, section, None)
+        if payload:
+            cited_anywhere.extend(_walk_source_ids(payload))
+    if not getattr(result, "comparisons", None):
+        cited_anywhere.extend(_walk_source_ids({"claim_audit": audit}))
     dangling: List[str] = []
     for sid in cited_anywhere:
         if str(sid).strip().upper() not in known:

@@ -32,7 +32,7 @@ from .security.policy import SecurityPolicy
 from .security.report import ScanReport
 from .security.sanitizer import fence
 from .security.screening import screen_deck
-from .sources import resolve_citations
+from .sources import audit_citations, resolve_citations
 from .validate import validate_comparison
 
 MAX_DECK_CHARS = 120_000
@@ -173,7 +173,17 @@ class BaselineAnalyst:
                 "model_calls": len(cfg.lenses),
             },
         )
-        out.registry = resolve_citations(out)
+        # Audit, then attribute — the same order and the same guarantee the
+        # pipeline gets. The baseline had neither: it rebuilt the bibliography
+        # from a snapshot and never checked a single citation, so the cheaper
+        # mode silently offered a weaker promise than the expensive one. That is
+        # backwards, and more so now that `--mode baseline` is the sensible
+        # default for a plain deck-versus-market comparison.
+        audit = audit_citations(out, registry, strip=True)
+        out.registry = resolve_citations(out, registry)
+        out.stats["citation_audit"] = audit.to_dict()
+        if not audit.ok:
+            self._log(f"Citation audit: {audit.summary()} — removed from the report")
         out.stats["references"] = out.registry.stats()
         self._log(f"done in {out.stats['elapsed_seconds']}s, "
                   f"{out.stats['model_calls']} model call(s)")

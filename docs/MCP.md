@@ -81,7 +81,7 @@ agreement metrics, and the consensus.
 
 | Argument | Notes |
 |---|---|
-| `panel` | **Required.** Two or more: `["anthropic:claude-sonnet-5","openai:gpt-4o"]` |
+| `panel` | **Required.** Two or more: `["anthropic:claude-sonnet-5","openai:gpt-5.2"]` |
 | `rounds` | Cross-review rounds; default 1, `0` skips review |
 | `chair` | Which connection writes the consensus |
 

@@ -1,0 +1,364 @@
+{
+  "headline": "Real Series A traction ($3.4M ARR, 210 farms, 6% MoM) attached to a competitive frame that covers only the 6-9% of agricultural employers who buy specialist software at all [S1] — the deck never mentions the ERP bundles and PEOs that serve the other ~90%.",
+  "verdict": {
+    "call": "LEAN NO",
+    "confidence": "medium",
+    "confidence_rationale": "The traction figures are specific and credible in shape, and the H-2A wedge is corroborated [S2], so this is not a weak company. But the four sources available all point the same way on the structural question — the majority of agricultural employers buy payroll bundled with a farm-management ERP or through a PEO [S1][S2][S3] — and the deck shows no awareness of it. Confidence is held at medium rather than high because no source sizes the market in dollars, none addresses Orchard's own numbers, and all four sources carry the same date (2026-03) and were found via a single query, so the research base is narrow. The deck is also only seven slides with no team, pricing, or use-of-funds content, so a material share of the case is simply absent rather than wrong."
+  },
+  "scorecard": [
+    {
+      "dimension": "Market size & timing",
+      "score": 4,
+      "weight": 5,
+      "rationale": "Slide 6 is a single line — 'Agricultural payroll software in North America' — with no TAM, SAM, employer count, or dollar figure of any kind. There is nothing to audit, which is unusual at Series A. Worse, the framing ('agricultural payroll software') is the narrow denominator: S1 puts the two specialist software vendors at an estimated 6-9% of agricultural employers, with the majority buying through an ERP bundle or a PEO. Payroll delivered as a PEO service [S3] sits outside a 'software' market definition entirely, and that is where the highest-complexity employers concentrate. No source in the pack states a growth rate, so market timing cannot be assessed at all — not overstated, simply unevidenced.",
+      "evidence": [
+        "Slide 6 in full: 'Agricultural payroll software in North America.' — no number stated",
+        "AgriPay and HarvestHR together hold an estimated 6-9% of agricultural employers [S1]",
+        "Majority obtain payroll bundled with a farm-management ERP or through a PEO [S1]",
+        "No source provided states a market size in dollars or a growth rate"
+      ],
+      "source_ids": ["S1", "S2", "S3"]
+    },
+    {
+      "dimension": "Competitive position",
+      "score": 3,
+      "weight": 5,
+      "rationale": "The deck names exactly two competitors and asserts they are 'the two vendors built for this market.' S1 supports the narrow reading — those two are the ag-specific software vendors — and contradicts the implied conclusion, since between them they reach only an estimated 6-9% of agricultural employers. The named competitive set therefore describes a small minority of the buying universe. The actual default alternatives are the farm-management ERP payroll module, adopted by default rather than selected because the office already runs the system [S2], and the PEO [S3]. S1 states the common shortlist is the incumbent ERP against a PEO, with a specialist appearing in a minority of evaluations. That reframes the binding constraint: the problem is not winning evaluations, it is being in one.",
+      "evidence": [
+        "Slide 4: 'The two vendors built for this market are AgriPay and HarvestHR'",
+        "Those two hold an estimated 6-9% of agricultural employers [S1]",
+        "'The common shortlist is the incumbent farm-management ERP against a PEO'; a specialist payroll vendor appears in a minority of evaluations [S1]",
+        "ERP payroll module 'is adopted by default rather than selected' [S2]",
+        "Neither ERP modules nor PEOs are mentioned anywhere in the deck"
+      ],
+      "source_ids": ["S1", "S2", "S3"]
+    },
+    {
+      "dimension": "Product & moat",
+      "score": 6,
+      "weight": 4,
+      "rationale": "The strongest part of the deck, and the part the research actually corroborates. S2 states that coverage of H-2A wage-rate requirements varies across ERP payroll modules and is the most frequently cited gap — which is precisely the wedge slide 3 claims. But the same source undercuts the other half of the differentiation: leading ERP modules already handle hourly and, 'in recent releases,' piece-rate pay. So one of the two product claims on slide 3 is being commoditized by the incumbents while the deck still presents it as a differentiator. What remains defensible is regulatory depth (H-2A), which is a real but narrowing moat — compliance features are copied, not patented, and the deck offers no evidence of switching costs, data lock-in, or workflow depth beyond the feature list.",
+      "evidence": [
+        "H-2A wage-rate coverage 'varies and is the most frequently cited gap' in ERP payroll modules [S2]",
+        "ERP modules handle hourly and, 'in recent releases', piece-rate pay [S2]",
+        "Slide 3 claims piece-rate + hourly in one pay run and H-2A compliance built in",
+        "No switching-cost, integration, or data-moat claim appears anywhere in the deck"
+      ],
+      "source_ids": ["S2"]
+    },
+    {
+      "dimension": "Business model",
+      "score": 3,
+      "weight": 3,
+      "rationale": "The deck states no pricing, no unit of charge (per farm, per employee, per pay run), no gross margin, no CAC or payback, and no sales motion. The only derivable figure is average revenue per customer: $3.4M ARR / 210 farms = roughly $16.2K per farm (my arithmetic from slide 5, not a stated figure). That is a mid-market ACV implying a sales-led motion, which sits awkwardly against S2's finding that the competing ERP module is adopted by default with no sales event to win. Seasonality is a specific unanswered question here: a business whose customers run 400-person intake weeks has revenue and support load that may be highly seasonal, and 'ARR' is doing undefined work if headcount-based billing swings through the year.",
+      "evidence": [
+        "$3.4M ARR / 210 farms ≈ $16.2K average ARR per farm (inferred from slide 5; the deck does not state this)",
+        "No pricing, billing unit, margin, CAC, or payback stated anywhere in the deck",
+        "Deck references a '400-person intake week' (slide 3) but never addresses revenue seasonality"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Traction vs. stage",
+      "score": 7,
+      "weight": 5,
+      "rationale": "The best evidence in the deck and appropriate in magnitude for Series A. $3.4M ARR across 210 farms with 6% MoM sustained for eight months implies roughly 1.59x growth over that period (1.06^8), i.e. about $2.1M ARR eight months ago — my arithmetic, not stated. That is a coherent, unexaggerated growth story rather than a hockey stick. NRR of 108% is positive but modest: it means the large majority of growth is new logos, not expansion, which matters because new-logo growth is exactly what the ERP-default and PEO dynamics [S1][S2][S3] would throttle first. No source in the pack speaks to Orchard's numbers, so these are unverifiable rather than doubted. Missing for the stage: gross and logo churn, CAC and payback, cohort retention, the share of ARR from the largest customers, and whether the eight-month run began from a seasonal trough.",
+      "evidence": [
+        "Slide 5: '$3.4M ARR across 210 farms. 6% MoM growth for eight months. Net revenue retention 108%.'",
+        "1.06^8 ≈ 1.59, implying roughly $2.1M ARR eight months ago (inferred)",
+        "108% NRR implies expansion contributes ~8 points annually; the remainder of growth is new logos (inferred)",
+        "No churn, CAC, payback, or concentration figure appears in the deck"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Team",
+      "score": 1,
+      "weight": 4,
+      "rationale": "There is no team slide. The deck contains seven slides and none names a founder, an operator, an agricultural or payroll-compliance background, or headcount. For a company selling into a regulated niche (H-2A) where domain credibility is most of the sale, the absence is not a formatting oversight — it removes the single dimension a Series A committee weighs most heavily after traction. This is a case of 'unproven in the deck' rather than 'wrong': the team may be excellent and simply unpresented.",
+      "evidence": [
+        "No slide in the deck names any person, role, background, or headcount"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Ask & plan",
+      "score": 3,
+      "weight": 3,
+      "rationale": "'Raising $15M at $90M post to expand into specialty crops' is the entire ask slide. At $3.4M ARR that is roughly 26.5x ARR post-money and about 16.7% dilution on a $75M pre (my arithmetic). The multiple is defensible only if growth durability and market headroom are both established, and the deck establishes neither — it gives no TAM and no competitive answer to the ERP and PEO defaults [S1][S2][S3]. There is no use of funds, no hiring plan, no milestone the round is meant to reach, and no quantification of the specialty-crop opportunity: no employer count, no ACV, no evidence Orchard's H-2A and piece-rate wedge transfers to that segment.",
+      "evidence": [
+        "Slide 7: 'Raising $15M at $90M post to expand into specialty crops.'",
+        "$90M post / $3.4M ARR ≈ 26.5x ARR; $15M / $90M ≈ 16.7% dilution (inferred)",
+        "No use of funds, milestones, hiring plan, or sizing of the specialty-crop segment appears in the deck"
+      ],
+      "source_ids": ["S1", "S2", "S3"]
+    }
+  ],
+  "claim_audit": [
+    {
+      "id": "C1",
+      "claim": "'The two vendors built for this market are AgriPay and HarvestHR.' (slide 4)",
+      "market_evidence": "S1 confirms AgriPay and HarvestHR are 'the two software vendors built specifically for agricultural payroll,' and in the same breath states they 'together hold an estimated 6-9% of agricultural employers,' with the majority obtaining payroll bundled with a farm-management ERP or through a PEO. S2 describes the ERP payroll module; S3 describes the PEO channel.",
+      "assessment": "partially-supported",
+      "delta": "The literal claim is correct; the implied claim — that these two constitute the competitive set — is wrong by roughly an order of magnitude. The named competitors reach an estimated 6-9% of agricultural employers [S1], leaving approximately 91-94% of employers served by alternatives the deck never names.",
+      "so_what": "Every competitive statement in the deck, including the win rate, is scoped to a small minority of the buying universe. The committee is not being shown the contest that decides the outcome.",
+      "source_ids": ["S1", "S2", "S3"],
+      "sources": [
+        "https://research.example.org/ag-payroll-landscape",
+        "https://research.example.org/farm-erp-payroll",
+        "https://research.example.org/ag-peo"
+      ],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C2",
+      "claim": "'We win 7 of every 10 head-to-head evaluations against them.' (slide 4)",
+      "market_evidence": "S4 states plainly that no independent source publishes head-to-head win rates for agricultural payroll vendors, and that vendor-reported win rates in adjacent categories 'have been found to describe only the deals a vendor was invited into, which excludes the decisions where no specialist was shortlisted at all.' S1 independently establishes that a specialist payroll vendor appears in only a minority of evaluations.",
+      "assessment": "unverifiable",
+      "delta": "The figure cannot be checked against any external benchmark [S4], and the denominator is not merely unstated but structurally narrow: 70% of head-to-heads against two vendors who between them touch 6-9% of employers [S1]. Because neither the deck nor any source gives the share of total decisions in which Orchard appears, the win rate over all agricultural payroll decisions cannot be computed from the material available — it is knowably lower than 70%, by an amount that cannot be quantified here.",
+      "so_what": "This is the deck's headline competitive proof and it is a metric without a denominator. It should be treated as a data-room question, not as evidence.",
+      "source_ids": ["S4", "S1"],
+      "sources": [
+        "https://research.example.org/ag-payroll-winrates",
+        "https://research.example.org/ag-payroll-landscape"
+      ],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C3",
+      "claim": "'That win rate is the clearest evidence we have that the product is better.' (slide 4)",
+      "market_evidence": "S4 describes exactly this inference as unsound in adjacent categories: vendor-reported win rates measure invitation, not superiority, because they exclude decisions in which no specialist was shortlisted. S1 confirms the specialist is absent from the majority of shortlists.",
+      "assessment": "contradicted",
+      "delta": "The claim is not merely unproven — the reasoning step is the one S4 specifically identifies as misleading. A 70% rate among invited evaluations is consistent with a product that is better, and equally consistent with a self-selecting funnel in which Orchard only competes where its H-2A wedge already decided the outcome.",
+      "so_what": "The company has volunteered that this is the clearest evidence it has. If that is literally true, the strongest competitive evidence in the business is a self-reported number with no denominator — which is itself the finding.",
+      "source_ids": ["S4", "S1"],
+      "sources": [
+        "https://research.example.org/ag-payroll-winrates",
+        "https://research.example.org/ag-payroll-landscape"
+      ],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C4",
+      "claim": "'$3.4M ARR across 210 farms. 6% MoM growth for eight months. Net revenue retention 108%.' (slide 5)",
+      "market_evidence": "None of S1-S4 addresses Orchard Payroll's own performance; the research pack speaks only to category structure. No external check is possible with the material provided.",
+      "assessment": "unverifiable",
+      "delta": "No delta can be computed against market data. Internally the figures are consistent: 1.06^8 ≈ 1.59x implies roughly $2.1M ARR eight months ago, and $3.4M / 210 farms is about $16.2K average ARR per farm (both my arithmetic, not stated in the deck). Nothing here is implausible for a Series A; it is simply unaudited.",
+      "so_what": "Traction is the part of this deck most likely to survive diligence and the part most worth spending diligence on. The specific gaps are seasonality (does the eight-month window start at a trough?), logo churn behind the 108% NRR, and customer concentration.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C5",
+      "claim": "'H-2A wage-rate compliance built in' as a core differentiator. (slide 3)",
+      "market_evidence": "S2 states that in farm-management ERP payroll modules, 'coverage of H-2A wage-rate requirements varies and is the most frequently cited gap.'",
+      "assessment": "supported",
+      "delta": "No gap between claim and evidence — this is the one differentiator the research independently corroborates, and it is corroborated against the right competitor (the ERP module), not the one the deck chose to fight.",
+      "so_what": "The real pitch is buried: Orchard's wedge is not that it beats AgriPay, it is that it fills the single most cited gap in the product the majority of farms already run. The deck argues the weaker case.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/farm-erp-payroll"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C6",
+      "claim": "'Piece-rate and hourly in one pay run' as a differentiator, and 'General payroll software cannot express it.' (slides 2-3)",
+      "market_evidence": "S2: leading farm-management ERP platforms 'ship payroll modules that handle hourly and, in recent releases, piece-rate pay.'",
+      "assessment": "partially-supported",
+      "delta": "True of general payroll software, which is what slide 2 says; no longer true of the farm-management ERP modules that are the actual incumbent, per recent releases [S2]. The differentiation is intact against the competitor the deck names and eroding against the competitor it does not.",
+      "so_what": "Half of the product story on slide 3 is being commoditized in real time. Diligence should establish how Orchard's piece-rate handling differs in substance from the shipped ERP modules, or accept that H-2A is the whole moat.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/farm-erp-payroll"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C7",
+      "claim": "'Seasonal crew onboarding that survives a 400-person intake week.' (slide 3)",
+      "market_evidence": "S3: PEO adoption in agriculture 'is highest among employers running large seasonal intakes, which is the same profile that experiences the most acute payroll complexity.' PEOs absorb payroll, workers compensation and seasonal compliance as a service.",
+      "assessment": "partially-supported",
+      "delta": "The pain is real and S3 confirms it is most acute in exactly this profile. But S3 also shows that this profile is the most likely to have already outsourced the whole function to a PEO. The deck's showcase customer is the segment with the highest existing substitution, and the substitute is a service offering that a software product does not compete with on features.",
+      "so_what": "Orchard's ideal customer profile and the PEO's ideal customer profile are the same population. Growth into it is a displacement problem — replacing a bundled service including workers comp — not a feature-comparison problem, and the deck has no story for it.",
+      "source_ids": ["S3"],
+      "sources": ["https://research.example.org/ag-peo"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C8",
+      "claim": "Market definition: 'Agricultural payroll software in North America.' (slide 6)",
+      "market_evidence": "No source provided states a size or growth rate for this market. S1 gives the only quantity available: the two specialist vendors hold an estimated 6-9% of agricultural employers, with the majority on ERP bundles or PEOs. S3 establishes that a material share of payroll spend in this sector is bought as a PEO service rather than as software.",
+      "assessment": "unverifiable",
+      "delta": "There is no number in the deck to compare against — the market slide contains no figure at all. The definitional point stands regardless: a 'software' framing excludes the PEO channel [S3], which is where the highest-complexity employers concentrate, so the chosen frame is both unsized and narrower than the opportunity the company describes elsewhere.",
+      "so_what": "At Series A, an unsized market slide is itself a signal. The committee cannot test whether $90M post is supported by headroom, because no headroom is claimed.",
+      "source_ids": ["S1", "S3"],
+      "sources": [
+        "https://research.example.org/ag-payroll-landscape",
+        "https://research.example.org/ag-peo"
+      ],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C9",
+      "claim": "'Raising $15M at $90M post to expand into specialty crops.' (slide 7)",
+      "market_evidence": "No source addresses specialty crops, valuation, or funding norms in this category. Assessment rests on the deck's own arithmetic.",
+      "assessment": "unverifiable",
+      "delta": "$90M post on $3.4M ARR is approximately 26.5x ARR (my arithmetic). Nothing in the deck or the research pack supports or refutes that multiple; the deck supplies neither the market headroom nor the retention quality that would normally justify it.",
+      "so_what": "The price is the crux. The traction could carry a first meeting; the price requires the competitive answer the deck does not give.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    }
+  ],
+  "alignment": {
+    "where_deck_matches_market": [
+      "The H-2A compliance wedge is real and independently corroborated: coverage of H-2A wage-rate requirements varies across ERP payroll modules and is the most frequently cited gap [S2].",
+      "AgriPay and HarvestHR are correctly identified as the only two vendors built specifically for agricultural payroll [S1].",
+      "The problem statement — piece-rate, seasonal, multi-jurisdiction, H-2A — is an accurate description of the complexity, and S3 confirms it is most acute in employers running large seasonal intakes.",
+      "'General payroll software cannot express it' is consistent with the research; nothing in S1-S4 suggests generalist payroll vendors serve this need."
+    ],
+    "where_deck_overstates": [
+      "Presenting AgriPay and HarvestHR as the competitive set. Those two hold an estimated 6-9% of agricultural employers [S1]; the deck's competitive analysis therefore addresses a small minority of the market.",
+      "Treating the 7-in-10 win rate as proof the product is better. S4 states no independent win-rate data exists in this category and that vendor-reported rates in adjacent categories count only invited deals; S1 states a specialist appears in a minority of evaluations, so the denominator is small and self-selected.",
+      "Framing piece-rate-plus-hourly in one pay run as differentiation, when leading farm-management ERP modules handle piece-rate in recent releases [S2].",
+      "A $90M post-money on $3.4M ARR (≈26.5x, inferred) implies market headroom and durability that the deck neither sizes nor evidences."
+    ],
+    "where_deck_understates": [
+      "The H-2A gap is the strongest asset in this deck and it is one clause on slide 3. S2 makes it the single most cited deficiency in the incumbent product — that is the pitch, and it is buried.",
+      "Sustained 6% MoM for eight months with 108% NRR is a disciplined, non-inflated growth profile; the deck states it once and does not develop cohort, payback, or expansion detail that would make it persuasive.",
+      "210 farms at roughly $16.2K average ARR (inferred) is a real mid-market book with reference-customer value the deck never uses — no logos, no case studies, no named intake week.",
+      "Nothing is claimed about the team, which at minimum understates whatever domain credibility exists."
+    ],
+    "blind_spots": [
+      {
+        "what": "The farm-management ERP payroll module — the actual incumbent — is never mentioned. It is 'adopted by default rather than selected' because the farm office already operates the system [S2].",
+        "why_it_matters": "Default adoption means there is often no evaluation for Orchard to win. This inverts the deck's central argument: the constraint is trigger-event creation and displacement, not head-to-head product superiority. It also means CAC and sales-cycle assumptions built on competitive bake-offs will understate the real cost of growth.",
+        "source_ids": ["S2", "S1"]
+      },
+      {
+        "what": "PEOs are never mentioned, and PEO adoption is highest among employers running large seasonal intakes — the exact profile the deck showcases with its '400-person intake week' [S3].",
+        "why_it_matters": "Orchard's best-fit segment is the segment most likely already served, and served by a bundle that includes workers compensation and seasonal compliance as a service [S3]. Competing there means unbundling a service relationship, which software features do not do. The specialty-crop expansion the round funds runs straight into this.",
+        "source_ids": ["S3"]
+      },
+      {
+        "what": "The common shortlist is the incumbent ERP against a PEO, with a specialist payroll vendor appearing in a minority of evaluations [S1].",
+        "why_it_matters": "This is the number that determines the ceiling, and it is the one the deck's win-rate slide silently divides by. Share of decisions won equals win rate multiplied by shortlist-inclusion rate; the deck reports the first and omits the second.",
+        "source_ids": ["S1", "S4"]
+      },
+      {
+        "what": "No market size, growth rate, or employer count anywhere in the deck — slide 6 is one line.",
+        "why_it_matters": "At Series A this removes the committee's ability to test the $90M post against headroom. It also means the usual diligence exercise (deflate the TAM) cannot be run; there is nothing to deflate, which is a different and in some ways harder problem.",
+        "source_ids": ["S1"]
+      },
+      {
+        "what": "No team slide, no pricing or billing unit, no CAC or payback, no gross or logo churn, no customer concentration, and no treatment of revenue seasonality in a business built around seasonal intakes.",
+        "why_it_matters": "Six of the standard Series A inputs are absent. Each is recoverable in a data room, but their collective absence means the committee is being asked to price the company on two slides of numbers.",
+        "source_ids": []
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shortlist-inclusion ceiling: the majority of agricultural employers never evaluate a specialist payroll vendor [S1], so Orchard's addressable pipeline is a fraction of the employer base regardless of how good the product is.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask for a full-funnel denominator: of all target accounts touched in the last four quarters, how many reached a competitive evaluation, and what was the alternative in each — AgriPay/HarvestHR, ERP module, PEO, or spreadsheets/status quo. A win rate against ERP and PEO alternatives specifically is the number that matters; the 7-in-10 is not."
+    },
+    {
+      "risk": "The moat narrows to H-2A alone as ERP modules ship piece-rate support [S2], and compliance features are replicable by a vendor already installed in the farm office.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Have a compliance-literate reference (not the company) assess how far Orchard's H-2A handling exceeds the shipped ERP modules, and how much ongoing regulatory maintenance it represents. Test whether any customer switched from an ERP module specifically over H-2A, and whether any switched back."
+    },
+    {
+      "risk": "PEO substitution in the ICP: the large-seasonal-intake employers Orchard is built for are the ones most likely already outsourced to a PEO [S3], and the specialty-crop expansion this round funds targets more of the same profile.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Count the customers in the current 210 who displaced a PEO, and get the sales cycle and discount required. If the answer is near zero, the expansion thesis needs re-underwriting before the price does."
+    },
+    {
+      "risk": "Growth durability: 6% MoM for eight months may reflect a seasonal window or a saturating early-adopter pool of H-2A-heavy farms rather than a repeatable motion.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Request 24-36 months of monthly new-ARR and logo counts, seasonally aligned, plus pipeline coverage for the next two quarters. Check whether the eight-month window begins at a seasonal trough."
+    },
+    {
+      "risk": "Quality of the 108% NRR: modest expansion could be masking logo churn, or could be headcount-driven (more seasonal workers) rather than product-driven, in which case it reverses in a weak season.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Decompose NRR into gross retention, price/seat expansion, and cross-sell; run it by cohort and by crop type. Ask what NRR was in the weakest season on record."
+    },
+    {
+      "risk": "Price: ≈26.5x ARR (inferred) with no sized market, no competitive answer to the default channels, and no team disclosure.",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Anchor on comparable vertical-SaaS Series A multiples at similar growth and NRR; treat the absence of a market slide as a reason to hold price rather than to assume headroom."
+    },
+    {
+      "risk": "Unassessable team risk — no founder, operator, or domain background is disclosed anywhere in the deck.",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Request team detail before the first meeting. Domain credibility in H-2A compliance is close to a gating requirement in this niche; if it is absent, the moat claim weakens further."
+    },
+    {
+      "risk": "Evidence culture: the company's stated best competitive proof is an unauditable self-reported metric it presents as conclusive.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Watch how the team responds when asked for the denominator. A ready, honest answer resolves this cheaply; a defensive or reframed one is the finding."
+    }
+  ],
+  "questions": [
+    "Of all agricultural employers you engaged in the last four quarters, in what share did you reach a competitive evaluation at all — and what were you compared against in each? [S1][S4]",
+    "What is your win rate specifically against a farm-management ERP payroll module and against a PEO, as opposed to against AgriPay and HarvestHR? [S2][S3]",
+    "How many of the 210 farms displaced a PEO, and how many displaced an ERP module they were already paying for? [S2][S3]",
+    "Since ERP modules now ship piece-rate pay in recent releases [S2], what exactly does your piece-rate engine do that theirs does not — and would a customer switch for that alone?",
+    "How large is the market you are actually selling into, expressed as agricultural employers rather than as a dollar TAM, and what share of them are reachable given that specialists appear in a minority of shortlists? [S1]",
+    "Does the eight-month, 6% MoM window start at a seasonal trough, and what does the same series look like over 24-36 months?",
+    "Behind 108% NRR: what are gross retention and logo retention, and how much of expansion is seasonal headcount that reverses?",
+    "Who is on the team, and where does the H-2A regulatory expertise sit — in a person, in the product, or in a vendor?",
+    "What does the $15M buy, in milestones? What ARR and what specialty-crop customer count does this round need to reach to raise the next one?",
+    "Slide 4 says the win rate is 'the clearest evidence we have that the product is better' — is that literally the strongest competitive evidence in the business, and if not, what is?"
+  ],
+  "actions": [
+    {
+      "action": "Send a pre-meeting data request for the full-funnel denominator: accounts touched, evaluations entered, alternative encountered per deal, and win rate segmented by alternative (specialist / ERP module / PEO / status quo). Decline the meeting if it does not come back segmented.",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Request the team page and founder backgrounds, with specific attention to who owns H-2A regulatory expertise.",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Reference-check four to six customers, weighted toward the largest seasonal-intake accounts, asking what they used before, whether a PEO was considered, and whether H-2A was the deciding factor. [S3]",
+      "owner": "Associate",
+      "priority": "P0"
+    },
+    {
+      "action": "Pull 24-36 months of monthly ARR, new logos, gross and logo churn, cohort retention, CAC and payback, and customer concentration; rebuild NRR from components and test for seasonality.",
+      "owner": "Associate",
+      "priority": "P1"
+    },
+    {
+      "action": "Commission an independent read on how the two leading farm-management ERP payroll modules handle H-2A wage rates and piece-rate today, to size how durable the remaining gap is. [S2]",
+      "owner": "Research / diligence analyst",
+      "priority": "P1"
+    },
+    {
+      "action": "Size the market bottom-up in employers rather than dollars — total agricultural employers, the H-2A-heavy subset, the PEO-served share — and derive a defensible SAM to test against the $90M post. [S1][S3]",
+      "owner": "Research / diligence analyst",
+      "priority": "P1"
+    },
+    {
+      "action": "Ask the company to quantify the specialty-crop expansion this round funds: employer count, expected ACV, and why the H-2A wedge transfers.",
+      "owner": "Deal lead",
+      "priority": "P1"
+    },
+    {
+      "action": "If the segmented win-rate data arrives and shows real displacement of ERP modules or PEOs, re-underwrite at a price anchored to a bottom-up SAM; if it does not, pass and revisit in two quarters against the monthly ARR series.",
+      "owner": "Investment committee",
+      "priority": "P2"
+    }
+  ],
+  "summary": "Orchard Payroll presents a coherent, unexaggerated Series A traction story attached to a competitive analysis that describes the wrong contest. The numbers on slide 5 — $3.4M ARR across 210 farms, 6% MoM for eight months, 108% NRR — are specific, internally consistent (1.06^8 implies roughly $2.1M ARR eight months ago, and about $16.2K average ARR per farm; both my arithmetic), and modest enough to be believable. None of the four sources provided speaks to Orchard's own performance, so these figures are unverifiable rather than doubted. For the stage, that is the right kind of unverifiable: it is a data-room problem, not a credibility problem.\n\nThe competitive frame is the problem. Slide 4 names AgriPay and HarvestHR as 'the two vendors built for this market,' which S1 confirms as literally true and simultaneously undercuts: those two together hold an estimated 6-9% of agricultural employers [S1]. The majority buy payroll bundled with a farm-management ERP or through a PEO [S1]. S2 explains why the ERP wins without a fight — the module 'is adopted by default rather than selected' because the farm office already runs the system. S3 explains where the rest goes — PEOs absorb payroll, workers compensation and seasonal compliance as a service, with adoption highest among employers running large seasonal intakes. That last finding is the sharpest one in the pack, because a 400-person intake week is the exact customer slide 3 is built to impress. Orchard's ideal customer profile and the PEO's ideal customer profile are the same population, and the deck never mentions PEOs at all.\n\nThat reframes the headline metric. Winning 7 of 10 head-to-heads against two vendors who reach 6-9% of employers [S1] is a strong number over a small, self-selected base. S4 states that no independent source publishes win rates in this category and that vendor-reported rates in adjacent categories 'describe only the deals a vendor was invited into, which excludes the decisions where no specialist was shortlisted at all' — which is precisely this situation, since S1 finds specialists appear in a minority of evaluations. Share of decisions won is win rate times shortlist-inclusion rate; the deck reports the first and omits the second, and the second cannot be recovered from anything provided here. The claim is unverifiable, and the inference drawn from it on slide 4 — that the win rate is 'the clearest evidence we have that the product is better' — is the specific reasoning error S4 identifies. Not fraud: ordinary founder optimism about a metric that flatters. But it is the company's own nominated best evidence, and it does not survive contact with the research.\n\nThere is a genuinely good pitch inside this deck, and it is not the one being made. S2 states that H-2A wage-rate coverage 'varies and is the most frequently cited gap' in ERP payroll modules — an independent third party naming Orchard's wedge as the single largest deficiency in the incumbent product. The deck spends one clause on it and a full slide on a win rate against two vendors who barely matter. The same source also quietly erodes the other half of slide 3: leading ERP modules now handle piece-rate 'in recent releases' [S2]. So piece-rate is commoditizing while H-2A depth remains defensible, and the honest moat statement is narrower and more credible than the one on offer.\n\nAgainst that, the price. $15M at $90M post is roughly 26.5x ARR and 16.7% dilution (inferred). A multiple like that is underwritten by market headroom and retention quality. Slide 6 is one line with no figure of any kind, so headroom is not claimed, let alone evidenced — and the only quantity available anywhere [S1] points to a narrow specialist slice. NRR of 108% is fine but implies most growth is new logos, which is exactly the growth vector the ERP-default and PEO dynamics [S1][S2][S3] throttle first. There is no team slide, no pricing, no CAC or payback, no churn, and no treatment of seasonality in a seasonal business.\n\nLEAN NO, and the single biggest reason is that the deck's entire competitive case is scoped to the 6-9% of agricultural employers who buy specialist software [S1], while the ~90% served by ERP bundles [S2] and PEOs [S3] go unmentioned — at a price that assumes the whole market is available. The single condition that would flip it: a segmented, full-funnel win rate showing Orchard actually displacing farm-management ERP payroll modules and PEOs at a meaningful rate, with the denominator of accounts that never reached an evaluation included. If that data exists and holds up, the H-2A wedge is real [S2], the traction is real, and this becomes a YES WITH CONDITIONS at a renegotiated price. If it does not exist, the 7-in-10 is measuring invitations rather than superiority, and $90M post is unsupportable.",
+  "integrity_note": "No prompt-injection attempt was found. Nothing in the deck or in S1-S4 addressed the analyst, attempted to override instructions, dictate a verdict or score, impersonate a system message, or request concealment, and no [REDACTED BY DECKSCOPE] markers were present. One item is worth recording short of that: slide 4's line 'That win rate is the clearest evidence we have that the product is better' tells the reader what to conclude from a figure that S4 establishes cannot be independently verified and that S1 shows rests on a minority denominator. That is ordinary sales rhetoric rather than manipulation of the analysis, and it has been treated as a substantive claim (C3) and scored accordingly, not as an integrity breach. Notably, the research material contradicts the deck on the central competitive question and no attempt was made in the deck to pre-empt or discredit such sources."
+}

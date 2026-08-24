@@ -13,7 +13,69 @@ import re
 from dataclasses import dataclass, field, asdict
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
-CITE_RX = re.compile(r"\bS(\d{1,3})\b")
+#: A citation written into prose. **Brackets are required**, and that is the whole
+#: point of this expression.
+#:
+#: The previous form was `\bS(\d{1,3})\b`, which matches any S-followed-by-digits
+#: token anywhere in a sentence. "Backups are stored in Amazon S3" therefore
+#: contained a citation as far as DeckScope was concerned, and the same
+#: expression drove harvesting, renumbering, stripping and evaluation scoring. So
+#: a legitimate phrase could be attributed to a bibliography entry it has nothing
+#: to do with, renumbered during a registry merge into `Amazon S8`, or deleted
+#: outright as a dangling citation — leaving "Backups are stored in Amazon ."
+#: Silent corruption of the report text, in a product whose entire promise is
+#: that the evidence trail is trustworthy.
+#:
+#: Every prompt already instructs models to cite inline as `[S3]`, so requiring
+#: the bracket costs nothing and closes the ambiguity. A group is allowed —
+#: `[S1, S3]` — because models write them.
+#:
+#: The trade is deliberate: a bare `S3` that really was meant as a citation is
+#: now ignored rather than acted on. Under-attributing is recoverable; corrupting
+#: a sentence is not.
+PROSE_CITE_RX = re.compile(r"\[\s*S\d{1,3}(?:\s*[,;]\s*S\d{1,3})*\s*\]", re.I)
+
+#: A single S-ID. Used to validate the *contents* of a `source_ids` array, where
+#: the whole string is the reference and no bracket is expected.
+SID_RX = re.compile(r"^\s*S(\d{1,3})\s*$", re.I)
+
+_SID_IN_GROUP_RX = re.compile(r"S(\d{1,3})", re.I)
+
+
+def prose_citations(text: str) -> List[str]:
+    """Every S-ID cited inside brackets in `text`, in order of appearance."""
+    out: List[str] = []
+    for group in PROSE_CITE_RX.findall(text or ""):
+        out.extend(f"S{n}" for n in _SID_IN_GROUP_RX.findall(group))
+    return out
+
+
+def map_prose_citations(text: str, fn) -> str:
+    """Rewrite each bracketed citation group through `fn(sid) -> sid|None`.
+
+    Returning None drops that ID from the group; a group left empty is removed
+    along with its brackets. Prose outside brackets is never touched, which is
+    the guarantee that keeps "Amazon S3" intact.
+    """
+    original = text or ""
+
+    def repl(match: "re.Match[str]") -> str:
+        kept: List[str] = []
+        for n in _SID_IN_GROUP_RX.findall(match.group(0)):
+            new = fn(f"S{n}")
+            if new:
+                kept.append(new)
+        return f"[{', '.join(kept)}]" if kept else ""
+
+    out = PROSE_CITE_RX.sub(repl, original)
+    if out == original:
+        # Nothing was a citation, so nothing may be reformatted. Tidying
+        # unconditionally would collapse deliberate spacing in prose that this
+        # function has no business touching.
+        return original
+    # Removing a citation can leave " ." or a doubled space behind.
+    out = re.sub(r"\s+([.,;:])", r"\1", out)
+    return re.sub(r"[ \t]{2,}", " ", out).strip()
 
 
 @dataclass
@@ -112,6 +174,21 @@ class SourceRegistry:
         return None
 
     # -------------------------------------------------------- attribution
+    def reset_attribution(self) -> None:
+        """Forget who cited what, keeping quarantine decisions.
+
+        Attribution has to be rebuilt from the *finished* artifact, after invalid
+        citations have been stripped. Marking sources cited on the way through and
+        never revisiting it meant the bibliography could say "cited" about a source
+        whose only reference had since been removed from the report — a claim the
+        reader cannot check and that is wrong in the direction that flatters us.
+        """
+        for src in self.sources:
+            if src.status in ("quarantined", "dropped"):
+                continue
+            src.status = "consulted"
+            src.cited_by = []
+
     def attribute(self, refs: Iterable[str], by: str) -> List[Source]:
         """Mark sources as cited by a specific finding. Returns the resolved ones."""
         out = []
@@ -123,6 +200,12 @@ class SourceRegistry:
                 # A source the security screen removed is never allowed to become
                 # evidence, even if the model cites it from memory of an earlier pass.
                 continue
+            if self._prompt_built and src.sid not in self._admitted:
+                # Never shown to a model, so nothing could have cited it from the
+                # evidence. The citation audit already treats this as invalid;
+                # attribution has to agree, or the two halves of the ledger
+                # disagree about the same source.
+                continue
             src.status = "cited"
             if by not in src.cited_by:
                 src.cited_by.append(by)
@@ -130,8 +213,8 @@ class SourceRegistry:
         return out
 
     def harvest_inline(self, text: str, by: str) -> List[Source]:
-        """Pick up bare [S3]-style citations written inside prose."""
-        return self.attribute({f"S{m}" for m in CITE_RX.findall(text or "")}, by)
+        """Pick up bracketed [S3]-style citations written inside prose."""
+        return self.attribute(dict.fromkeys(prose_citations(text)), by)
 
     def apply_reliability(self, market: Dict[str, Any]) -> None:
         """Fold the market agent's reliability judgements back onto the registry."""
@@ -143,10 +226,20 @@ class SourceRegistry:
                 src.published = entry["date"]
 
     # ---------------------------------------------------------- rendering
-    def prompt_block(self, char_budget: int = 90_000) -> str:
-        """The numbered bibliography handed to the model, with citation rules."""
+    def prompt_block(self, char_budget: int = 90_000,
+                     only: Optional[Iterable[str]] = None) -> str:
+        """The numbered bibliography handed to the model, with citation rules.
+
+        `only` restricts the block to specific IDs. That matters for the narrow
+        passes — a listing lookup, say — which merge their handful of sources
+        into the run's registry and then need a prompt containing *those*, not
+        the whole run's bibliography. Rendering everything would both blow the
+        budget and mark unrelated sources as admitted, which is the flag the
+        citation audit trusts.
+        """
         if not self.sources:
             return "(no research material available)"
+        wanted = {str(s).strip().upper() for s in only} if only is not None else None
         lines = [
             "Each source below has a citation ID. Cite them by ID — for example S3 — in "
             "every field that has a `source_ids` slot, and inline in prose where a figure "
@@ -158,6 +251,8 @@ class SourceRegistry:
         omitted = 0
         for s in self.sources:
             if s.status == "quarantined":
+                continue
+            if wanted is not None and s.sid.upper() not in wanted:
                 continue
             block = (f"[{s.sid}] {s.title or '(untitled)'}\n"
                      f"      url: {s.url or 'n/a'}\n"
@@ -323,6 +418,15 @@ def merge_registries(registries: Dict[str, "SourceRegistry"]
                     if tag not in existing.cited_by:
                         existing.cited_by.append(tag)
             local_map[src.sid] = existing.sid
+            # Carry the admission ledger across. Without this the merged
+            # registry only learned which sources appeared in later *shared*
+            # prompts, so a source a panelist genuinely read in round one looked
+            # unadmitted — and the citation audit strips citations to unadmitted
+            # sources. The panel would have deleted its own honest evidence.
+            if reg is not None and src.sid in reg.admitted_ids:
+                merged._admitted.add(existing.sid)
+        if reg is not None and reg._prompt_built:
+            merged._prompt_built = True
         remap[label] = local_map
     return merged, remap
 
@@ -377,7 +481,9 @@ def rewrite_citations(obj: Any, local_map: Dict[str, str]) -> Any:
         return local_map.get(tok.strip(), tok.strip())
 
     def swap_prose(text: str) -> str:
-        return CITE_RX.sub(lambda m: local_map.get(f"S{m.group(1)}", m.group(0)), text)
+        # Only inside brackets. Renumbering every S-token in prose is how
+        # "Amazon S3" became "Amazon S8" during a panel merge.
+        return map_prose_citations(text, lambda sid: local_map.get(sid, sid))
 
     if isinstance(obj, dict):
         for k, v in list(obj.items()):
@@ -396,77 +502,126 @@ def rewrite_citations(obj: Any, local_map: Dict[str, str]) -> Any:
     return obj
 
 
+#: Every part of a finished result that may carry citations. Attribution, the
+#: audit and the evaluation scorer all read this one list, because three
+#: traversals with three different ideas of "the whole report" is how a
+#: dangling citation in an optional section coexisted with a perfect
+#: citation-integrity score.
+CITATION_SECTIONS = ("market", "comparisons", "opportunity", "discovery_delta",
+                     "cold_market")
+
+#: Fields that identify the object a citation sits on, so the bibliography can
+#: say "investor: claim C1" rather than a JSON path.
+_NAME_KEYS = ("id", "name", "dimension", "company", "value", "claim", "what",
+              "market", "risk", "action", "category")
+
+
+def _label(path: List[str], holder: Optional[Dict[str, Any]]) -> str:
+    """A human-readable 'cited by' label for a position in the result tree."""
+    parts = [p for p in path if p]
+    if parts and parts[0] == "comparisons" and len(parts) > 1:
+        head = f"{parts[1]}: " + ".".join(parts[2:]) if len(parts) > 2 else parts[1]
+    else:
+        head = ".".join(parts)
+    if isinstance(holder, dict):
+        for key in _NAME_KEYS:
+            val = holder.get(key)
+            if isinstance(val, str) and val.strip():
+                return f"{head} ({val.strip()[:60]})"
+    return head or "report"
+
+
+def walk_citations(result: Any, *, on_ids=None, on_prose=None) -> None:
+    """Visit every citation in a finished result, once, in one place.
+
+    `on_ids(sids, label)` sees each `source_ids` array and may return a
+    replacement list. `on_prose(text, label)` sees each string and may return
+    replacement text. Returning None leaves the value untouched.
+
+    Field-by-field traversals know the fields somebody remembered to list, so a
+    schema that grows a new `source_ids` slot escapes them silently. Walking the
+    finished object means a new field is covered the day it is added — and
+    sharing the walk means the ledger and the audit cannot disagree about what
+    they looked at.
+    """
+    def visit(node: Any, path: List[str], holder: Optional[Dict[str, Any]]) -> None:
+        if isinstance(node, dict):
+            for key, value in list(node.items()):
+                if key.startswith("_"):
+                    continue          # _meta carries no user-facing citations
+                if key == "source_ids" and isinstance(value, list):
+                    if on_ids is not None:
+                        kept = on_ids([str(v) for v in value],
+                                      _label(path, node))
+                        if kept is not None:
+                            node[key] = kept
+                elif isinstance(value, str):
+                    if on_prose is not None:
+                        new = on_prose(value, _label(path + [key], node))
+                        if new is not None:
+                            node[key] = new
+                else:
+                    visit(value, path + [key], node)
+        elif isinstance(node, list):
+            for i, item in enumerate(node):
+                if isinstance(item, str):
+                    if on_prose is not None:
+                        new = on_prose(item, _label(path, holder))
+                        if new is not None:
+                            node[i] = new
+                else:
+                    visit(item, path, holder)
+
+    for section in CITATION_SECTIONS:
+        payload = getattr(result, section, None)
+        if payload:
+            visit(payload, [section], None)
+
+
 def resolve_citations(result: Any, registry: Optional[SourceRegistry] = None
                       ) -> SourceRegistry:
-    """Walk a finished AnalysisResult and attribute every citation it contains.
+    """Rebuild the bibliography's `cited` status from the **finished** artifact.
+
+    Ordering is the point of this function, and getting it wrong produced a
+    genuinely dishonest report. Attribution used to run *before* the citation
+    audit: a source was marked `cited`, the audit then removed its only
+    reference from the report as invalid, and nothing revisited the ledger. The
+    References section therefore claimed a source supported a conclusion whose
+    citation the reader could no longer see — wrong in the direction that
+    flatters the product, and impossible for the reader to check.
+
+    So this resets attribution and rebuilds it from what actually survived,
+    using the same traversal the audit uses. Run it *after* `audit_citations`.
 
     `registry` is the live ledger for the run and should always be supplied.
-    Rebuilding from `market._meta.registry` reconstructs a *snapshot* taken when
+    Rebuilding from `market._meta.registry` reconstructs a snapshot taken when
     the market agent finished — before cold discovery and the opportunity pass
-    added their sources. Anything those passes found was therefore missing from
-    the final bibliography, and their citations resolved to nothing or, worse, to
-    whatever source happened to occupy that index.
-
-    The fallback remains for callers holding only a serialized result.
+    added their sources. The fallback remains for callers holding only a
+    serialized result.
     """
     reg = registry if registry is not None else SourceRegistry.from_dict(
         (result.market.get("_meta") or {}).get("registry", {}))
     reg.apply_reliability(result.market)
+    reg.reset_attribution()
 
-    market = result.market
-    for est in (market.get("sizing") or {}).get("tam_estimates", []) or []:
-        reg.attribute(est.get("source_ids") or ([est["url"]] if est.get("url") else []),
-                      f"TAM estimate {est.get('value', '')}")
-    land = market.get("competitive_landscape") or {}
-    for group in ("incumbents", "challengers"):
-        for c in land.get(group) or []:
-            reg.attribute(c.get("source_ids") or ([c["url"]] if c.get("url") else []),
-                          f"competitor: {c.get('name', '')}")
-    for r in (market.get("funding_environment") or {}).get("recent_rounds", []) or []:
-        reg.attribute(r.get("source_ids") or ([r["url"]] if r.get("url") else []),
-                      f"round: {r.get('company', '')}")
-    reg.harvest_inline((market.get("sizing") or {}).get("consensus_view", ""),
-                       "market: consensus view")
+    def ids(sids: List[str], where: str):
+        reg.attribute(sids, where)
+        return None                    # read-only pass; the audit does the editing
 
+    def prose(text: str, where: str):
+        reg.harvest_inline(text, where)
+        return None
+
+    walk_citations(result, on_ids=ids, on_prose=prose)
+
+    # `claim_audit[].sources` holds full URLs for the same references. It is not
+    # a `source_ids` array, so the generic walk sees it as prose and ignores it.
     for lens, comp in (result.comparisons or {}).items():
         for c in comp.get("claim_audit") or []:
-            refs = list(c.get("source_ids") or []) + list(c.get("sources") or [])
-            reg.attribute(refs, f"{lens}: claim {c.get('id', '')}")
-            reg.harvest_inline(c.get("market_evidence", ""),
-                               f"{lens}: claim {c.get('id', '')}")
-        for row in comp.get("scorecard") or []:
-            reg.attribute(row.get("source_ids") or [],
-                          f"{lens}: scorecard {row.get('dimension', '')}")
-            for ev in row.get("evidence") or []:
-                reg.harvest_inline(str(ev), f"{lens}: scorecard {row.get('dimension', '')}")
-        reg.harvest_inline(comp.get("summary", ""), f"{lens}: summary")
-        reg.harvest_inline(comp.get("headline", ""), f"{lens}: headline")
-
-    # Everything above names the fields it knows about, which means a new
-    # source-bearing field is invisible to it until somebody remembers to add a
-    # line here. Nobody ever remembers. This sweeps whatever is left — including
-    # the optional passes, which no hand-written branch covered.
-    for section in ("opportunity", "discovery_delta", "cold_market"):
-        payload = getattr(result, section, None)
-        if payload:
-            _attribute_recursively(reg, payload, section)
-
+            if isinstance(c, dict) and c.get("sources"):
+                reg.attribute([str(u) for u in c["sources"]],
+                              f"{lens}: claim {c.get('id', '')}")
     return reg
-
-
-def _attribute_recursively(reg: SourceRegistry, node: Any, where: str) -> None:
-    """Attribute every `source_ids` list and inline [S#] anywhere beneath `node`."""
-    if isinstance(node, dict):
-        for key, value in node.items():
-            if key == "source_ids" and isinstance(value, list):
-                reg.attribute([str(v) for v in value], where)
-            elif isinstance(value, str):
-                reg.harvest_inline(value, where)
-            else:
-                _attribute_recursively(reg, value, where)
-    elif isinstance(node, list):
-        for item in node:
-            _attribute_recursively(reg, item, where)
 
 
 @dataclass
@@ -525,6 +680,32 @@ def audit_citations(result: Any, registry: SourceRegistry,
     badge pointing at the wrong source is worse than no badge: it converts an
     unsupported statement into an apparently evidenced one.
     """
+    audit, on_ids, on_prose = _make_auditor(registry, strip)
+    walk_citations(result, on_ids=on_ids, on_prose=on_prose)
+    return audit
+
+
+def audit_fragment(node: Any, registry: SourceRegistry, *, strip: bool = True,
+                   where: str = "fragment") -> CitationAudit:
+    """The same check, on a bare dict or list rather than a whole result.
+
+    The panel needs this. Its revisions and its chair's consensus are model
+    output like any other, but they live outside an `AnalysisResult`, so the
+    recursive audit never reached them — leaving the expensive mode with a
+    weaker citation guarantee than the cheap one, which is backwards from what
+    anyone paying for a panel would assume. Field-by-field validators covered
+    `scorecard` and `claim_audit` and nothing else, so a fabricated citation in
+    a revised summary, a blind spot, a risk, or an inline reference survived.
+    """
+    audit, on_ids, on_prose = _make_auditor(registry, strip)
+    shim = type("_Fragment", (), {s: None for s in CITATION_SECTIONS})()
+    setattr(shim, CITATION_SECTIONS[0], node)
+    walk_citations(shim, on_ids=on_ids, on_prose=on_prose)
+    return audit
+
+
+def _make_auditor(registry: SourceRegistry, strip: bool):
+    """The checker itself, shared so every caller enforces the same invariant."""
     audit = CitationAudit()
     known = {s.sid.upper(): s for s in registry.sources}
     admitted = registry.admitted_ids
@@ -544,33 +725,19 @@ def audit_citations(result: Any, registry: SourceRegistry,
             return False
         return True
 
-    def walk(node: Any, where: str) -> Any:
-        if isinstance(node, dict):
-            for key, value in list(node.items()):
-                if key == "source_ids" and isinstance(value, list):
-                    kept = [v for v in value if check(v, f"{where}.{key}")]
-                    if strip:
-                        node[key] = kept
-                elif isinstance(value, str):
-                    bad = [f"S{m}" for m in CITE_RX.findall(value)
-                           if not check(f"S{m}", f"{where}.{key}")]
-                    if strip and bad:
-                        # Remove the marker, keep the prose. The sentence may
-                        # still be a reasonable observation; it simply is not
-                        # evidenced, and must stop looking as though it were.
-                        for token in set(bad):
-                            node[key] = re.sub(rf"\[?\b{token}\b\]?", "", node[key])
-                        node[key] = re.sub(r"\s{2,}", " ", node[key]).strip()
-                else:
-                    walk(value, f"{where}.{key}")
-        elif isinstance(node, list):
-            for i, item in enumerate(node):
-                walk(item, where)
-        return node
+    def on_ids(sids: List[str], where: str):
+        kept = [s for s in sids if check(s, where)]
+        return kept if strip else None
 
-    for section in ("market", "comparisons", "opportunity", "discovery_delta",
-                    "cold_market"):
-        payload = getattr(result, section, None)
-        if payload:
-            walk(payload, section)
-    return audit
+    def on_prose(text: str, where: str):
+        if not PROSE_CITE_RX.search(text or ""):
+            return None               # no bracketed citation, so nothing to judge
+        bad = {sid for sid in prose_citations(text) if not check(sid, where)}
+        if not bad or not strip:
+            return None
+        # Remove the marker, keep the prose. The sentence may still be a
+        # reasonable observation; it simply is not evidenced, and must stop
+        # looking as though it were. Only the bracketed reference is touched.
+        return map_prose_citations(text, lambda sid: None if sid in bad else sid)
+
+    return audit, on_ids, on_prose

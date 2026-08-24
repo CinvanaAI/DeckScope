@@ -222,10 +222,16 @@ class Pipeline:
             # backend name raises here, and losing the entire analysis to an
             # optional extra would be the wrong trade.
             try:
+                # The policy and the registry go in because a market-data
+                # backend that reads listing facts out of web pages is doing
+                # research, and research that skips the screen or the
+                # bibliography is exactly the hole this pass used to have.
                 feed = get_market_data(cfg.opportunity.market_data,
                                        config=cfg.opportunity,
                                        researcher=self.researcher,
-                                       provider=self.provider)
+                                       provider=self.provider,
+                                       policy=policy,
+                                       registry=market_agent.registry)
                 opp_agent = OpportunityAnalyst(
                     self.provider, feed, researcher=self.researcher,
                     policy=policy,
@@ -241,6 +247,14 @@ class Pipeline:
                 # than only the market pass.
                 if getattr(opp_agent, "security", None):
                     opportunity_scan = opp_agent.security
+                # The listing lookups screen their own pages too. Merge their
+                # findings in, or a hostile page reached through the market-data
+                # backend would be screened and then never disclosed.
+                for extra in getattr(feed, "security_reports", []) or []:
+                    if opportunity_scan is None:
+                        opportunity_scan = extra
+                    else:
+                        opportunity_scan.findings.extend(extra.findings)
             except Exception as exc:  # noqa: BLE001
                 self._log(f"Opportunity-cost pass failed, continuing without it: {exc}")
                 opportunity = {"error": str(exc)}
@@ -301,19 +315,24 @@ class Pipeline:
                 "deckscope_version": _version(),
             },
         )
-        # ---- Resolve every citation back to the ONE bibliography.
+        # ---- Check every citation in the finished artifact, once. Then, and
+        # only then, work out what the bibliography is allowed to claim.
         #
-        # The live registry, not a snapshot rebuilt from the market agent's
-        # metadata: the optional passes added sources after that snapshot was
-        # taken, and rebuilding from it silently dropped them.
-        result.registry = resolve_citations(result, market_agent.registry)
-
-        # ---- Then check every citation in the finished artifact, once.
+        # The order is load-bearing. Attributing first and auditing second let
+        # the References section say "cited" about a source whose only reference
+        # the audit had already removed from the report — a status the reader
+        # cannot verify, wrong in the direction that flatters us.
         #
         # This is the last line of defence for the product's core promise. A
         # source badge the reader can open is worthless — actively harmful — if
         # it can resolve to a document that never supported the claim.
-        audit = audit_citations(result, result.registry, strip=True)
+        registry = market_agent.registry
+        audit = audit_citations(result, registry, strip=True)
+
+        # The live registry, not a snapshot rebuilt from the market agent's
+        # metadata: the optional passes added sources after that snapshot was
+        # taken, and rebuilding from it silently dropped them.
+        result.registry = resolve_citations(result, registry)
         result.stats["citation_audit"] = audit.to_dict()
         if not audit.ok:
             self._log(f"Citation audit: {audit.summary()} — removed from the report")

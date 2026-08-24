@@ -115,7 +115,7 @@ TOOLS: List[Dict[str, Any]] = [
                 "panel": {"type": "array", "items": {"type": "string"},
                           "description": "Two or more connections as 'provider' or "
                                          "'provider:model', e.g. "
-                                         "['anthropic:claude-sonnet-5','openai:gpt-4o']"},
+                                         "['anthropic:claude-sonnet-5','openai:gpt-5.2']"},
                 "rounds": {"type": "integer",
                            "description": "Cross-review rounds. Default 1; 0 skips review."},
                 "chair": {"type": "string",
@@ -229,7 +229,7 @@ def _panel(args: Dict[str, Any]) -> str:
     specs = args.get("panel") or []
     if len(specs) < 2:
         return ("A panel needs at least two AI connections. Pass e.g. "
-                "panel: ['anthropic:claude-sonnet-5', 'openai:gpt-4o'].")
+                "panel: ['anthropic:claude-sonnet-5', 'openai:gpt-5.2'].")
     if not args.get("deck_path") and not args.get("deck_text"):
         return "Provide either deck_path or deck_text."
 

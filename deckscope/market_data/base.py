@@ -71,10 +71,21 @@ class MarketDataProvider(ABC):
     precision: str = "approximate"
 
     def __init__(self, config: Any = None, researcher: Any = None,
-                 provider: Any = None) -> None:
+                 provider: Any = None, policy: Any = None,
+                 registry: Any = None) -> None:
         self.config = config
         self.researcher = researcher
         self.provider = provider
+        #: The same screening policy the main research uses. A backend that
+        #: fetches pages and hands them to a model without this is a second,
+        #: quieter door into the prompt.
+        self.policy = policy
+        #: The run's bibliography, so sources this backend retrieves get
+        #: canonical IDs and appear in the final References section.
+        self.registry = registry
+        #: What the screen found here, so the run's security report can include
+        #: it rather than describing only the market pass.
+        self.security_reports: List[Any] = []
 
     @abstractmethod
     def lookup(self, company: str, *, context: str = "") -> Listing:

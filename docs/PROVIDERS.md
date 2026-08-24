@@ -62,13 +62,13 @@ research:
 ```yaml
 provider:
   name: openai
-  model: gpt-4o
+  model: gpt-5.2
   api_key_env: OPENAI_API_KEY
 ```
 
 Key: [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 
-`gpt-4o` for balance, `gpt-4o-mini` for cost, `o4-mini` for reasoning-heavy work at the
+`gpt-5.2` for balance, `gpt-5.2-mini` for cost, `gpt-5.2-nano` for high-volume work at the
 cost of speed.
 
 ---
@@ -107,7 +107,7 @@ The simplest way to assemble a diverse panel without collecting several accounts
 ```bash
 deckscope panel deck.pdf --panel \
   openrouter:anthropic/claude-sonnet-4.5 \
-  openrouter:openai/gpt-4o \
+  openrouter:openai/gpt-5.2 \
   openrouter:google/gemini-flash-latest
 ```
 
@@ -118,7 +118,7 @@ deckscope panel deck.pdf --panel \
 ```yaml
 provider:
   name: groq
-  model: llama-3.3-70b-versatile
+  model: openai/gpt-oss-120b
   api_key_env: GROQ_API_KEY
 ```
 

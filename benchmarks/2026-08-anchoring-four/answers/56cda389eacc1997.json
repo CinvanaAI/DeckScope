@@ -1,0 +1,420 @@
+{
+  "headline": "Fernwood's entire competitive case is a 131% NRR figure measured on a restricted denominator; converted to the basis the benchmarks it invokes actually use, it lands at or below them [S1] — and the deck asks $75M post for it with no team slide, no growth rate, and no named competitor.",
+  "verdict": {
+    "call": "LEAN NO",
+    "confidence": "medium",
+    "confidence_rationale": "The structural findings are robust and do not depend on the bibliography: the deck itself scopes both retention figures to 'customers past their first renewal', it shows no ARR trajectory, and it contains no team, competition, GTM, or use-of-funds section. Those are readable off the deck alone. The market-side corrections that make the case decisive — the 104-112% all-customer benchmark and the 25-40 point cohort inflation [S1], the 30-35% first-year churn [S2], the 3-4% annual buyer-base decline [S3], the free bundled wholesaler tool [S4] — all rest on four unattributed summaries on a single placeholder domain, same date, all surfaced by one query, with no publisher, methodology, or sample. They may be one voice rather than four. S1's definitional mechanism is internally coherent and would hold directionally even if its exact numbers are wrong, which is why I use it, but I will not call this high confidence on evidence I cannot attribute. Confidence is medium, and it is medium in the direction of 'we cannot yet tell', not 'we are nearly certain this fails'."
+  },
+  "scorecard": [
+    {
+      "dimension": "Market size & timing",
+      "score": 3,
+      "weight": 5,
+      "rationale": "The deck's unit count is right and its dollar figure is unsupported by anything. 22,000 groups sits squarely inside the independent 21,000-23,000 range [S3] — the one number in the deck that checks out. But S3 also records that count declining 3-4% annually for six consecutive years as groups are acquired by regional chains, and the deck never mentions it. A market whose addressable accounts shrink 3-4% a year requires share gains of roughly that magnitude to hold revenue flat. Timing is therefore not a tailwind; the window on the independent segment is closing, not opening. No source in the bibliography contains any dollar sizing of this category at all — no TAM, SAM, ACV, or price point — so the $1.4B rests entirely on the deck's own arithmetic with nothing to check it against.",
+      "evidence": [
+        "21,000-23,000 independent pharmacy groups in North America; deck claims 'roughly 22,000' [S3]",
+        "Count declining 3-4% annually for six years via acquisition by regional chains [S3]",
+        "Zero dollar-denominated sizing for this category anywhere in the bibliography",
+        "Zero price of the bundled wholesaler tool makes it the default for smaller groups [S4], which excludes an unquantified but evidently large share of the base from any paid product"
+      ],
+      "source_ids": ["S3", "S4"]
+    },
+    {
+      "dimension": "Competitive position",
+      "score": 2,
+      "weight": 5,
+      "rationale": "There is no competition slide. Slide 5 substitutes a retention metric for competitive analysis, and the metric turns out not to survive contact with the benchmark it invokes [S1]. Meanwhile the actual competitive situation is severe and knowable: all three national wholesalers ship reorder tooling free as a term of the distribution agreement [S4], meaning the product is never competing against nothing — it competes against already-installed, already-paid-for, already-default. Worse, the vendor must extract data out of the incumbent's ordering system to displace the incumbent, and that migration is precisely where implementations die [S2]. The deck identifies the wholesaler tool as the problem and then declines to name a single wholesaler, product, dispensing-system vendor, or buying group.",
+      "evidence": [
+        "Three national wholesalers supply reorder tools at no charge, bundled into the distribution agreement [S4]",
+        "Zero price makes them the default option for smaller groups [S4]",
+        "Failed implementations typically fail during initial data migration from the wholesaler's ordering system [S2]",
+        "Deck names zero competitors; no competition slide exists"
+      ],
+      "source_ids": ["S4", "S2"]
+    },
+    {
+      "dimension": "Product & moat",
+      "score": 4,
+      "weight": 4,
+      "rationale": "The wedge is real and the deck picked the right one. S4 reports independent analyses describing the wholesaler tools as optimising for wholesaler fill rates rather than pharmacy margin — a misalignment that follows from who supplies the tool, so it will not close through the incumbent simply improving its software. Reconciling against dispensing history rather than purchase history is the correct expression of that wedge. But the deck gives one sentence and no mechanism, no model, no data-integration description, and no account of how it obtains dispensing history. That last point is pivotal and unverified: no source establishes who holds dispensing data or on what terms a third party can access it. If it comes through pharmacy management system vendors, the moat is a dependency on a party that could ship the feature natively. Right thesis, unevidenced execution.",
+      "evidence": [
+        "Wholesaler tools described as optimising for wholesaler fill rates rather than pharmacy margin [S4]",
+        "Misalignment is structural — the supplier of the tool sits on the other side of the transaction it optimises [S4]",
+        "No source establishes who holds dispensing history or its accessibility to a third party",
+        "Deck offers no mechanism, model, architecture, demo, or data-source detail (slide 3)"
+      ],
+      "source_ids": ["S4"]
+    },
+    {
+      "dimension": "Business model",
+      "score": 3,
+      "weight": 3,
+      "rationale": "A single ACV figure and nothing else — no pricing structure, gross margin, CAC, LTV, or payback. The $62k is not a list price; it is $2.1M / 34 backsolved from the existing base (the deck's own arithmetic reconciles to ~$61.8k), then applied uniformly across 22,000 groups of unknown store counts. The market side makes this worse rather than merely unproven: the buyer's current spend on this function is zero because the wholesaler bundles it [S4], so every sale is net-new budget creation at a small operator, not displacement of a line item. And with 30-35% of logos churning in year one [S2], roughly a third of all acquisition cost in this market never reaches a renewal, so blended payback across a cohort is materially worse than nominal payback on a survivor.",
+      "evidence": [
+        "$62k ACV appears to be $2.1M/34, not a price point; no pricing model shown",
+        "Buyer's incumbent spend on this function is zero, bundled into distribution [S4]",
+        "30-35% first-year logo churn concentrated before first renewal [S2]",
+        "No gross margin, CAC, LTV, or payback anywhere in the deck"
+      ],
+      "source_ids": ["S4", "S2"]
+    },
+    {
+      "dimension": "Traction vs. stage",
+      "score": 3,
+      "weight": 5,
+      "rationale": "$2.1M ARR across 34 customers is a credible seed-to-early-Series-A position and I do not penalise the absolute number. I penalise the absence of a denominator and the absence of a curve. Both retention figures are scoped to 'customers past their first renewal' without disclosing how many customers that leaves — and S2 establishes that in this specific market 30-35% of logos churn in year one, concentrated before first renewal, which means the qualifier removes exactly the cohort that fails. Applying S1's correction, a past-first-renewal cohort typically reports 25-40 points above the same business's all-customer figure, putting Fernwood's implied all-customer NRR near 91-106% against a published benchmark of 104-112% [S1]. There is also no ARR history, no growth rate, no new-logo velocity, and no date on any figure. For a Series A, the missing growth curve is not an omission, it is the whole assessment.",
+      "evidence": [
+        "$2.1M ARR, 34 customers, no growth rate, no time period, no ARR history (slide 4)",
+        "Both retention figures restricted to 'customers past their first renewal'; qualifying denominator never disclosed",
+        "Market first-year logo churn 30-35%, concentrated before first renewal [S2]",
+        "All-customer vertical SaaS NRR benchmarks 104-112%; past-first-renewal cohorts typically 25-40 points higher for the same business [S1]"
+      ],
+      "source_ids": ["S1", "S2"]
+    },
+    {
+      "dimension": "Team",
+      "score": 1,
+      "weight": 4,
+      "rationale": "There is no team slide. No founder names, no roles, no backgrounds, no headcount, no advisors, anywhere in seven slides. For a $12M Series A in a regulated-adjacent vertical requiring both pharmacy domain credibility and the ability to execute data migrations that kill a third of deals in this market [S2], this is not a formatting oversight — it removes the single largest input into a Series A decision. I score this on what is present, which is nothing. No source bears on this dimension; the failure is entirely in the deck.",
+      "evidence": [
+        "No founders, roles, backgrounds, headcount, or advisors named anywhere in the deck",
+        "Migration competence is the market's decisive capability [S2] and the deck offers no evidence the team has it"
+      ],
+      "source_ids": ["S2"]
+    },
+    {
+      "dimension": "Ask & plan",
+      "score": 2,
+      "weight": 3,
+      "rationale": "$12M at $75M post is roughly 36x ARR on $2.1M, priced as a company with a demonstrated growth curve the deck never shows. There is no use of funds, no milestones, no burn, and no runway — current or post-raise. I want to be careful here: no source in the bibliography contains a single funding round, valuation, or multiple for this category or any adjacent one, so I cannot say the terms are off-market against evidence. What I can say is that the deck asks the committee to accept a growth-stage multiple while withholding every input that would justify one, and proposes no plan for the money.",
+      "evidence": [
+        "$12M at $75M post, ~36x on $2.1M ARR (slide 7)",
+        "No use of funds, milestones, burn, or runway stated",
+        "No valuation norms, rounds, multiples, or exit comps in any source provided"
+      ],
+      "source_ids": []
+    }
+  ],
+  "claim_audit": [
+    {
+      "id": "C1",
+      "claim": "$2.1M ARR across 34 pharmacy groups.",
+      "market_evidence": "No source in the bibliography contains revenue, ACV, or customer-count data for any vendor in this category — the material has no dollar-denominated sizing at all. The only external context is directional: 30-35% first-year logo churn in software sold to independent pharmacy operators [S2], which bears on how stable a 34-account base is, and a buyer universe of 21,000-23,000 groups [S3], against which 34 is roughly 0.15% penetration.",
+      "assessment": "unverifiable",
+      "delta": "No delta can be computed — nothing in the market evidence sizes revenue in this category, so the figure is neither confirmed nor contradicted. The gap is not between claim and evidence but between the claim and its own missing definition: ARR is undefined (contracted, billed, or annualised run-rate), undated, and carries no growth history.",
+      "so_what": "The number is plausible and unremarkable for the stage; it is not the problem. The problem is that a point-in-time ARR with no trajectory cannot support a growth-stage valuation, and diligence must treat it as an unaudited assertion until the ARR schedule and contracts are seen.",
+      "source_ids": ["S2", "S3"],
+      "sources": ["https://research.example.org/pharmacy-software-churn", "https://research.example.org/pharmacy-group-count"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C2",
+      "claim": "Net revenue retention of 131% among customers past their first renewal.",
+      "market_evidence": "S1 states that all-customer NRR in vertical SaaS benchmarks at 104-112%, and that a cohort restricted to customers past their first renewal typically reports 25-40 points higher than the all-customer figure for the same business, because the customers most likely to churn have already been excluded from the denominator. S2 establishes that in this specific market the excluded cohort is unusually large: 30-35% first-year logo churn, concentrated before the first renewal.",
+      "assessment": "partially-supported",
+      "delta": "The figure itself may well be accurate as stated; the basis is the issue. Applying S1's correction, 131% on a past-first-renewal cohort implies roughly 91-106% on the all-customer basis the published benchmarks use [S1]. And in this market the excluded cohort is not a rounding error — 30-35% of logos never reach first renewal [S2] — so the restriction is doing more work here than in a typical vertical SaaS business.",
+      "so_what": "The metric the deck builds its whole competitive argument on is measured on a basis that flatters it, in a market where that flattery is unusually large. Ask for all-customer NRR and the size of the qualifying cohort before anything else.",
+      "source_ids": ["S1", "S2"],
+      "sources": ["https://research.example.org/vsaas-retention-definitions", "https://research.example.org/pharmacy-software-churn"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C3",
+      "claim": "Logo retention of 96% among customers past their first renewal.",
+      "market_evidence": "S2: first-year logo churn of 30-35% in software sold to independent pharmacy operators, concentrated before the first renewal.",
+      "assessment": "partially-supported",
+      "delta": "96% retention among customers who already survived the churn event is close to tautological in a market where 30-35% of logos churn in year one before that same event [S2]. The stated figure and the market figure are not in conflict — they measure different populations, and the deck reports the one that excludes the failures. With 34 total customers the qualifying cohort may be small enough that 96% represents as few as one non-churn event.",
+      "so_what": "Blended logo retention across all 34 accounts is the number that matters and it is not disclosed. If Fernwood's all-customer first-year churn is at or near the market's 30-35% [S2], the retention story on slide 4 is a market-average business presented as an exceptional one.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/pharmacy-software-churn"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C4",
+      "claim": "'Retention is the whole story in this category.'",
+      "market_evidence": "The bibliography identifies four differentiation axes in this category and retention is only one of them: whose margin the tool optimises for [S4], price against a free default [S4], ability to complete the initial data migration out of the wholesaler's ordering system [S2], and surviving the first renewal [S2]. Separately, the addressable base is contracting 3-4% annually [S3], which is a volume problem retention cannot solve.",
+      "assessment": "contradicted",
+      "delta": "The deck reduces the category to one axis; the evidence shows at least four, and the one the deck omits entirely — competing against a free, pre-installed, contractually bundled incumbent [S4] — is the one that determines whether a customer is ever acquired to be retained. On a shrinking buyer base [S3], retention without new-logo velocity is a managed decline.",
+      "so_what": "This is not merely an unfalsifiable slogan; it is an argument for why the committee should look only at the number the company controls. Treat slide 5 as a redirection, not as positioning.",
+      "source_ids": ["S4", "S2", "S3"],
+      "sources": ["https://research.example.org/wholesaler-reorder", "https://research.example.org/pharmacy-software-churn", "https://research.example.org/pharmacy-group-count"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C5",
+      "claim": "'Our 131% NRR is well above the benchmarks published for vertical SaaS.'",
+      "market_evidence": "S1: benchmarks are published on the all-customer basis at 104-112%; a past-first-renewal cohort typically reports 25-40 points higher than the all-customer figure for the same business; the two bases are not comparable.",
+      "assessment": "contradicted",
+      "delta": "Deck presents 131% as 'well above' a 104-112% benchmark — a claimed premium of roughly 19-27 points. Converted to the benchmark's own basis, the implied all-customer figure is roughly 91-106% [S1], which straddles the bottom of the benchmark range and sits mostly below it. The claimed direction of the comparison plausibly inverts. This is the single most consequential finding in the analysis.",
+      "so_what": "The load-bearing claim of the 'Why we win' slide compares two figures the source says are not comparable [S1], and on a like-for-like basis the advantage may not exist. Whether this is a definitional error or a chosen framing changes the diligence question from 'is the metric good' to 'how does this team present metrics'.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/vsaas-retention-definitions"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C6",
+      "claim": "NRR 'compounds: we grow inside an account as they add stores.'",
+      "market_evidence": "S3 confirms the buying unit is a group rather than a store, which structurally permits growth inside an account. But S3 also records that the independent group count has declined 3-4% annually for six years as groups are acquired by regional chains. No source in the bibliography measures expansion revenue in this category.",
+      "assessment": "contradicted",
+      "delta": "The deck's expansion engine assumes customers are adding stores; the only evidence about what is happening to this cohort shows the opposite direction of travel — groups being absorbed at 3-4% per year for six consecutive years [S3]. The deck gives no cohort expansion data at all to weigh against it.",
+      "so_what": "If expansion is store-count-driven, the mechanism runs against a six-year consolidation trend and the compounding story is fragile. If expansion is price or module driven rather than store driven, the deck's stated mechanism is wrong even where the number is right. Either way, whether an acquired group's contract survives, transfers, or dies is undetermined by any source [S3] and determines whether consolidation is Fernwood's churn channel or its expansion channel.",
+      "source_ids": ["S3"],
+      "sources": ["https://research.example.org/pharmacy-group-count"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C7",
+      "claim": "Roughly 22,000 independent pharmacy groups in North America.",
+      "market_evidence": "S3: approximately 21,000-23,000 independent pharmacy groups in North America, declining 3-4% annually for six years.",
+      "assessment": "supported",
+      "delta": "Essentially zero on the headline number — 22,000 is the midpoint of the independent 21,000-23,000 range [S3]. The delta is entirely in what travels alongside it: S3's count is falling 3-4% per year and the deck presents it as a static universe. Both S3 and the deck also decline to define what constitutes a 'group', so the agreement may be coincidental agreement between two undefined quantities.",
+      "so_what": "The deck's one externally corroborated number. Give it credit — and then note that the corroborating source also contains the fact most damaging to the deck's thesis, which the deck omits.",
+      "source_ids": ["S3"],
+      "sources": ["https://research.example.org/pharmacy-group-count"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C8",
+      "claim": "At a $62k average contract value, 22,000 groups is a $1.4B serviceable market.",
+      "market_evidence": "No source in the bibliography contains any dollar sizing of this category — no TAM, SAM, ACV, or price point. S4 establishes that a free, bundled wholesaler tool is the default option for smaller groups, implying the viable paid segment is the larger end of the base only. S3 shows the unit base declining 3-4% annually.",
+      "assessment": "unverifiable",
+      "delta": "The arithmetic is internally consistent (22,000 x $62k = $1.364B) and externally uncheckable — nothing in the material sizes this category in dollars. But the method is contradicted on both inputs: it assumes 100% of the universe is serviceable when S4 says the small end defaults to free [S4], and it assumes a static universe when S3 says it shrinks 3-4% per year [S3]. This is a TAM under a SAM label, and an eroding one.",
+      "so_what": "A serviceable market that assumes full penetration at today's price is not a serviceable market. The honest version would segment the 21,000-23,000 groups by store count, exclude the segment that defaults to the free tool [S3][S4], and net out six years of decline — leaving a materially smaller number the deck never attempts.",
+      "source_ids": ["S3", "S4"],
+      "sources": ["https://research.example.org/pharmacy-group-count", "https://research.example.org/wholesaler-reorder"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C9",
+      "claim": "$62k average contract value.",
+      "market_evidence": "No source provides an ACV, list price, per-store rate, or contract benchmark for a paid product in this category. The only price fact in the entire bibliography is the incumbent's: zero, bundled into the distribution agreement [S4].",
+      "assessment": "unverifiable",
+      "delta": "Nothing to measure it against. Internally, it reconciles to $2.1M / 34 = ~$61.8k, so it is a backsolved average from 34 accounts rather than a price point. The market evidence bears on its extensibility rather than its accuracy: S4's finding that zero price makes the wholesaler tool the default for smaller groups implies price realisation varies sharply by group size [S4], so a single blended average from the current base cannot be projected across 22,000 groups of unknown store counts.",
+      "so_what": "The ACV is probably true of today's 34 customers and probably not true of the next 21,966. It is doing double duty — as a business-model fact and as the multiplier in the market slide — and it is only load-tested for the first.",
+      "source_ids": ["S4"],
+      "sources": ["https://research.example.org/wholesaler-reorder"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C10",
+      "claim": "Independent pharmacy groups over-order slow-moving stock and stock out of fast movers in the same week.",
+      "market_evidence": "S4 reports that independent analyses describe the wholesalers' reorder tools as optimising for wholesaler fill rates rather than for pharmacy margin — a mechanism consistent with exactly this symptom. No source measures over-ordering or stockout rates directly.",
+      "assessment": "partially-supported",
+      "delta": "The causal mechanism is corroborated; the symptom is not quantified anywhere. The deck asserts the pattern with zero evidence given (the extraction records no evidence for the problem statement), and the market can only support it indirectly and at second hand — S4 reports the fill-rate criticism from unnamed 'independent analyses' [S4].",
+      "so_what": "The problem is real enough in shape to build on, but nobody in this bibliography has sized the pain in dollars, which is why no dollar market exists to point at. Customer references quantifying carrying cost and lost margin would convert this from plausible to fundable.",
+      "source_ids": ["S4"],
+      "sources": ["https://research.example.org/wholesaler-reorder"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C11",
+      "claim": "'Their wholesaler's reorder tool optimises for the wholesaler.'",
+      "market_evidence": "S4: the three national pharmaceutical wholesalers each supply inventory reordering tools at no charge as part of the distribution agreement; independent analyses describe these tools as optimising for wholesaler fill rates rather than for pharmacy margin, but note that their zero price makes them the default option for smaller groups.",
+      "assessment": "supported",
+      "delta": "The deck's assertion matches the independent characterisation almost word for word [S4] — this is the deck's strongest and most durable claim, and the misalignment is structural rather than a fixable product deficiency. The delta is in the half of S4's sentence the deck omits: the same source that validates the criticism also records that the tool is free, contractually bundled, and winning by default at the smaller end of the market [S4].",
+      "so_what": "Fernwood has correctly identified a durable opening — the incumbent has a positive incentive not to close it. It has not acknowledged that the incumbent does not need to close it, because free and adequate beats paid and better for a large and unquantified share of the base.",
+      "source_ids": ["S4"],
+      "sources": ["https://research.example.org/wholesaler-reorder"],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C12",
+      "claim": "Demand forecasting per store, per SKU, reconciled against dispensing history rather than against purchase history.",
+      "market_evidence": "S4 establishes purchase/fill-rate orientation as the incumbent's weakness, making dispensing reconciliation the correct axis of attack [S4]. S2 establishes that the wholesaler's ordering system holds the data that must be migrated, and that failed implementations fail at exactly that migration [S2]. No source names any dispensing-system vendor, states who holds dispensing history, or describes on what terms a third party can access it.",
+      "assessment": "unverifiable",
+      "delta": "The strategic logic is corroborated; the technical feasibility is entirely unchecked. The pivotal question — whether dispensing history is accessible to Fernwood, and whether the pharmacy management system vendors who hold it will cooperate or compete — is answered by no source and by no slide.",
+      "so_what": "This claim is simultaneously the moat and the largest unexamined dependency. If dispensing data is inaccessible to the wholesalers, it is a genuine defensible wedge; if it is gated by pharmacy management system vendors, Fernwood's differentiator sits on infrastructure owned by a party that could ship it natively. Nothing in the deck or the research resolves this.",
+      "source_ids": ["S4", "S2"],
+      "sources": ["https://research.example.org/wholesaler-reorder", "https://research.example.org/pharmacy-software-churn"],
+      "evidence_quality": "weak"
+    },
+    {
+      "id": "C13",
+      "claim": "Raising $12M at $75M post.",
+      "market_evidence": "No source provided contains a funding round, valuation, multiple, investor, or exit for this category or any adjacent one. The funding_environment section of the market analysis is empty by its own account, and its 'steady' investor appetite reading is explicitly flagged as 'no signal' rather than an observation.",
+      "assessment": "unverifiable",
+      "delta": "Cannot be benchmarked — I was given no norms to benchmark against, and I will not import a multiple from general knowledge and dress it as sourced. Internally, $75M post on $2.1M ARR is ~36x, which the deck asks the reader to accept without an ARR trajectory, a growth rate, a use of funds, milestones, or runway.",
+      "so_what": "The terms may be defensible; the deck simply does not attempt to defend them. In the absence of a growth curve, a 36x ask is a request to price the story rather than the business.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    }
+  ],
+  "alignment": {
+    "where_deck_matches_market": [
+      "The buyer count is right: 'roughly 22,000' groups sits at the midpoint of the independent 21,000-23,000 estimate [S3]. This is the deck's one externally corroborated figure.",
+      "The problem diagnosis is right and independently corroborated: the wholesaler's reorder tool does optimise for the wholesaler, per independent analyses cited in S4 [S4]. The deck's framing of the incumbent's flaw matches the evidence closely.",
+      "The chosen differentiation axis is the correct one. Whose margin the tool optimises for is the only axis of product differentiation any source in the bibliography identifies [S4], and dispensing-vs-purchase-history reconciliation is a coherent expression of it.",
+      "The buying unit is correctly identified as the group rather than the store [S3], which does structurally permit in-account expansion even though no source measures whether it occurs."
+    ],
+    "where_deck_overstates": [
+      "'Our 131% NRR is well above the benchmarks published for vertical SaaS' — the benchmarks are published on an all-customer basis at 104-112%, and a past-first-renewal cohort typically reports 25-40 points higher for the same business [S1]. On the comparable basis the implied figure is roughly 91-106%, at or below benchmark. The claimed premium may not survive conversion.",
+      "'Retention is the whole story in this category' — the evidence identifies at least four differentiation axes, including price against a free default and migration competence [S4][S2], and none of them is retention.",
+      "$1.4B 'serviceable market' — the arithmetic assumes 100% of a shrinking universe [S3] is reachable at an ACV backsolved from 34 accounts, in a market where zero price makes the incumbent the default for smaller groups [S4]. This is a TAM wearing a SAM label.",
+      "'It compounds: we grow inside an account as they add stores' — asserted with no cohort data, in a cohort that has been shrinking through acquisition for six consecutive years [S3].",
+      "96% logo retention presented as a strength when it is measured on survivors of a churn event that claims 30-35% of logos in this market [S2]."
+    ],
+    "where_deck_understates": [
+      "The durability of its own wedge. The wholesaler's misalignment is structural — a tool that genuinely optimised for pharmacy margin would work against the supplier's own fill rates [S4] — so the incumbent has a positive reason not to close the gap, not merely an absence of interest. That is a far stronger argument than 'retention is the whole story', and the deck never makes it.",
+      "The switching cost it may already own. Migration out of the wholesaler's ordering system is hard enough to kill a third of first-year deals in this market [S2]; every migration Fernwood has completed is a wall against the next vendor. The deck treats implementation as invisible rather than as evidence of a hard-won capability.",
+      "The strategic significance of its 34 completed implementations. In a market where the decisive competitive capability is migration competence [S2], 34 live accounts is a proof point the deck reports only as a revenue denominator."
+    ],
+    "blind_spots": [
+      {
+        "what": "The addressable base is shrinking 3-4% per year and has been for six consecutive years, as independent groups are acquired by regional chains [S3]. The deck presents 22,000 groups as a static universe.",
+        "why_it_matters": "A market that loses 3-4% of its accounts annually requires share gains of roughly that magnitude just to hold revenue flat. It also converts the deck's expansion thesis into a contradiction: the deck says customers add stores, while the only evidence about this cohort says the cohort itself is being absorbed. And it is unresolved whether an acquired group's contract survives — which determines whether consolidation is a slow drain on the prospect pool or an active churn channel.",
+        "source_ids": ["S3"]
+      },
+      {
+        "what": "Every prospect already has a free, pre-installed, contractually bundled alternative. All three national wholesalers supply reorder tooling at no charge as a term of the distribution agreement, and zero price makes them the default option for smaller groups [S4].",
+        "why_it_matters": "The buyer's current spend on this function is zero, so every sale is net-new budget creation at a small operator rather than displacement of an incumbent line item. It also caps price at the small end of the base, which means the deck's uniform $62k across all 22,000 groups is not merely unproven but structurally implausible. The deck names the wholesaler tool as the problem and omits that it is free, bundled, and winning by default.",
+        "source_ids": ["S4"]
+      },
+      {
+        "what": "First-year logo churn in software sold to independent pharmacy operators runs 30-35%, concentrated before the first renewal [S2].",
+        "why_it_matters": "This is a property of the market, not of any one vendor, and it is precisely the cohort the deck's retention qualifier excludes. It means the 'past their first renewal' denominator is doing unusually heavy lifting here, and that roughly a third of all acquisition cost in this market never reaches a renewal — making blended CAC payback materially worse than any per-survivor figure.",
+        "source_ids": ["S2"]
+      },
+      {
+        "what": "Failed implementations typically fail during the initial data migration from the wholesaler's ordering system [S2] — the vendor must extract data from the incumbent in order to displace the incumbent.",
+        "why_it_matters": "This is an unusually adverse structural position and the deck does not acknowledge it exists. It is also unresolved whether the difficulty is technical, contractual, or active resistance by the wholesaler — the remedies differ completely, and only one of them can be engineered away.",
+        "source_ids": ["S2"]
+      },
+      {
+        "what": "The upstream dependency on whoever holds dispensing history. The product's entire differentiator requires data that no source establishes Fernwood can obtain, from a system-of-record vendor no source names.",
+        "why_it_matters": "If that data comes through pharmacy management system vendors, Fernwood's moat depends on the cooperation of parties who sit on the same input and could ship forecasting natively. The deck describes the differentiator in one sentence and never mentions where the data comes from, what it costs, or who controls it.",
+        "source_ids": ["S4", "S2"]
+      },
+      {
+        "what": "The regulatory surface of ingesting dispensing history is addressed by neither the deck nor any source — no PHI/privacy obligations, no state pharmacy board requirements, no DSCSA/track-and-trace, no controlled-substance reporting appears anywhere.",
+        "why_it_matters": "Dispensing data is plausibly PHI-adjacent, and business-associate obligations would bear on architecture, sales cycle, and cost. Neither the company nor the research has looked; the absence in the deck is a posture question and the absence in the bibliography is a diligence gap. I am flagging it as unexamined, not as a known problem.",
+        "source_ids": []
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "The headline metric does not survive conversion to a comparable basis: 131% past-first-renewal NRR implies roughly 91-106% all-customer, against a published benchmark of 104-112% [S1]. The 'Why we win' slide may be built on an advantage that does not exist.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Request all-customer NRR and all-customer logo retention across all 34 accounts, with the past-first-renewal denominator stated in absolute customer counts, and a churn log by account and date. If the company cannot produce these in a week, the inability is itself the answer."
+    },
+    {
+      "risk": "The retention percentages rest on a denominator small enough to be statistically meaningless. With 34 total customers and 30-35% market-wide first-year churn [S2], the qualifying cohort could be single-digit, in which case 96% logo retention may distinguish itself from a far worse figure by one account.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Get n for the qualifying cohort. Recompute both figures on the full base. Reject any figure whose denominator the company will not name."
+    },
+    {
+      "risk": "The market is shrinking. The independent group base has declined 3-4% annually for six years through acquisition by regional chains [S3], and it is unknown whether an acquired group's contract survives, transfers, or terminates.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask how many of Fernwood's 34 accounts have been acquired to date and what happened to each contract. That single data point converts consolidation from an abstract headwind into either a churn channel or an expansion channel."
+    },
+    {
+      "risk": "Free, bundled, default competition at every prospect [S4] caps both price and reachable segment. The $62k ACV may hold only for the largest groups, in which case the addressable base is a fraction of 22,000 and the $1.4B is off by a large multiple.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Segment the existing 34 accounts by store count and ACV, and plot win rate against group size. If wins concentrate above a store-count threshold, size the market on that segment only and re-underwrite."
+    },
+    {
+      "risk": "No team is disclosed at all — no names, roles, backgrounds, or headcount — for a $12M Series A in a category whose decisive capability is executing data migrations that kill a third of deals [S2].",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "This is resolved by a single conversation or it is disqualifying. Founder backgrounds, pharmacy domain history, and who owns implementation delivery."
+    },
+    {
+      "risk": "The differentiator may not be technically or commercially achievable at scale: no source establishes who holds dispensing history or on what terms a third party can access it, and the holders may be pharmacy management system vendors who could ship forecasting natively.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Map the integration stack: which dispensing systems Fernwood reads, under what agreements, at what cost, with what termination rights. Ask whether any PMS vendor has shipped or announced forecasting."
+    },
+    {
+      "risk": "Absorption by the wholesalers. They already own the distribution relationship, the ordering workflow, the purchase-history data, and a zero-price channel [S4], and the migration path out of their system is the hard step for anyone else [S2]. The category has already been absorbed once at the basic-reordering level.",
+      "severity": "high",
+      "likelihood": "low",
+      "mitigation_or_test": "Likelihood is low specifically because a wholesaler tool that optimised for pharmacy margin would work against the supplier's own fill rates [S4] — the absorber has a positive reason not to build it. Test by asking whether any wholesaler has shipped, hired for, or announced margin-aware forecasting; no source shows one has."
+    },
+    {
+      "risk": "Valuation is priced on a growth curve that is never shown. ~36x ARR with no ARR history, no growth rate, no new-logo velocity, no use of funds, no milestones, and no runway.",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Monthly ARR by cohort for 24 months, new logos per quarter, and a use-of-funds plan tied to milestones. Underwrite on the curve, not the point."
+    },
+    {
+      "risk": "The market picture itself may be thinner than it looks. All four sources sit on one placeholder domain, share one date, were surfaced by a single query about SaaS retention, and name no publisher, author, methodology, or sample — they may be one upstream voice rather than four corroborating ones.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Re-run the market work against attributable primary sources (a real independent-pharmacy census, a named vertical SaaS retention benchmark with a stated panel) before relying on any specific figure quoted here. The structural findings would likely survive; the point estimates may not."
+    },
+    {
+      "risk": "Unexamined regulatory exposure from ingesting dispensing history — PHI/privacy obligations, state pharmacy board requirements, controlled-substance reporting. Neither the deck nor any source addresses any of it.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Ask what agreements govern the dispensing data Fernwood holds, whether business-associate obligations attach, and who signed off. Silence on this at Series A in a health-adjacent vertical is itself informative."
+    }
+  ],
+  "questions": [
+    "How many of the 34 customers are past their first renewal? Name the integer. Both headline metrics collapse or hold on this one number.",
+    "What are net revenue retention and logo retention across all 34 accounts, on the all-customer basis that published benchmarks use [S1]?",
+    "Which published vertical SaaS benchmark is the 131% being compared against, and was it stage- and ACV-matched, and was the basis checked?",
+    "What was ARR twelve and twenty-four months ago, and how many new logos closed in each of the last four quarters?",
+    "Of the expansion revenue inside the 131%, how much came from customers genuinely opening new stores versus price increases, module attach, or backfill within an existing footprint? [S3] says this cohort is being consolidated, not expanding.",
+    "How many of your 34 customers have been acquired by a regional chain since signing, and what happened to each contract? [S3]",
+    "Who holds the dispensing history you reconcile against, what agreement gives you access, and what happens if that vendor ships forecasting?",
+    "What is your win rate against 'do nothing and keep using the free wholesaler tool' [S4], and does it vary by group store count?",
+    "What is the smallest group, by store count, that has ever paid you — and what did they pay?",
+    "Who are the founders, what did they do before, and who owns implementation delivery in a market where migration failure kills a third of first-year customers [S2]?",
+    "What is your own first-year logo churn, against the market's 30-35% [S2]?",
+    "What does the $12M buy, against what milestones, and what is current monthly burn?"
+  ],
+  "actions": [
+    {
+      "action": "Send a one-page metrics request before any partner time: qualifying-cohort size for both retention figures, all-customer NRR and logo retention across all 34 accounts, monthly ARR for 24 months, quarterly new logos, and an account-level churn log. Treat a non-answer or a further-restricted denominator as a decision.",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Ask directly how the 131% was compared to 'the benchmarks published for vertical SaaS' and whether the basis mismatch [S1] was known. The answer distinguishes a definitional error from a chosen framing, and that distinction should carry more weight in this decision than the metric itself.",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Request the team page that does not exist in the deck: founders, roles, backgrounds, headcount, and who owns implementation delivery.",
+      "owner": "Deal lead",
+      "priority": "P0"
+    },
+    {
+      "action": "Segment the 34 accounts by store count and ACV and plot win rate against group size, to test whether the paid segment is the large end only, as S4's zero-price-default finding implies [S4]. Re-size the market on that segment rather than on 22,000.",
+      "owner": "Associate / diligence",
+      "priority": "P1"
+    },
+    {
+      "action": "Run four to six customer references, weighted toward the largest and the most recently signed, on three questions: what they used before, what the migration was like, and what would make them go back to the free wholesaler tool [S2][S4].",
+      "owner": "Associate / diligence",
+      "priority": "P1"
+    },
+    {
+      "action": "Map the dispensing-data supply chain: which systems Fernwood integrates with, under what agreements, at what cost, with what termination rights, and whether any of those vendors has shipped or announced forecasting.",
+      "owner": "Technical diligence",
+      "priority": "P1"
+    },
+    {
+      "action": "Redo the market research against attributable primary sources. The current bibliography is four unattributed summaries on one placeholder domain, one date, one query [S1][S2][S3][S4]; no figure quoted in this memo should be treated as established until at least the group count and the retention benchmark are replaced with named, methodology-bearing sources.",
+      "owner": "Research",
+      "priority": "P1"
+    },
+    {
+      "action": "Get a preliminary read on PHI/business-associate obligations attaching to third-party analytics on dispensing data, since neither the deck nor the research touches it.",
+      "owner": "Legal / regulatory counsel",
+      "priority": "P2"
+    },
+    {
+      "action": "If the metrics request comes back clean — all-customer NRR above 115%, disclosed denominators, and a visible growth curve — re-underwrite at a price supported by the curve rather than by the story, and reopen. Otherwise close the file with a specific written reason so the founders can come back with the data.",
+      "owner": "Deal lead",
+      "priority": "P2"
+    }
+  ],
+  "summary": "Fernwood Systems has found a real problem and has picked the right axis to attack it on, and then built its pitch on the one number that does not survive scrutiny. The problem diagnosis is independently corroborated: the three national pharmaceutical wholesalers each supply reorder tooling to their customers, and independent analyses describe those tools as optimising for wholesaler fill rates rather than pharmacy margin [S4]. That is a structural misalignment — the party supplying the tool sits on the other side of the transaction it optimises — which means it will not close through the incumbent improving its software. It is a durable opening, and reconciling forecasts against dispensing history rather than purchase history is a coherent way to exploit it. The deck's buyer count is also correct: 'roughly 22,000' groups sits at the midpoint of the independent 21,000-23,000 estimate [S3]. Two of the deck's foundations check out.\n\nThe third does not. Slide 5 asserts that 'retention is the whole story in this category' and that 131% NRR is 'well above the benchmarks published for vertical SaaS'. Those benchmarks are published on an all-customer basis at 104-112%, and a cohort restricted to customers past their first renewal typically reports 25-40 points higher than the all-customer figure for the same business, because the customers most likely to churn have already been excluded from the denominator [S1]. Fernwood's 131% is scoped, in its own words, to 'customers past their first renewal'. Converted to the basis the benchmarks use, the implied all-customer figure is roughly 91-106% — straddling the bottom of the benchmark range and sitting mostly below it. The claimed direction of the comparison plausibly inverts. And the qualifier does unusually heavy lifting in this particular market, because first-year logo churn in software sold to independent pharmacy operators runs 30-35%, concentrated before the first renewal [S2]. The excluded cohort is not a rounding error; it is roughly a third of everything ever sold here. The same qualifier makes 96% logo retention close to tautological, and with 34 total customers the qualifying base may be small enough that the figure turns on a single account.\n\nThe market slide performs the mirror image of the same move. It takes an ACV backsolved from the current 34 customers ($2.1M / 34 = ~$61.8k, matching the stated $62k) and multiplies it across the entire 22,000-group universe. Nothing in the bibliography can check the resulting $1.4B, because no source given to me contains any dollar sizing of this category at all — no TAM, no SAM, no price point, no ACV benchmark [S1][S2][S3][S4]. But two things in the evidence contradict the method rather than the arithmetic. Zero price makes the bundled wholesaler tool the default option for smaller groups [S4], so a large and unquantified share of those 22,000 groups is not addressable at $62k or at any price. And the base is shrinking: independent groups have been acquired by regional chains at 3-4% per year for six consecutive years [S3]. A serviceable market that assumes full penetration of a contracting universe at a price only the large end will pay is a TAM wearing a SAM label.\n\nThat decline also collides with the deck's growth story. 'It compounds: we grow inside an account as they add stores' assumes customers are expanding, while the only evidence about this cohort shows it being absorbed [S3]. Whether an acquired group's contract survives, transfers, or terminates is established by no source — and that single unknown determines whether consolidation is Fernwood's expansion channel or its churn channel. Meanwhile the competitive picture the deck omits entirely is unusually adverse: the incumbent is free, pre-installed, and bundled into a distribution agreement already signed at every prospect [S4], so every sale is net-new budget creation at a small operator rather than displacement of a line item; and the vendor must extract data out of the incumbent's ordering system in order to displace it, which is exactly where implementations fail [S2]. There is no competition slide at all. There is also no team slide — no founder names, roles, backgrounds, or headcount anywhere in seven slides — in a market where migration competence is the decisive capability [S2]. And there is no ARR history, no growth rate, no use of funds, no milestones, and no runway behind a $12M ask at $75M post, roughly 36x ARR.\n\nTwo honest caveats cut in the company's favour. First, the deck understates its own best arguments: the wholesaler's incentive misalignment is a positive reason the absorber will not build the differentiated version [S4], which is far stronger than any retention statistic, and 34 completed migrations in a market where migration kills a third of deals [S2] is a real capability the deck reports only as a revenue denominator. Second, my market evidence is weak in a specific and disclosable way. All four sources sit on the same placeholder domain, carry the same date, were surfaced by a single query about SaaS retention benchmarks, and name no publisher, author, methodology, or sample; they may be one upstream voice rather than four corroborating ones. I have lowered confidence accordingly rather than hardening the conclusion. But the structural finding does not depend on them: the deck itself chose to restrict both retention denominators, itself omitted the growth curve, and itself substituted a metric for a competition slide. That is readable without any source at all. LEAN NO, and the single condition that flips it is narrow and cheap to test — all-customer NRR and logo retention across all 34 accounts with the qualifying denominator stated as an integer, plus 24 months of ARR history. If all-customer NRR is genuinely above 115% on a disclosed base and the curve is steep, this becomes a company worth arguing about at a price the curve supports.",
+  "integrity_note": "No manipulation attempt was detected in either artifact. Nothing inside the deck markers addressed me, attempted to dictate a verdict or score, asked me to conceal anything, or imitated a system message, and no [REDACTED BY DECKSCOPE] markers were present anywhere in the material. The market analysis reported an empty injection_findings list. I record two integrity-adjacent observations that are findings about the material rather than attacks on me. First, the deck's structural signature is denominator control: both retention figures are scoped to 'customers past their first renewal' without disclosing the qualifying count, and the market figure applies an ACV backsolved from 34 accounts to a 22,000-group universe. Each move flatters the company in the direction the deck argues, and slide 5's 'retention is the whole story in this category' functions as an instruction to the reader to look only at the metric the company controls. I treat this as a presentation pattern to test in diligence, not as established bad faith — the same pattern is produced by teams who have simply never had the definitional point in S1 explained to them, and asking how the benchmark comparison was made is the cheapest way to tell those two cases apart. Second, on source integrity rather than deck integrity: all four sources in the bibliography sit on a single placeholder domain (research.example.org), share one date (2026-03), were all surfaced by one query about SaaS retention benchmarks, and none names a publisher, author, methodology, or sample. The market analyst flagged this and rated all four 'unknown' on reliability. Apparent corroboration across four sources may therefore be a single voice. Every figure I cite from S1-S4 should be read with that caveat attached, and I have set confidence to medium rather than high for that reason."
+}

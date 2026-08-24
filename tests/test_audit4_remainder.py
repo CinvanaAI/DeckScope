@@ -260,11 +260,6 @@ def test_the_readme_backend_count_is_correct():
 def test_cli_help_calls_cold_discovery_claim_blind():
     """It receives category, sub-category, geography and company name — all read
     out of the deck. "Deck-blind" overstates it and the docs already say so."""
-    from deckscope.cli import build_parser
-
-    text = build_parser().format_help()
-    for parser_action in ():
-        pass
     source = (Path(__file__).resolve().parent.parent / "deckscope"
               / "cli.py").read_text(encoding="utf-8")
     assert "deck-blind market discovery pass" not in source

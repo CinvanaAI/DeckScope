@@ -1,0 +1,344 @@
+{
+  "headline": "Real early traction ($390k ARR, 46 teams, 11% MoM) attached to a market slide that is off by roughly 12-17x — the deck sizes itself against $3.1B of AI observability [S1] while the LLM tracing slice it actually sells into is $180-260M and decelerating to 20-25% [S2].",
+  "verdict": {
+    "call": "LEAN NO",
+    "confidence": "medium",
+    "confidence_rationale": "The market-sizing and competitive gaps are established directly by the supplied sources [S1][S2][S3][S4], so those findings are firm. What is not knowable from the deck is the shape of the traction underneath the ARR — retention, churn, ACV mix, multi-provider usage — and any of those could be strong enough to change the picture. Confidence is medium rather than high because the negative case rests on market structure, which is verifiable, while the offsetting case rests on evidence the deck simply does not supply rather than on evidence that is absent from the world."
+  },
+  "scorecard": [
+    {
+      "dimension": "Market size & timing",
+      "score": 3,
+      "weight": 5,
+      "rationale": "The deck claims to be in a $3.1B market growing 38% a year. The headline number checks out as a boundary — independent 2026 estimates put AI observability at $3.0-3.4B growing 35-40% [S1] — but that boundary counts model monitoring, feature drift detection and data-quality tooling for traditional ML, where the great majority of the spend still sits, and analysts specifically caution that the headline growth rate is carried by the established ML monitoring segment and does not describe every slice within it [S1]. Tessera sells tracing and evaluation for LLM applications, which is sized separately at $180-260M in 2026, with growth decelerating from above 60% in 2024 to 20-25% through 2025 and 2026 [S2]. So the deck has picked the one framing that inverts both variables: it is ~12-17x too large on size and roughly 1.5-1.9x too high on growth. Timing is the harder problem than size — the deceleration is attributed to model providers shipping tracing and evaluation natively [S2][S3], which means the slice is being compressed from above by free substitutes, not merely growing more slowly.",
+      "evidence": [
+        "Deck slide 4: 'We are in AI observability: a $3.1B market growing 38% a year.'",
+        "$3.0-3.4B at 35-40% is the composite AI observability boundary, majority of spend in traditional ML monitoring [S1]",
+        "LLM application tracing and evaluation specifically: $180-260M in 2026, growth 20-25% [S2]",
+        "Deceleration from >60% (2024) attributed to native provider tooling, not weakening demand [S2]"
+      ],
+      "source_ids": ["S1", "S2", "S3"]
+    },
+    {
+      "dimension": "Competitive position",
+      "score": 3,
+      "weight": 5,
+      "rationale": "Slide 5 is factually behind the market by about a year. The deck says Datadog and New Relic 'have no LLM-native tracing'; Datadog added LLM observability to its APM suite during 2025, bundled for existing customers rather than sold separately [S4]. The deck says Arize and WhyLabs are 'built around feature drift, not prompts'; both shipped LLM tracing products during 2025 [S4]. The Datadog detail is the more damaging of the two: a bundled feature inside a suite a buyer already pays for does not have to be better than Tessera, only good enough, and it removes both the procurement step and the line item. New Relic's position is not addressed by any supplied source and is unverifiable here. A competition slide that is wrong in the incumbents' favour, in a category this crowded, reads either as stale diligence or as selective framing, and both are material at seed.",
+      "evidence": [
+        "Deck slide 5: 'Datadog and New Relic own general application monitoring but have no LLM-native tracing.'",
+        "Deck slide 5: 'Arize and WhyLabs ... are built around feature drift, not prompts.'",
+        "Datadog added LLM observability to APM in 2025, bundled for existing customers [S4]",
+        "Arize and WhyLabs both shipped LLM tracing products during 2025 [S4]"
+      ],
+      "source_ids": ["S4"]
+    },
+    {
+      "dimension": "Product & moat",
+      "score": 5,
+      "weight": 4,
+      "rationale": "The product description is coherent and the one genuinely differentiated element — regression evals run against captured production traffic, rather than against a static golden set — is a real wedge, because it compounds with the customer's own accumulated traffic and is the piece a bundled competitor is least likely to match well. But the deck asserts the capability and shows no evidence that it is what customers buy on or stay for. Against that, the sources name exactly where independent tools do retain an advantage: applications spanning several model providers, and retention and access controls the platforms do not offer [S3]. The deck never claims either. End-to-end tracing of prompt, retrieval, tool calls and response is now table stakes rather than a moat, given the 2025 shipping activity [S3][S4]. Score reflects a plausible but unevidenced moat, not an absent one.",
+      "evidence": [
+        "Deck slide 3: 'regression evals that run against captured production traffic'",
+        "Independent tools retain advantage on multi-provider applications and on retention/access controls the platforms do not offer [S3]",
+        "OpenAI and Anthropic ship request tracing and evaluation dashboards at no additional cost [S3]"
+      ],
+      "source_ids": ["S3", "S4"]
+    },
+    {
+      "dimension": "Business model",
+      "score": 4,
+      "weight": 3,
+      "rationale": "No pricing, gross margin, sales motion, payback or expansion data anywhere in the deck. The only inference available is arithmetic: $390k ARR across 46 teams implies roughly $8.5k average ACV (inferred, not stated), which is a team-level, likely self-serve or low-touch price point. That is a workable motion but it is the price band most exposed to a free native alternative [S3] and to a bundled incumbent feature [S4], because at $8.5k the buyer has no procurement friction to overcome in switching away either. Reaching $3M ARR at that ACV means roughly 354 paying teams (inferred), which is a volume-acquisition problem the deck does not describe how to solve. Net revenue retention is the single number that would most change this score and it is absent.",
+      "evidence": [
+        "Deck slide 6: '$390k ARR across 46 teams' — implies ~$8.5k ACV (inferred by division, not stated in the deck)",
+        "Deck slide 7: '$3M ARR in 24 months' — implies ~354 teams at current ACV (inferred)",
+        "No pricing, margin, NRR, churn or CAC disclosed anywhere in the deck",
+        "Native provider tracing and evals ship at no additional cost [S3]; Datadog's is bundled, not sold separately [S4]"
+      ],
+      "source_ids": ["S3", "S4"]
+    },
+    {
+      "dimension": "Traction vs. stage",
+      "score": 6,
+      "weight": 5,
+      "rationale": "This is the strongest part of the deck and it is genuinely respectable for a seed. $390k ARR with 11% MoM sustained over four months compounds to about 1.52x, implying roughly $257k ARR four months ago (inferred). That is real demand, not a pilot list, and at seed thin revenue is not the thing to penalise — thin evidence of demand is, and this is not thin. The reservations are about denominators, which the deck never supplies: 46 teams out of how many trials, at what conversion, with what churn, and what share of that ARR is design-partner or discounted. 11% MoM on a ~$32.5k MRR base is roughly $3.6k of net new MRR a month, about five new teams (inferred) — a small enough absolute number that a handful of logos in either direction changes the growth rate materially. Four months is also a short window on which to price a round. Against the market, $390k represents 0.15-0.22% of the $180-260M slice [S2], so nothing here is yet constrained by market size; the constraint is prospective.",
+      "evidence": [
+        "Deck slide 6: '$390k ARR across 46 teams. 11% MoM growth for four months.'",
+        "1.11^4 = 1.52, implying ~$257k ARR four months ago (inferred)",
+        "$390k is 0.15-0.22% of the $180-260M 2026 LLM tracing slice [S2]",
+        "No churn, NRR, conversion rate or trial denominator disclosed"
+      ],
+      "source_ids": ["S2"]
+    },
+    {
+      "dimension": "Team",
+      "score": 1,
+      "weight": 4,
+      "rationale": "The deck contains no team slide at all — no founders, no names, no prior background, no relevant domain history, no headcount. For a seed round where the team is normally the primary underwriting object, this is not a thin section, it is an absent one. The score reflects total absence of information rather than a negative judgement; nothing here can be assessed and nothing should be assumed. No supplied source speaks to the team, so this is unverifiable rather than unsupported.",
+      "evidence": [
+        "No slide in the seven-slide deck names a founder, an operator, or any prior experience",
+        "No headcount, no advisors, no hiring plan"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Ask & plan",
+      "score": 4,
+      "weight": 4,
+      "rationale": "$5M at $28M post is 71.8x current ARR (inferred from $390k) and 9.3x the $3M target. The 71.8x multiple is not itself disqualifying for a seed with this growth rate, but it prices in a large market, and the actual serviceable slice is $180-260M [S2] rather than the $3.1B the deck argues from — so the multiple and the market thesis are load-bearing on each other. The plan's internal arithmetic is, to the deck's credit, not aggressive: $390k to $3M in 24 months is 7.7x, about 8.8% MoM sustained (inferred), slightly below the 11% currently claimed. That is honest as a target, though sustaining 8.8% for 24 months is a far harder thing than 11% for four. What is missing is any use-of-funds breakdown, any hiring plan, and any statement of what milestone $3M ARR is meant to unlock — and $3M ARR would represent roughly 1% of even the upper end of the slice at 2028 growth rates [S2].",
+      "evidence": [
+        "Deck slide 7: 'Raising $5M at $28M post to reach $3M ARR in 24 months.'",
+        "$28M / $390k = 71.8x current ARR (inferred)",
+        "$390k to $3M over 24 months = 7.7x, ~8.8% MoM compounded (inferred), below the 11% claimed on slide 6",
+        "No use of funds, no hiring plan, no milestone definition"
+      ],
+      "source_ids": ["S2"]
+    }
+  ],
+  "claim_audit": [
+    {
+      "id": "C1",
+      "claim": "'We are in AI observability: a $3.1B market growing 38% a year.' (slide 4)",
+      "market_evidence": "Independent 2026 estimates put AI observability at $3.0-3.4B growing 35-40% annually [S1]. $3.1B and 38% both sit inside those ranges. However, that boundary counts model monitoring, feature drift detection and data-quality tooling for traditional machine learning, which is where the great majority of the spend still sits [S1]. The slice Tessera actually sells into — tracing and evaluation for LLM applications — is $180-260M in 2026 growing 20-25% [S2].",
+      "assessment": "partially-supported",
+      "delta": "The number is right for a category the company is not really in. Against the serviceable slice, $3.1B is 12-17x the $180-260M actually addressable [S2], and 38% is 1.5-1.9x the 20-25% growth that slice is running at [S2]. The claim is not fabricated; the boundary is chosen.",
+      "so_what": "Every downstream number in the deck — the $28M post, the $3M target, the implied share of market — is being argued from a denominator roughly 15x too large. An IC that accepts slide 4 as written will misprice the round. This is also the single most testable thing about the founders' market judgement: whether they know the slice number and chose the composite anyway.",
+      "source_ids": ["S1", "S2"],
+      "sources": [
+        "https://research.example.org/ai-observability-sizing",
+        "https://research.example.org/llm-tracing-slice"
+      ],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C2",
+      "claim": "'Independent analysts put it in that range and the category is one of the fastest growing in developer infrastructure.' (slide 4)",
+      "market_evidence": "The first half is accurate — independent estimates do put AI observability at $3.0-3.4B at 35-40% [S1]. The second half is directly qualified by the same source: analysts caution that the headline growth rate is carried by the established ML monitoring segment and does not describe every slice within it [S1]. Tessera's own slice decelerated from above 60% in 2024 to 20-25% [S2]. No supplied source ranks AI observability against other developer infrastructure categories.",
+      "assessment": "partially-supported",
+      "delta": "'Independent analysts put it in that range' is supported [S1]. 'One of the fastest growing in developer infrastructure' is unverifiable as a ranking claim from the material supplied, and is contradicted in spirit for Tessera's own slice, which at 20-25% [S2] is growing at ordinary rather than exceptional rates. No analyst is named, so the attribution cannot be checked.",
+      "so_what": "The deck borrows the credibility of an independent estimate while inheriting none of that estimate's stated caveat. Ask which analyst, and whether the founders have seen the slice-level breakdown.",
+      "source_ids": ["S1", "S2"],
+      "sources": [
+        "https://research.example.org/ai-observability-sizing",
+        "https://research.example.org/llm-tracing-slice"
+      ],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C3",
+      "claim": "'Datadog and New Relic own general application monitoring but have no LLM-native tracing.' (slide 5)",
+      "market_evidence": "Datadog added LLM observability to its APM suite during 2025, bundled for existing customers rather than sold separately [S4]. No supplied source addresses New Relic's position.",
+      "assessment": "contradicted",
+      "delta": "The Datadog half is wrong as of 2025 [S4], and wrong in the most commercially significant way: not merely that Datadog has the capability, but that it is bundled into a suite the buyer already owns, so it costs zero incremental dollars and zero procurement effort. The New Relic half cannot be verified with what is available. The deck is describing a 2024 competitive landscape in a 2026 seed round.",
+      "so_what": "Tessera's likely buyer — a team already running Datadog APM — can now get LLM observability without a new vendor. That does not mean Tessera loses, but it means the sales conversation is displacement rather than greenfield, and the deck shows no awareness that this is the conversation it is in.",
+      "source_ids": ["S4"],
+      "sources": ["https://research.example.org/ml-monitoring-vendors"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C4",
+      "claim": "'Arize and WhyLabs come from the ML monitoring world and are built around feature drift, not prompts.' (slide 5)",
+      "market_evidence": "Arize and WhyLabs, both from the ML monitoring lineage, shipped LLM tracing products during 2025 [S4].",
+      "assessment": "contradicted",
+      "delta": "The lineage claim is correct; the present-tense product claim is a year stale. Both named competitors now ship LLM tracing [S4], so the stated differentiation — that they address drift and not prompts — no longer describes their products. The source does not say how good those products are, so the depth of the competitive overlap is unverifiable; only its existence is established.",
+      "so_what": "Two of the four competitors named are dismissed on a basis that has already been closed. Combined with C3, three of four competitive dismissals on slide 5 are outdated, which shifts the burden onto Tessera to state a differentiator that survives 2026 rather than one that worked in 2024.",
+      "source_ids": ["S4"],
+      "sources": ["https://research.example.org/ml-monitoring-vendors"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C5",
+      "claim": "'$390k ARR across 46 teams. 11% MoM growth for four months.' (slide 6)",
+      "market_evidence": "No supplied source speaks to Tessera's revenue; this cannot be checked against the research material. Internally the figures are consistent: 11% MoM over four months compounds to 1.52x, implying about $257k ARR four months ago, and $390k across 46 teams implies about $8.5k average ACV (both inferred by arithmetic, not stated).",
+      "assessment": "unverifiable",
+      "delta": "Nothing in the material contradicts these numbers and nothing corroborates them. The gap is not between the claim and the market, it is between the claim and its missing denominators: no churn, no net revenue retention, no trial-to-paid conversion, no statement of how much of the $390k is design-partner, discounted, or annual-prepaid, and no cohort view. 'Growth for four months' is also a short and self-selected window.",
+      "so_what": "For a seed this is real evidence of demand and should be credited as such. But the ARR figure alone cannot distinguish a compounding business from 46 logos acquired in a burst, and at ~$3.6k of net new MRR a month (inferred) the growth rate is sensitive to a handful of accounts in either direction. Data-room verification is a P0.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C6",
+      "claim": "'Raising $5M at $28M post to reach $3M ARR in 24 months.' (slide 7)",
+      "market_evidence": "No source addresses valuation. Against the market, $3M ARR would be roughly 1.2-1.7% of the 2026 LLM tracing slice of $180-260M [S2], and at 20-25% growth [S2] the slice reaches roughly $260-400M by 2028, putting $3M at around 1% of it.",
+      "assessment": "unverifiable",
+      "delta": "$28M post on $390k ARR is 71.8x (inferred), and 9.3x the 24-month target. The plan itself implies about 8.8% MoM sustained for 24 months (inferred), slightly below the current 11% — an internally reasonable assumption. The real gap is not in the arithmetic but in the terminal question the deck never poses: a company at $3M ARR holding ~1% of a $260-400M slice [S2] is a good business and is not, on this trajectory, a fund returner.",
+      "so_what": "The ask is priced off slide 4's $3.1B framing. Priced off the $180-260M slice [S2], the same round needs a credible story about expanding scope — into the multi-provider and governance use cases the sources identify as defensible [S3], or beyond tracing altogether. The deck offers no such story, which is the core reason this is a lean no rather than a yes with conditions.",
+      "source_ids": ["S2", "S3"],
+      "sources": [
+        "https://research.example.org/llm-tracing-slice",
+        "https://research.example.org/native-tracing"
+      ],
+      "evidence_quality": "moderate"
+    },
+    {
+      "id": "C7",
+      "claim": "'When an LLM feature misbehaves in production, nobody can reconstruct why. Teams ship prompt changes blind and find out from support tickets.' (slide 2)",
+      "market_evidence": "The underlying pain is real and demand for the capability is not in question — the sources attribute the slice's deceleration to model providers shipping the capability natively rather than to weakening demand for the capability itself [S2]. But 'nobody can reconstruct why' is now overstated: OpenAI and Anthropic both ship request tracing and evaluation dashboards inside their developer platforms at no additional cost, covering the single-provider case that describes most early-stage LLM applications [S3], and Datadog, Arize and WhyLabs all shipped LLM tracing during 2025 [S4].",
+      "assessment": "partially-supported",
+      "delta": "The problem is validated; the premise that it is unsolved is not. For the single-provider case that describes most early-stage LLM applications [S3] — which is plausibly what many of Tessera's 46 teams are — a free first-party answer already exists. The gap between 'this problem matters' and 'this problem is unaddressed' is the whole investment case, and the deck treats them as one statement.",
+      "so_what": "Tessera's defensible ground is precisely where the free tools stop: multi-provider applications, and retention and access controls the platforms do not offer [S3]. The deck should be leading with that segment and reporting what share of its 46 teams sit in it. It never mentions the segment at all.",
+      "source_ids": ["S2", "S3", "S4"],
+      "sources": [
+        "https://research.example.org/llm-tracing-slice",
+        "https://research.example.org/native-tracing",
+        "https://research.example.org/ml-monitoring-vendors"
+      ],
+      "evidence_quality": "strong"
+    }
+  ],
+  "alignment": {
+    "where_deck_matches_market": [
+      "The $3.1B / 38% figures on slide 4 are inside the independent 2026 range of $3.0-3.4B at 35-40% for AI observability as a composite category [S1] — the numbers are accurate for the boundary quoted, and the deck should not be accused of fabricating them.",
+      "The underlying problem statement is real: the sources attribute the slice's slowdown to native provider tooling rather than to weakening demand for tracing and evaluation itself [S2], so the capability Tessera sells is genuinely wanted.",
+      "The competitive lineage described on slide 5 is correct as far as it goes — Arize and WhyLabs do come from the ML monitoring world [S4], and Datadog and New Relic are general application monitoring incumbents.",
+      "The 24-month plan is internally conservative rather than heroic: $390k to $3M implies ~8.8% MoM (inferred), below the 11% currently claimed on slide 6, which is a more honest projection than most seed decks offer."
+    ],
+    "where_deck_overstates": [
+      "Market size by roughly 12-17x: $3.1B claimed [S1 boundary] against a $180-260M serviceable slice for LLM application tracing and evaluation [S2].",
+      "Growth by roughly 1.5-1.9x: 38% claimed against 20-25% in Tessera's actual slice, down from above 60% in 2024 [S2] — the deck presents a decelerating slice as an accelerating one.",
+      "Competitive whitespace: 'Datadog and New Relic ... have no LLM-native tracing' is contradicted for Datadog, which shipped it into APM in 2025 and bundles it [S4]; 'Arize and WhyLabs ... built around feature drift, not prompts' is contradicted for both, which shipped LLM tracing in 2025 [S4].",
+      "Problem novelty: 'nobody can reconstruct why' overstates the status quo when OpenAI and Anthropic both ship tracing and evaluation dashboards at no additional cost for the single-provider case that describes most early-stage LLM applications [S3].",
+      "Implicitly, the durability of $8.5k-ACV team-level pricing (inferred from slide 6) against a competitor that bundles the same capability for free into a suite the customer already buys [S4]."
+    ],
+    "where_deck_understates": [
+      "Its own defensibility: the sources name exactly where independent tools keep an advantage — applications spanning several model providers, and retention and access controls the platforms do not offer [S3] — and the deck never claims either, despite these being the strongest available arguments for its existence.",
+      "The regression-evals-against-captured-production-traffic mechanic on slide 3 is buried in a single line. It is the one element here that compounds with a customer's own data and is the hardest thing for a bundled competitor to match; it deserves to be the whole product slide.",
+      "The traction is presented flatly. $257k to $390k in four months (inferred) with 46 paying teams is above the bar for seed, and the deck gives it one line with no cohort, retention or expansion detail that would let it carry more weight."
+    ],
+    "blind_spots": [
+      {
+        "what": "Model providers ship tracing and evaluation dashboards inside their own developer platforms at no additional cost, covering the single-provider case that describes most early-stage LLM applications [S3]. The deck's competition slide does not mention OpenAI or Anthropic at all.",
+        "why_it_matters": "This is the largest competitor by installed base and it is free. It also defines Tessera's true addressable segment: the sources say independent tools retain an advantage where an application spans several model providers or needs retention and access controls the platforms do not offer [S3]. Everything outside that segment is being sold against zero. An investor cannot size this business without knowing what fraction of the 46 teams are multi-provider, and the deck does not let them ask.",
+        "source_ids": ["S3"]
+      },
+      {
+        "what": "The LLM tracing slice is decelerating, not accelerating — from above 60% in 2024 to 20-25% through 2025 and 2026 [S2] — and the deceleration is caused by the free native tooling, not by demand softening [S2][S3].",
+        "why_it_matters": "A category compressed by free substitutes behaves very differently from one that is simply maturing: pricing power erodes at the low end first, which is exactly where an $8.5k ACV (inferred) sits. The deck's 38% growth claim points the IC in the opposite direction from where the slice is actually heading, and the causal mechanism means the trend is structural rather than cyclical.",
+        "source_ids": ["S2", "S3"]
+      },
+      {
+        "what": "Datadog's LLM observability is bundled for existing customers rather than sold separately [S4].",
+        "why_it_matters": "Bundling is a distribution weapon, not a product one. It means the incumbent does not need feature parity to win — it needs adequacy plus the fact that the buyer's contract is already signed. This compresses Tessera's realistic pricing ceiling and lengthens its sales cycle, and neither the pricing nor the sales motion appears anywhere in the deck.",
+        "source_ids": ["S4"]
+      },
+      {
+        "what": "The great majority of AI observability spend still sits in traditional ML model monitoring, feature drift detection and data-quality tooling [S1] — categories Tessera does not serve.",
+        "why_it_matters": "It is the specific reason the $3.1B figure cannot be used as Tessera's denominator, and it also means the incumbents Tessera competes with have a revenue base in the larger adjacent segment to fund their LLM efforts from. Tessera does not.",
+        "source_ids": ["S1", "S4"]
+      },
+      {
+        "what": "The deck contains no team slide — no founders, no backgrounds, no headcount, no hiring plan.",
+        "why_it_matters": "At seed, with a $28M post and an infrastructure product whose moat depends on execution speed against free and bundled competitors, the team is normally the primary underwriting object. Its complete absence is not something the market sources establish, but it is the most conspicuous omission in the document.",
+        "source_ids": []
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Free native tracing and evaluation from OpenAI and Anthropic [S3] caps the addressable segment to multi-provider and governance-constrained applications, and Tessera's current 46 teams turn out to sit mostly outside that segment.",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Ask for a breakdown of the 46 teams by number of model providers in production and by whether they bought for retention or access-control reasons. If fewer than half are multi-provider or governance-driven, the ARR is sitting on ground that a free tool already covers, and retention data over the last two provider-platform releases will show it. This single cut is the most decision-relevant number in the diligence."
+    },
+    {
+      "risk": "Datadog's bundled LLM observability [S4] takes the mid-market before Tessera reaches escape velocity, because the buyer never runs a procurement process at all.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Ask for win/loss records against Datadog specifically over the last two quarters, and for the share of the 46 teams that are existing Datadog APM customers. Reference calls with two customers who evaluated both and chose Tessera, focused on why, would be more informative than any slide."
+    },
+    {
+      "risk": "The slice is too small to return a fund: $180-260M in 2026 growing 20-25% [S2] supports a good business at $3M ARR (~1% share) but not a venture outcome at the implied trajectory.",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Press the founders on scope expansion — is this an evals company, an AI application-performance company, or the system of record for production LLM behaviour? Ask what they would build at $10M ARR. A credible answer expands the denominator; the absence of one confirms the ceiling."
+    },
+    {
+      "risk": "The 11% MoM over four months is a burst rather than a compounding rate — a short, self-selected window on a small base where ~$3.6k of net new MRR a month (inferred) makes the rate hostage to a handful of logos.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Request 18 months of monthly MRR with new/expansion/contraction/churn decomposition, logo and dollar retention by cohort, and the trial-to-paid denominator. Sustaining the plan needs ~8.8% MoM for 24 months (inferred), so the question is durability, not the current print."
+    },
+    {
+      "risk": "Price compression at the ~$8.5k ACV band (inferred) as free and bundled alternatives set the reference price, capping expansion revenue even if logo growth holds.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Ask for net revenue retention and for the pricing history — any discounting trend over the last three quarters, and whether any customer has moved up a tier. Test whether there is an enterprise tier with real access controls, which is where the pricing power the sources identify actually lives [S3]."
+    },
+    {
+      "risk": "Founder market judgement: a competition slide that is contradicted on three of four named competitors [S4] and a market slide that uses a 15x-too-large denominator [S1][S2] together suggest either stale research or deliberate framing.",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Simply ask, in the first meeting, what the LLM tracing slice is worth and how fast it is growing. If they know the $180-260M / 20-25% numbers [S2] and chose the composite anyway, that is a framing decision to weigh. If they do not know them, that is a knowledge gap in their own category — the more serious of the two answers."
+    },
+    {
+      "risk": "Unassessable team risk — no founders, backgrounds or headcount disclosed anywhere in the deck.",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Obtain founder bios, equity split, headcount by function, and prior working relationship before any partner meeting. This is table stakes and its absence should be resolved before further diligence spend."
+    },
+    {
+      "risk": "Valuation risk: at 71.8x current ARR (inferred), the entry price leaves no room for the market-size correction the sources imply [S2].",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Model the Series A at $3M ARR against comparable multiples for a company holding ~1% of a $260-400M slice [S2]. If the A does not clear the seed's post comfortably, either the price or the scope has to change."
+    }
+  ],
+  "questions": [
+    "What share of your 46 teams run production applications across more than one model provider — the segment the market says independents actually defend [S3]?",
+    "What do you believe the LLM tracing and evaluation slice is worth in 2026, and at what growth rate? (The answer establishes whether slide 4 is a research gap or a framing choice against the $180-260M / 20-25% picture [S2].)",
+    "Slide 5 says Datadog has no LLM-native tracing and that Arize and WhyLabs are built around drift, not prompts — all three shipped LLM tracing during 2025 [S4]. When was that slide last revised?",
+    "How many of the 46 teams already pay for Datadog APM, where LLM observability now arrives bundled at no extra cost [S4]?",
+    "What are net revenue retention and logo churn over the last four quarters, and what is the trial-to-paid conversion rate that produced 46 teams?",
+    "What share of the $390k is design-partner, discounted, or annual-prepaid, and what is the largest single account as a percentage of ARR?",
+    "The plan implies about 8.8% MoM for 24 months (inferred), below your current 11% but sustained six times longer — what breaks first, top-of-funnel or conversion?",
+    "What happens to your win rate the next time OpenAI or Anthropic extends their free evaluation dashboards [S3] — which specific capability of yours is out of their reach, and why does it stay out of reach?",
+    "Who are the founders, what did they build before this, and how long have they worked together?",
+    "What is the product at $10M ARR — is this an evals tool, or the system of record for production LLM behaviour? The difference is the difference between a $200M slice [S2] and a real venture outcome.",
+    "At ~$8.5k ACV (inferred), reaching $3M ARR needs roughly 354 teams — what is the acquisition channel that delivers 300 more logos, and what does it cost per logo?"
+  ],
+  "actions": [
+    {
+      "action": "Before committing partner time, ask the founders for the multi-provider share of the customer base and their own view of the LLM tracing slice size — two questions by email that resolve most of the investment case [S2][S3].",
+      "owner": "Deal partner",
+      "priority": "P0"
+    },
+    {
+      "action": "Request the data room basics: 18 months of monthly MRR with new/expansion/contraction/churn, cohort retention, trial-to-paid conversion, ACV distribution, and customer concentration.",
+      "owner": "Deal partner / associate",
+      "priority": "P0"
+    },
+    {
+      "action": "Obtain founder bios, headcount by function, equity split and hiring plan — the deck has no team slide at all, and no diligence should proceed past a first call without them.",
+      "owner": "Associate",
+      "priority": "P0"
+    },
+    {
+      "action": "Run four customer reference calls, prioritising two multi-provider accounts and two that evaluated Datadog or a native provider dashboard and chose Tessera anyway [S3][S4]; probe on what they would do if the price doubled.",
+      "owner": "Associate",
+      "priority": "P1"
+    },
+    {
+      "action": "Independently re-size the LLM tracing and evaluation slice and its growth trajectory, and build a bottom-up TAM from paying-team counts rather than accepting either slide 4's $3.1B [S1] or the $180-260M composite [S2] uncritically.",
+      "owner": "Research / platform team",
+      "priority": "P1"
+    },
+    {
+      "action": "Hands-on product comparison: run the same instrumented multi-provider application through Tessera, Datadog LLM observability, Arize, and the native OpenAI and Anthropic dashboards, and document where the free options actually stop [S3][S4].",
+      "owner": "Technical diligence",
+      "priority": "P1"
+    },
+    {
+      "action": "Model the Series A: what ARR, multiple and market framing clear a $28M post, given ~1% share of a $260-400M 2028 slice [S2]. If the A does not clear comfortably, take the price conversation to the founders early rather than at term sheet.",
+      "owner": "Deal partner",
+      "priority": "P2"
+    },
+    {
+      "action": "Log the slide 5 accuracy issue in the IC memo as a founder-judgement data point, and revisit it after the first meeting rather than concluding on it from the deck alone.",
+      "owner": "Deal partner",
+      "priority": "P2"
+    }
+  ],
+  "summary": "Tessera Labs is raising $5M at $28M post on $390k ARR across 46 teams, growing 11% month over month for four months, to build tracing and evaluation for LLM applications. The traction is the honest part of this deck. Compounding 11% over four months implies roughly $257k ARR at the start of the window (inferred), and 46 paying teams at roughly $8.5k average ACV (inferred) is real demand rather than a pilot list. At seed, thin revenue is not the thing to penalise — thin evidence of demand is, and there is evidence of demand here. The problem is not the traction. It is that almost every framing statement wrapped around the traction is either a year stale or measured against the wrong denominator.\n\nStart with the market slide. Slide 4 says 'we are in AI observability: a $3.1B market growing 38% a year,' and those figures are genuinely inside the independent 2026 range of $3.0-3.4B at 35-40% [S1]. But that boundary counts model monitoring, feature drift detection and data-quality tooling for traditional machine learning, which is where the great majority of the spend still sits [S1], and the same source cautions explicitly that the headline growth rate is carried by the established ML monitoring segment and does not describe every slice within it [S1]. The slice Tessera actually sells into is sized separately at $180-260M in 2026 [S2]. That is a 12-17x gap between the deck's denominator and the company's addressable market. Growth is worse than the size gap, because it runs the wrong direction: the LLM tracing slice decelerated from above 60% in 2024 to 20-25% through 2025 and 2026 [S2], so the deck presents a decelerating slice at nearly twice its actual growth rate. The deck did not invent a number; it selected a boundary, and then dropped that boundary's own stated caveat.\n\nThe cause of the deceleration is the thing the deck never mentions anywhere. OpenAI and Anthropic both ship request tracing and evaluation dashboards inside their developer platforms at no additional cost, covering the single-provider case that describes most early-stage LLM applications [S3], and the slowdown in the slice is attributed to exactly this rather than to weakening demand for the capability [S2]. So the largest competitor by installed base is free, and it is absent from slide 5. That slide is also wrong about the competitors it does name: Datadog added LLM observability to its APM suite during 2025, bundled for existing customers rather than sold separately [S4], directly contradicting 'Datadog and New Relic ... have no LLM-native tracing'; and Arize and WhyLabs both shipped LLM tracing products during 2025 [S4], contradicting 'built around feature drift, not prompts.' Three of the four named competitors are dismissed on grounds that closed a year ago. Datadog's bundling is the most commercially significant of these, because a bundled feature does not need to beat Tessera — it needs to be adequate, and it arrives with no procurement step and no new line item, which is precisely the friction that protects an $8.5k ACV product.\n\nWhat makes this frustrating rather than fatal is that the sources hand Tessera a defensible position it declines to claim. Independent tools retain an advantage where an application spans several model providers or requires retention and access controls the platforms do not offer [S3]. That is a real, named, durable wedge, and it pairs naturally with the one genuinely differentiated thing on slide 3 — regression evals run against captured production traffic, which compounds with the customer's own accumulated data and is the hardest capability for a bundled competitor to replicate well. The deck mentions the evals mechanic in a single line and never mentions the multi-provider or governance segment at all. It is arguing the wrong case with the wrong numbers while holding a better case in its hand.\n\nOn the ask: $28M post is 71.8x current ARR (inferred) and 9.3x the $3M target. The 24-month plan is, to the founders' credit, internally conservative — $390k to $3M is 7.7x, about 8.8% MoM (inferred), slightly below the 11% currently claimed, though sustaining 8.8% for 24 months is a much harder thing than 11% for four. The deeper issue is terminal rather than arithmetic. $3M ARR would be roughly 1.2-1.7% of the 2026 slice [S2]; at 20-25% growth the slice reaches roughly $260-400M by 2028 [S2], putting the plan's endpoint at about 1% of it. That describes a good business and not a fund returner, and nothing in the deck argues for expanding beyond it. The deck also has no team slide whatsoever — no founders, no backgrounds, no headcount — which at seed removes the primary underwriting object entirely.\n\nThe call is LEAN NO. The single biggest reason: the company is priced and pitched against a $3.1B composite [S1] when it sells into a $180-260M slice decelerating to 20-25% under pressure from free first-party tooling [S2][S3], and its competition slide shows no awareness that this happened [S4]. The single condition that would flip the answer: evidence that a majority of the 46 teams are multi-provider or governance-driven accounts — the segment the market says independents actually defend [S3] — with retention that held through the last two provider-platform releases, plus a credible product story beyond tracing that expands the denominator. That is one email and one data-room pull away, and it is worth sending, because the traction underneath is real enough that the answer might come back yes.",
+  "integrity_note": "No manipulation attempt was found. Nothing inside the deck or research markers addressed the analyst, attempted to redirect the task, dictated a verdict or score, imitated a system message, or asked for anything to be concealed, and no [REDACTED BY DECKSCOPE] markers were present. Slide 4's 'Independent analysts put it in that range' is unattributed and pairs an accurate composite figure [S1] with the omission of that same source's caveat about slice-level growth [S1], but this reads as ordinary selective framing by a fundraising document rather than an attempt to manipulate the analysis, and it is handled in the claim audit (C1, C2) rather than treated as an integrity event."
+}

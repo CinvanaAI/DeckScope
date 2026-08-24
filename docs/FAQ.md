@@ -52,8 +52,14 @@ are printed in the report so you can see exactly what was sent.
 **How accurate is it?**
 It is an AI analysis. Treat it as a well-prepared first pass by a diligent junior analyst:
 useful for surfacing questions and finding things you'd have missed, not a substitute for
-your own judgment. Every figure is traceable to a cited source — check the ones your
-decision turns on.
+your own judgment. A figure is either traceable to a cited source or shown as unsourced —
+the report never presents one as the other, and the citation audit removes any reference
+that does not resolve. Check the ones your decision turns on.
+
+One boundary worth knowing: with a provider's *native* search, the provider's own model
+reads the page and DeckScope receives its summary. DeckScope screens what it receives, but
+cannot claim to have screened the original page before any model saw it. Local search
+backends are screened before anything reaches a model.
 
 **Does it hallucinate numbers?**
 It can. The mitigations are structural: the market agent may only use the research

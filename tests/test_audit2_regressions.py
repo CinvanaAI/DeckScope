@@ -169,10 +169,18 @@ def test_gemini_does_not_send_sampling_parameters():
     os.environ.setdefault("GEMINI_API_KEY", "test")
     os.environ.setdefault("OPENAI_API_KEY", "test")
     assert GeminiProvider(ProviderConfig(name="gemini")).accepts_sampling() is False
+
+    # The property, not two model names. This test pinned `gpt-4o` as the
+    # sampling case and `o4-mini` as the non-sampling one; OpenAI has since
+    # retired `o4-mini` and moved the default to a GPT-5 model, which *also*
+    # rejects temperature — so a catalogue refresh turned a passing test into a
+    # failing one without anything being wrong with the code.
+    for prefix in OpenAIProvider.no_sampling_prefixes:
+        assert OpenAIProvider(
+            ProviderConfig(name="openai",
+                           model=f"{prefix}-something")).accepts_sampling() is False
     assert OpenAIProvider(
-        ProviderConfig(name="openai", model="gpt-4o")).accepts_sampling() is True
-    assert OpenAIProvider(
-        ProviderConfig(name="openai", model="o4-mini")).accepts_sampling() is False
+        ProviderConfig(name="openai", model="gpt-4.1")).accepts_sampling() is True
 
 
 # =========================================================== source policy

@@ -1,0 +1,318 @@
+{
+  "headline": "The rare deck whose market numbers survive checking — Quarry sizes its segment honestly and even understates its growth rate, but it is asking 26x ARR for a $310M serviceable market whose incumbents have already put the differentiating feature on their public roadmaps.",
+  "verdict": {
+    "call": "YES WITH CONDITIONS",
+    "confidence": "medium",
+    "confidence_rationale": "Every market claim in the deck is independently corroborated by the research provided [S1][S2][S3], which is unusual and raises trust in management. But the traction figures ($4.2M ARR, 28 manufacturers, 5% MoM, 118% NRR, 79% GM) are unverifiable from anything supplied, the deck contains no team slide and no use of funds, and no source addresses Series A comparables — so the price question, which is the deciding question, cannot be settled from the material at hand."
+  },
+  "scorecard": [
+    {
+      "dimension": "Market size & timing",
+      "score": 7,
+      "weight": 5,
+      "rationale": "Timing is genuinely good and the deck is honest about size. The segment is growing 28-32% on traceability rules taking effect through 2026 and 2027 [S2], which is a dated forcing function rather than a general trend. The cap on the score is the size itself: a $280-340M serviceable segment [S2] is a real market but a narrow one, and the deck offers no argument for how it widens.",
+      "evidence": [
+        "Deck: 'data catalog and metadata management market is $2.4B growing 24% a year' — inside the independent $2.2-2.6B / 22-26% range [S1]",
+        "Deck: serviceable segment 'roughly $310M' — inside the independent $280-340M estimate [S2]",
+        "Deck explicitly declines the total-market framing ('We do not claim all of it'), avoiding the $6B-plus vendor construction S1 warns about",
+        "At $4.2M ARR the company holds roughly 1.4% of its own stated SAM (inferred arithmetic, not stated in the deck)"
+      ],
+      "source_ids": ["S1", "S2"]
+    },
+    {
+      "dimension": "Competitive position",
+      "score": 5,
+      "weight": 5,
+      "rationale": "The deck's competitive claim is accurate and its self-assessment is candid to the point of being an underwriting problem. Collibra and Alation ship no pre-built GxP validation evidence today, but both list regulated-industry accelerators on published roadmaps [S3] — which is exactly the 'one roadmap item from being matched' the deck concedes. A wedge with a published expiry date is a timing bet, not a position.",
+      "evidence": [
+        "Deck slide 5: 'Neither ships validation evidence for GxP environments today, which is where we win and also where we are one roadmap item from being matched'",
+        "S3 corroborates both halves: no current GxP validation packages, but regulated-industry accelerators are on both vendors' published roadmaps",
+        "Deck names no third competitive vector at all — cloud-bundled catalogs are absent from slide 5 [S4]"
+      ],
+      "source_ids": ["S3", "S4"]
+    },
+    {
+      "dimension": "Product & moat",
+      "score": 5,
+      "weight": 4,
+      "rationale": "There is a defensible technical claim here that the deck does not press: lineage across MES and LIMS. Bundled cloud catalogs capture lineage only inside the platform boundary and do not reach manufacturing execution or laboratory systems [S4], so the integration surface — not the validation template — is the part an incumbent cannot copy in one roadmap item. The deck leads with the copyable half and never quantifies switching costs, integration count, or validation-package depth.",
+      "evidence": [
+        "Deck slide 3: 'Automated lineage capture across MES, LIMS and the data warehouse'",
+        "S4: bundled catalogs 'do not reach systems outside it, such as manufacturing execution or laboratory information systems'",
+        "No slide states number of MES/LIMS connectors, named systems supported, or time-to-deploy",
+        "118% NRR is the only indirect evidence of stickiness offered"
+      ],
+      "source_ids": ["S4"]
+    },
+    {
+      "dimension": "Business model",
+      "score": 6,
+      "weight": 3,
+      "rationale": "Unit economics are stated without denominators. 79% gross margin is below the 80-85% a pure-software catalog would earn, which is consistent with validation delivery being partly services — plausible and not disqualifying in a GxP business, but it needs disaggregating. Implied ACV of roughly $150K ($4.2M / 28, inferred) is a credible enterprise price point. CAC, payback, sales cycle and logo churn are all absent.",
+      "evidence": [
+        "Deck slide 6: 'Gross margin 79%'",
+        "Deck slide 6: '$4.2M ARR across 28 manufacturers' — implied ~$150K average ACV (inferred, not stated)",
+        "No CAC, payback period, sales cycle length, or logo retention anywhere in the deck",
+        "118% NRR is stated without the gross-retention figure underneath it"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Traction vs. stage",
+      "score": 7,
+      "weight": 5,
+      "rationale": "For a Series A this is real traction: 28 paying regulated manufacturers is hard-won evidence of demand in a segment with long validation-driven sales cycles, and 118% NRR says deployments expand. The deduction is for the growth unit: 5% MoM sustained twelve months compounds to 1.80x, i.e. roughly 80% year-over-year, from about $2.3M twelve months ago (inferred arithmetic). That is good, not exceptional, and 'MoM' is the flattering way to present it.",
+      "evidence": [
+        "Deck slide 6: '$4.2M ARR across 28 manufacturers. 5% MoM growth for twelve months. Net revenue retention 118%.'",
+        "5% MoM compounded over 12 months = 1.796x, implying ~$2.34M ARR a year ago and ~80% YoY growth (inferred)",
+        "No pipeline, no logo churn, no cohort or expansion detail to test whether the 118% is broad or one large account",
+        "None of the traction figures can be checked against any source supplied"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Team",
+      "score": 2,
+      "weight": 4,
+      "rationale": "The deck contains no team slide, no founder names, and no statement of domain background. This score is a floor for absent evidence, not a judgment on the people. In a GxP-adjacent business where credibility with quality and regulatory affairs buyers is most of the sale, the omission is itself notable at Series A.",
+      "evidence": [
+        "Seven slides, none covering team, founders, advisors, or prior regulated-industry experience"
+      ],
+      "source_ids": []
+    },
+    {
+      "dimension": "Ask & plan",
+      "score": 4,
+      "weight": 3,
+      "rationale": "$18M at $110M post is 26.2x current ARR (inferred; $110M / $4.2M), or 21.9x on the $92M pre-money, against roughly 80% YoY growth in a $280-340M serviceable market [S2]. There is no use of funds, no milestone set, no hiring plan and no target for what the round buys. The round also implies only ~16.4% dilution, thin for a lead expecting a board seat and ownership.",
+      "evidence": [
+        "Deck slide 7: 'Raising $18M at $110M post.'",
+        "Implied 26.2x ARR post-money multiple and ~16.4% dilution (both inferred from stated figures)",
+        "No use-of-funds, milestone, or 18-24 month plan slide",
+        "Entry price implies capturing a large share of a $280-340M segment [S2] to return a fund"
+      ],
+      "source_ids": ["S2"]
+    }
+  ],
+  "claim_audit": [
+    {
+      "id": "C1",
+      "claim": "The data catalog and metadata management market is $2.4B growing 24% a year.",
+      "market_evidence": "Independent 2026 estimates put the category at $2.2-2.6B growing 22-26% annually; vendor materials claiming $6B or more do so by folding in data quality and governance tooling [S1].",
+      "assessment": "supported",
+      "delta": "Zero meaningful delta. $2.4B and 24% are the midpoints of the independent $2.2-2.6B and 22-26% ranges [S1]. The deck also declined the inflated $6B framing that was available to it.",
+      "so_what": "Management chose the narrow, defensible boundary over the flattering one. That is a signal about how the rest of their numbers were probably assembled, and it earns the traction figures more benefit of the doubt than a typical deck gets.",
+      "source_ids": ["S1"],
+      "sources": ["https://research.example.org/catalog-sizing"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C2",
+      "claim": "Our serviceable segment is deployments in regulated manufacturing, which we size at roughly $310M.",
+      "market_evidence": "Catalog and lineage deployments in regulated manufacturing are estimated at $280-340M in 2026 [S2].",
+      "assessment": "supported",
+      "delta": "$310M is the exact midpoint of the independent $280-340M range [S2]. No overstatement.",
+      "so_what": "The honest number is also the uncomfortable one. A $310M SAM means a $110M post-money entry prices the company at roughly a third of the entire serviceable market it has defined, and returning a fund requires either segment dominance or an expansion story the deck does not tell.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/gxp-lineage"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C3",
+      "claim": "Growth of 24% a year (the rate the deck attaches to its market slide).",
+      "market_evidence": "The regulated-manufacturing segment is growing faster than the wider category, at 28-32%, driven by traceability rules taking effect through 2026 and 2027 [S2]; the wider category grows 22-26% [S1].",
+      "assessment": "partially-supported",
+      "delta": "The 24% is right for the wrong market. Applied to the segment the company actually sells into, the correct figure is 28-32% [S2] — the deck understates its own tailwind by roughly 4-8 percentage points a year.",
+      "so_what": "This is a self-inflicted wound on the strongest slide. It also means the deck omits the regulatory catalyst — specific traceability rules landing in 2026 and 2027 [S2] — which is the best 'why now' argument available and the only thing that makes the narrow SAM a growth story rather than a niche.",
+      "source_ids": ["S1", "S2"],
+      "sources": ["https://research.example.org/catalog-sizing", "https://research.example.org/gxp-lineage"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C4",
+      "claim": "Collibra and Alation are credible in large enterprises; neither ships validation evidence for GxP environments today, which is where we win and also where we are one roadmap item from being matched.",
+      "market_evidence": "Collibra and Alation remain the established enterprise catalog vendors; neither currently ships pre-built validation evidence packages for GxP environments; both list regulated-industry accelerators on published roadmaps [S3].",
+      "assessment": "supported",
+      "delta": "Accurate in both directions, including the self-criticism. S3 confirms the gap exists today and confirms the deck's own warning that it is closing — the accelerators are already on published roadmaps.",
+      "so_what": "The differentiator the deck leads with has a publicly announced expiry. Underwriting this requires believing the real moat is elsewhere (MES/LIMS integration depth, validated-deployment switching costs) and that Quarry converts the open window into installed base before the roadmap items ship.",
+      "source_ids": ["S3"],
+      "sources": ["https://research.example.org/catalog-vendors"],
+      "evidence_quality": "strong"
+    },
+    {
+      "id": "C5",
+      "claim": "$4.2M ARR across 28 manufacturers. 5% MoM growth for twelve months. Net revenue retention 118%. Gross margin 79%.",
+      "market_evidence": "No source supplied addresses this company's financials. Nothing in [S1]-[S4] confirms or contradicts any of it.",
+      "assessment": "unverifiable",
+      "delta": "Cannot be measured against market data. Internally the figures are arithmetically coherent: 5% MoM for twelve months compounds to 1.80x, implying roughly $2.34M ARR a year ago and ~80% YoY growth, and $4.2M across 28 accounts implies ~$150K average ACV (both inferred).",
+      "so_what": "This is the 'right but unproven in the deck' bucket, not the 'wrong' bucket. Two things need testing in diligence: whether 118% NRR is broad-based or carried by one or two expansions, and whether the 79% gross margin hides validation services that will not scale like software.",
+      "source_ids": [],
+      "sources": [],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C6",
+      "claim": "Raising $18M at $110M post.",
+      "market_evidence": "No source supplied contains Series A valuation comparables or multiples. The only market anchor available is the $280-340M segment size [S2].",
+      "assessment": "unverifiable",
+      "delta": "Against internal figures rather than market data: $110M post is 26.2x stated ARR, $92M pre is 21.9x, and the post-money equals roughly a third of the entire $280-340M serviceable segment [S2] (all inferred).",
+      "so_what": "This is the crux of the decision. The business may well be worth backing; at 26x ARR on ~80% growth into a sub-$350M SAM, the entry price consumes most of the return before the risks in C4 are resolved.",
+      "source_ids": ["S2"],
+      "sources": ["https://research.example.org/gxp-lineage"],
+      "evidence_quality": "none"
+    },
+    {
+      "id": "C7",
+      "claim": "Implicit in slide 5: the competitive set for this product is the established catalog vendors.",
+      "market_evidence": "The major cloud data platforms each include a catalog with their data warehouse at no separate charge; those bundled catalogs capture lineage only within the platform's own boundary and do not reach manufacturing execution or laboratory information systems [S4].",
+      "assessment": "partially-supported",
+      "delta": "The competitive set is incomplete. Free bundled catalogs are not named anywhere in the deck, and they are the most common reason a data budget never opens — 'we already have one' [S4].",
+      "so_what": "S4 also hands Quarry its rebuttal and its real moat argument: bundled catalogs stop at the platform boundary and cannot see MES or LIMS. The deck neither raises the objection nor uses the answer, which reads as a gap in commercial self-awareness rather than a gap in the product.",
+      "source_ids": ["S4"],
+      "sources": ["https://research.example.org/cloud-catalog"],
+      "evidence_quality": "moderate"
+    }
+  ],
+  "alignment": {
+    "where_deck_matches_market": [
+      "Category size: deck says $2.4B / 24%; independent estimates say $2.2-2.6B / 22-26% [S1].",
+      "Serviceable segment: deck says roughly $310M; independent estimate is $280-340M [S2].",
+      "Competitive gap: deck says Collibra and Alation ship no GxP validation evidence today; S3 confirms exactly that [S3].",
+      "Competitive fragility: deck says it is 'one roadmap item from being matched'; S3 confirms both vendors list regulated-industry accelerators on published roadmaps [S3].",
+      "Deck explicitly refuses the inflated total-market framing that S1 identifies as a vendor practice [S1]."
+    ],
+    "where_deck_overstates": [
+      "Nothing in the market section overstates — an unusual finding worth stating plainly.",
+      "Presentation, not substance: '5% MoM growth for twelve months' is the flattering unit for what compounds to roughly 80% year-over-year (inferred).",
+      "The $110M post-money is not a market claim, but it prices in segment dominance the deck presents no plan to achieve [S2]."
+    ],
+    "where_deck_understates": [
+      "Growth rate: the deck attaches 24% to its market slide when its own segment grows 28-32% [S2].",
+      "Why now: the deck never mentions the traceability rules taking effect through 2026 and 2027 that drive the segment's faster growth [S2] — the single strongest argument in its favour.",
+      "Moat: the MES/LIMS reach described on slide 3 is the part incumbents and cloud bundles structurally cannot match [S4], yet the deck frames its advantage as validation evidence, which is the copyable half [S3]."
+    ],
+    "blind_spots": [
+      {
+        "what": "Cloud data platforms already bundle a catalog with the warehouse at no separate charge [S4].",
+        "why_it_matters": "It is the most common budget-killer in this category — the buyer believes the problem is already solved and free. The deck never names it, so it also never delivers the answer S4 supplies: bundled catalogs stop at the platform boundary and do not reach MES or LIMS. Price anchoring against free also pressures the ~$150K implied ACV.",
+        "source_ids": ["S4"]
+      },
+      {
+        "what": "The regulatory calendar — traceability rules taking effect through 2026 and 2027 — is what makes the segment grow at 28-32% rather than the category's 22-26% [S1][S2].",
+        "why_it_matters": "This is a dated, external forcing function and the best possible 'why now' for a Series A. Its absence means the deck asks the investor to believe in a market pull it has evidence for but never presents, and it leaves unanswered whether demand is durable after the compliance deadlines pass.",
+        "source_ids": ["S1", "S2"]
+      },
+      {
+        "what": "The incumbents' roadmap items are the clock on this investment, and the deck gives no estimate of when they ship or what installed base Quarry needs by then [S3].",
+        "why_it_matters": "The deck volunteers the vulnerability but not the race plan. Underwriting requires a view on whether ~$150K-ACV validated deployments create enough switching cost that a later Collibra or Alation accelerator displaces nothing already sold.",
+        "source_ids": ["S3"]
+      },
+      {
+        "what": "No team, no use of funds, no milestones anywhere in seven slides.",
+        "why_it_matters": "In a GxP buying process the sale runs through quality and regulatory affairs, where founder credibility is a large part of the close. At Series A an investment committee cannot assess execution risk or judge what $18M buys without either.",
+        "source_ids": []
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Incumbent feature parity: Collibra or Alation ships a regulated-industry accelerator with validation evidence, collapsing the stated differentiator [S3].",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Get both vendors' published roadmap timing from customer references, not from the founders. Then test displacement directly: ask the 28 customers what it would cost in requalification time and money to swap Quarry for a bundled incumbent module. If the answer is 'a validation cycle', the moat is real and is switching cost, not features."
+    },
+    {
+      "risk": "Entry price. $110M post on $4.2M ARR is 26.2x with ~80% YoY growth into a $280-340M segment [S2] (multiple inferred).",
+      "severity": "high",
+      "likelihood": "high",
+      "mitigation_or_test": "Model the exit honestly: at 30% segment growth [S2] the SAM is roughly $1.1-1.2B by 2031; a 20% share is ~$230M revenue. Decide whether that outcome, discounted for dilution, clears the fund's return bar from a $110M entry. If not, negotiate price or require the adjacency plan in writing."
+    },
+    {
+      "risk": "SAM ceiling. The company's own honest sizing caps the addressable opportunity at $280-340M today [S2], with no stated expansion path into adjacent regulated verticals or the wider $2.2-2.6B category [S1].",
+      "severity": "high",
+      "likelihood": "medium",
+      "mitigation_or_test": "Ask for the second act with evidence, not narrative: which adjacent regulated segment, what percentage of the current MES/LIMS connector work carries over, and is there any pipeline in it today."
+    },
+    {
+      "risk": "Free bundled cloud catalogs anchor price and delay budget [S4].",
+      "severity": "medium",
+      "likelihood": "high",
+      "mitigation_or_test": "Pull win/loss data on deals lost to 'we already have the platform catalog', and check whether ACV has held at ~$150K over the last four quarters or drifted down."
+    },
+    {
+      "risk": "Growth quality. 118% NRR and 5% MoM may be concentrated in a few expansions rather than broad-based.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Request the customer-by-customer ARR waterfall for 8 quarters: new, expansion, contraction, churn, plus gross logo retention and revenue concentration in the top 3 accounts."
+    },
+    {
+      "risk": "Gross margin of 79% suggests a services component in validation delivery that may not scale.",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Split COGS into hosting, support, and validation/implementation services. Test whether implementation hours per new customer are falling as the validation package standardizes."
+    },
+    {
+      "risk": "Demand may be deadline-driven rather than structural, with the segment's 28-32% growth tied to rules effective through 2026-2027 [S2].",
+      "severity": "medium",
+      "likelihood": "medium",
+      "mitigation_or_test": "Check whether renewals from the earliest cohorts hold after their initial compliance milestone passed, and whether any customer bought without a pending audit or deadline."
+    },
+    {
+      "risk": "Team is entirely unassessed — the deck contains no founder or team information.",
+      "severity": "medium",
+      "likelihood": "low",
+      "mitigation_or_test": "Standard founder diligence, weighted toward prior GxP, MES/LIMS or validation experience and to references from quality/regulatory buyers rather than data leaders."
+    }
+  ],
+  "questions": [
+    "Why does the market slide use 24% when the segment you actually sell into grows at 28-32% [S2]? Was that a deliberate conservatism or does your own data show slower segment growth than the independent estimate?",
+    "What does a customer have to redo — in validation time and cost — to replace Quarry with a bundled incumbent module once Collibra or Alation ships its regulated-industry accelerator [S3]?",
+    "Of the 118% NRR, how much comes from the top three accounts, and what is gross logo retention across the 28 manufacturers?",
+    "How many of the 28 bought against a specific regulatory deadline, and how many renewed after that deadline passed [S2]?",
+    "How many deals in the last four quarters were lost or stalled on 'our cloud platform already includes a catalog' [S4], and what happened to ACV in those segments?",
+    "Break the 21 points of COGS into hosting, support and validation services — and show implementation hours per new customer over the last six cohorts.",
+    "What justifies 26.2x ARR (inferred) at ~80% YoY growth into a $280-340M segment [S2], and what does the $18M buy in milestone terms over 24 months?",
+    "How many MES and LIMS systems do you have production connectors for today, and how long does the 29th customer take to go live versus the 5th?",
+    "Who are the founders and what is their regulated-manufacturing background — why is there no team slide in a Series A deck?",
+    "What is the second market, and is there any pipeline in it today?"
+  ],
+  "actions": [
+    {
+      "action": "Take the first meeting. The market claims check out against independent sources [S1][S2][S3] and the traction is real for the stage; the open questions are price and moat durability, both of which are meeting questions, not screening questions.",
+      "owner": "Deal partner",
+      "priority": "P0"
+    },
+    {
+      "action": "Request the ARR waterfall by customer for 8 quarters plus gross logo retention, revenue concentration and COGS disaggregation before any term discussion.",
+      "owner": "Deal team / associate",
+      "priority": "P0"
+    },
+    {
+      "action": "Run 6-8 customer references specifically on switching cost: what requalification would be required to swap Quarry out. This is the single test that separates a feature from a moat [S3][S4].",
+      "owner": "Deal team",
+      "priority": "P0"
+    },
+    {
+      "action": "Independently establish incumbent roadmap timing for GxP validation accelerators via channel and customer conversations rather than founder assertion [S3].",
+      "owner": "Research / platform team",
+      "priority": "P1"
+    },
+    {
+      "action": "Build the exit model against the $280-340M segment at 28-32% growth [S2] and determine the maximum entry valuation that clears the fund's return bar. Bring a number, not a range, to the price conversation.",
+      "owner": "Deal partner",
+      "priority": "P1"
+    },
+    {
+      "action": "Ask for a use-of-funds and 24-month milestone plan, and for the team slide the deck omits.",
+      "owner": "Associate",
+      "priority": "P1"
+    },
+    {
+      "action": "Pressure-test the adjacency thesis — which second regulated vertical, what carries over technically, what pipeline exists today.",
+      "owner": "Deal partner",
+      "priority": "P2"
+    }
+  ],
+  "summary": "Start with what is unusual about this deck: the market arithmetic survives checking. Quarry claims a $2.4B data catalog and metadata management market growing 24% a year, and independent 2026 estimates put the category at $2.2-2.6B growing 22-26% [S1]. It claims a $310M serviceable segment in regulated manufacturing; the independent estimate for catalog and lineage deployments in regulated manufacturing is $280-340M [S2]. Both figures are the midpoints of their ranges. S1 explicitly notes that vendor materials inflate this category to $6B or more by folding in data quality and governance tooling — a framing Quarry had available and declined, writing 'We do not claim all of it' on the slide instead. After several thousand decks, that is worth more than a percentage point of growth: it tells you something about how the numbers you cannot verify were probably assembled.\n\nThe same candor runs through the competition slide, and there it becomes an underwriting problem rather than a virtue. The deck says Collibra and Alation are credible in large enterprises, ship no GxP validation evidence today, and that Quarry is 'one roadmap item from being matched.' S3 confirms all three: neither vendor currently ships pre-built validation evidence packages for GxP environments, and both list regulated-industry accelerators on published roadmaps [S3]. Quarry has correctly diagnosed that its stated differentiator has a published expiry date. What it has not done is tell you why that does not matter — and the answer is sitting in its own slide 3 and in [S4]. Bundled cloud catalogs, which ship free with the major data warehouses, capture lineage only within the platform's own boundary and do not reach manufacturing execution or laboratory information systems [S4]. The MES/LIMS integration surface is the part neither the incumbents' roadmap items nor the free bundles structurally address. The deck leads with the copyable half of its advantage and buries the durable half.\n\nTwo further omissions run the same direction — the deck consistently understates itself. It attaches 24% growth to its market slide when the segment it actually sells into is growing at 28-32%, driven by traceability rules taking effect through 2026 and 2027 [S2]. That is a dated external forcing function and the single best 'why now' argument available to a Series A in this space, and the deck does not mention it. Likewise, free bundled catalogs are the most common reason a data budget never opens, and slide 5 never names them [S4] — so the rebuttal never gets made either.\n\nOn traction, keep the failure modes apart. $4.2M ARR across 28 manufacturers, 5% MoM for twelve months, 118% NRR and 79% gross margin cannot be checked against anything supplied — none of [S1]-[S4] addresses company financials. This is unverifiable, not wrong. Internally the numbers cohere: 5% MoM compounded twelve times is 1.80x, implying roughly $2.34M ARR a year ago and about 80% year-over-year growth, and $4.2M across 28 accounts implies roughly $150K average ACV (all inferred). Twenty-eight paying regulated manufacturers is genuine evidence of demand in a segment with validation-lengthened sales cycles, and 118% NRR says deployments expand once landed. The gaps are gross logo retention, revenue concentration, and whether 79% gross margin conceals validation services that will not scale like software. 'MoM' is also the flattering unit for what is a good-not-exceptional 80% annual growth rate.\n\nThat brings it to price, which is where this decision actually lives. $18M at $110M post is 26.2x current ARR and 21.9x pre-money (inferred), against ~80% growth into a serviceable segment independently sized at $280-340M [S2]. The post-money valuation is roughly a third of the entire market the company has honestly defined. Grow that segment at 30% [S2] and it is $1.1-1.2B by 2031; a dominant 20% share is roughly $230M in revenue. That is a real company and a good outcome — but from a $110M entry, after dilution, it is not obviously a fund-returner, and it requires winning a race whose finish line the incumbents have already announced they are running toward [S3]. The round also implies only about 16.4% dilution, thin for a lead.\n\nThe verdict is YES WITH CONDITIONS. The single biggest reason to engage: this is a real, faster-than-category-growing market with a dated regulatory catalyst [S2], an incumbent gap that exists today [S3], structural reach that free bundles cannot match [S4], and management that reported its own market honestly and its own vulnerability out loud. The single condition that would flip this to STRONG YES: customer references establishing that replacing Quarry requires a full requalification cycle — i.e. that the moat is validated-deployment switching cost rather than the validation feature the incumbents have on their roadmap — paired with a price nearer 15-18x ARR. Absent the switching-cost evidence, the honest read is that you are paying 26x for a feature with a publicly announced expiry date, and the answer is no at this price.",
+  "integrity_note": "No manipulation was attempted. Neither the pitch deck nor any of the four research sources addressed the analyst, attempted to dictate a verdict or score, imitated a system message, or asked for anything to be concealed. No [REDACTED BY DECKSCOPE] markers were present. The opposite of manipulation is present and is itself a material finding: the deck volunteered the narrow market boundary over the inflated one that S1 shows is common vendor practice [S1], and volunteered on slide 5 that it is 'one roadmap item from being matched' — a disclosure that damages its own case and that S3 confirms is accurate [S3]. That candor raises confidence in the unverifiable traction figures, though it does not substitute for auditing them."
+}

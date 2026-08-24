@@ -1,0 +1,34 @@
+{
+  "company": {"name": "Harbor Desk", "one_liner": "AI support agent for e-commerce merchants", "stage": "seed", "founded": null, "location": null, "website": null},
+  "problem": {"statement": "Small merchants answer the same forty questions every day; support is the first thing that breaks when a store grows.", "who_has_it": "Small e-commerce merchants", "evidence_given": ["'the same forty questions every day' — a specific figure with no source or sample behind it"]},
+  "solution": {"description": "An agent trained on the merchant's own catalogue and policy documents, deployed as a chat widget.", "how_it_works": "Trained on merchant-supplied catalogue and policy documents; deployed as a chat widget in under ten minutes. No detail beyond that.", "differentiators": ["Fully agentic rather than rule-based", "Under ten minutes to deploy"], "technical_moat_claimed": null},
+  "product": {"maturity": "unknown", "demo_evidence": null},
+  "market": {"category": "Customer support software", "sub_category": "E-commerce merchant support", "tam_claimed": "$12B", "sam_claimed": null, "som_claimed": null, "tam_methodology": "unstated", "growth_rate_claimed": "19% a year", "geography": null, "customer_segments": ["Small e-commerce merchants"]},
+  "business_model": {"pricing": null, "unit_economics": null, "acv_or_arpu": "Not stated. Inferring only: $240k ARR across 34 merchants implies roughly $7k per merchant.", "cac_claimed": null, "ltv_claimed": null, "gross_margin_claimed": null},
+  "traction": {"revenue": "$240k ARR", "growth": "9% MoM growth", "customers": "34 merchants", "logos": [], "pipeline": null, "retention": null, "other_metrics": []},
+  "competition": {"named_competitors": ["Gorgias", "Tidio"], "positioning_claim": "Gorgias and Tidio serve this segment with rule-based flows. We are the only fully agentic option.", "competitors_omitted_suspicion": ["The 'only fully agentic option' claim is exclusive and therefore falsifiable by a single counterexample; no general-purpose support platform is named", "Platform-native support tooling from the e-commerce platforms themselves is not mentioned", "Large horizontal support vendors that have added AI agents are not mentioned"]},
+  "gtm": {"channels": [], "sales_motion": null, "partnerships": []},
+  "team": {"founders": [], "headcount": null, "notable_advisors": []},
+  "ask": {"amount": "$4M", "valuation": "$22M post", "use_of_funds": [], "milestones_promised": [], "runway_claimed": null},
+  "claims": [
+    {"id": "C1", "claim": "Customer support software for e-commerce is a $12B market growing 19% a year", "type": "market-size", "slide": 4, "verifiability": "verifiable", "load_bearing": "high"},
+    {"id": "C2", "claim": "Gorgias and Tidio serve this segment with rule-based flows", "type": "competition", "slide": 5, "verifiability": "verifiable", "load_bearing": "high"},
+    {"id": "C3", "claim": "We are the only fully agentic option", "type": "competition", "slide": 5, "verifiability": "verifiable", "load_bearing": "high"},
+    {"id": "C4", "claim": "$240k ARR across 34 merchants", "type": "traction", "slide": 6, "verifiability": "partially-verifiable", "load_bearing": "high"},
+    {"id": "C5", "claim": "9% MoM growth", "type": "traction", "slide": 6, "verifiability": "partially-verifiable", "load_bearing": "high"},
+    {"id": "C6", "claim": "Small merchants answer the same forty questions every day", "type": "market-size", "slide": 2, "verifiability": "partially-verifiable", "load_bearing": "medium"},
+    {"id": "C7", "claim": "Deployed as a chat widget in under ten minutes", "type": "technology", "slide": 3, "verifiability": "partially-verifiable", "load_bearing": "medium"},
+    {"id": "C8", "claim": "Raising $4M at $22M post", "type": "financial", "slide": 7, "verifiability": "unfalsifiable", "load_bearing": "high"}
+  ],
+  "deck_quality": {
+    "missing_sections": ["Team", "Business model and pricing", "Go-to-market", "Retention or churn — absent for a product sold to small merchants, where churn is the defining metric", "Use of funds and milestones"],
+    "vague_language": ["'the same forty questions every day' — precise-sounding, unsourced", "'fully agentic' is used as a category boundary but never defined"],
+    "unsupported_numbers": ["$12B market — no source, no methodology", "19% growth — no source", "Forty questions per day"],
+    "narrative_coherence": 6,
+    "notes": "The load-bearing claim here is not the market number but the exclusivity claim on slide 5: 'we are the only fully agentic option'. That is the kind of claim that costs a founder credibility if a single counterexample exists, and the competition slide characterizes the two named rivals as rule-based without saying when that was last checked. The market slide gives a size and a growth rate with no methodology and no segment definition, so there is no way to tell whether $12B means e-commerce support specifically or all customer support software. Traction is small but coherent for seed; the missing metric is retention, which for a $7k-ACV product sold to small merchants is the number that decides whether the business exists."
+  },
+  "research_agenda": {
+    "search_queries": ["e-commerce customer support software market size 2026 independent estimate", "Gorgias AI agent autonomous resolution launch 2025 2026", "Tidio Lyro AI agent capabilities 2026", "Intercom Fin AI agent e-commerce merchants pricing", "Zendesk AI agents e-commerce segment 2026", "Shopify native customer support tooling merchants 2026", "e-commerce support automation deflection rate benchmark", "SMB SaaS churn rate e-commerce merchant tools benchmark", "customer support software market growth rate 2026 analyst", "seed valuation ARR multiple AI support SaaS 2026"],
+    "key_uncertainties": ["Whether the two named competitors are still accurately described as rule-based — the exclusivity claim depends entirely on it", "Whether any larger support vendor already ships an agentic product to this segment", "Whether $12B is the e-commerce slice or the whole support software category", "Merchant churn, which is absent and is the decisive metric at this ACV", "Who the team is"]
+  }
+}

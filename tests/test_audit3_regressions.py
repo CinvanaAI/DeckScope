@@ -10,6 +10,7 @@ citations to sources no model had seen, a DNS pin that a second DNS answer could
 undo, and a CI job whose gate was unreachable. A check that cannot fail is worse
 than no check, because it is trusted.
 """
+import os
 import socket
 import sys
 import zipfile
@@ -387,7 +388,11 @@ def test_reasoning_models_get_max_completion_tokens_and_a_developer_role():
         captured.update(payload)
         raise RuntimeError("stop here — the payload is what we are testing")
 
-    for model, reasoning in (("o4-mini", True), ("gpt-4o", False)):
+    # A current reasoning-family name and a current chat name. Taken from the
+    # provider's own prefix list so a catalogue refresh cannot silently turn this
+    # into a test of a retired model.
+    reasoning_name = OpenAIProvider.reasoning_prefixes[-1] + ".2"
+    for model, reasoning in ((reasoning_name, True), ("gpt-4.1", False)):
         provider = OpenAIProvider(ProviderConfig(name="openai", model=model))
         assert provider.is_reasoning_model() is reasoning
         captured.clear()
@@ -419,12 +424,20 @@ def test_retired_openai_models_are_named_rather_than_404ing():
     from deckscope.providers.openai_provider import OpenAIProvider
 
     os.environ.setdefault("OPENAI_API_KEY", "test")
-    try:
-        OpenAIProvider(ProviderConfig(name="openai", model="o3-mini"))
-    except ProviderError as exc:
-        assert "o4-mini" in str(exc), "the error must name a working replacement"
-    else:
-        raise AssertionError("o3-mini is retired and must be refused")
+    retired = sorted(OpenAIProvider.retired_models)
+    assert retired, "the retirement map is empty, so nothing can be redirected"
+    for name in retired:
+        replacement = OpenAIProvider.retired_models[name]
+        # The replacement must itself be live, or the advice sends the user
+        # from one dead model to another.
+        assert replacement not in OpenAIProvider.retired_models, (
+            f"{name} redirects to {replacement}, which is also retired")
+        try:
+            OpenAIProvider(ProviderConfig(name="openai", model=name))
+        except ProviderError as exc:
+            assert replacement in str(exc), "the error must name a working replacement"
+        else:
+            raise AssertionError(f"{name} is retired and must be refused")
 
 
 def test_the_docs_do_not_recommend_models_the_code_refuses():
@@ -763,13 +776,35 @@ def test_the_sbom_marks_direct_dependencies_apart_from_transitive_ones():
 
 
 def test_the_acceptance_script_refuses_to_run_inside_a_checkout():
-    """Running it from the repository would test nothing, so it must not."""
+    """Running it from the repository would test nothing, so it must not.
+
+    Skipped where no POSIX shell is available. This used to invoke whatever
+    `bash` happened to be on PATH, which on a Windows runner is some other
+    shell entirely: it failed on the first line with exit 1 rather than
+    reaching the guard and exiting 2, so all three Windows CI jobs went red
+    over an environment difference and not over DeckScope. A test that cannot
+    run on a platform should say so, not fail there.
+    """
+    import shutil
     import subprocess
 
     root = Path(__file__).resolve().parent.parent
-    proc = subprocess.run(["bash", str(root / "scripts" / "acceptance.sh"),
-                           sys.executable],
-                          cwd=str(root), capture_output=True, text=True)
+    script = root / "scripts" / "acceptance.sh"
+
+    # Portable half: the guard has to exist and exit 2, checkable as text on any
+    # platform. This runs everywhere, so the test is never vacuous.
+    text = script.read_text(encoding="utf-8")
+    assert "only meaningful outside a source checkout" in text
+    assert "exit 2" in text
+
+    # Executable half: only where a POSIX shell actually exists.
+    if not shutil.which("bash"):
+        return
+    try:
+        proc = subprocess.run(["bash", str(script), sys.executable],
+                              cwd=str(root), capture_output=True, text=True)
+    except OSError:
+        return
     assert proc.returncode == 2
     assert "only meaningful outside a source checkout" in proc.stdout
 

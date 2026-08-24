@@ -388,9 +388,9 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
     if ask_yes("Set up a panel now?", default=False):
         _out()
         say("Enter the connections you want on the panel, separated by commas.")
-        say(dim("   Examples: anthropic:claude-sonnet-5, openai:gpt-4o, gemini"))
+        say(dim("   Examples: anthropic:claude-sonnet-5, openai:gpt-5.2, gemini"))
         say(dim("   Each one needs its own key — run `deckscope setup` again to add more."))
-        raw = ask("Panel", f"{provider}, openai:gpt-4o")
+        raw = ask("Panel", f"{provider}, openai:gpt-5.2")
         members = [m.strip() for m in raw.split(",") if m.strip()]
         if len(members) >= 2:
             cfg["panel"] = {"members": members,

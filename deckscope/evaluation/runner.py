@@ -333,32 +333,51 @@ def _run_panel(cfg, corpus, provider: str, model: Optional[str], size: int):
     # the scorer was reading a document that does not contain the fields it
     # checks. The comparable artifact is the report the panel voted highest,
     # which is what a user is told to read as the panel's answer.
-    ranked = sorted(result.working,
-                    key=lambda p: (p.rank if p.rank is not None else 99))
-    winner = ranked[0] if ranked else None
-    if winner is not None:
-        primary.comparisons = {lens: winner.final(lens)
-                               for lens in winner.lenses()}
+    # The vote decides, and a vote that reached no decision must not be
+    # overruled by a sort.
+    #
+    # `voting.tally` deliberately returns `winner=None` on a tie or a preference
+    # cycle, and says so in its note — refusing to manufacture a winner is the
+    # honest behaviour and the module goes out of its way to provide it. This
+    # function then sorted panelists by `rank`, took the first, and scored it as
+    # "the panel". On the shipped three-member demo every panelist scores 1.5,
+    # preferences form an A > B > C > A cycle, the panel correctly reports that
+    # there is no winner, and the evaluator scored Panelist A anyway — because
+    # alphabetical order broke the sort. The published panel accuracy was
+    # therefore not the accuracy of a panel decision; on an indecisive vote it
+    # was the accuracy of an arbitrarily chosen individual analyst.
+    #
+    # The fix is not to pick a better tie-break. It is to score the panel's own
+    # deliverable: the chair's consensus, which is what the report leads with and
+    # what a user is told to read as the panel's answer. That exists whether or
+    # not the vote reached a decision, so the evaluation no longer depends on a
+    # ranking that may not have produced one.
+    from ..ensemble import consensus_as_comparison
+
+    lenses = list(primary.comparisons or {})
+    lens = lenses[0] if lenses else None
+    vote = (result.votes or {}).get(lens) if lens else None
+    decided = bool(vote and getattr(vote, "decisive", False))
+
+    if result.consensus:
+        primary.comparisons = {ln: consensus_as_comparison(rep)
+                               for ln, rep in result.consensus.items()}
     primary.registry = result.registry or primary.registry
 
-    # Report what the panel actually cost, not what one panelist cost.
-    #
-    # `primary` is a single panelist's result, so its token counts describe one
-    # member. Left alone, a three-member panel reported the same cost as a single
-    # pipeline run — which would make a cost/benefit comparison between modes
-    # worse than useless, since the expensive option would look free.
-    total = {"input": 0, "output": 0}
-    for member in result.working:
-        usage = ((member.result.stats or {}).get("token_usage") or {}
-                 if member.result else {})
-        total["input"] += int(usage.get("input") or 0)
-        total["output"] += int(usage.get("output") or 0)
+    # What the panel actually cost — every round, not just the independent
+    # analyses. See `Panel._total_usage`.
     stats = dict(primary.stats or {})
-    stats["token_usage"] = total
+    panel_stats = result.stats or {}
+    stats["token_usage"] = panel_stats.get("token_usage") or {"input": 0, "output": 0}
     stats["panelists"] = len(result.working)
-    stats["elapsed_seconds"] = (result.stats or {}).get(
+    stats["elapsed_seconds"] = panel_stats.get(
         "elapsed_seconds", stats.get("elapsed_seconds"))
+    stats["panel_decided"] = decided
+    if not decided:
+        stats["panel_undecided_reason"] = (
+            getattr(vote, "note", "") or "the panel did not vote")
     primary.stats = stats
+    setattr(primary, "panel_decided", decided)
     return primary
 
 

@@ -99,10 +99,10 @@ deckscope panel DECK --panel PROVIDER[:MODEL] PROVIDER[:MODEL] ... [options]
 Plus every option `run` accepts.
 
 ```bash
-deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-4o
+deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-5.2
 deckscope panel deck.pdf --panel anthropic openai gemini --rounds 2 --format html pdf
 deckscope panel deck.pdf --panel anthropic:claude-opus-5 anthropic:claude-haiku-4-5-20251001 \
-                         --chair openai:gpt-4o --lens all
+                         --chair openai:gpt-5.2 --lens all
 deckscope panel deck.pdf            # uses the panel saved by `deckscope setup`
 deckscope panel deck.pdf --panel anthropic openai --strategy convergence
 deckscope panel deck.pdf --panel anthropic openai gemini --strategy confidence_floor -r 4

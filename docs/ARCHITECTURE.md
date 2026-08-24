@@ -182,7 +182,9 @@ hidden behind a confident-looking report.
 
 ## Caching
 
-Keyed on agent + provider + model + a hash of the input. Lives in `.deckscope_cache/`.
+Keyed on agent + provider + model + a hash of the input. Lives in the per-user
+application-data directory, not the working folder — a cache of extracted deck
+text is confidential, and the working folder gets committed and cloud-synced.
 Panelists get separate namespaces. Disable with `--no-cache` or `cache_dir: null`.
 
 Re-running the same deck with a different lens reuses the deck extraction and market

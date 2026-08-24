@@ -37,7 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
   deckscope run deck.pdf --lens all --research tavily --security strict
   deckscope run https://example.com/deck.pdf --company "Acme Flow"
 
-  deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-4o
+  deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-5.2
   deckscope panel deck.pdf --panel anthropic openai gemini --rounds 2 --format html pdf
 """)
     p.add_argument("--version", action="version",
@@ -58,7 +58,7 @@ def build_parser() -> argparse.ArgumentParser:
                          "Costs a token or two per provider; the result is cached.")
     md.add_argument("--select", nargs="+", default=None, metavar="PROVIDER:MODEL",
                     help="Save these as your panel, e.g. "
-                         "--select anthropic:claude-sonnet-5 openai:gpt-4o")
+                         "--select anthropic:claude-sonnet-5 openai:gpt-5.2")
     md.add_argument("--clear", action="store_true",
                     help="Forget the saved panel selection")
     md.add_argument("--all", action="store_true",
@@ -179,7 +179,7 @@ def build_parser() -> argparse.ArgumentParser:
     panel.add_argument("--panel", "-p", nargs="+", default=None,
                        metavar="PROVIDER[:MODEL]",
                        help="Two or more AI connections, e.g. anthropic:claude-sonnet-5 "
-                            "openai:gpt-4o gemini")
+                            "openai:gpt-5.2 gemini")
     panel.add_argument("--rounds", "-r", type=int, default=None,
                        help="Maximum cross-review rounds (0 skips review entirely)")
     panel.add_argument("--strategy", "-s", default="adaptive",
@@ -598,7 +598,7 @@ def _models(args: Any) -> int:
         _out(f"  {av.diversity(sorted(saved))['note']}")
     else:
         _out("\n  No panel saved. Choose one with:")
-        _out("    deckscope models --select anthropic:claude-sonnet-5 openai:gpt-4o")
+        _out("    deckscope models --select anthropic:claude-sonnet-5 openai:gpt-5.2")
     _out("")
     return 0
 
@@ -637,7 +637,7 @@ def _panel(args: Any) -> int:
     members = args.panel or saved_panel.get("members")
     if not members:
         _out("\nNo panel selected, and none saved.\n")
-        _out("  deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-4o\n")
+        _out("  deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-5.2\n")
         _out("Or save a default panel by running:  deckscope setup\n")
         return 2
 

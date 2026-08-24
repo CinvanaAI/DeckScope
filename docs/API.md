@@ -108,7 +108,7 @@ from deckscope.ensemble import analyze_with_panel
 
 result = analyze_with_panel(
     "deck.pdf",
-    ["anthropic:claude-sonnet-5", "openai:gpt-4o", "gemini"],
+    ["anthropic:claude-sonnet-5", "openai:gpt-5.2", "gemini"],
     lens="investor", rounds=1, formats=["html"])
 
 cons = result.consensus["investor"]
@@ -138,7 +138,7 @@ from deckscope.ensemble import Panel
 
 panel = Panel(cfg,
               [ProviderConfig(name="anthropic", model="claude-sonnet-5"),
-               ProviderConfig(name="openai", model="gpt-4o")],
+               ProviderConfig(name="openai", model="gpt-5.2")],
               rounds=2,
               chair=ProviderConfig(name="anthropic"),
               parallel=True,

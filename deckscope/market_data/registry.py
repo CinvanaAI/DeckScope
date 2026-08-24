@@ -45,7 +45,8 @@ def list_market_data() -> List[str]:
 
 
 def get_market_data(name: str = "auto", *, config: Any = None,
-                    researcher: Any = None, provider: Any = None
+                    researcher: Any = None, provider: Any = None,
+                    policy: Any = None, registry: Any = None
                     ) -> MarketDataProvider:
     """Build a backend. `auto` uses search when research is available, else none."""
     _bootstrap()
@@ -56,4 +57,5 @@ def get_market_data(name: str = "auto", *, config: Any = None,
     if key not in _REGISTRY:
         raise ValueError(f"Unknown market-data backend {name!r}. "
                          f"Available: {', '.join(list_market_data())}, auto")
-    return _REGISTRY[key](config=config, researcher=researcher, provider=provider)
+    return _REGISTRY[key](config=config, researcher=researcher, provider=provider,
+                          policy=policy, registry=registry)

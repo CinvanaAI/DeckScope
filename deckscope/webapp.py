@@ -70,6 +70,25 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
     # ---- helpers
+    def _drain(self, limit: int) -> None:
+        """Read and discard at most `limit` bytes of the request body.
+
+        Only ever called before answering a request that is being refused, so
+        the data is thrown away. The limit is the point: an unbounded drain
+        would reintroduce the unbounded read that the size cap exists to
+        prevent, which would be a denial-of-service fix that is itself a
+        denial-of-service.
+        """
+        remaining = max(0, int(limit))
+        while remaining > 0:
+            try:
+                chunk = self.rfile.read(min(65536, remaining))
+            except Exception:  # noqa: BLE001 - the client hung up; nothing to do
+                return
+            if not chunk:
+                return
+            remaining -= len(chunk)
+
     def _send(self, code: int, body: bytes, ctype: str = "text/html; charset=utf-8") -> None:
         self.send_response(code)
         self.send_header("Content-Type", ctype)
@@ -195,6 +214,16 @@ class Handler(BaseHTTPRequestHandler):
         if length < 0:
             return self._json({"error": "bad request"}, 400)
         if length > MAX_BODY_BYTES:
+            # Answer, but drain first — up to a bounded amount.
+            #
+            # Replying without reading the body leaves unread bytes in the
+            # socket. On some platforms the close that follows becomes an
+            # RST, and the client sees a connection reset instead of the 413
+            # that was actually sent: the server behaves correctly and the
+            # caller cannot tell. Draining a bounded prefix lets the response
+            # be delivered, and the bound is what stops this from becoming the
+            # unbounded read the cap exists to prevent.
+            self._drain(min(length, MAX_BODY_BYTES * 4))
             return self._json({"error": "request too large"}, 413)
         try:
             payload = json.loads(self.rfile.read(length) or b"{}")
@@ -595,7 +624,7 @@ competes in, and tells you where the two agree — and where they don't.</div>
 
   <label>Use a panel of AIs <span style="text-transform:none;letter-spacing:0">(optional — they analyze separately, then review each other)</span></label>
   <input id="panel" type="text"
-         placeholder="anthropic:claude-sonnet-5, openai:gpt-4o, gemini">
+         placeholder="anthropic:claude-sonnet-5, openai:gpt-5.2, gemini">
   <p class="hint">Leave empty for a single analysis. Two or more connections, separated
   by commas, turns on cross-review: each model critiques the others, revises its own
   report, and a chair reports where they agreed and where they split.</p>

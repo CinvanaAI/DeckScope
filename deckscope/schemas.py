@@ -296,6 +296,9 @@ CONSENSUS_SCHEMA: Dict[str, Any] = {
         "assessments": {"Panelist A": "supported", "Panelist B": "contradicted"},
         "consensus": "supported|partially-supported|contradicted|unverifiable|no consensus",
         "confidence": "high|medium|low",
+        # The panel's own claim assessments carried no citations, so the most
+        # expensive mode produced the one deliverable a reader could not trace.
+        "source_ids": ["S1"],
         "note": "str"}],
     "minority_report": [{
         "panelist": "str",

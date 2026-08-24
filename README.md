@@ -369,7 +369,9 @@ Full threat model and detection details in **[docs/SECURITY.md](docs/SECURITY.md
 ## Citations
 
 Every source retrieved gets a stable ID (`S1`, `S2`, …) before screening. Agents cite by
-ID. The report ends with the complete bibliography in three groups:
+ID. In prose a citation must be bracketed — `[S3]` — so an ordinary phrase like
+"Amazon S3" is never mistaken for one. The report ends with the complete bibliography in
+three groups:
 
 - **Cited in this analysis** — with what each one supports
 - **Consulted, not cited** — retrieved but supported no conclusion
@@ -506,7 +508,7 @@ One model gives you one model's blind spots. A panel gives you something better 
 only if the panelists actually engage rather than being averaged together.
 
 ```bash
-deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-4o gemini
+deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-5.2 gemini
 deckscope panel deck.pdf --panel anthropic openai --rounds 2 --format html pdf
 deckscope demo --panel                       # see it work, free
 ```
@@ -590,7 +592,7 @@ for s in result.sources:
 from deckscope.ensemble import analyze_with_panel
 
 panel = analyze_with_panel("deck.pdf",
-                           ["anthropic:claude-sonnet-5", "openai:gpt-4o"],
+                           ["anthropic:claude-sonnet-5", "openai:gpt-5.2"],
                            rounds=1, formats=["html"])
 print(panel.consensus["investor"]["consensus_verdict"])
 print(panel.metrics["investor"]["contested_claims"])
@@ -637,7 +639,7 @@ security:
   min_font_pt: 4.0
 
 panel:
-  members: [anthropic:claude-sonnet-5, openai:gpt-4o]
+  members: [anthropic:claude-sonnet-5, openai:gpt-5.2]
   rounds: 1
 ```
 
@@ -725,16 +727,21 @@ Worth reading before you trust anything it produces.
   against decks whose correct answers are known, because the decks and their evidence
   were authored together. There are two results, and they fail in opposite directions.
 
-  Under the built-in `mock` provider, on the five shipped cases:
+  Under the built-in `mock` provider, on all nine shipped cases:
 
-  | | claim accuracy | relative input cost |
-  |---|:--:|:--:|
-  | baseline (one prompt) | 0.368 | 0.2× |
-  | pipeline (three agents) | 0.368 | 1.0× |
-  | panel (three panelists) | 0.211 | 3.0× |
+  | | claim accuracy | claim citation | relative input cost |
+  |---|:--:|:--:|:--:|
+  | baseline (one prompt) | 0.333 | 0.667 | 0.2× |
+  | pipeline (three agents) | 0.333 | 0.588 | 1.0× |
+  | panel (three panelists) | 0.196 | 0.800 | 12.7× |
 
   The pipeline ties the baseline exactly. But the mock is a fixture shipped for offline
   testing, so those are properties of the fixture rather than of any model.
+
+  The panel's cost multiple used to be reported as 3.0×, which was the cost of three
+  *independent* analyses and excluded the review, revision, voting and chair calls that
+  are the entire point of a panel. Counted honestly it is an order of magnitude, and the
+  report now breaks the two apart.
 
   Driven by a **real frontier model** through the `manual` provider's spool mode, on
   the same five cases:

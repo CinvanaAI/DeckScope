@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import json
 import statistics
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
@@ -44,7 +45,8 @@ from .schemas import (COMPARISON_SCHEMA, CONSENSUS_SCHEMA, REVIEW_SCHEMA, coerce
                       schema_block, scorecard_total)
 from .validate import ValidationReport, _check_ids, validate_comparison
 from .security.sanitizer import fence
-from .sources import SourceRegistry, merge_registries, rewrite_citations
+from .sources import (SourceRegistry, audit_fragment, merge_registries,
+                      rewrite_citations)
 
 #: A panel needs at least two analysts, because one cannot cross-review itself.
 #: Selecting a single model is a perfectly reasonable thing to want; it is just
@@ -106,9 +108,9 @@ def panel_cost_note(size: int) -> str:
             f"peer readings carried inside the {size} review calls. Call count "
             f"grows with the panel; token cost grows with its square.")
     if size > LARGE_PANEL_ADVISORY:
-        note += (f" At this size the review rounds dominate the bill — worth "
-                 f"running once with `--rounds 0` first to see the independent "
-                 f"analyses before paying for cross-review.")
+        note += (" At this size the review rounds dominate the bill — worth "
+                 "running once with `--rounds 0` first to see the independent "
+                 "analyses before paying for cross-review.")
     return note
 
 
@@ -249,12 +251,57 @@ class Panel:
             for i, pc in enumerate(panel)]
         #: The chair writes the consensus. Defaults to the first panelist's backend.
         self.chair_config = chair or panel[0]
+        #: Tokens spent on the rounds that make this a panel rather than three
+        #: separate analyses: review, revision, voting and the chair's synthesis.
+        #: These calls go straight to a provider, so nothing fed them into the
+        #: member pipelines' accounting and the reported panel cost was simply
+        #: "N independent runs" — it excluded precisely the interaction being
+        #: paid for, and the CI gate that checked cost > 2x a pipeline passed
+        #: while printing that the panel was honestly costed.
+        self.interaction_usage: Dict[str, int] = {"input": 0, "output": 0, "calls": 0}
+        self._usage_lock = threading.Lock()
 
     # ------------------------------------------------------------- logging
     def _log(self, message: str, **data: Any) -> None:
         self.on_event(message, data)
         if self.config.verbose:
             _out(f"[panel] {message}", flush=True)
+
+    def _total_usage(self, working: List[Panelist]) -> Dict[str, Any]:
+        """What the panel actually cost, with the interaction shown separately.
+
+        The reported figure used to be the sum of each panelist's independent
+        pipeline — that is, "N separate analyses" — and excluded review,
+        revision, voting and the chair entirely. Those calls are the panel. A
+        cost line that omits them makes the expensive mode look cheap, which is
+        worse than reporting no cost at all.
+        """
+        members = {"input": 0, "output": 0}
+        for p in working:
+            usage = ((p.result.stats or {}).get("token_usage") or {}) if p.result else {}
+            members["input"] += int(usage.get("input", 0) or 0)
+            members["output"] += int(usage.get("output", 0) or 0)
+        rounds = dict(self.interaction_usage)
+        return {
+            "input": members["input"] + rounds["input"],
+            "output": members["output"] + rounds["output"],
+            "independent_analyses": members,
+            "panel_rounds": rounds,
+            "note": ("`independent_analyses` is what N separate runs would have "
+                     "cost; `panel_rounds` is the review, revision, voting and "
+                     "chair calls that make it a panel."),
+        }
+
+    def _track(self, completion: Any) -> None:
+        """Record a round's token cost. Safe to pass as `complete_json(on_usage=)`.
+
+        Rounds fan out across threads, so the accumulation is locked.
+        """
+        usage = getattr(completion, "usage", None) or {}
+        with self._usage_lock:
+            self.interaction_usage["input"] += int(usage.get("input", 0) or 0)
+            self.interaction_usage["output"] += int(usage.get("output", 0) or 0)
+            self.interaction_usage["calls"] += 1
 
     # ---------------------------------------------------------- round one
     def run(self, corpus: Optional[Any] = None) -> PanelResult:
@@ -282,7 +329,11 @@ class Panel:
 
         result = PanelResult(panelists=self.panelists)
         primary = working[0].result
-        result.security = primary.security if primary else {}
+        # Every panelist's screen, not the first one's. Panelists research
+        # independently, so a hostile page that only panelist C retrieved was
+        # screened, quarantined — and then never disclosed, because the panel's
+        # security report was a copy of panelist A's.
+        result.security = _merge_security([p.result for p in working])
         lenses = list(primary.comparisons) if primary else []
 
         # ---- Unify the bibliography before anything is cross-read.
@@ -342,8 +393,12 @@ class Panel:
                 if result.round_log else "no review rounds"),
             "chair": _pname(self.chair_config),
             "research_backend": (primary.stats or {}).get("research_backend") if primary else None,
-            "sources_found": (primary.stats or {}).get("sources_found", 0) if primary else 0,
-            "security_risk": (primary.security or {}).get("overall_risk") if primary else None,
+            # The merged bibliography, not one panelist's. `sources_found` used
+            # to report the primary's count, so a panel that consulted forty
+            # distinct documents could claim it found twelve.
+            "sources_found": len(result.registry.sources) if result.registry else 0,
+            "security_risk": (result.security or {}).get("overall_risk"),
+            "token_usage": self._total_usage(working),
             "deckscope_version": _version(),
         }
         self._log(f"Panel complete in {result.stats['elapsed_seconds']}s")
@@ -522,7 +577,7 @@ class Panel:
                             me=me.label,
                             reports=fence(reports, "PEER ANALYSES"),
                             sources=fence(sources, "SHARED BIBLIOGRAPHY")),
-                        temperature=0.2)
+                        temperature=0.2, on_usage=self._track)
                     ballot = ballot_from_json(me.label, payload,
                                               [o.label for o in others])
                     if ballot:
@@ -570,7 +625,8 @@ class Panel:
                     f"### When reviewing the {name} analyses:\n{lens_block(Lens.parse(name))}"
                     for name in (lenses or ["investor"]))
                 system = REVIEW_SYSTEM.format(lens_block=blocks)
-                me.review = coerce(provider.complete_json(system, user, temperature=0.3),
+                me.review = coerce(provider.complete_json(system, user, temperature=0.3,
+                                                          on_usage=self._track),
                                    REVIEW_SCHEMA)
             except Exception as exc:  # noqa: BLE001
                 me.review = {"error": f"{type(exc).__name__}: {exc}"}
@@ -624,18 +680,28 @@ class Panel:
                                      "YOUR REVIEW NOTES"),
                         sources=fence(sources, "SHARED BIBLIOGRAPHY"))
                     system = REVISE_SYSTEM.format(lens_block=lens_block(Lens.parse(lens)))
-                    revised = coerce(provider.complete_json(system, user, temperature=0.3),
+                    revised = coerce(provider.complete_json(system, user, temperature=0.3,
+                                                            on_usage=self._track),
                                      COMPARISON_SCHEMA)
                     # A revision is model output like any other. Skipping
                     # validation here let out-of-range scores and invented
                     # citations into the convergence metrics and the vote.
                     validation = validate_comparison(
                         revised, valid_source_ids=citable)
+                    # `validate_comparison` checks `scorecard` and `claim_audit`
+                    # only. A revision is a whole comparison — summary, headline,
+                    # blind spots, risks, actions, inline references — and every
+                    # one of those could carry a fabricated citation that the
+                    # single-model pipeline would have caught and stripped. The
+                    # expensive mode must not offer the weaker guarantee.
+                    cite_audit = (audit_fragment(revised, registry, strip=True)
+                                  if registry is not None else None)
                     revised["_meta"] = {
                         "lens": lens, "revised": True, "round": round_number,
                         "weighted_score": scorecard_total(revised.get("scorecard") or []),
                         "revision_log": revised.get("revision_log") or [],
                         "validation": validation.to_dict(),
+                        "citation_audit": (cite_audit.to_dict() if cite_audit else None),
                     }
                     me.record_revision(lens, revised)
             except Exception as exc:  # noqa: BLE001
@@ -690,7 +756,8 @@ class Panel:
                     changes=fence(changes, "PANELIST REVISIONS"),
                     sources=fence(sources, "SHARED BIBLIOGRAPHY"))
                 system = CONSENSUS_SYSTEM.format(lens_block=lens_block(Lens.parse(lens)))
-                report = coerce(provider.complete_json(system, user, temperature=0.3),
+                report = coerce(provider.complete_json(system, user, temperature=0.3,
+                                                       on_usage=self._track),
                                 CONSENSUS_SCHEMA)
                 # The chair is a model too. Its citations get the same treatment.
                 chair_validation = ValidationReport()
@@ -698,9 +765,16 @@ class Panel:
                     for pos in (row.get("positions") or []):
                         _check_ids(pos, "source_ids", set(citable_upper),
                                    "contested.positions", chair_validation)
+                # That loop covers `contested.positions[].source_ids` and
+                # nothing else, so the panel's single most-read artifact — the
+                # chair's synthesis — was the least checked thing in the run.
+                chair_audit = (audit_fragment(report, result.registry, strip=True)
+                               if result.registry is not None else None)
                 report["_meta"] = {"lens": lens, "chair": _pname(self.chair_config),
                                    "metrics": result.metrics.get(lens, {}),
-                                   "validation": chair_validation.to_dict()}
+                                   "validation": chair_validation.to_dict(),
+                                   "citation_audit": (chair_audit.to_dict()
+                                                      if chair_audit else None)}
                 result.consensus[lens] = report
                 self._log(f"  [{lens}] consensus: "
                           f"{(report.get('consensus_verdict') or {}).get('call', '—')} "
@@ -840,6 +914,91 @@ def _packet(p: Panelist, lenses: List[str], include_annexes: bool = False) -> st
     return f"### {p.label}\n" + json.dumps(payload, indent=2, default=str)[:55_000]
 
 
+def consensus_as_comparison(consensus: Dict[str, Any]) -> Dict[str, Any]:
+    """The chair's consensus, shaped like a comparison so it can be judged.
+
+    The panel's actual deliverable — the thing the report puts at the top and a
+    user reads as "what the panel concluded" — is the consensus. It was never
+    scoreable, because it follows a different schema: `consensus_verdict.call`
+    rather than `verdict.call`, `claim_consensus[].consensus` rather than
+    `claim_audit[].assessment`. So the evaluator scored a voted panelist
+    instead, and when the vote tied or cycled it scored whichever panelist a
+    sort happened to put first.
+
+    Nothing new is invented here. The fields already exist and already mean the
+    same things; this states the correspondence in one place so the panel is
+    measured on its own output rather than on a proxy for it.
+    """
+    verdict = consensus.get("consensus_verdict") or {}
+    claims = []
+    for row in consensus.get("claim_consensus") or []:
+        if not isinstance(row, dict):
+            continue
+        claims.append({
+            "id": row.get("id"),
+            "claim": row.get("claim"),
+            "assessment": row.get("consensus"),
+            "market_evidence": row.get("note") or "",
+            "source_ids": list(row.get("source_ids") or []),
+            "evidence_quality": row.get("confidence"),
+        })
+    contested_text = [
+        f"{c.get('topic', '')}: {c.get('resolution', '')}"
+        for c in (consensus.get("contested") or []) if isinstance(c, dict)]
+    return {
+        "headline": consensus.get("headline", ""),
+        "verdict": {"call": verdict.get("call"),
+                    "confidence": verdict.get("confidence"),
+                    "confidence_rationale": verdict.get("rationale", ""),
+                    "agreement": verdict.get("agreement")},
+        "claim_audit": claims,
+        "alignment": {
+            "where_deck_matches_market": [
+                p.get("point", "") for p in (consensus.get("where_all_agree") or [])
+                if isinstance(p, dict)],
+            "blind_spots": [
+                {"what": b, "why_it_matters": "raised by the panel", "source_ids": []}
+                for b in ((consensus.get("reliability") or {})
+                          .get("shared_blind_spots") or [])],
+        },
+        "questions": [c.get("what_would_settle_it", "")
+                      for c in (consensus.get("contested") or [])
+                      if isinstance(c, dict)],
+        "summary": "\n\n".join(
+            [consensus.get("summary", "")] + contested_text).strip(),
+        "_meta": dict(consensus.get("_meta") or {}, derived_from="panel consensus"),
+    }
+
+
+_RISK_ORDER = {"clean": 0, "low": 1, "medium": 2, "high": 3, "critical": 4}
+
+
+def _merge_security(results: List[Optional[AnalysisResult]]) -> Dict[str, Any]:
+    """One security report for the whole panel, not the first panelist's copy.
+
+    Panelists research independently, so each one screens a different set of
+    pages. Reporting only the primary's scan meant a hostile source that another
+    panelist retrieved was detected, quarantined — and then invisible in the
+    output, which is the half of the promise that matters. The headline risk
+    becomes the worst any panelist saw, and every panelist's findings are listed
+    with the panelist that hit them.
+    """
+    reports = [r.security for r in results if r and r.security]
+    if not reports:
+        return {}
+    merged = dict(reports[0])
+    worst = max(reports,
+                key=lambda s: _RISK_ORDER.get(str(s.get("overall_risk", "")), 0))
+    merged["overall_risk"] = worst.get("overall_risk")
+    merged["per_panelist"] = [
+        {"panelist": (r.stats or {}).get("model") or f"panelist {i + 1}",
+         "overall_risk": (r.security or {}).get("overall_risk"),
+         "summary": (r.security or {}).get("summary", [])}
+        for i, r in enumerate(results) if r and r.security]
+    merged["summary"] = [line for r in reports for line in (r.get("summary") or [])]
+    return merged
+
+
 def _sources_block(working: List[Panelist],
                    registry: Optional[SourceRegistry] = None) -> str:
     """The one bibliography every panelist cites from.
@@ -942,7 +1101,7 @@ def analyze_with_panel(deck: str, panel: List[str], *, lens: Any = "investor",
 
         from deckscope.ensemble import analyze_with_panel
         result = analyze_with_panel("deck.pdf",
-                                    ["anthropic:claude-sonnet-5", "openai:gpt-4o"],
+                                    ["anthropic:claude-sonnet-5", "openai:gpt-5.2"],
                                     formats=["html", "pdf"])
         _out(result.consensus["investor"]["headline"])
 

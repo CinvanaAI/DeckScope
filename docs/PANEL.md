@@ -3,7 +3,7 @@
 Several AI services analyze the same deck, then read each other's work, argue, and revise.
 
 ```bash
-deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-4o gemini
+deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-5.2 gemini
 deckscope demo --panel        # see it work, free, no keys
 ```
 
@@ -222,7 +222,7 @@ Use panel agreement to raise confidence. Do not use it to establish fact.
 ## Composing a panel
 
 **Diversity of provider beats diversity of model.** Two models from the same family share
-training data and failure modes. `anthropic:claude-sonnet-5 openai:gpt-4o gemini` will
+training data and failure modes. `anthropic:claude-sonnet-5 openai:gpt-5.2 gemini` will
 disagree more usefully than three Claude variants.
 
 **Two is enough to be useful; three is the sweet spot.** Beyond four, cost and prompt
@@ -234,7 +234,7 @@ closer.
 
 ```bash
 # a serious panel
-deckscope panel deck.pdf --panel anthropic:claude-opus-5 openai:gpt-4o gemini:gemini-2.5-pro --rounds 2
+deckscope panel deck.pdf --panel anthropic:claude-opus-5 openai:gpt-5.2 gemini:gemini-2.5-pro --rounds 2
 
 # a cheap panel
 deckscope panel deck.pdf --panel anthropic:claude-haiku-4-5-20251001 gemini:gemini-flash-latest
@@ -284,34 +284,50 @@ Now measurable, and the first numbers are worth reading carefully.
 deckscope eval --mode pipeline baseline panel
 ```
 
-On the five shipped evaluation cases, under the built-in mock provider:
+On all nine shipped evaluation cases, under the built-in mock provider:
 
-| | claim accuracy | relative input cost |
-|---|:--:|:--:|
-| baseline (one prompt) | 0.368 | 0.2× |
-| pipeline (three agents) | 0.368 | 1.0× |
-| panel (three panelists) | 0.211 | 3.0× |
+| | claim accuracy | claim citation | relative input cost |
+|---|:--:|:--:|:--:|
+| baseline (one prompt) | 0.333 | 0.667 | 0.2× |
+| pipeline (three agents) | 0.333 | 0.588 | 1.0× |
+| panel (three panelists) | 0.196 | 0.800 | 12.7× |
 
-The panel now scores *lower*. It previously scored higher — 0.579 — but that number was partly earned by a
-fixture that overwrote claim assessments to manufacture disagreement, and some
-of those fabrications matched the planted answers. With the fixture reporting
-only what the evidence supports, the panel is worse than a single prompt on this
-suite while costing three times the pipeline. **This is the mock** — a deterministic fixture written for offline
-testing. It tells you the harness works end to end and that the panel machinery
-produces a materially different analysis. It tells you nothing about whether three
-real models reviewing each other beats one good model, because no real model was
-involved.
+The panel scores *lower* on accuracy and *higher* on citation — it cites what it asserts
+more reliably and gets more of those assertions wrong. **This is the mock**, a
+deterministic fixture written for offline testing. It tells you the harness works end to
+end and that the panel machinery produces a materially different analysis. It tells you
+nothing about whether three real models reviewing each other beats one good model,
+because no real model was involved.
 
-What it does establish is that a tie means something. The suite separates the panel
-from the pipeline by 15 points, so it is not blind to architectural differences — and
-every multi-mode run reports whether the modes actually produced different analyses.
-A delta of zero between two modes therefore means they agreed, not that the comparison
-never happened. That distinction had to be built, because it is otherwise impossible
-to tell the two apart from the numbers alone.
+### What is being scored, and what it costs
 
-Note also that the pipeline ties the baseline exactly. The panel's advantage here is
-not evidence for the three-agent design; if anything it suggests whatever helps comes
-from *disagreement between analysts*, not from splitting one analyst into three roles.
+Two things in this table were wrong until recently, and both flattered the panel.
+
+**The scored artifact.** The evaluator used to score the panelist the vote ranked
+first. But `voting.tally` deliberately returns no winner on a tie or a preference
+cycle — and on the shipped three-member demo every panelist scores 1.5, preferences
+form an A > B > C > A cycle, and the panel correctly reports that there is no winner.
+The evaluator sorted anyway and scored Panelist A, because alphabetical order broke the
+tie. The published number was not the accuracy of a panel decision; it was the accuracy
+of an arbitrarily chosen analyst. It now scores the **chair's consensus** — the artifact
+the report leads with and a reader actually reads — which exists whether or not the vote
+reached a decision. `consensus_verdict.call` and `claim_consensus[]` already carried the
+same meaning as `verdict.call` and `claim_audit[]`; nothing was invented to make this
+work, and the consensus rows now carry `source_ids` so the panel's own claims are
+traceable.
+
+**The cost.** The 3.0× figure was the sum of each panelist's independent pipeline —
+what N separate runs would have cost — and excluded review, revision, voting and the
+chair entirely. Those calls *are* the panel. Counted honestly the multiple is an order
+of magnitude, and `stats.token_usage` now reports `independent_analyses` and
+`panel_rounds` separately so the two are never conflated again.
+
+What the suite does establish is that a tie means something: it separates the panel from
+the pipeline by 14 points, so it is not blind to architectural differences, and every
+multi-mode run reports whether the modes actually produced different analyses. A delta of
+zero therefore means the modes agreed, not that the comparison never happened.
+
+Note also that the pipeline ties the baseline exactly.
 
 ### The same suite, driven by a real model
 
@@ -365,7 +381,7 @@ from deckscope.ensemble import analyze_with_panel
 
 result = analyze_with_panel(
     "deck.pdf",
-    ["anthropic:claude-sonnet-5", "openai:gpt-4o", "gemini"],
+    ["anthropic:claude-sonnet-5", "openai:gpt-5.2", "gemini"],
     lens="investor", rounds=1, formats=["html", "pdf"])
 
 print(result.consensus["investor"]["consensus_verdict"])
@@ -382,7 +398,7 @@ from deckscope.config import ProviderConfig, RunConfig
 from deckscope.ensemble import Panel
 
 panel = Panel(config, [ProviderConfig(name="anthropic", model="claude-sonnet-5"),
-                       ProviderConfig(name="openai", model="gpt-4o")],
+                       ProviderConfig(name="openai", model="gpt-5.2")],
               rounds=4,
               strategy="confidence_floor",     # or a RoundStrategy instance
               vote=True,

@@ -6,6 +6,118 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ## [Unreleased]
 
+### Fixed (fifth audit) — uneven guarantees
+
+The theme was that DeckScope's promises were real but not uniform. A citation was
+checked recursively in one mode and two fields deep in another; one research path
+skipped the security screen entirely; the bibliography could describe a source in
+terms the report no longer supported; and the panel — the most expensive thing
+here — had the weakest checking of the three modes. Uneven guarantees are worse
+than weak ones, because the strong case is what gets documented and the weak case
+is what ships.
+
+**A legitimate phrase could be mistaken for a citation and silently rewritten.**
+`CITE_RX` was `\bS(\d{1,3})\b`, which matches any S-token anywhere in a sentence,
+and the same expression drove harvesting, renumbering, stripping and evaluation
+scoring. So "Backups are stored in Amazon S3" carried a citation as far as
+DeckScope was concerned: it could be attributed to an unrelated bibliography
+entry, renumbered to `Amazon S8` during a panel merge, or deleted as dangling,
+leaving `Backups are stored in Amazon .` Prose citations now require the bracket
+the prompts already ask for — `[S3]`, or `[S1, S3]` — and `source_ids` arrays are
+matched exactly. The trade is deliberate: a bare `S3` meant as a citation is now
+ignored rather than acted on, because under-attributing is recoverable and
+corrupting a sentence is not.
+
+**The bibliography could claim a source was cited after its citation was removed.**
+Attribution ran before the audit, so a source was marked `cited`, the audit then
+stripped its only reference as invalid, and nothing revisited the ledger —
+producing a status the reader cannot verify, wrong in the direction that flatters
+us. The order is reversed, attribution is rebuilt from the artifact that actually
+survived, and `attribute()` now refuses unadmitted sources so the two halves of
+the ledger cannot disagree. Attribution and the audit also share one traversal
+(`walk_citations`), because two hand-maintained walkers is how a valid citation
+inside `alignment.blind_spots` stayed filed as "consulted, not cited".
+
+**Public-listing research bypassed the evidence pipeline.** The market-data search
+backend called `researcher.search_many()` directly and pasted raw titles, URLs and
+snippets into a prompt. Pages therefore never passed the injection screen, the
+sources never entered the bibliography, and the market caps feeding the
+opportunity-cost arithmetic had no provenance. It now goes through `gather()` like
+everything else — retrieved, registered, screened, quarantined if hostile, given
+canonical IDs — and returns `source_ids` that are validated against the registry.
+Its screening findings reach the run's security report.
+
+**The panel had weaker guarantees than the single-model pipeline.**
+
+- Revisions and the chair's consensus never received the recursive citation
+  audit; `validate_comparison` covered `scorecard` and `claim_audit` only, so a
+  fabricated citation in a revised summary, a blind spot, a risk or an inline
+  reference survived. `audit_fragment()` now applies the same check to both.
+- Merging panelist registries dropped the per-panelist admitted ledger, so a
+  source a panelist genuinely read looked unadmitted — and the audit strips
+  citations to unadmitted sources. The panel could delete its own honest evidence.
+- The security report was a copy of the first panelist's. A hostile page that
+  only another panelist retrieved was screened, quarantined, and then never
+  disclosed. Findings are aggregated and the headline risk is the worst any
+  panelist saw.
+- `sources_found` reported one panelist's count for the whole panel.
+
+**Reported panel cost excluded the panel.** The figure was the sum of each
+panelist's independent pipeline and omitted review, revision, voting and the
+chair — precisely the interaction being paid for. Measured on the shipped demo,
+those rounds cost 133,933 input tokens against 40,248 for the three analyses: the
+old number was low by a factor of four. `stats.token_usage` now reports
+`independent_analyses` and `panel_rounds` separately, and the CI gate checks that
+the rounds were counted rather than only that the total is large.
+
+**The evaluator invented a panel winner.** `voting.tally` deliberately returns no
+winner on a tie or a preference cycle. The evaluator sorted panelists by rank and
+scored the first anyway — and on the shipped three-member demo every panelist
+scores 1.5, preferences form an A > B > C > A cycle, and alphabetical order picked
+Panelist A. The published panel accuracy was not the accuracy of a panel decision;
+it was the accuracy of an arbitrarily chosen analyst. It now scores the **chair's
+consensus**, which is the artifact the report leads with and exists regardless of
+the vote. `consensus_verdict.call` and `claim_consensus[]` already carried the same
+meaning as `verdict.call` and `claim_audit[]`; `claim_consensus` rows gained
+`source_ids` so the panel's own claims are traceable.
+
+**Other fixes**
+
+- The baseline ran no citation audit at all — the cheaper mode offered the weaker
+  promise, which is backwards now that it is the sensible default.
+- The evaluation citation check said "the whole report" and walked `comparisons`
+  and `market` only, so a dangling citation in an optional pass scored 1.000.
+  Both the runtime and the scorer now read one shared `CITATION_SECTIONS` list.
+- The mock's chair returned a fixed consensus about a $47B TAM whatever deck the
+  panel had read — the same defect already fixed in the revise path, and the
+  reason panel claim accuracy read 0.000.
+- An oversized request body was refused without being drained, so the close could
+  become an RST and the client saw a connection reset instead of the 413 the
+  server actually sent. The drain is bounded, or it would reintroduce the
+  unbounded read the size cap exists to prevent.
+- The acceptance-script test invoked whatever `bash` was on PATH, which on
+  Windows is another shell entirely; it failed on the first line and took all
+  three Windows CI jobs red over an environment difference. It now checks the
+  guard portably and executes it only where a POSIX shell exists.
+- Lint: one f-string without placeholders, one unused local.
+- Provider catalogues had drifted. Groq shut down `llama-3.3-70b-versatile` for
+  free and developer tiers on 16 August 2026 — it was this backend's only
+  catalogue entry *and* its default — replaced with `openai/gpt-oss-120b` and
+  `qwen/qwen3.6-27b`. OpenAI's catalogue still offered `o4-mini`, retired in
+  February 2026, and defaulted to `gpt-4o`; now GPT-5.2 and its mini/nano
+  variants. Two tests that pinned specific model names were rewritten to assert
+  the property, since that is what turned a catalogue refresh into a test failure.
+
+### Added — reproducible benchmark artifacts
+
+`benchmarks/` holds the exact prompt and answer for every exchange behind the
+real-model numbers, the sha256 of each, the scores, and the per-case output
+fingerprints. A benchmark with no retained artifacts is a claim rather than
+evidence, and a project about traceable evidence should not ask to be taken on
+trust about its own measurements. The numbers were re-scored under the tightened
+citation rules before being committed, and did not move.
+
+
 ### Changed — the architecture claim, measured against a real model
 
 Every number this project had ever reported about its own design came from the
