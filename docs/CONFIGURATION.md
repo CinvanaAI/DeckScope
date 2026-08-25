@@ -237,3 +237,29 @@ Each profile gets its own settings, keys, and defaults.
 | `research.recency_days: 365` | Tighter recency for fast-moving categories |
 | `provider.temperature: 0.1` | More consistent, less exploratory |
 | A panel | Catches what any single model misses |
+
+---
+
+## Government data (Census)
+
+Market sizing is built from two numbers the US Census publishes free: how many
+establishments operate in an industry (County Business Patterns) and what they
+take in (Economic Census). One key unlocks both, plus the American Community
+Survey and everything else Census publishes.
+
+| | |
+|---|---|
+| Variable | `CENSUS_API_KEY` |
+| Cost | free, no approval step |
+| Sign up | https://api.census.gov/data/key_signup.html |
+| Set up | `deckscope setup` walks you through it, or set the variable yourself |
+
+**The key does not work until you click the confirmation link in the email.**
+That is the step people miss, and a key that has not been confirmed fails at
+first use rather than at signup. The wizard says so; this is here for anyone
+setting the variable by hand.
+
+Without a key, market sizes report as **unestablished** with the reason and the
+signup URL attached. Nothing crashes, and no figure is substituted — a report
+that says "I could not establish this" is worth more than one carrying a
+plausible number nobody can trace.

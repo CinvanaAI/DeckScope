@@ -55,12 +55,27 @@ class Unavailable(RuntimeError):
 
 
 def _key() -> str:
+    """The Census key, from the environment or the saved key file.
+
+    Both, in that order, and the key file matters: the setup wizard writes to
+    `%APPDATA%\\DeckScope\\.env` with owner-only permissions, and reading only
+    `os.environ` meant a key the user had just been walked through saving was
+    not found at run time. An onboarding flow that stores a credential the
+    product then cannot see is worse than no onboarding flow.
+    """
     key = (os.environ.get(KEY_ENV) or "").strip()
+    if not key:
+        try:
+            from deckscope import settings
+            key = (settings.load_env(into_environ=True).get(KEY_ENV) or "").strip()
+        except Exception:  # noqa: BLE001 - the store is optional, not required
+            key = ""
     if not key:
         raise Unavailable(
             f"{KEY_ENV} is not set. The Census API refuses keyless requests, so "
             f"establishment counts and industry revenue cannot be retrieved. "
-            f"A key is free and issued immediately at {KEY_SIGNUP}. "
+            f"A key is free and issued immediately at {KEY_SIGNUP} — "
+            f"run `deckscope setup` and it will walk you through it. "
             f"Without it this figure stays unestablished rather than being "
             f"answered from a worse source.")
     return key

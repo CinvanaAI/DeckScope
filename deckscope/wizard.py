@@ -193,13 +193,19 @@ KEY_URLS = {"anthropic": "https://console.anthropic.com/settings/keys",
 RESEARCH_KEY_ENVS = {"tavily": "TAVILY_API_KEY", "serper": "SERPER_API_KEY",
                      "brave": "BRAVE_API_KEY", "exa": "EXA_API_KEY"}
 
+#: Government statistical data — a different thing from web search, and worth
+#: its own step. Web search finds what somebody wrote about a market; these
+#: publish what the market measurably is. One free key unlocks all of them.
+CENSUS_ENV = "CENSUS_API_KEY"
+CENSUS_SIGNUP = "https://api.census.gov/data/key_signup.html"
+
 
 def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
     settings.load_env()
     existing = settings.load_settings()
 
     banner("DeckScope setup",
-           "Six questions. You can change any answer later with: deckscope setup")
+           "Seven questions. You can change any answer later with: deckscope setup")
 
     if existing and not reconfigure:
         say(f"You already have settings saved at {settings.config_path()}.")
@@ -214,7 +220,7 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
         "search the web. Let's set both up.")
 
     # ---------------------------------------------------------- 1. provider
-    banner("1 of 6 · Which AI should do the analysis?")
+    banner("1 of 7 · Which AI should do the analysis?")
     say("If you're not sure, pick Claude — it produces the strongest analysis. "
         "If you'd rather not create an account yet, pick the demo at the bottom "
         "and everything will still run.")
@@ -281,7 +287,7 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
 
         options = catalog(provider)
         if options:
-            banner("2 of 6 · Which model?")
+            banner("2 of 7 · Which model?")
             say("Bigger models cost more and think harder. The middle option is "
                 "the right default for almost everyone.")
             model = choose("Choose a model",
@@ -289,11 +295,11 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
                            default=min(2, len(options)))
             cfg["provider"]["model"] = model
     else:
-        banner("2 of 6 · Model")
+        banner("2 of 7 · Model")
         say("Nothing to choose for this option — moving on.")
 
     # ---------------------------------------------------------- 3. research
-    banner("3 of 6 · How should DeckScope research the market?")
+    banner("3 of 7 · How should DeckScope research the market?")
     say("This is what makes the analysis worth reading. Without it, the market "
         "half of the report is just the AI's memory, which has a cutoff date and "
         "cannot see recent funding rounds, pricing, or new entrants.\n\n"
@@ -312,8 +318,11 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
         else:
             _collect_key(research, env)
 
-    # ------------------------------------------------------------- 4. lens
-    banner("4 of 6 · Whose point of view should the report take?")
+    # ------------------------------------------------- 4. government data
+    _census_step(cfg)
+
+    # ------------------------------------------------------------- 5. lens
+    banner("5 of 7 · Whose point of view should the report take?")
     say("Same evidence, different question. You can produce more than one, and "
         "you can change this per run.")
     lens_menu = [
@@ -333,7 +342,7 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
     cfg["lenses"] = ALL_LENSES if lens == "all" else [lens]
 
     # ---------------------------------------------------------- 5. outputs
-    banner("5 of 6 · What files should DeckScope produce?")
+    banner("6 of 7 · What files should DeckScope produce?")
     from .render.registry import DESCRIPTIONS
 
     say("Pick as many as you like — type the numbers separated by commas.")
@@ -360,7 +369,7 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
     Path(out_dir).mkdir(parents=True, exist_ok=True)
 
     # --------------------------------------------------------- 6. security
-    banner("6 of 6 · Security")
+    banner("7 of 7 · Security")
     say("Pitch decks and web pages are written by other people, and both can carry "
         "text meant to steer an AI rather than inform you — white text on a white "
         "slide, hidden speaker notes, a web page seeded with fake instructions.\n\n"
@@ -422,6 +431,89 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
     _out(f"    {green('deckscope doctor')}           re-check everything is working")
     _out()
     return cfg
+
+
+def _census_step(cfg: Dict[str, Any]) -> None:
+    """Offer the Census key, with the walkthrough it actually needs.
+
+    Its own step rather than a line in the research menu, because it is a
+    different kind of source. Web search finds what somebody *wrote* about a
+    market. The Census publishes what the market measurably *is* — how many
+    businesses operate in an industry, in a county, and what they take in. Those
+    are the two terms every market size is built from.
+
+    The generic key flow is not reused here for one specific reason: the Census
+    emails a confirmation link that must be clicked before the key works. A user
+    who pastes the key straight from the email gets a key that silently fails on
+    first run, and nothing in a generic "paste your key" prompt would tell them
+    why.
+    """
+    banner("4 of 7 · Government data (optional, free)")
+    say("Market sizes are built from two numbers: how many businesses are in an "
+        "industry, and what each one takes in. The US Census publishes both, "
+        "free, by industry and down to the county.\n\n"
+        "This is the same data an investment bank pays a research firm for. "
+        "Skipping it does not break anything — market sizes will just report "
+        "as unestablished, with a note saying why.")
+    _out()
+
+    if settings.has_key(CENSUS_ENV):
+        current = os.getenv(CENSUS_ENV) or \
+            settings.load_env(into_environ=False).get(CENSUS_ENV, "")
+        say(f"Found an existing key: {settings.masked(current)}")
+        if ask_yes("Use it?", default=True):
+            cfg.setdefault("data", {})["census"] = True
+            return
+
+    if not ask_yes("Set up Census data access now?", default=True):
+        say(yellow("Skipped. Market sizing will report figures as unestablished "
+                   "until a key is added. Run `deckscope setup` again any time."))
+        return
+
+    _out()
+    say(bold("How to get one — about two minutes:"))
+    say(f"1. Open {blue(CENSUS_SIGNUP)}")
+    say("2. Enter any organization name and your email address. There is no "
+        "approval step and no cost.")
+    say("3. " + bold("Check your email and click the confirmation link.") +
+        " The key does not work until you do — this is the step everyone "
+        "misses.")
+    say("4. Copy the key from that email. It is 40 characters, letters and "
+        "numbers, no dashes.")
+    _out()
+
+    while True:
+        key = ask_secret("Paste your Census key (or press Enter to skip)")
+        if not key:
+            say(yellow("Skipped. Market sizing will report figures as "
+                       "unestablished until a key is added."))
+            return
+        problem = _census_key_problem(key)
+        if problem:
+            say(red(problem))
+            continue
+        settings.save_key(CENSUS_ENV, key)
+        spinner_done(True, f"Key saved to {settings.env_path()}")
+        cfg.setdefault("data", {})["census"] = True
+        say(dim("  Owner-only permissions. Never written into the settings file "
+                "or into any report."))
+        return
+
+
+def _census_key_problem(key: str) -> str:
+    """Why this cannot be a Census key, or empty if it looks fine.
+
+    Checked before saving because the alternative is a key that fails silently
+    on the first real run, long after the user has forgotten this screen.
+    """
+    key = key.strip()
+    if len(key) != 40:
+        return (f"A Census key is exactly 40 characters; that one is "
+                f"{len(key)}. Copy the whole string from the email.")
+    if not all(ch.isalnum() for ch in key):
+        return ("A Census key is letters and numbers only. That one has other "
+                "characters in it — check for a stray space or a line break.")
+    return ""
 
 
 def _collect_key(service: str, env: str) -> None:
@@ -559,6 +651,18 @@ def doctor() -> int:
     _out(f"  Formats          {', '.join(cfg.get('output', {}).get('formats', []))}")
     _out(f"  Reports folder   {cfg.get('output', {}).get('out_dir')}")
     _out(f"  Security mode    {cfg.get('security', {}).get('mode', 'balanced')}")
+    # Reported at a glance because its absence is silent otherwise: market
+    # sizes simply come back unestablished, which looks like a broken product
+    # rather than a missing free credential.
+    if settings.has_key(CENSUS_ENV):
+        current = os.getenv(CENSUS_ENV) or \
+            settings.load_env(into_environ=False).get(CENSUS_ENV, "")
+        problem = _census_key_problem(current)
+        state = green(settings.masked(current)) if not problem else red(problem)
+        _out(f"  Census data      {state}")
+    else:
+        _out(f"  Census data      {yellow('no key')}"
+             f"{dim('  — market sizes will report as unestablished')}")
     panel = cfg.get("panel") or {}
     if panel.get("members"):
         _out(f"  Panel            {', '.join(panel['members'])} "
