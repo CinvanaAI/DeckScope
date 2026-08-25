@@ -1,0 +1,987 @@
+FIGS, Inc. (FIGS) | S-1 | S-1 | Filed: 2021-09-14
+https://www.sec.gov/Archives/edgar/data/1846576/000119312521271933/d213818ds1.htm
+→ https://www.sec.gov/Archives/edgar/data/1846576/000119312521271933/d213818ds1.htm
+Content-Type: text/html
+
+As filed with the Securities and Exchange Commission on September 13, 2021
+
+Registration No. 333-
+
+### UNITED STATES
+
+### SECURITIES AND EXCHANGE COMMISSION
+Washington, D.C. 20549
+
+#### FORM S-1
+
+### REGISTRATION STATEMENT
+
+#### UNDER
+
+#### THE SECURITIES ACT OF 1933
+
+#### FIGS, Inc.
+**(Exact name of Registrant as specified in its charter)**
+
+*(untagged table — column alignment not verified)*
+
+| Delaware | 2300 | 46-2005653 |
+| --- | --- | --- |
+| (State or other jurisdiction of incorporation or organization) | (Primary Standard Industrial Classification Code Number) | (I.R.S. Employer Identification Number) |
+
+#### 2834 Colorado Avenue, Suite 100
+
+#### Santa Monica, California 90404
+**(424) 300-8330
+
+(Address, including zip code, and telephone number, including area code, of Registrant’s principal executive offices)**
+
+#### Heather Hasson
+
+#### Trina Spear
+
+#### Co-ChiefExecutive Officers
+
+#### FIGS, Inc.
+
+#### 2834 Colorado Avenue, Suite 100
+
+#### Santa Monica, California 90404
+**(424) 500-8209
+
+(Name, address, including zip code, and telephone number, including area code, of agent for service)
+
+Copies to:**
+
+*(untagged table — column alignment not verified)*
+
+| Marc D. Jaffe Ian D. Schuman Alison A. Haggerty Latham & Watkins LLP 1271 Avenue of the Americas New York, New York 10020 (212) 906-1200 | Jeffrey D. Lawrence Chief Financial Officer FIGS, Inc. 2834 Colorado Avenue, Suite 100 Santa Monica, California 90404 (424) 500-8209 | Dave Peinsipp Kristin VanderPas Charles S. Kim Cooley LLP 101 California Street, 5th Floor San Francisco, California 94111 (415) 693-2000 |
+| --- | --- | --- |
+
+Approximate date of commencement of proposed sale to the public : As soon as practicable after the effective date of this Registration Statement.
+
+If any of the securities being registered on this Form are to be offered on a delayed or continuous basis pursuant to Rule 415 under the Securities Act of 1933, as amended, or Securities Act, check the following box. ☐
+
+If this Form is filed to register additional securities for an offering pursuant to Rule 462(b) under the Securities Act, check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering. ☐
+
+If this Form is a post-effective amendment filed pursuant to Rule 462(c) under the Securities Act, check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering.  ☐
+
+If this Form is a post-effective amendment filed pursuant to Rule 462(d) under the Securities Act, check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering.  ☐
+
+Indicate by check mark whether the registrant is a large accelerated filer, an accelerated filer, a non-accelerated filer, a smaller reporting company, or an emerging growth company. See definitions of “large accelerated filer,” “accelerated filer,” “smaller reporting company,” and “emerging growth company” in Rule 12b-2 of the Securities Exchange Act of 1934, as amended.
+
+*(untagged table — column alignment not verified)*
+
+| Large accelerated filer | ☐ | Accelerated filer | ☐ |
+| --- | --- | --- | --- |
+| Non-accelerated filer | ☒ | Smaller reporting company | ☐ |
+|  |  | Emerging growth company | ☒ |
+
+If an emerging growth company, indicate by check mark if the registrant has elected not to use the extended transition period for complying with any new or revised financial accounting standards provided pursuant to Section 7(a)(2)(B) of the Securities Act. ☒
+
+CALCULATION OF REGISTRATION FEE
+
+*(untagged table — column alignment not verified)*
+
+| Title of Each Class of Securities to be Registered | Amount to be Registered(1) | Proposed Maximum Offering Price Per Share(2) | Proposed Maximum Aggregate Offering Price(2) | Amount of Registration Fee |
+| --- | --- | --- | --- | --- |
+| Class A common stock, par value $0.0001 per share | 10,150,708 | $42.27 | $429,070,427.16 | $46,811.58 |
+
+*(untagged table — column alignment not verified)*
+
+| (1) | Includes 1,324,005 shares of Class A common stock that the underwriters have the option to purchase from the selling stockholders. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| (2) | Estimated solely for the purpose of calculating the registration fee in accordance with Rule 457(c) under the Securities Act of 1933, as amended. The price per share and aggregate offering price are based on the average of the high and low prices of the Registrant’s Class A common stock on September 10, 2021, as reported on the New York Stock Exchange. |
+| --- | --- |
+
+The Registrant hereby amends this Registration Statement on such date or dates as may be necessary to delay its effective date until the Registrant shall file a further amendment that specifically states that this Registration Statement shall thereafter become effective in accordance with Section 8(a) of the Securities Act or until the Registration Statement shall become effective on such date as the Securities and Exchange Commission, acting pursuant to said Section 8(a), may determine.
+
+The information in this preliminary prospectus is not complete and may be changed. Neither we nor the selling stockholders may sell these securities until the registration statement filed with the Securities and Exchange Commission is effective. This preliminary prospectus is not an offer to sell these securities, and neither we nor the selling stockholders are soliciting offers to buy these securities in any jurisdiction where the offer or sale is not permitted.
+
+Subject to Completion. Dated September 13, 2021
+
+*(untagged table — column alignment not verified)*
+
+| CLASS A COMMON STOCK | 8,826,703 SHARES |
+| --- | --- |
+
+The selling stockholders identified in this prospectus, who are Tulco LLC, our majority stockholder, and our co-founders and co-Chief Executive Officers, are offering 8,826,703 shares of our Class A common stock. We will not receive any of the proceeds from the sale of the shares being sold by the selling stockholders.
+
+Our Class A common stock is listed on the New York Stock Exchange, or the NYSE, under the symbol “FIGS.” The last reported sale price of our Class A common stock on the NYSE on September 10, 2021 was $43.63 per share.
+
+We have two classes of authorized common stock: Class A common stock and Class B common stock. The rights of the holders of each class of our common stock are identical, except with respect to voting and conversion rights. Each share of Class A common stock is entitled to one vote per share. Each share of Class B common stock is entitled to 20 votes per share and is convertible into one share of Class A common stock. See the section titled “Description of Capital Stock” for more information. All outstanding shares of our Class B common stock are held by our co-founders and co-Chief Executive Officers, Heather Hasson and Trina Spear, and Tulco, LLC, our majority stockholder. Immediately following the completion of this offering, these holders will represent approximately 80.1% of the voting power of our outstanding capital stock, assuming no exercise of the underwriters’ option to purchase additional shares.
+
+We are a “controlled company” within the meaning of the corporate governance rules of the New York Stock Exchange.
+
+We are an “emerging growth company” as that term is used in the Jumpstart Our Business Startups Act of 2012 and, as such, may elect to comply with certain reduced public company reporting requirements.
+
+See “ Risk Factors” beginning on page 16 to read about factors you should consider before buying shares of our Class A common stock. Neither the Securities and Exchange Commission nor any other regulatory body has approved or disapproved of these securities or passed upon the accuracy or adequacy of this prospectus. Any representation to the contrary is a criminal offense.
+
+*(untagged table — column alignment not verified)*
+
+|  | Per Share | Total |
+| --- | --- | --- |
+|  |  |  |
+| Public offering price | $ | $ |
+|  |  |  |
+| Underwriting discount and commissions (1) | $ | $ |
+|  |  |  |
+| Proceeds, before expenses, to the selling stockholders | $ | $ |
+
+(1)See “Underwriting” beginning on page 140 for additional information regarding underwriter compensation.
+
+The underwriters have the option for a period of 30 days to purchase up to an additional 1,324,005 shares from the selling stockholders at the public offering price, less the underwriting discount and commissions.
+
+The underwriters expect to deliver the shares against payment in New York, New York on , 2021.
+
+*(untagged table — column alignment not verified)*
+
+| GOLDMAN SACHS & CO. LLC | MORGAN STANLEY |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| BARCLAYS | CREDIT SUISSE | BofA SECURITIES |
+| --- | --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| COWEN | GUGGENHEIM SECURITIES | KEYBANC CAPITAL MARKETS |
+| --- | --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| OPPENHEIMER & CO. | PIPER SANDLER | TELSEY ADVISORY GROUP |
+| --- | --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| ACADEMY SECURITIES | R. SEELAUS & CO., LLC | RAMIREZ & CO., INC. | SIEBERT WILLIAMS SHANK |
+| --- | --- | --- | --- |
+
+Prospectus dated , 2021
+
+## Table of Contents
+
+ TABLE OF CONTENTS
+
+*(untagged table — column alignment not verified)*
+
+|  | Page |  |
+| --- | --- | --- |
+| Prospectus Summary |  | 1 |
+| Risk Factors |  | 16 |
+| Special Note Regarding Forward-Looking Statements |  | 54 |
+| Industry and Market Data |  | 56 |
+| Use of Proceeds |  | 57 |
+| Dividend Policy |  | 58 |
+| Selected Financial Data |  | 59 |
+| Management’s Discussion and Analysis of Financial Condition and Results of Operations |  | 62 |
+| Business |  | 84 |
+| Management |  | 107 |
+| Executive Compensation |  | 115 |
+| Certain Relationships and Related Party Transactions |  | 121 |
+| Principal and Selling Stockholders |  | 123 |
+| Description of Capital Stock |  | 125 |
+| Shares Eligible for Future Sale |  | 133 |
+| Material U.S. Federal Income Tax Consequences to Non-U.S. Holders of Our Class A Common Stock |  | 136 |
+| Underwriting |  | 140 |
+| Legal Matters |  | 147 |
+| Experts |  | 147 |
+| Where You Can Find Additional Information |  | 147 |
+| Index to Financial Statements |  | F-1 |
+
+Neither we, the selling stockholders, nor any of the underwriters have authorized anyone to provide any information or to make any representations other than those contained in this prospectus or in any free writing prospectuses we have prepared. Neither we, the selling stockholders, nor any of the underwriters take responsibility for, and can provide no assurance as to the reliability of, any other information that others may give you. This prospectus is an offer to sell only the shares offered hereby, but only under circumstances and in jurisdictions where it is lawful to do so. The information contained in this prospectus is accurate only as of the date of this prospectus, regardless of the time of delivery of this prospectus or of any sale of our Class A common stock.
+
+For investors outside of the United States:Neither we, the selling stockholders, nor any of the underwriters have done anything that would permit this offering or possession or distribution of this prospectus in any jurisdiction where action for that purpose is required, other than in the United States. Persons outside of the United States who come into possession of this prospectus must inform themselves about, and observe any restrictions relating to, the offering of the shares of our Class A common stock and the distribution of this prospectus outside of the United States.
+
+i
+
+## Prospectus Summary
+
+### PROSPECTUS SUMMARY
+This summary highlights selected information presented in more detail elsewhere in this prospectus. This summary does not contain all the information you should consider before investing in our Class A common stock. You should carefully read this prospectus in its entirety before investing in our Class A common stock, including the sections titled “Risk Factors,” “Management’s Discussion and Analysis of Financial Condition and Results of Operations,” and “Special Note Regarding Forward-LookingStatements,” and our financial statements and the accompanying notes included elsewhere in this prospectus. Unless otherwise indicated, the terms “FIGS,” “Wear FIGS,” “we,” “us” and “our” refer to FIGS, Inc.
+
+#### Our Mission
+Our mission is to celebrate, empower and serve those who serve others.
+
+#### Who We Are
+**We are a founder-led, direct-to-consumer healthcare apparel and lifestyle brand that seeks to celebrate, empower and serve current and future generations of healthcare professionals. We are committed to helping this growing, global community of professionals, whom we refer to as Awesome Humans, look, feel and perform at their best—24/7, 365 days a year. We create technically advanced apparel and products that feature an unmatched combination of comfort, durability, function and style, all at an affordable price. In doing so, we have redefined what scrubs are—giving rise to our tag-line: why wear scrubs, when you can #wearFIGS?
+
+We have revolutionized the large and fragmented healthcare apparel market. We branded a previously unbranded industry and de-commoditized a previously commoditized product—elevating scrubs and creating premium products for healthcare professionals. Most importantly, we built a community and lifestyle around a profession. As a result, we have become the industry’s category-defining healthcare apparel and lifestyle brand.
+
+We market and sell 98% of our products through our digital platform, consisting of our website and mobile app, to a rapidly growing community of loyal customers. From 2017 to 2020, we grew net revenues from $17.6 million to $263.1 million, representing a compound annual growth rate, or CAGR, of 146%. In addition, in 2020, we delivered operating income and Adjusted EBITDA of $57.9 million and $69.1 million, respectively.
+
+We Are Obsessed with Our Community of Awesome Humans.
+
+We are dedicated to empowering and celebrating every healthcare professional across all disciplines and levels of experience. The healthcare community informs and inspires us, and we place these Awesome Humans at the center of everything we do. We purposefully design products to serve their particular needs and we sell those products through a convenient direct-to-consumer, or DTC, model tailored to their around-the-clock lifestyle. We use our digital platform to celebrate Awesome Humans in aspirational, creative and unexpected ways. We leverage social media platforms to listen to, engage with, understand and better serve our community of healthcare professionals at scale. Our Ambassador Program, which consists of hundreds of healthcare professionals from around the world, further drives engagement with our community. Our Ambassadors are an extension of our team and are evangelists for our brand. Our differentiated community-based approach has allowed us to build a growing base of approximately 1.6 million active customers who are passionate and loyal to our brand.**
+
+#### Innovation Drives Our Product Development.
+**We create technically advanced apparel and products for the modern healthcare professional. Our design philosophy is rooted in Technical Comfort ™ —the conviction that design, comfort and function are non-negotiable. While multi-billion-dollar companies were focused on athletes, we believed that nobody was sufficiently focused on healthcare professionals—extraordinary people who care for patients, cure diseases and save lives, and who deserve to look, feel and perform at their best. As a result, we developed cutting-edge fabric technology and product designs to specifically address their needs. Our proprietary fabric technology, called FIONx, offers four-way stretch, anti-odor, anti-wrinkle and moisture-wicking properties. Our scrubs feature easy-to-access zippered pockets for professional and personal items such as stethoscopes, scissors, smartphones and ID badges. Our lifestyle apparel and other non-scrub offerings allow medical professionals to be outfitted—on and off shift. By enabling all healthcare professionals to have access to these products, we make the healthcare community more inclusive and aim to elevate the entire healthcare ecosystem.
+
+We Are a Digitally Native Direct-to-ConsumerBrand.
+
+We are a digitally native DTC brand that utilizes technology to deliver a differentiated customer experience. We disrupted the industry’s historical distribution model, which required healthcare professionals to physically travel to brick-and-mortar stores to purchase their uniforms. We have built the largest DTC platform in healthcare apparel, leading the industry in the shift to digital. By selling directly through our digital platform, we control all aspects of the customer experience. Further, we are able to engage with our community of healthcare professionals before, during and after purchase, through our digital platform and numerous other channels. This direct engagement enables us to establish personal relationships at scale and provides us with valuable customer data and feedback that we leverage across our organization to better serve our community.
+
+We Leverage Data Science to Connect with and Serve Our Community.
+
+We leverage our rich customer data set, bolstered by the inherent benefits of our DTC model, to serve our community more effectively and efficiently. We develop proprietary and customized data solutions designed to optimize our product innovation, inventory analytics, marketing efforts and operational efficiency. We maintain centralized Data Science and Data Engineering teams and de-centralized Data Analysts working directly within each key functional area of the company. This approach enables us to gather and manage extensive data, and rapidly and directly apply that data to deliver customer insights and improve our core operating activities and decision-making processes. Our vast and growing data set plays a critical role in driving new customer acquisition as well as in our community engagement and retention strategy.**
+
+#### We Give Back to the Community We Serve.
+In line with our purpose-driven mission, giving back is ingrained in everything we do at FIGS and has been from the beginning. When we started FIGS, we created an initiative called Threads for Threads to donate scrubs to healthcare professionals who work in resource-poor countries and lack the proper uniforms to do their jobs safely. By providing clean scrubs to these individuals, we aim to empower them and improve the quality of care they provide. Our efforts have been supported by over 60 organizations who understand the needs of local healthcare professionals and work with us to ensure that we provide what is needed. To date, we have donated hundreds of thousands of FIGS scrubs and other products to medical professionals in need. In response to the COVID-19 pandemic, in 2020, we focused our giving efforts locally in the United States, donating personal protective equipment, scrubs, funds and other essential products to frontline workers affected by the pandemic. Through all of these efforts, our approach is simple: we give back to the healthcare community that gives so much of itself to serving others.
+
+### Our Recent Financial Performance
+We have demonstrated rapid growth, strong profitability and positive cash flow generation. In 2020, we achieved the following results compared to 2019:
+
+*(untagged table — column alignment not verified)*
+
+| • | Expanded our community of active customers by 118% from 0.6 million to approximately 1.3 million; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased net revenues from $110.5 million to $263.1 million, representing 138% year-over-year growth; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased gross margin by 50 basis points from 71.8% to 72.3%; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Improved net operating (loss) income from $(0.3) million to $57.9 million; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased Adjusted EBITDA from $1.7 million to $69.1 million, representing an Adjusted EBITDA margin of 26.3% in 2020; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased cash flow from operations from $6.5 million to $21.7 million; and |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased free cash flow from $1.8 million to $19.5 million. |
+| --- | --- |
+
+In the six months ended June 30, 2021, we had the following results compared to the six months ended June 30, 2020:
+
+*(untagged table — column alignment not verified)*
+
+| • | Expanded our community of active customers by 79.2% from approximately 0.9 million to approximately 1.6 million; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased net revenues from $96.1 million to $188.2 million, representing 95.8% year-over-year growth; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased gross margin by 0.2 percentage points from 72.3% to 72.5%; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Net operating income (loss) decreased from $20.6 million to $(16.0) million; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased Adjusted EBITDA from $21.9 million to $51.1 million, representing an Adjusted EBITDA margin of 27.2% in 2021; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased cash flow from operations from $24.3 million to $32.7 million; and |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased free cash flow from $23.2 million to $31.7 million. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| * | NM = Not Meaningful |
+| --- | --- |
+
+We define an active customer as a unique customer account that has made at least one purchase in the preceding 12-month period. See the section titled “Selected Financial Data—Non-GAAP Financial Measures” for information regarding Adjusted EBITDA, Adjusted EBITDA margin and free cash flow, including a reconciliation to the most directly comparable financial measures prepared in accordance with generally accepted accounting principles in the United States, or U.S. GAAP.
+
+#### Our Market Opportunity
+**Healthcare Apparel Is a Large, Growing and Non-DiscretionaryIndustry.
+
+According to the Bureau of Labor Statistics, the healthcare sector is the largest and fastest growing job segment in the United States, employing over 20 million professionals in 2020. Total U.S. employment between 2019 and 2029 is expected to grow by 15% for all healthcare professionals versus just 4% for all occupations. Within this growing market, healthcare apparel is a large, fundamentally attractive industry underpinned by its scale, recurring nature and compelling growth outlook. In 2020, the total addressable market of the healthcare apparel industry was an estimated $12.0 billion in the United States and $79.0 billion globally, according to an April 2021 Frost & Sullivan study that we commissioned. Unlike most other categories in the apparel sector, the healthcare apparel industry is largely non-discretionary, recession resistant and much less susceptible to fashion or fad risk. Hospitals, medical offices, clinics and laboratories routinely require healthcare professionals to wear scrubs, lab coats and other medical apparel during every shift. Over time, healthcare apparel purchasing has shifted from institutions to the individual, with approximately 85% of all medical professionals now purchasing their own uniforms. Due to frequent wear, healthcare apparel continuously needs to be replenished, resulting in highly predictable, recurring demand for such products.**
+
+#### The Industry Has Historically Lacked Innovation.
+Prior to FIGS, the healthcare apparel industry had operated for over 100 years with little change or innovation. Despite attractive market fundamentals, the industry had been held back, and its consumers underserved, by legacy participants with outdated business models.
+
+We believe that key limitations of industry incumbents include:
+
+*(untagged table — column alignment not verified)*
+
+| • | Commoditized Products. Legacy manufacturers typically sell commoditized product offerings that are notoriously ill-fitting, uncomfortable, baggy, boxy and lacking in design and functionality, with minimal focus on fabric technology or performance. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Brand Obscurity. Traditional scrubs manufacturers sell under third-party licenses, and therefore do not retain control over the product and have limited ability to promote brand loyalty. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Antiquated Distribution. An outdated distribution strategy causes incumbent manufacturers to rely on a highly fragmented network of discount brick-and-mortar medical supply stores, often in inconvenient locations, and unappealing aggregated online sites operated by third-party retailers. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Channel Conflict. Due to legacy wholesale relationships, many incumbent manufacturers do not sell DTC despite consumers’ growing desire to engage directly with brands. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Customer Separation. Incumbent manufacturers generally do not have a direct connection with the end customer—the healthcare professional. As a result, they lack valuable feedback regarding customers’ needs and preferences. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Challenged Margins. Structurally challenged margin profiles, stemming from third-party brand licensing and wholesale distribution economics, likely impacts incumbent manufacturers’ ability to invest in product innovation, marketing and customer experience. |
+| --- | --- |
+
+#### The Industry is Fundamentally Changing.
+We believe the healthcare apparel sector is positioned for continued strong growth driven by the following key industry dynamics:
+
+*(untagged table — column alignment not verified)*
+
+| • | Resilient Industry with Favorable Long-Term Trends. The healthcare apparel industry is growing and has demonstrated resilience across economic cycles, driven by the non-discretionary, replenishment nature of its products and the secular growth of the healthcare sector. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Increased Demand for Healthcare Professionals. Healthcare is the fastest growing job sector in the United States, having grown by 22% from January 2011 to January 2020. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Acceleration of eCommerce. The shift to eCommerce is rapidly accelerating as consumers continue to embrace the convenience of online and mobile shopping. For healthcare professionals who work long shifts and all hours of the day and night, the convenience of eCommerce is even more necessary. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Attraction to Purpose-Driven Brands. Consumers are increasingly attracted to, and interested in engaging with, purpose-driven brands using social media channels. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Magnified Importance of Technically Advanced Healthcare Apparel. The COVID-19 pandemic has magnified the indispensability of healthcare professionals. Due to the pandemic, more healthcare professionals are choosing to wear medical apparel, and a greater number of hospitals, medical offices and clinics are requiring staff to wear scrubs and other medical apparel. While we demonstrated consistent and significant growth prior to 2020, we believe the pandemic has accelerated awareness of the FIGS brand and a shift in purchasing decisions that will continue to drive future growth. |
+| --- | --- |
+
+Supported by these key trends, the healthcare apparel industry is expected to demonstrate strong and consistent growth, with the total addressable market in the United States expected to grow by a 6.1% CAGR over the next five years, from approximately $12.0 billion in 2020 to approximately $16.0 billion in 2025, according to the Frost & Sullivan study.
+
+#### What Sets Us Apart
+We believe that the following competitive strengths have been key drivers of our success to date and strategically position us for continued success.
+
+#### Deeply Passionate, Loyal Community
+We have been building a large, growing community of deeply loyal customers who share an authentic emotional connection with FIGS. During 2020, our community more than doubled to approximately 1.3 million active customers, about 60% of whom were repeat customers. Our brand awareness is driven largely by word of mouth among healthcare professionals who are passionate about FIGS, and whose passion quickly spreads through hospitals and healthcare institutions, where thousands of healthcare professionals often work in close proximity to one another. In addition, through our digital platform and social media presence, we showcase the daily wins and challenges that healthcare professionals experience, and allow our community to engage with each other on common ground, bridging gaps that previously existed across disciplines and experience levels within the healthcare profession. Our strong customer loyalty is demonstrated by our compelling revenue retention metrics. In 2020, we retained 75% of the 2019 and prior cohorts’ net revenues, including 100% of the 2019 net revenues generated by 2018 and prior cohorts.
+
+#### Authentic, Category-Defining Brand
+FIGS is the first digitally native lifestyle brand outfitting healthcare professionals. Our brand represents premium products combined with a seamless digital customer experience that healthcare professionals have never experienced before. Many of our customers form a deep emotional connection with our brand because we are the first brand in the industry to seek relentlessly to understand and fulfill their unique needs. Through our Ambassador Program, we have formed meaningful relationships with hundreds of Awesome Humans who help us reach millions of healthcare professionals around the world in an intimate, authentic and personalized way. Our strong brand affinity is demonstrated by our high Net Promoter Score of +81. See the section titled “Industry and Market Data” for additional information regarding Net Promoter Score.
+
+#### Industry-Leading Product Innovation
+We strive to create the most innovative, functional, comfortable and stylish healthcare apparel in the industry. Our design philosophy stems from an unwavering focus on what healthcare professionals need from their apparel in order to look, feel and perform at their best. Our innovative products are designed, sourced and manufactured from the fiber level. Our proprietary FIONx fabric technology is made from what we believe to be the best combination of materials and is core-spun for maximum durability to withstand the demands of a healthcare professional’s work without sacrificing comfort. We design products that offer technical features such as four-way stretch, anti-odor, anti-wrinkle, and moisture-wicking properties. Our approach and products are distinct from those of legacy manufacturers, who offer poorly fitting scrubs and other commoditized healthcare apparel offerings. By elevating healthcare apparel, we seek to create products that healthcare professionals never even knew they needed or wanted, and that not only meet but exceed their expectations. We dream about inventing the future so that design is aesthetically pleasing, while also solving real problems for our community. This combination of form and function results in a range of products that deliver maximum comfort, function and style.
+
+#### Digitally Native Direct-to-ConsumerStrategy
+**Our business is powered by a digitally native DTC strategy, which offers significant competitive advantages. Unlike most incumbent scrubs manufacturers, who sell through legacy distribution channels and do not have direct touchpoints with the end customer, we directly engage with and serve medical professionals through our digital platform. By owning all aspects of the customer experience, including website and app design, marketing content, storytelling and post-purchase customer engagement, we deliver an elevated, personalized and seamless experience. Our DTC strategy also gives us access to valuable real-time customer data that allows us to better acquire and retain customers and reliably predict buying patterns. This leads to operational efficiencies throughout our supply chain, inventory management and new product development.
+
+Highly Effective Merchandising and Product Launch Model
+
+We have developed a highly effective merchandising strategy, anchored by our recurring, functional offering of 13 core scrubwear styles, which represented approximately 82% of our net revenues in 2020. The remaining 18% of net revenues in 2020 was generated by limited edition scrubwear styles as well as our lifestyle apparel and other non-scrub offerings, which include lab coats, underscrubs, outerwear, activewear, loungewear, compression socks, footwear, masks, face shields and other products. We launch limited edition colors or styles approximately weekly, driving recurring traffic to our digital platform where customers often purchase limited edition products along with our core offerings. These launches not only drive interest in the limited edition products themselves, they also drive our core business, as, on average, 90% of sales on launch days are core styles. This innovative, lower-risk merchandising strategy drives recurring demand while maintaining inventory efficiency.
+
+Attractive Financial Profile Driving Robust Growth, Profitability and Cash Flow Generation
+
+Our business model supports our attractive financial profile characterized by robust growth, profitability and cash flow generation. We have built an industry-leading business with only approximately $60.0 million of outside equity capital raised between 2013 and 2020, reflecting our focus on scalability and capital efficiency. As a successful DTC brand with a highly effective merchandising model, we benefit from structurally advantaged product margins and have experienced rapid growth and strong profitability. In 2020, we delivered net revenue growth of 138%, gross margins of 72.3%, operating income margins of 22.0% and Adjusted EBITDA margins of 26.3%. Due to our modest capital expenditure requirements, we enjoy significant cash flow generation.**
+
+#### Mission-Driven, Founder-LedCulture and Execution
+Our company culture, strategic vision and operational execution are driven by our visionary co-founders and co-Chief Executive Officers, Heather Hasson and Trina Spear. Ms. Hasson and Ms. Spear are successful entrepreneurs who offer highly complementary skillsets that have helped to scale FIGS from selling out of the back of a car to generating net revenues of $263.1 million in 2020.
+
+Our company culture mirrors our founders’ mission to celebrate, empower and serve those who serve others. We understand that authentically serving humans starts from within, and we are passionate about supporting our community and ensuring that our company reflects the world we want to live in.
+
+#### Our Growth Strategies
+In 2020, the total addressable market of the U.S. healthcare apparel industry was approximately $12.0 billion, according to the Frost & Sullivan study. Notwithstanding our rapid growth, we estimate that our share of this U.S. healthcare apparel industry was approximately 2.1%, presenting substantial opportunity for further growth. We believe we are well-positioned to significantly expand our market share and drive sustainable growth and profitability by executing on the following strategies:
+
+#### Continue to Increase Customer Loyalty
+We have the opportunity to create customers for life—customers who return to FIGS repeatedly throughout their medical careers. Healthcare apparel continuously needs to be replenished, resulting in highly predictable, recurring demand. As a result, customer loyalty and retention will continue to be a key driver of our growth. We encourage repeat purchases by introducing innovative limited edition styles, products and color drops. We inspire customer loyalty by building authentic relationships with our community and by creating thoughtful brand and performance marketing focused on retention. For example, through our #FIGSLOVE program, we send special gifts, such as embroidered lab coats, to members of our community when they graduate from school, open a new practice or reach other career milestones. We aim to be part of their journey, building deep, lasting relationships along the way.
+
+For customers that were acquired between 2017 and 2019, approximately 50% returned for a second purchase, demonstrating our high customer retention and engagement. After a second purchase, 63% of those customers in that cohort purchased again. After a third purchase, 70% of those customers in that cohort purchased yet again. By leveraging data analytics and developing new personalization capabilities, we plan to continue to deepen our existing customer relationships to further improve our strong customer retention and engagement.
+
+#### Grow Brand Awareness and Attract New Customers
+As of June 30, 2021, we served a community of approximately 1.6 million active customers, which compares to a broader total addressable market of over 20 million healthcare professionals in the United States. In addition, while men on average represented approximately 25% of the U.S. healthcare workforce in 2019, our men’s business represented only 17% of our net revenues in 2020, presenting significant opportunity to expand our customer base.
+
+We have a significant opportunity to grow brand awareness and attract new customers to FIGS through word of mouth, brand marketing and performance marketing. Among U.S. healthcare professionals and medical students, we have aided and unaided brand awareness of 55% and 22%, respectively, according to a survey
+
+performed by Frost & Sullivan. See “Industry and Market Data” for additional information. Hospitals and other healthcare institutions, which often employ thousands of healthcare professionals working in close physical proximity on a daily basis, serve as ideal environments for growing awareness of our brand through word of mouth. Brand marketing and performance marketing also work together to drive millions of visits to our digital platform. Brand marketing includes differentiated content, our network of hundreds of Ambassadors, and social media, all of which result in outsized engagement with our community. Our digital-centric performance marketing efforts are designed to drive customers from awareness to consideration to conversion. These efforts include retargeting, paid search and product listing advertisements, paid social media advertisements, search engine optimization, personalized email and mobile push notifications through our app. Our highly productive, diversified strategy generates a significant return on new customer acquisition investments resulting from high average order value, strong product margins and attractive repeat purchase behavior.
+
+#### Broaden Our Lifestyle Offerings
+**We intend to continue to leverage healthcare professionals’ trust in our technical function, fit, comfort and style, as well as our rapid product development capabilities to broaden and deepen our product offerings. We have strategically expanded our addressable market over time by creating new innovative products and entering or creating new categories that are complementary to our core offerings. Our category expansion strategy is focused on outfitting the medical professional—on and off shift—to work, at work and from work. Our customers often begin their FIGS journey with our core scrubs and expand their purchases to limited edition scrubs and lifestyle and other products, such as lab coats, underscrubs, outerwear, activewear, loungewear, compression socks, footwear, masks and face shields. As we continue to expand our offerings to fully outfit the medical professional, we believe we have a significant opportunity to continue to expand our share of both the uniform and lifestyle wardrobe of our customers.
+
+Utilize Data Science to Expand Our Community, Elevate Customer Experience and Drive Intelligent Replenishment
+
+We expect to drive continued growth from our use of proprietary data science. Through hundreds of data attributes associated with millions of customers, we have a unique ability to welcome new healthcare professionals to our community and drive repeat business from them. As just one illustration of this, we are able to identify geographic regions where FIGS is under-represented, use our knowledge of existing community members to build machine learning-derived customer segments to identify who is most likely to purchase from us, and drive our customers to a digital experience that is pre-populated with the products most likely to appeal to them.
+
+Similarly, we believe that traditional fixed-time subscription models are disconnected from a healthcare professional’s actual needs. Instead, we use an intelligent replenishment model that is tied to individualized buying preferences. To us, it is fundamental that we cater to the unique preferences of each healthcare professional—how often they want to buy certain products, which products they are most likely to buy, and through which channel they are most likely to transact. By leveraging data science, we are able to answer these questions for each member of our large and growing community in increasingly accurate ways, and to create replenishment opportunities that are tied to those customized needs.**
+
+#### Pursue International Expansion
+While we expect the majority of our near-term growth to continue to come from the United States, we believe there is a tremendous opportunity over the long term to serve healthcare professionals throughout the rest of the world. According to the Frost & Sullivan study, the number of healthcare professionals and medical students internationally is expected to grow from approximately 118 million in 2020 to an estimated 124 million
+
+in 2025, and the total addressable market for international healthcare apparel is expected to grow from an estimated $67.0 billion in 2020 to an estimated $86.0 billion in 2025. In 2020, we successfully piloted international expansion by selling into Australia, Canada and the United Kingdom. Over time, we plan to enter other new markets as we seek to enhance our ability to serve our international customers and further establish FIGS as a global brand. In order to offer a more localized experience to customers internationally, we plan to launch products that are specific to local markets and digital experiences that are tied to local culture. We also intend to offer market-specific languages, currency and content, as well as strategic international shipping and distribution hubs. We plan to leverage our social media strategy and expand our network of Ambassadors to grow our brand awareness globally.
+
+#### Enter New Professional Markets
+Outside of the healthcare apparel industry, we believe we have a compelling long-term opportunity to enter into other uniform-wearing professional markets. In the United States, there are 40 million people outside of healthcare in service-based industries that traditionally wear uniforms every day, such as food service, hospitality, construction and transportation. The occupational nature of these professions is generally hands-on, labor-intensive and often requires apparel with technical specifications. Furthermore, we believe the incumbent apparel manufacturers in these markets suffer from limitations similar to those faced by the legacy healthcare apparel manufacturers. In our view, these markets—similar to the healthcare apparel market—have long been underserved by incumbent apparel manufacturers and are ripe for disruption. We believe we are strategically positioned to leverage our core competencies to expand into these new markets in the future.
+
+#### Risk Factors Summary
+Our business is subject to numerous risks and uncertainties, including those highlighted in the section titled “Risk Factors” immediately following this Prospectus Summary. Some of these risks include:
+
+*(untagged table — column alignment not verified)*
+
+| • | Our recent rapid growth may not be sustainable or indicative of future growth, and we expect our growth rate to ultimately slow over time. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | If we fail to manage our growth effectively, our business, financial condition and results of operations may be adversely affected. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | We have only recently achieved profitability and may not maintain profitability in the future. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Our success depends on our ability to maintain the value and reputation of our brand. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | If we fail to attract new customers, retain existing customers, or fail to maintain or increase sales to those customers, our business, financial condition, results of operations and growth prospects will be harmed. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | If our marketing efforts are not successful, our business, financial condition and results of operations could be harmed. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Our business depends on our ability to maintain a strong community of engaged customers and Ambassadors, including through the use of social media. We may not be able to maintain and enhance our brand if we experience negative publicity related to our marketing efforts or use of social media, fail to maintain and grow our network of Ambassadors or otherwise fail to meet our customers’ expectations. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | If we do not continue to successfully develop and introduce new, innovative and updated products, we may not be able to maintain or increase our sales and profitability. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | The market for healthcare apparel is highly competitive. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Our future success depends on the continuing efforts of our key employees and our ability to attract and retain highly skilled personnel and senior management. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | We plan to expand into additional international markets, which will expose us to new risks. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Shipping is a critical part of our business and any changes in, or disruptions to, our shipping arrangements, could adversely affect our business, financial condition and results of operations. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | If we are unable to accurately forecast customer demand, manage our inventory and plan for future expenses, our results of operations could be adversely affected. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Our business may be subject to uncertainty as a result of the COVID-19 pandemic. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | Our reliance on a limited number of third-party suppliers to provide materials for and produce our products could cause problems in our supply chain and subject us to additional risks. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | The dual-class structure of our common stock and voting agreement among us and the Class B stockholders has the effect of concentrating control with our co-founders and co-Chief Executive Officers, and Tulco, LLC. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | We are a “controlled company” within the meaning of the rules of the New York Stock Exchange and, as a result, qualify for, and rely on, exemptions from certain corporate governance requirements. You do not have the same protections afforded to stockholders of companies that are subject to such requirements. |
+| --- | --- |
+
+#### Our Dual-Class Capital Structure
+We have two classes of authorized common stock: Class A common stock and Class B common stock. The rights of the holders of each class of our common stock are identical, except with respect to voting and conversion rights. Each share of Class A common stock is entitled to one vote per share. Each share of Class B common stock is entitled to 20 votes per share and is convertible into one share of Class A common stock. All outstanding shares of our Class B common stock are held by our co-founders and co-Chief Executive Officers, Heather Hasson and Trina Spear, and Tulco, LLC, our majority stockholder. Immediately following the completion of this offering, these holders will represent approximately 80.1% of the voting power of our outstanding capital stock, assuming no exercise of the underwriters’ option to purchase additional shares.
+
+Holders of shares of our Class A common stock and Class B common stock generally vote together as a single class on all matters (including the election of directors) submitted to a vote of stockholders, unless otherwise required by Delaware law or our amended and restated certificate of incorporation. Our amended and restated certificate of incorporation does not provide for cumulative voting for the election of directors.
+
+Each outstanding share of Class B common stock is convertible at any time at the option of the holder into one share of Class A common stock. In addition, each share of Class B common stock will convert automatically into one share of Class A common stock upon any transfer, whether or not for value, except for certain permitted transfers described in our amended and restated certificate of incorporation, including transfers for estate planning purposes or charitable transfers where voting control is retained by the transferring holder or transfers to affiliates or certain other related entities of the transferring holder. Once converted or transferred and converted into Class A common stock, the Class B common stock may not be reissued.
+
+All outstanding shares of our Class B common stock will convert automatically into shares of our Class A common stock upon the earlier of (1) the date fixed by our board of directors that is not less than 60 days or more than 180 days following the death or disability of both Ms. Hasson and Ms. Spear and (2) June 1, 2031, the 10-year anniversary of the date of the closing of our initial public offering, or IPO, each of which we refer to as a final conversion event. In addition, if prior to a final conversion event Tulco, LLC and its permitted transferees
+
+cease to hold at least 20% of the aggregate number of shares of all classes of common stock then outstanding (calculated on a diluted basis to include any issued and outstanding stock options, restricted stock units or other equity awards, whether vested or unvested), then any shares of Class B common stock then held by Tulco, LLC and its permitted transferees will convert automatically into shares of our Class A common stock on a date fixed by our board of directors that is not less than 60 days or more than 180 days following such occurrence. Once converted into Class A common stock, the Class B common stock may not be reissued.
+
+Upon the conversion of all shares of Class B common stock into shares of Class A common stock, the rights of the holders of all outstanding shares of common stock will be identical.
+
+See the section titled “Description of Capital Stock” for more information.
+
+#### Corporate Information
+We were formed in 2013 as FIGS, Inc., a Delaware corporation. Our principal executive offices are located at 2834 Colorado Avenue, Suite 100 Santa Monica, California 90404 and our telephone number is (424) 300-8330. Our website address is www.wearfigs.com . The information contained on, or that can be accessed through, our website is not incorporated by reference into, and is not a part of, this prospectus. Investors should not rely on any such information in deciding whether to purchase our Class A common stock.
+
+We have announced, and we intend to continue to announce, material information to the public through filings with the Securities and Exchange Commission, or the SEC, the investor relations page on our website, press releases, public conference calls, and public webcasts. Any updates to the list of disclosure channels through which we will announce information will be posted on the investor relations page on our website.
+
+#### Trademarks
+FIGS, the CROSS & SHIELD logo, Threads for Threads, FIONtechnology, FIONx, Technical Comfort, Awesome Humans and other registered or common law trade names, trademarks, or service marks of FIGS appearing in this prospectus are the property of FIGS. This prospectus may contain additional trade names, trademarks, and service marks of other companies that are the property of their respective owners. We do not intend our use or display of other companies’ trade names, trademarks, or service marks to imply a relationship with, or endorsement or sponsorship of us by, these other companies. Solely for convenience, our trademarks and tradenames referred to in this prospectus may appear without the ®and ™symbols, but those references are not intended to indicate, in any way, that we will not assert, to the fullest extent under applicable law, our rights, or the right of the applicable licensor, to these trademarks and tradenames.
+
+#### Implications of Being an Emerging Growth Company
+We qualify as an “emerging growth company” as defined in Section 2(a) of the Securities Act of 1933, as amended, or the Securities Act, as modified by the Jumpstart Our Business Startups Act of 2012, or the JOBS Act. As an emerging growth company, we may take advantage of specified reduced disclosure and other requirements that are otherwise applicable, in general, to public companies that are not emerging growth companies. These provisions include:
+
+*(untagged table — column alignment not verified)*
+
+| • | the option to present only two years of audited financial statements and only two years of related Management’s Discussion and Analysis of Financial Condition and Results of Operations in this prospectus; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | not being required to comply with the auditor attestation requirements of Section 404 of the Sarbanes-Oxley Act of 2002; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | reduced disclosure obligations regarding executive compensation in our periodic reports, proxy statements and registration statements; and |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | exemptions from the requirements of holding a nonbinding advisory vote on executive compensation and stockholder approval of any golden parachute payments not previously approved. |
+| --- | --- |
+
+We will remain an emerging growth company until the earliest to occur of: (1) the last day of the fiscal year in which we have more than $1.07 billion in annual revenue; (2) the date we qualify as a “large accelerated filer,” with at least $700 million of equity securities held by non-affiliates; (3) the date on which we have issued, in any three-year period, more than $1.0 billion in non-convertible debt securities; and (4) the last day of the fiscal year ending after the fifth anniversary of the completion of our IPO.
+
+We have elected to take advantage of certain of the reduced disclosure obligations in the registration statement of which this prospectus is a part and may elect to take advantage of other reduced reporting requirements in future filings. As a result, the information that we provide may be different than the information you receive from other public companies in which you hold stock.
+
+Emerging growth companies can also take advantage of the extended transition period provided in Section 13(a) of the Securities Exchange Act of 1934, as amended, or the Exchange Act, for complying with new or revised accounting standards. In other words, an emerging growth company can delay the adoption of certain accounting standards until those standards would otherwise apply to private companies. We have elected to take advantage of this extended transition period and, as a result, our operating results and financial statements may not be comparable to the operating results and financial statements of companies who have adopted the new or revised accounting standards.
+
+### THE OFFERING
+
+*(untagged table — column alignment not verified)*
+
+| Class A common stock offered by the selling stockholders | 8,826,703 shares |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| Option to purchase additional shares of Class A common stock offered by the selling stockholders | The selling stockholders have granted the underwriters a 30-day option to purchase up to 1,324,005 additional shares of our Class A common stock at the public offering price, less the underwriting discounts and commissions. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| Class A common stock to be outstanding after this offering | 151,021,138 shares |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| Class B common stock to be outstanding after this offering | 12,302,907 shares |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| Total common stock to be outstanding after this offering | 163,324,045 shares |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| Use of Proceeds | The selling stockholders will receive all net proceeds from the sale of the shares of Class A common stock to be sold in this offering, and we will not receive any of these proceeds. See the section titled “Use of Proceeds” for additional information. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| Voting Rights | Shares of our Class A common stock are entitled to one vote per share. Shares of our Class B common stock are entitled to 20 votes per share. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| Holders of our Class A common stock and Class B common stock generally vote together as a single class, unless otherwise required by law or our amended and restated certificate of incorporation. Each share of our Class B common stock is convertible into one share of our Class A common stock at any time and will convert automatically upon certain transfers and in certain other circumstances as described in our amended and restated certificate of incorporation. See “—Our Dual-Class Capital Structure” above. All outstanding shares of our Class B common stock are held by our co-founders and co-Chief Executive Officers, Heather Hasson and Trina Spear, and Tulco, LLC, our majority stockholder. Immediately following the completion of this offering, these holders will represent approximately 80.1% of the voting power of our outstanding capital stock, assuming no exercise of the underwriters’ option to purchase additional shares. These Class B stockholders have the ability to control the outcome of matters submitted to our stockholders for approval, including the election of our directors and the approval of any change of control transaction. In addition, we and the Class B stockholders have entered into a voting agreement with respect to the election of directors. See the sections titled “Principal and Selling Stockholders” and “Description of Capital Stock” for additional information. |
+| --- |
+
+*(untagged table — column alignment not verified)*
+
+| Controlled Company | We are a “controlled company” within the meaning of the corporate governance rules of the NYSE. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| Risk Factors | See the section titled “Risk Factors” and other information included in this prospectus for a discussion of some of the factors you should consider before deciding to purchase shares of our Class A common stock. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| NYSE Symbol | “FIGS” |
+| --- | --- |
+
+The number of shares of our common stock to be outstanding after this offering as set forth above is based upon 147,730,670 shares of our Class A common stock and 13,264,059 shares of our Class B common stock outstanding, in each case, as of August 31, 2021. This does not include the following additional equity awards that have already been granted:
+
+*(untagged table — column alignment not verified)*
+
+| • | 39,718,610 shares of our Class A common stock issuable upon the exercise of outstanding stock options under our Amended 2016 Equity Incentive Plan, or our 2016 Plan, as of August 31, 2021, at a weighted-average exercise price of $3.74 per share, including 33,387,120 shares underlying stock option awards that are subject to the Equity Award Exchange Agreement (defined below); and |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | 3,381,520 shares of our Class A common stock issuable upon the vesting and settlement of outstanding restricted stock units, or RSUs, under our 2016 Plan as of August 31, 2021, all of which are subject to the Equity Award Exchange Agreement. |
+| --- | --- |
+
+This also does not include the following additional shares of our Class A common stock that have been reserved for future issuance:
+
+*(untagged table — column alignment not verified)*
+
+| • | 13,157,003 shares of our Class A common stock reserved for future issuance under our 2021 Equity Incentive Plan, or our 2021 Plan; and |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | 1,605,647 shares of our Class A common stock reserved for issuance under our 2021 Employee Stock Purchase Plan, or our ESPP. |
+| --- | --- |
+
+Pursuant to an equity award exchange right agreement entered into between us and our co-founders and co-Chief Executive Officers, Ms. Hasson and Ms. Spear, or the Equity Award Exchange Agreement, each of Ms. Hasson and Ms. Spear have a right to require us to exchange any shares of Class A common stock received upon the exercise of stock options or the vesting and settlement of RSUs, in each case granted under our 2016 Plan and outstanding prior to the date of effectiveness of the registration statement related to our IPO, for an equivalent number of shares of Class B common stock. As of August 31, 2021, this included an aggregate of 33,387,120 shares underlying outstanding options and an aggregate of 3,381,520 shares underlying outstanding RSUs held by Ms. Hasson and Ms. Spear. The Equity Award Exchange Agreement does not cover any equity awards granted to Ms. Hasson or Ms. Spear in connection with or following the completion of our IPO.
+
+Except as otherwise indicated, all information in this prospectus reflects and assumes:
+
+*(untagged table — column alignment not verified)*
+
+| • | no exercise of outstanding stock options or vesting and settlement of outstanding RSUs referred to above after August 31, 2021, other than the exercise of stock options in connection with the sale of shares in this offering (see “Principal and Selling Stockholders” for more information); and |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | no exercise by the underwriters of their option to purchase up to an additional 1,324,005 shares of our Class A common stock from the selling stockholders in this offering. |
+| --- | --- |
+
+### SUMMARY FINANCIAL DATA
+The following tables summarize our financial data for the periods and as of the dates indicated. We derived our summary statements of operations data for the years ended December 31, 2019 and 2020 from our audited financial statements included elsewhere in this prospectus. We derived our summary statements of operations data for the six months ended June 30, 2020 and 2021 and the summary balance sheet data as of June 30, 2021 from our unaudited financial statements included elsewhere in this prospectus. In our opinion, the unaudited interim financial statements have been prepared on a basis consistent with our audited financial statements and contain all adjustments, consisting only of normal and recurring adjustments, necessary for a fair presentation of such interim financial statements. Our historical results are not necessarily indicative of the results to be expected in the future and our interim results are not necessarily indicative of the results that may be expected for the full fiscal year or any other future period. You should read the following summary financial data in conjunction with the sections titled “Selected Financial and Other Data” and “Management’s Discussion and Analysis of Financial Condition and Results of Operations” and our financial statements, the accompanying notes and other financial information included elsewhere in this prospectus.
+
+*(untagged table — column alignment not verified)*
+
+|  | Years Ended December 31, |  |  |  | Six Months Ended June 30, |  |  |  |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|  | 2019 |  | 2020 |  | 2020 |  | 2021 |  |
+|  | (in thousands, except share and per share data) |  |  |  |  |  |  |  |
+| Statements of Operations Data: |  |  |  |  |  |  |  |  |
+| Net revenues | $110,494 |  | $263,112 |  | $96,110 |  | $188,196 |  |
+| Cost of goods sold |  | 31,158 |  | 72,888 |  | 26,578 |  | 51,683 |
+|  |  |  |  |  |  |  |  |  |
+| Gross profit |  | 79,336 |  | 190,224 |  | 69,532 |  | 136,513 |
+| Operating expenses: |  |  |  |  |  |  |  |  |
+| Selling |  | 24,840 |  | 51,896 |  | 19,644 |  | 36,337 |
+| Marketing |  | 33,193 |  | 38,852 |  | 16,142 |  | 26,327 |
+| General and administrative(1) |  | 21,650 |  | 41,536 |  | 13,150 |  | 89,850 |
+|  |  |  |  |  |  |  |  |  |
+| Total operating expenses |  | 79,683 |  | 132,284 |  | 48,936 |  | 152,514 |
+|  |  |  |  |  |  |  |  |  |
+| Net (loss) income from operations |  | (347) |  | 57,940 |  | 20,596 |  | (16,001) |
+| Other income (loss), net |  | 459 |  | 136 |  | 116 |  | (69) |
+|  |  |  |  |  |  |  |  |  |
+| Net income (loss) before income tax provision |  | 112 |  | 58,076 |  | 20,712 |  | (16,070) |
+| Provision for income taxes |  | — |  | 8,318 |  | 2,403 |  | 13,036 |
+|  |  |  |  |  |  |  |  |  |
+| Net income (loss) | $112 |  | $49,758 |  | $18,309 |  | $(29,106) |  |
+|  |  |  |  |  |  |  |  |  |
+| Basic earnings (loss) per share(2) | $— |  | $0.32 |  | $0.12 |  | $(0.19) |  |
+|  |  |  |  |  |  |  |  |  |
+| Diluted earnings (loss) per share(2) | $— |  | $0.30 |  | $0.12 |  | $(0.19) |  |
+|  |  |  |  |  |  |  |  |  |
+| Weighted-average shares outstanding - basic(2) |  | 153,052,983 |  | 153,327,308 |  | 153,052,983 |  | 155,725,959 |
+|  |  |  |  |  |  |  |  |  |
+| Weighted-average shares outstanding - diluted(2) |  | 153,624,013 |  | 163,331,348 |  | 153,661,856 |  | 155,725,959 |
+
+*(untagged table — column alignment not verified)*
+
+| (1) | Includes stock-based compensation expense of $0.2 million and $8.7 million for the years ended December 31, 2019 and 2020, respectively, and $0.3 million and $61.0 million for the six months ended June 30, 2020 and 2021, respectively. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| (2) | See Note 13 to our audited financial statements and Note 11 to our unaudited interim financial statements included elsewhere in this prospectus for an explanation of the calculations of our basic and diluted earnings per share and the weighted-average number of shares used in the computation of the per share amounts. |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+|  | As of December 31, |  |  |  | As of June 30, |  |
+| --- | --- | --- | --- | --- | --- | --- |
+|  | 2019 |  | 2020 |  | 2021 |  |
+|  | (in thousands) |  |  |  |  |  |
+| Balance Sheet Data: |  |  |  |  |  |  |
+| Cash and cash equivalents | $38,353 |  | $58,133 |  | $163,968 |  |
+| Total assets |  | 62,598 |  | 133,855 |  | 254,254 |
+| Total liabilities |  | 23,784 |  | 36,178 |  | 50,539 |
+| Total stockholders’ equity |  | 38,814 |  | 97,677 |  | 203,715 |
+
+## Risk Factors
+
+### RISK FACTORS
+Investing in our Class A common stock involves a high degree of risk. You should consider carefully the risks and uncertainties described below, together with all of the other information in this prospectus, including the section titled “Management’s Discussion and Analysis of Financial Condition and Results of Operations” and our financial statements and the accompanying notes included elsewhere in this prospectus before deciding whether to invest in shares of our Class A common stock. The risks and uncertainties described below are not the only ones we face. Additional risks and uncertainties that we are unaware of or that we deem immaterial may also become important factors that adversely affect our business. If any of the following risks occur, our business, financial condition, results of operations and future prospects could be adversely affected. In that event, the market price of our Class A common stock could decline, and you could lose part or all of your investment.
+
+### Risks Related to Our Business
+**Our recent rapid growth may not be sustainable or indicative of future growth, and we expect our growth rate to ultimately slow over time.
+
+We have experienced significant and rapid growth. Net revenues increased from $110.5 million in 2019 to $263.1 million in 2020. For the six months ended June 30, 2020 and 2021, we had net revenues of $96.1 million and $188.2 million, respectively. Our historical rate of growth may not be sustainable or indicative of our future rate of growth, and in future periods, our net revenues could grow more slowly than we expect or decline. We believe that continued growth in net revenues, as well as our ability to improve or maintain margins and profitability, will depend upon, among other factors, our ability to address the challenges, risks and difficulties described elsewhere in this “Risk Factors” section. We cannot provide assurance that we will be able to successfully manage any such challenges or risks to our future growth. Any of these factors could cause our net revenue growth to slow or decline and may adversely affect our margins and profitability. Even if our net revenues continue to increase, we expect that our growth rate may slow for a number of other reasons, including if there is a slowdown in the growth of demand for our products, increased competition, a decrease in the growth or reduction in the size of our overall market or if we cannot capitalize on growth opportunities. Failure to continue to grow our net revenues or improve or maintain margins would adversely affect our business, financial condition and results of operations. You should not rely on our historical rate of growth as an indication of our future performance.
+
+If we fail to manage our growth effectively, our business, financial condition and results of operations may be adversely affected.
+
+We have expanded our operations rapidly since our founding in 2013. To manage our growth effectively, we must continue to implement our operational plans and strategies, improve and expand our infrastructure of people and information systems and expand, train and manage our employee base. We have rapidly increased employee headcount since our inception to support the growth in our business. To support our continued growth, we must effectively integrate, develop and motivate a large number of new employees. We face significant competition for personnel, including in Southern California, where our headquarters is located. To attract top talent, we may need to increase our employee compensation levels to remain competitive in attracting and retaining talented employees. In addition, we could be required to continue to expand our sales and marketing, product development and distribution functions, to upgrade our management information systems and other processes and technology and to obtain more space for our expanding workforce. Additionally, the growth of our business places significant demands on our existing management and other employees. Failure to manage our employee base and hiring needs effectively, including successfully integrating our new hires, may adversely affect our business, financial condition and results of operations.**
+
+**In addition, we are required to manage relationships with a growing number of customers, suppliers, manufacturers, distributors and other third parties. If we are unable to expand supply, manufacturing and distribution capabilities when required, or our information technology systems and our other processes are inadequate to support the future growth of these relationships, we could experience delays in customer service and order response and shipping times, which would adversely impact our reputation and brand. If we are unable to manage the growth of our organization effectively, our business, financial condition and results of operations may be adversely affected.
+
+We only recently achieved profitability and may not be profitable in the future.
+
+We have a history of operating losses and only recently achieved profitability. We expect our operating expenses to increase in the future as we increase our sales and marketing efforts, continue to invest in developing new products, hire additional personnel, expand our operating infrastructure and expand into new geographies. Further, as a public company, we incur additional legal, accounting and other expenses that we did not incur as a private company. These efforts and additional expenses may be more costly than we expect, and we cannot guarantee that we will be able to increase our net revenues to offset our increased operating expenses. Our net revenues growth may slow for a number of other reasons, including if we experience reduced demand for our products, increased competition, a decrease in the growth or reduction in the size of our overall market or if we cannot capitalize on growth opportunities. If our net revenues do not grow at a greater rate than our operating expenses, we will not be able to maintain the level of profitability that we recently achieved.
+
+Our success depends on our ability to maintain the value and reputation of our brand.
+
+The FIGS brand is integral to our business strategy and our ability to attract and engage customers. Maintaining, promoting and positioning our brand will depend largely on the success of our marketing and branding efforts and our ability to provide a consistent, high quality product and customer experience. Our brand may suffer if we fail to achieve these objectives or if our public image were to be tarnished by negative publicity about us, including our products, technology, customer service, personnel, marketing efforts, Ambassadors or suppliers. Even isolated incidents involving our company, suppliers, agents or third-party service providers, or the products we sell, could erode the trust and confidence of our customers and damage the strength of our brand, especially if such incidents result in adverse publicity, governmental investigations, product recalls or litigation.
+
+In addition, the importance of our brand may increase to the extent we experience increased competition, which could require additional expenditures on our brand promotion activities. Maintaining and enhancing our brand image also may require us to make additional investments in areas such as merchandising, marketing and online operations. These investments may be substantial and may not ultimately be successful. Moreover, if we are unsuccessful in protecting our intellectual property rights in our brand, the value of our brand may be harmed. Any harm to our brand and reputation could adversely affect our ability to attract and engage customers and negatively impact our business, financial condition and results of operations.
+
+If we fail to attract new customers, retain existing customers, or fail to maintain or increase sales to those customers, our business, financial condition, results of operations and growth prospects will be harmed.
+
+Our success depends in large part upon widespread adoption of our products by healthcare professionals. In order to attract new customers and continue to expand our customer base, we must appeal to and attract healthcare professionals who identify with our products. If the number of healthcare professionals who are willing to purchase our products does not continue to increase, if we fail to deliver a high quality shopping experience or if our current or potential future customers are not convinced that our products are superior to alternatives, then our ability to retain existing customers, acquire new customers and grow our business may be harmed. We have made significant investments in enhancing our brand and attracting new customers, and we expect to continue to make significant investments to promote our products, including campaigns that can be expensive and may not always result in new customers or increased sales of our products. These factors, in turn,**
+
+**may increase our customer acquisition costs over time. Further, as our brand becomes more widely known, we may not attract new customers or increase our net revenues at the same rates as we have in the past. If we are unable to acquire new customers who purchase products in numbers sufficient to grow our business, we may not be able to generate the scale necessary to drive beneficial network effects with our suppliers, our net revenues may decrease, and our business, financial condition and operating results may be materially adversely affected.
+
+In addition, our future success depends in part on our ability to increase sales to our existing customers over time, as a significant portion of our net revenues are generated from sales to existing customers, particularly those existing customers who are highly engaged and make frequent and/or large purchases of the products we offer. If existing customers no longer find our products appealing, are not satisfied with our customer service, including shipping times, or if we are unable to timely update our products to meet current trends and customer demands, our existing customers may not make purchases, or if they do, they may make fewer or smaller purchases in the future.
+
+If we are unable to continue to attract new customers or our existing customers decrease their spending on the products we offer or fail to make repeat purchases of our products, our business, financial condition, results of operations and growth prospects will be harmed.
+
+If our marketing efforts are not successful, our business, financial condition and results of operations could be harmed.
+
+We create differentiated brand marketing content and utilize performance marketing to drive customers from awareness to consideration to conversion, and promoting awareness of our brand and products is important to our ability to grow our business, drive customer engagement and attract new customers. Our marketing strategy includes brand marketing campaigns across platforms, including email, digital, display, site, direct-mail, commercials, social media and Ambassadors, as well as performance marketing efforts, including retargeting, paid search and product listing advertisements, paid social media advertisements, search engine optimization, personalized email and mobile push notifications through our app.
+
+We have historically benefited from social media, customer referrals and word of mouth to advertise our brand. Social networks are important as a source of new customers and as a means by which to connect with existing customers, and such importance may be increasing. In addition, we have implemented grassroots marketing efforts such as engaging with local doctors, nurses and other healthcare professionals, some of whom we refer to as our Ambassadors, to assist us by introducing our brand and culture to their communities. Our social media and grassroots efforts must be tailored to each particular market. This requires substantial efforts as we enter new markets, as well as ongoing attention and resources. We also seek to engage with our customers and build awareness of our brands through sponsoring unique events and experiences. If our marketing efforts and messaging are not appropriately tailored to and accepted by the healthcare community, we may fail to attract customers and our brand and reputation may be harmed. In addition, our marketing initiatives may become increasingly expensive as competition increases, and generating a meaningful return on those initiatives may be difficult. Our future growth and profitability and the success of our brand will depend in part upon the effectiveness and efficiency of these marketing efforts.
+
+We receive a significant amount of visits to our digital platform via social media or other channels used by our existing and prospective customers. As eCommerce and social media continue to rapidly evolve, we must continue to establish relationships with these channels and may be unable to develop or maintain these relationships on acceptable terms. In addition, we currently receive a significant number of visits to our website and mobile app via search engine results. Search engines frequently change the algorithms that determine the ranking and display of results of a user’s search, which could reduce the number of visits to our website, in turn reducing new customer acquisition and adversely affecting our results of operations. If we are unable to cost-effectively drive traffic to our digital platform, our ability to acquire new customers and our financial condition would suffer. Email marketing efforts are also important to our marketing efforts. If we are unable to**
+
+**successfully deliver emails to our customers or if customers do not engage with our emails, whether out of choice, because those emails are marked as low priority or spam or for other reasons, our business could be adversely affected. Our marketing initiatives may become increasingly expensive and generating a meaningful return on those initiatives may be difficult or unpredictable. Even if we successfully increase net revenues as a result of our marketing efforts, it may not offset the additional marketing expenses we incur.
+
+If our marketing efforts are not successful in promoting awareness of our products, driving customer engagement or attracting new customers, or if we are not able to cost-effectively manage our marketing expenses, our results of operations could be adversely affected.
+
+Our business depends on our ability to maintain a strong community of engaged customers and Ambassadors, including through the use of social media. We may not be able to maintain and enhance our brand if we experience negative publicity related to our marketing efforts or use of social media, fail to maintain and grow our network of Ambassadors or otherwise fail to meet our customers’ expectations.
+
+We partner with Ambassadors to help raise awareness of our brand and engage with our community. Our ability to maintain relationships with our existing Ambassadors and to identify new Ambassadors is critical to expanding and maintaining our customer base. As our market becomes increasingly competitive or as we expand internationally, recruiting and maintaining new Ambassadors may become increasingly difficult. If we are not able to develop and maintain strong relationships with our Ambassador network, our ability to promote and maintain awareness of our brand may be adversely affected. Further, if we incur excessive expenses in this effort, our business, financial condition and results of operations may be adversely affected.
+
+We and our Ambassadors use third-party social media platforms to raise awareness of our brand and engage with our community. As existing social media platforms evolve and new platforms develop, we and our Ambassadors must continue to maintain a presence on these platforms and establish presences on emerging popular social media platforms. If we are unable to cost-effectively use social media platforms as marketing tools, our ability to acquire new customers and our financial condition may suffer. Furthermore, as laws and regulations governing the use of these platforms evolve, any failure by us, our Ambassadors, our sponsors or third parties acting at our direction to abide by applicable laws and regulations in the use of these platforms could subject us to regulatory investigations, class action lawsuits, liability, fines or other penalties and adversely affect our business, financial condition and results of operations. In addition, an increase in the use of social media for product promotion and marketing may cause an increase in the burden on us to monitor compliance of such materials, and increase the risk that such materials could contain problematic product or marketing claims in violation of applicable regulations. For example, in some cases, the Federal Trade Commission has sought enforcement action where an endorsement has failed to clearly and conspicuously disclose a financial relationship or material connection between an influencer and an advertiser.
+
+We also do not prescribe what our Ambassadors post, and our Ambassadors could engage in behavior or use their platforms in a manner that reflects poorly on our brand or is in violation of applicable regulations or platform terms of service, and may be attributed to us. Negative commentary regarding us, our products or Ambassadors and other third parties who are affiliated with us, whether accurate or not, may be posted on social media platforms at any time and may adversely affect our reputation, brand and business. The harm may be immediate, without affording us an opportunity for redress or correction and could have an adverse effect on our business, financial condition and results of operations.
+
+In addition, customer complaints or negative publicity related to our website, mobile app, products, product delivery times, customer data handling, marketing efforts, security practices or customer support, especially on blogs and social media websites, could diminish customer loyalty and community engagement.**
+
+**If we do not continue to successfully develop and introduce new, innovative and updated products, we may not be able to maintain or increase our sales and profitability.
+
+We are an apparel and lifestyle brand for healthcare professionals. As a result, our success depends in part on our ability to create apparel for healthcare professionals, as well as to anticipate and react to changing customer demands in a timely manner. All of our products are subject to changing customer preferences that cannot be predicted with certainty. If we do not continue to introduce new products or innovations on existing products in a timely manner or our new products or innovations are not accepted by our customers, or if our competitors introduce similar products in a more timely fashion, our brand or our position as a leader in medical apparel could be harmed.
+
+Further, our new products and innovations on existing and future products may not receive the same level of customer acceptance as our products have in the past. Customer preferences could change, especially as we expand our product offerings beyond our core scrubwear, and our future success depends in part on our ability to anticipate and respond to these changes. Our failure to anticipate and respond in a timely manner to changing customer preferences could lead to, among other things, lower sales, excess inventory or inventory shortages, markdowns and write-offs and diminished brand loyalty. Even if we are successful in anticipating customer needs and preferences, our ability to adequately address those needs and preferences will in part depend upon our continued ability to develop and introduce innovative, high quality products and designs and maintain our distinctive brand identity as we expand the range of products we offer. A failure to effectively introduce new products or innovations on existing products that appeal to our customers could result in a decrease in net revenues and excess inventory levels, which could adversely affect our business, financial condition and results of operations.
+
+The market for healthcare apparel is highly competitive.
+
+We compete in the healthcare apparel industry, principally on the basis of product quality, innovation, style, price and brand image, as well as customer experience and service. The industry is highly competitive and includes established companies as well as new entrants. We compete against wholesalers of healthcare apparel, such as Careismatic Brands, Barco Uniforms, Landau Uniforms and Superior Group of Companies. Additionally, we compete with healthcare apparel specialty retailers, such as Scrubs & Beyond and Uniform Advantage as well as digitally native brands such as Jaanuu. In addition, we may face future competition from large, diversified apparel companies with brand recognition and well-established sales, manufacturing and distribution infrastructure that choose to expand into the production and marketing of medical apparel. Some of our competitors have longer operating histories, larger market share and greater resources than we do.
+
+Our competitors may be able to achieve and maintain market share more quickly and effectively than we can. Similarly, if customers perceive the products offered by our competitors to be of higher quality than ours, or our competitors offer similar products at lower prices, our revenues may decline, which would adversely affect our results of operations.
+
+Many of our potential competitors promote their brands primarily through traditional forms of advertising, such as print media, and have substantial resources to devote to such efforts. Our competitors may also use traditional forms of advertising more quickly in new markets than we can. While we believe that our DTC business model offers us competitive advantages, our competitors may also be able to increase sales in their new and existing markets faster than we do by emphasizing different distribution channels than we do, such as wholesale and an extensive franchise network of retail stores, and many of our competitors have substantial resources to devote toward increasing sales in such ways. Competition may result in pricing pressures, reduced profit margins or lost market share or a failure to grow our market share, any of which could substantially harm our business, financial condition and results of operations.**
+
+**Our future success depends on the continuing efforts of our key employees and our ability to attract and retain highly skilled personnel and senior management.
+
+We are dependent on our ability to continue to identify, attract, develop, integrate and retain qualified and highly skilled personnel, including senior management, designers, product managers, engineers, data scientists and logistics and supply chain personnel. In particular, we are highly dependent on the services of our co-founders and co-Chief Executive Officers, Heather Hasson and Trina Spear, who are critical to the development of our business, future vision and strategic direction. We also heavily rely on the continued service and performance of other members of our senior management team, who provide leadership, contribute to the core areas of our business and help us to efficiently execute our business. If the senior management team, including any new hires that we make, fails to work together effectively and to execute our plans and strategies on a timely basis, our business and future growth prospects could be harmed.
+
+Additionally, the loss of any key personnel could make it more difficult to manage our operations research, development, production and marketing activities, reduce our employee retention and net revenues and impair our ability to compete. Although we have entered into employment offer letters or agreements with certain of our key personnel, these agreements have no specific duration and constitute at-will employment. We have not obtained key man life insurance policies on any of our senior management team. As a result, we would have no way to cover the financial loss if we were to lose the services of members of our senior management team.
+
+Competition for highly skilled personnel is often intense, especially in Southern California, where our headquarters is located. We may not be successful in attracting, integrating or retaining qualified personnel to fulfill our current or future needs. We may experience difficulty in hiring and retaining highly skilled employees with appropriate qualifications. Failure to manage our employee base and hiring needs effectively, including successfully integrating our new hires, or to retain and motivate our current personnel may adversely affect our business, financial condition and results of operations.
+
+If we cannot maintain our culture as we grow, we could lose the innovation, teamwork and passion that we believe contribute to our success and our business may be harmed.
+
+We believe that a critical component of our success has been our corporate culture. We have invested substantial time and resources in building our culture, which is rooted in passion, purpose and innovation. As we continue to grow, including geographically expanding our presence outside of our headquarters in Santa Monica, California, and developing the infrastructure associated with being a public company, we will need to maintain our culture among a larger number of employees, dispersed across various geographic regions. Any failure to preserve our culture could negatively affect our future success, including our ability to retain and recruit personnel and to effectively focus on and pursue our corporate objectives.
+
+We plan to expand into additional international markets, which will expose us to new and significant risks.
+
+Our future growth depends in part on our expansion efforts outside of the United States. Our current operations and customer base are based largely in the United States, with shipping capabilities to Australia, Canada and the United Kingdom. Therefore, we have a limited number of customers and experience operating outside of the United States. We also have limited experience with regulatory environments and market practices outside of the United States and cannot guarantee that we will be able to penetrate or successfully operate in any market outside of the United States. In connection with our expansion efforts outside of North America, we may encounter obstacles we do not face in the United States, including cultural and linguistic differences, differences in regulatory environments and market practices, difficulties in keeping abreast of market, business and technical developments and foreign customers’ tastes and preferences.
+
+We may also encounter difficulty expanding into new markets because of limited brand recognition in those markets, leading to delayed acceptance of our apparel by customers there. In particular, we have no assurance that our marketing efforts will prove successful outside of the narrow geographic regions in which they have**
+
+**been used in the United States. The expansion into new markets may also present competitive, merchandising, forecasting and distribution challenges that are different from or more severe than those we currently face. There are also other risks and costs inherent in doing business in international markets, including:
+
+*(untagged table — column alignment not verified)*
+
+| • | the need to adapt and localize products for specific countries to account for, among other things, different cultural tastes, size and fit preferences or regulatory requirements; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | difficulty establishing and managing international operations and the increased operations, travel, infrastructure, including establishment of local delivery service and customer service operations, and legal compliance costs associated with locations in different countries or regions; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | increased shipping times to and from international markets; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | the need to vary pricing and margins to effectively compete in international markets; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | increased competition from local providers of similar products; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | the ability to protect and enforce intellectual property rights abroad; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | the need to offer customer support in various languages; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | difficulties in understanding and complying with local laws, regulations and customs in other jurisdictions; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | compliance with anti-bribery laws, such as the U.S. Foreign Corrupt Practices Act, or FCPA, and the U.K. Bribery Act 2010, or U.K. Bribery Act, by us, our employees and our business partners; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | complexity and other risks associated with current and future legal requirements in other countries, including legal requirements related to medical apparel, customer advertising protection, customer product safety and data privacy frameworks, such as the EU General Data Protection Regulation 2016/679, or GDPR; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | varying business practices and customs related to the sale of medical apparel; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | varying levels of internet technology adoption and infrastructure, and increased or varying network and hosting service provider costs; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | tariffs and other non-tariff barriers, such as quotas and local content rules, as well as tax consequences; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | fluctuations in currency exchange rates and the requirements of currency control regulations, which might restrict or prohibit conversion of other currencies into U.S. dollars; and |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | political or social unrest or economic instability in a specific country or region in which we operate, including, for example, the effects of “Brexit,” which could have an adverse impact on our operations in that location. |
+| --- | --- |
+
+Our failure to successfully manage these risks could harm our international operations and have an adverse effect on our business, financial condition and results of operations.
+
+Shipping is a critical part of our business and any changes in, or disruptions to, our shipping arrangements could adversely affect our business, financial condition and results of operations.
+
+We currently rely on third-party global providers to deliver the products we offer on our website and mobile app. If we are not able to negotiate acceptable pricing and other terms with these providers, or if these providers experience performance problems or other difficulties in processing our orders or delivering our products to customers, it could negatively impact our results of operations and our customers’ experience. For example, changes to the terms of our shipping arrangements or the imposition of surcharges or surge pricing may adversely impact our margins and profitability. In addition, our ability to receive inbound inventory efficiently and ship merchandise to customers may be negatively affected by factors beyond our and these providers’ control, including pandemic, weather, fire, flood, power loss, earthquakes, acts of war or terrorism or other**
+
+**events specifically impacting other shipping partners, such as labor disputes, financial difficulties, system failures and other disruptions to the operations of the shipping companies on which we rely. We have in the past experienced, and may in the future experience, shipping delays for reasons outside of our control. We are also subject to risks of damage or loss during delivery by our shipping vendors. If the products ordered by our customers are not delivered in a timely fashion, including to international customers, or are damaged or lost during the delivery process, our customers could become dissatisfied and cease buying products from us, which would adversely affect our business, financial condition and results of operations.
+
+If we experience problems with our distribution and warehouse management system, our ability to meet customer expectations, manage inventory, complete sales and achieve objectives for operating efficiencies could be harmed.
+
+We rely on our sole fulfillment center in the City of Industry, California, which is operated by our third-party logistics provider, for all of our product distribution. Our fulfillment center includes computer-controlled and automated equipment and relies on a warehouse management system to manage supply chain fulfillment operations, which means its operations are complicated and may be subject to a number of risks related to cybersecurity, the proper operation of software and hardware, electronic or power interruptions or other system failures. In addition, because all of our products are distributed from our City of Industry fulfillment center, our operations could also be interrupted by labor difficulties, or by floods, fires or other natural disasters near our fulfillment center. We maintain business interruption insurance, but it may not adequately protect us from the adverse effects that could result from significant disruptions to our distribution system, such as the long-term loss of customers or an erosion of our brand image. Moreover, if we or our third-party logistics provider are unable to adequately staff our fulfillment center to meet demand or if the cost of such staffing is higher than historical or projected costs due to mandated wage increases, regulatory changes, hazard pay, international expansion or other factors, our results of operations could be harmed. In addition, operating a fulfillment center comes with potential risks, such as workplace safety issues and employment claims for the failure or alleged failure to comply with labor laws or laws respecting union organizing activities. Our distribution capacity is also dependent on the timely performance of services by third parties, including the shipping of our products to and from our City of Industry distribution facility. We may need to operate additional fulfillment centers in the future to keep pace with the growth of our business, and we cannot assure you that we will be able to locate suitable facilities on commercially acceptable terms in accordance with our expansion plans, nor can we assure you that we will be able to recruit qualified managerial and operational personnel to support our expansion plans. If we encounter problems with our distribution and warehouse management systems, our ability to meet customer expectations, manage inventory and fulfillment capacity, complete sales, fulfill orders in a timely manner and achieve objectives for operating efficiencies could be harmed, which could also harm our reputation and our relationship with our customers.
+
+If we are unable to accurately forecast customer demand, manage our inventory and plan for future expenses, our results of operations could be adversely affected.
+
+We base our current and future inventory needs and expense levels on our operating forecasts and estimates of future demand. To ensure adequate inventory supply, we must be able to forecast inventory needs and expenses and place orders sufficiently in advance with our suppliers and manufacturers, based on our estimates of future demand for particular products. Failure to accurately forecast demand may result in inefficient inventory supply or increased costs. This risk may be exacerbated by the fact that we may not carry a significant amount of inventory and may not be able to satisfy short-term demand increases. Accordingly, if we fail to accurately forecast customer demand, we may experience excess inventory levels or a shortage of products available for sale. Inventory levels in excess of customer demand may result in inventory write-downs or write-offs and the sale of excess inventory at discounted prices, which would cause our gross margins to suffer and could impair the strength and premium nature of our brand. Further, lower than forecasted demand could also result in excess manufacturing capacity or reduced manufacturing efficiencies, which could result in lower margins. Conversely, if we underestimate customer demand, our suppliers and manufacturers may not be able to**
+
+deliver products to meet our requirements, and we may be subject to higher costs in order to secure the necessary production capacity or we may incur increased shipping costs. An inability to meet customer demand and delays in the delivery of our products to our customers could result in reputational harm and damaged customer relationships and have an adverse effect on our business, financial condition and results of operations.
+
+Moreover, while we devote significant attention to forecasting efforts, the volume, timing, value and type of the orders we receive are inherently uncertain. In addition, we cannot be sure the same growth rates, trends and other key performance metrics are meaningful predictors of future growth. Our business, as well as our ability to forecast demand, is also affected by general economic and business conditions in the United States and the degree of customer confidence in future economic conditions, and we anticipate that our ability to forecast demand due to these types of factors will be increasingly affected by conditions in international markets. A significant portion of our expenses is fixed, and as a result, we may be unable to adjust our spending in a timely manner to compensate for any unexpected shortfall in net revenues. Any failure to accurately predict net revenues or gross margins could cause our operating results to be lower than expected, which could adversely affect our financial condition.
+
+#### Merchandise returns could harm our business.
+**We allow our customers to return our products, subject to our return policy. We generally accept merchandise returns for full refund if returned within 30 days of the original purchase date and for exchange up to 30 days from the original purchase date. Our revenue is reported net of returns and discounts. We estimate our liability for product returns based on historical return trends and an evaluation of current economic and market conditions. We record the expected customer refund liability as a reduction to revenue, and the expected inventory right of recovery as a reduction of cost of goods sold. The introduction of new products, changes in customer confidence or shopping habits or other competitive and general economic conditions could cause actual returns to exceed our estimates. If actual return costs differ from previous estimates, the amount of the liability and corresponding revenue are adjusted in the period in which such costs occur. In addition, from time to time, our products may be damaged in transit, which can also increase return rates. Returned goods may also be damaged in transit as part of the return process which can impede our ability to resell returned goods. Competitive pressures could cause us to alter our return policies or our shipping policies, which could result in an increase in damaged products and an increase in product returns. If the rate of product returns increases significantly or if product return economics become less efficient, our business, financial condition and results of operations could be harmed.
+
+The fluctuating cost of raw materials could increase our cost of goods sold and cause our business, financial condition and results of operations to suffer.
+
+We have in the past experienced, and may in the future experience, fluctuations in the cost of raw materials used in our products for reasons beyond our control. For example, our core scrubs fabric includes synthetic fabric, the components of which may experience price fluctuations. Our costs for raw materials are affected by, among other things, weather, customer demand, speculation on the commodities market, the relative valuations and fluctuations of the currencies of producer versus customer countries and other factors that are generally unpredictable and beyond our control. Increases in the cost of raw materials could adversely affect our cost of goods sold, business, financial condition and results of operations.
+
+Our business may be subject to uncertainty as a result of the COVID-19 pandemic.
+
+The COVID-19 pandemic has magnified the indispensability of healthcare professionals and the demand for scrubs and other medical apparel. We experienced increased demand in 2020 and in the six months ended June 30, 2021, while certain of our ocean freight providers, as well as some of our suppliers and manufacturers, particularly those operating in Vietnam, are experiencing delays, in the past have experienced delays and shut-downs, and could experience delays and shut-downs again in the future due to the COVID-19 pandemic. In order**
+
+**to manage the impact of these disruptions and meet our customers’ expectations, we have from time to time used faster but more expensive air freight, which has in the past increased our cost of goods sold, and we may from time to time need to continue to use more expensive air freight in the future. The COVID-19 pandemic may continue to adversely affect workforces, economies and financial markets globally, potentially leading to an economic downturn and a reduction in consumer spending or an inability for our suppliers, vendors or other parties with whom we do business to meet their contractual obligations, which could negatively impact our business and results of operations. We believe the COVID-19 pandemic has accelerated the awareness of the FIGS brand and a shift in purchasing decisions that will continue to drive future growth; however, there can be no assurance that these trends will continue, and the ultimate impact of the COVID-19 pandemic on our business remains uncertain.
+
+Our reliance on a limited number of third-party suppliers to provide materials for and produce our products could cause problems in our supply chain and subject us to additional risks.
+
+We rely on third-party suppliers to manufacture our raw materials and products. Our products are manufactured by third parties and may be available, in the short-term, from a limited number of sources. We choose not to enter into long-term contracts with any of our suppliers or manufacturers for the production and supply of our raw materials and products, and typically transact business with our suppliers on an order-by-order basis. We also compete with other companies for raw materials and production.
+
+We currently source the vast majority of the fabrics used in our products from two third-party suppliers in China, and we source the other raw materials used in our products, including items such as content labels, elastics, buttons, clasps and drawcords, from suppliers located predominantly in the Asia Pacific region. We also work with a limited number of manufacturing partners that produce our products in facilities located in South East Asia, China and South America, with the vast majority of our products currently being produced by our two largest manufacturing suppliers in South East Asia. We are continuously working to diversify our sourcing and manufacturing capabilities.
+
+We may experience a disruption in the supply of fabrics or raw materials from current sources, and we may be unable to locate alternative materials suppliers of comparable quality at an acceptable price, or at all. In addition, if we experience significantly increased demand, or if we need to replace an existing supplier or manufacturer, we may be unable to locate additional supplies of fabrics or raw materials or additional manufacturing capacity on terms that are acceptable to us, or at all, or we may be unable to locate any supplier or manufacturer with sufficient capacity to meet our requirements or to fill our orders in a timely manner. Identifying a suitable supplier is an involved process that requires us to become satisfied with its quality control, responsiveness and service, financial stability and labor and other ethical practices. Even if we are able to expand existing or find new manufacturing or fabric sources, we may encounter delays in production and added costs as a result of the time it takes to train our suppliers and manufacturers in our methods, products, and quality control standards. Our supply of fabric or the manufacture of our products could be disrupted or delayed by the impact of global health pandemics, including the current COVID-19 pandemic, and the related government and private sector responsive actions, such as border closures, restrictions on product shipments and travel restrictions. For example, as a result of the COVID-19 pandemic, certain of our ocean freight providers, as well as some of our suppliers and manufacturers, particularly those operating in Vietnam, are experiencing delays, in the past have experienced delays and shutdowns, and could experience delays and shutdowns again in the future. In order to manage the impact of these disruptions and meet our customers’ expectations, we have from time to time used faster but more expensive air freight, which has in the past increased our cost of goods sold, and we may from time to time need to continue to use more expensive air freight in the future. Any delays, interruption or increased costs in the supply of fabric or the manufacture of our products could have an adverse effect on our ability to meet customer demand for our products and result in lower net revenues, increased cost of goods sold and lower income from operations, both in the short and long term.**
+
+**Moreover, we have occasionally received, and may in the future receive, shipments of products that fail to comply with our technical specifications or that fail to conform to our quality control standards. Under these circumstances, unless we are able to obtain replacement products in a timely manner, we risk the loss of net revenues resulting from the inability to sell those products and related increased administrative and shipping costs. Additionally, if the unacceptability of our products is not discovered until after such products are purchased by our customers, our customers could lose confidence in our products, and our business and brand could be harmed.
+
+The operations of many of our suppliers are subject to additional risks that are beyond our control and that could harm our business, financial condition and results of operations.
+
+Substantially all of our suppliers are located outside of the United States, and as a result, we are subject to risks associated with doing business abroad, including:
+
+*(untagged table — column alignment not verified)*
+
+| • | the imposition of new laws and regulations, including those relating to labor conditions, quality and safety standards, imports, duties, taxes and other charges on imports, as well as trade restrictions and restrictions on currency exchange or the transfer of funds; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | political unrest, terrorism, labor disputes and economic instability resulting in the disruption of trade from foreign countries in which our products are manufactured; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | reduced protection for intellectual property rights, including trademark protection, in some countries, particularly in China; |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | disruptions or delays in shipments whether due to port congestion, labor disputes, product regulations and/or inspections or other factors, natural disasters or health pandemics, or other transportation disruptions; and |
+| --- | --- |
+
+*(untagged table — column alignment not verified)*
+
+| • | the impact of health conditions, including the ongoing COVID-19 pandemic, and related government and private sector responsive actions, and other changes in local economic conditions in countries where our manufacturers, suppliers or customers are located. |
+| --- | --- |
+
+These and other factors beyond our control could interrupt our suppliers’ production in offshore facilities, influence the ability of our suppliers to export our products cost-effectively or at all and inhibit our suppliers’ ability to procure certain materials, any of which could harm our business, financial condition and results of operations.
+
+Any failure by us or our manufacturers or suppliers to comply with product safety, labor or other laws, provide safe conditions for our or their workers or use or be transparent about ethical business practices may damage our reputation and brand and harm our business.
+
+We are committed to supporting our communities around the globe. Operating with compassion and integrity is core to our values, which makes our reputation sensitive to allegations of unethical or improper business practices, whether real or perceived. The failure of any of our suppliers or manufacturers to provide safe and humane factory conditions and oversight at their facilities could damage our reputation and brand or result in legal claims against us. We rely on our manufacturers’ and suppliers’ compliance reporting in order to comply with regulations applicable to our products. This is further complicated by the fact that expectations of ethical business practices continually evolve and may be substantially more demanding than applicable legal requirements.
+
+We do not control our suppliers and manufacturers or their business, and they may not comply with our guidelines or applicable law. The products we sell are subject to regulation by the Federal Customer Product Safety Commission, the Federal Trade Commission and similar state and international regulatory authorities. Product safety, labeling and licensing concerns may require us to voluntarily remove selected merchandise from our inventory

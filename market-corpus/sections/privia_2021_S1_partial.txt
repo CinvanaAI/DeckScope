@@ -1,0 +1,953 @@
+Privia Health Group, Inc. (PRVA) | S-1 | FORM S-1 | Filed: 2021-04-07
+https://www.sec.gov/Archives/edgar/data/1759655/000119312521108380/d92164ds1.htm
+→ https://www.sec.gov/Archives/edgar/data/1759655/000119312521108380/d92164ds1.htm
+Content-Type: text/html
+
+As filed with the Securities and Exchange Commission on April 7, 2021 Registration No. 333- SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM S-1 REGISTRATION STATEMENT UNDER THE SECURITIES ACT OF 1933 Privia Health Group, Inc. (Exact Name of Registrant as Specified in Its Charter)
+
+| Delaware                        |     |                         8000 |     | 81-3599420            |
+| (State or Other Jurisdiction of 
+ Incorporation or Organization)  |     | -Primary Standard Industrial 
+   Classification Code Number |     | -I.R.S. Employer      
+ Identification Number |
+
+950 N. Glebe Rd., Suite 700 Arlington, VA 22203 (571) 366-8850 (Address, Including Zip Code, and Telephone Number, Including Area Code, of Registrant’s Principal Executive Offices) Shawn Morris Chief Executive Officer Privia Health Group, Inc. 950 N. Glebe Rd., Suite 700 Arlington, VA 22203 (571) 366-8850 (Name, Address, Including Zip Code, and Telephone Number, Including Area Code, of Agent For Service) Copies to:
+
+| Richard D. Truesdell, Jr., Esq. 
+ Roshni Banker Cariello          
+ Davis Polk & Wardwell LLP       
+ 450 Lexington Avenue            
+ New York, New York 10017        
+ (212) 450-4000                  |     | Mitchell S. Bloom, Esq.    
+ Benjamin K. Marsh, Esq.    
+ Michael J. Rosenberg, Esq. 
+ Goodwin Procter LLP        
+ 620 8th Avenue             
+ New York, NY 10018         
+ (212) 813-8800             |
+
+Approximate date of commencement of proposed sale to the public: As soon as practicable after the effective date of this Registration Statement. If any of the securities being registered on this form are to be offered on a delayed or continuous basis pursuant to Rule 415 under the Securities Act of 1933, check the following box. ☐ If this form is filed to register additional securities for an offering pursuant to Rule 462(b) under the Securities Act, check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering. ☐ If this form is a post-effective amendment filed pursuant to Rule 462(c) under the Securities Act, check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering. ☐ If this form is a post-effective amendment filed pursuant to Rule 462(d) under the Securities Act, check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering. ☐ Indicate by check mark whether the registrant is a large accelerated filer, an accelerated filer, a non-acceleratedfiler, a smaller reporting company or an emerging growth company. See the definitions of “large accelerated filer,” “accelerated filer,” “smaller reporting company” and “emerging growth company” in Rule 12b-2of the Exchange Act.
+
+| Large accelerated filer |     | ☐ |     | Accelerated filer         |     | ☐ |
+| Non-accelerated filer   |     | ☒ |     | Smaller reporting company |     | ☐ |
+|                         |     |   |     | Emerging growth company   |     | ☒ |
+
+If an emerging growth company, indicate by check mark if the registrant has elected not to use the extended transition period for complying with any new or revised financial accounting standards provided pursuant to Section 7(a)(2)(B) of the Securities Act. ☐
+
+| Title Of Each Class Of                  
+ Securities To Be Registered             |     |             Proposed 
+    Maximum Aggregate 
+ Offering Price(1)(2) |     |        Amount Of 
+ Registration Fee |
+| Common Stock, par value $0.01 per share |     |         $100,000,000 |     |          $10,910 |
+
+| (1) | Includes                                                                           
+ shares which the underwriters have the right to purchase to cover over-allotments. |
+
+| (2) | Estimated solely for the purpose of computing the amount of the registration fee pursuant to Rule 457(o) under 
+ the Securities Act of 1933.                                                                                    |
+
+The Registrant hereby amends this registration statement on such date or dates as may be necessary to delay its effective date until the registrant shall file a further amendment which specifically states that this registration statement shall thereafter become effective in accordance with Section 8(a) of the Securities Act of 1933 or until the registration statement shall become effective on such date as the Commission, acting pursuant to said Section 8(a), may determine.
+
+The information in this prospectus is not complete and may be changed. We may not sell these securities until the registration statement filed with the Securities and Exchange Commission is effective. This preliminary prospectus is not an offer to sell these securities and we are not soliciting offers to buy these securities in any state where the offer or sale is not permitted. SUBJECT TO COMPLETION, DATED APRIL 7, 2021 PRELIMINARY PROSPECTUS Shares Privia Health Group, Inc. Common Stock $ per share Privia Health Group, Inc. (“Privia Health”) is offering shares of its common stock and the selling shareholder is selling shares of Privia Health’s common stock. This is our initial public offering and no public market exists for our common stock. We anticipate that the initial public offering price will be between $ and $ per share. We intend to apply to list our common stock on the Nasdaq Global Select Market (“NASDAQ”) under the symbol “PRVA”. Investing in our common stock involves risks. See “ Risk Factors” beginning on page 24. We are an “emerging growth company” as defined in the Jumpstart Our Business Startups Act and will therefore be subject to reduced reporting requirements. Immediately after this offering, assuming an offering size as set forth above, we expect to be a “controlled company” within the meaning of the corporate governance standards of the NASDAQ. See “Management—Controlled Company Status.” Neither the Securities and Exchange Commission nor any state securities commission has approved or disapproved of these securities or determined if this prospectus is truthful or complete. Any representation to the contrary is a criminal offense.
+
+|                                                     |     | Per   
+ Share |     | Total |
+|:----------------------------------------------------|:----|:------|:----|:------|
+| Public offering price                               |     | $     |     | $     |
+| Underwriting discounts and commissions              |     | $     |     | $     |
+| Proceeds to Privia Health before expenses(1)        |     | $     |     | $     |
+| Proceeds to the selling stockholder before expenses |     | $     |     | $     |
+
+| (1) | We have agreed to reimburse the underwriters for certain FINRA-related expenses. See “Underwriting.” |
+
+Privia Health has granted the underwriters the right to purchase an additional shares of common stock to cover over-allotments. The underwriters expect to deliver the shares to purchasers on or about , 2021 through the book-entry facilities of The Depository Trust Company.
+
+| Goldman Sachs & Co. LLC |     | J.P. Morgan |
+
+| Credit Suisse         |     | Piper Sandler          |     | William Blair |
+| Canaccord Genuity     |     | Truist Securities      |     |               |
+| R. Seelaus & Co., LLC |     | Siebert Williams Shank |     |               |
+
+, 2021
+
+OUR MISSION Transform healthcare to enable doctors and their teams to focus on keeping people healthy WHO WE ARE National physician platform transforming the healthcare delivery experience WHAT WE DO Provide tailored solutions for physicians and providers, creating value and securing their future
+
+TABLE OF CONTENTS
+
+|                                                                            |     | Page |     |
+| Prospectus Summary                                                         |     |      |   1 |
+| Risk Factors                                                               |     |      |  24 |
+| Special Note Regarding Forward-Looking Statements                          |     |      |  72 |
+| Use of Proceeds                                                            |     |      |  73 |
+| Capitalization                                                             |     |      |  75 |
+| Dilution                                                                   |     |      |  77 |
+| Selected Consolidated Financial Data                                       |     |      |  79 |
+| Management’s Discussion and Analysis of Financial Condition and Results of 
+ Operations                                                                 |     |      |  84 |
+| Certain Relationships and Related Party Transactions                       |     |      | 167 |
+
+|                                                       |     | Page |     |
+| Description of Certain Indebtedness                   |     |      | 169 |
+| Principal and Selling Stockholders                    |     |      | 171 |
+| Description of Capital Stock                          |     |      | 173 |
+| Material U.S. Federal Tax Considerations for Non-U.S. 
+ Holders of Common Stock                               |     |      | 178 |
+| Shares Eligible for Future Sale                       |     |      | 181 |
+| Underwriting                                          |     |      | 183 |
+| Legal Matters                                         |     |      | 188 |
+| Experts                                               |     |      | 188 |
+| Where You Can Find More Information                   |     |      | 188 |
+| Index to Consolidated Financial Statements            |     |      | F-1 |
+
+In this prospectus, “Privia,” “Privia Health,” the “Company,” “we,” “us” and “our” refer to Privia Health Group, Inc. and its consolidated subsidiaries. We and the underwriters have not authorized anyone to provide any information or to make any representations other than those contained in this prospectus or in any free writing prospectuses we have prepared. We and the underwriters take no responsibility for, and can provide no assurance as to the reliability of, any other information that others may provide you. We are offering to sell, and seeking offers to buy, shares of common stock only in jurisdictions where offers and sales are permitted. The information contained in this prospectus is accurate only as of the date of this prospectus, regardless of the time of delivery of this prospectus or of any sale of the common stock. Until , 2021, all dealers that buy, sell or trade our common stock, whether or not participating in this offering, may be required to deliver a prospectus. This is in addition to the dealers’ obligation to deliver a prospectus when acting as underwriters and with respect to their unsold allotments or subscriptions. i
+
+PROSPECTUS SUMMARY This summary highlights selected information contained elsewhere in this prospectus. This summary does not contain all of the information that you should consider before investing in our common stock. For a more complete understanding of us and this offering, you should read and carefully consider the entire prospectus, including the more detailed information set forth under “Risk Factors” and “Management’s Discussion and Analysis of Financial Condition and Results of Operations” and our consolidated financial statements and the related notes, before making an investment decision. Some of the statements in this prospectus are forward-looking statements. See “Forward-Looking Statements.” Unless the context is otherwise required, all references in this prospectus to “Privia,” “Privia Health,” the “Company,” “we,” “us” and “our” refer to Privia Health Group, Inc. and its consolidated subsidiaries. Privia Health is a technology-driven, national physician-enablement company that collaborates with medical groups, health plans, and health systems to optimize physician practices, improve patient experiences, and reward doctors for delivering high-value care in both in-person and virtual care settings (the “Privia Platform”). We directly address three of the most pressing issues facing physicians today: the transition to the value-based care (“VBC”) reimbursement model, the ever-increasing administrative requirements to operate a successful medical practice and the need to engage patients using modern user-friendly technology. We seek to accomplish these objectives by entering markets and organizing existing physicians and non-physician clinicians into a unique practice model that combines the advantages of a partnership in a large regional medical group (each, a “Medical Group”) with significant local autonomy for the physicians (collectively, “Privia Physicians”) and non-physician clinicians (collectively “Privia Clinicians” and, together with the Privia Physicians, the “Privia Providers”) joining our Medical Groups. Our Medical Groups are designated as in-network by all major health insurance plans in all of our markets, and all Privia Providers are credentialed with such health insurance plans. Our platform is purpose-built, organizing physicians into cost efficient, value-based and primary-care centric networks bolstered by strong physician governance, and promotes a culture of physician leadership. The Privia Platform is powered by our proprietary end-to-end, cloud-based technology solution that integrates both Privia-developed and third-party applications into a seamless interface and workflow that manages all aspects of our Privia Physicians’ provision of healthcare services (the “Privia Technology Solution”). We enhance the patient experience, improve practice economics and influence point of care delivery through investments in data analytics, revenue cycle management (“RCM”), practice and clinical operations and payer alignment. The Privia Platform is designed to succeed across demographic cohorts, acuity levels and reimbursement models, including traditional fee-for-service(“FFS”) Medicare, the Medicare Shared Savings Program (“MSSP”), Medicare Advantage, Medicaid, commercial insurance and other existing and emerging direct contracting programs with payers and employers. We believe that the Privia model is a highly scalable solution to help our nation’s healthcare system achieve the quadruple aim of better outcomes, lower costs, improved patient experience, and happier and more engaged providers. Our customers have affirmed our model, as Privia has rapidly become one of the nation’s leading independent physician companies since launching our first Medical Group in 2013. There are three core elements to our physician alignment approach:
+
+| 1) | A focus on maximizing the potential of a physician’s medical practice across the physician’s entire 
+ patient panel, with the end goal of succeeding in VBC reimbursement;                                |
+
+| 2) | A highly flexible payer-agnostic approach to address the needs of multiple types of physician practices, from 
+ independently owned to hospital employed or hospital affiliated practices; and                                |
+
+| 3) | Delivering a profitable model for both Privia and our Privia Physicians, regardless of the reimbursement model, 
+ geographic environment or specialty.                                                                            |
+
+The Privia Platform is powered by the Privia Technology Solution, which efficiently manages all aspects of our Privia Physicians’ provision of healthcare services and eliminates the complexity and reduces the cost of
+
+
+otherwise having to buy more than 30 point solutions. The intended result is engaged Privia Providers delivering high quality virtual and in-person healthcare to patients with superior clinical outcomes and experiences at lower costs. We believe our technology-enabled platform is highly scalable, allowing us to both rapidly build density in new geographic markets and guide those markets from FFS to VBC by shifting the reimbursement model and helping our Privia Providers better manage the cost of care through a focus on quality and success-based reimbursement. This model is designed to enable significant growth, with significant revenue visibility, low invested capital and attractive margins. We believe the Privia Platform aligns with the direction healthcare is headed in the United States, including (1) a macro shift towards VBC models that focus on delivering coordinated, high quality care at lower total costs, (2) a greater focus on the patient experience, and (3) a focus on optimizing provider workflow and bringing back the joy of practicing medicine. We believe our approach is highly attractive to multiple types of physician practices given our significant value proposition and our comprehensive solution set. We believe our technology-enabled platform is differentiated and well positioned to drive sustainable long-term growth, with attractive margins and attractive returns on invested capital. The Privia Platform has the following key attributes:
+
+| • |     | Addresses a Large Total Addressable Market: Targets a large and growing total addressable market                                    
+ (“TAM”) (physician enablement market estimated to be $1.9 trillion, with an ability to serve over 1 million providers in the U.S.). |
+
+| • |     | Purpose-Built to Scale Nationally: Flexible model to enter new markets with multiple types of physician        
+ practices (more than 485,000 primary care physicians and more than 535,000 physician specialists in the U.S.). |
+
+| • |     | Powered by the Privia Technology Solution: Comprehensive cloud-based technology-enabled platform designed                                                                                                          
+ to optimize provider workflow across the full continuum of reimbursement environments as well as both virtual and in-person care settings (eliminates the need to buy and integrate more than 30 point solutions). |
+
+| • |     | Establishes Provider Density in Local Markets: Supports a proven expansion strategy resulting in increased                                                                                                                
+ relevance with payers and patients (over 650 care center locations across six states and the District of Columbia, targeting over 70 metropolitan statistical areas (“MPSAs”) located within those geographical markets). |
+
+| • |     | Designed to Transform Care Delivery: Designed to transition care delivery in each market from FFS to VBC                                                                                                                        
+ and to enhance the care model and ability of Privia Providers to manage higher risk patients (more than $430 million total savings generated across Commercial, Medicare Advantage, Medicare Shared Savings, and Medicaid since 
+ 2014; patient Net Promoter Score (NPS) of 85).                                                                                                                                                                                  |
+
+| • |     | Demonstrates Physician Value Proposition Consistently: Reduces administrative burden and generally                                                                                                                                            
+ increases provider profitability (95% Privia Provider retention rate over the past four years in addition to a five-time (2016-2020) Healthcare Financial Management Association’s (HFMA) MAP Award recipient for high performance in revenue 
+ cycle).                                                                                                                                                                                                                                       |
+
+| • |     | Generates Attractive Financial Results: Has an established scale, diversified revenue mix with no single                                                                                                         
+ payer or individual practice concentration, and is profitable and capital efficient with attractive growth (as of the year ended December 31, 2020, approximately $817 million in revenue and $1.3 billion total 
+ practice collections, high return on invested capital with superior unit economics and high free cash flow conversion). See “Key Metrics” for a discussion of practice collections.                              |
+
+| • |     | Led by a Highly Experienced Executive and Physician Leadership Team: Our management team has significant                                                                                                                 
+ experience leading payer, provider and healthcare information technology organizations. Our Privia Physicians assume key leadership roles within our Medical Groups, Medical Group committees, and ACOs (defined below). |
+
+
+We believe our model is highly scalable. Privia currently operates in six states and the
+District of Columbia, covering over 70 target MPSAs (including 20 out of the largest 100 MPSAs). We aim to build relevance in each of our markets with all key constituents (physicians, non-physician
+clinicians, patients, government programs, commercial payers and employers). Privia started by partnering with small and large independent physician practices focused on primary care, pediatrics, women’s health, and select subspecialties
+focused on treating chronically ill patients. We now have more than 2,770 Privia Providers who have signed to join our platform as of December 31, 2020. Of these, we have approximately 2,550 Privia Providers on our platform who are credentialed
+and bill for health care services, through our Medical Groups, as of December 31, 2020 (“implemented providers”). Once a provider signs an agreement to join Privia, there is a five-to-eight
+month period on average before that provider is implemented on our platform. This time lag between signing and implementing a Privia Provider gives us very high visibility into total practice collections over a forward twelve-month period. Our
+implemented Privia Providers operate in over 650 care center locations providing care to over 3 million patients, including approximately 410,000 commercial patients who have selected one of our Medical Groups as their provider of primary care
+services, as measured at the end of a particular period (“attributed lives”), 83,000 Medicare Advantage attributed lives, 150,000 Medicare Shared Savings / Maryland CPC+ Program attributed lives, and over 30,000 Medicaid attributed lives.
+In addition, we currently have over 170,000 patients aging into Medicare over the next five years. Our confidence in our business model is based on our belief that the Privia Platform works across all geographies and will allow us to enter many new
+markets across the country over the coming decades and fundamentally move those markets to VBC.
+
+Privia Physicians join the Medical Group
+in their geographic market as an owner of the Medical Group. Certain of our Medical Groups are majority-owned by us (each, an “Owned Medical Group”), with Privia Physicians collectively owning a minority interest. However, in those markets
+in which state regulations do not allow us to own Medical Groups, the Medical Groups are owned entirely by Privia Physicians (each, a “Non-Owned Medical Group”). We provide management services to each Medical Group though a local
+management services organization (each, a “MSO”) established with the objective of maximizing the independence and autonomy of our Privia Physicians’ practices (each, an “Affiliated Practice”), while providing Medical Groups
+with access to VBC opportunities either directly or through Privia-owned accountable care organizations (each, an “ACO”). In markets with Non-Owned Medical Groups, we earn revenue by providing administrative and management services through
+owned MSO entities (FFS-administrative services revenue). We have national committees that distribute quality guidance, and we employ Chief Medical Officers who provide clinical oversight and direction over the clinical affairs of the Owned Medical
+Groups. Additionally, we hold the provider contracts, maintain the patient records, set reimbursement rates, and negotiate payer contracts on behalf of the Owned Medical Groups. The Medical Groups have no ownership in the underlying Affiliated
+Practices, but the Affiliated Practices do provide certain services to the Medical Groups, such as use of space, non-physician staffing, equipment and supplies. We principally derive our revenues from the following three sources:
+(i) FFS-patient care revenue generated from providing healthcare services to patients through Privia Providers of Owned Medical Groups and management and administrative services earned for administrative services provided to Non-Owned Medical
+Groups (“FFS-administrative services”), (ii) VBC revenue collected on behalf of our Privia Providers in the form of management and administrative fees, which, at this time, are primarily in the form of per member per month
+(“PMPM”) fees and shared savings, which includes quality bonuses, and (iii) other revenue from additional services offered by Privia to its Privia Providers or directly to patients or employers. The operations of our Owned Medical
+Groups, owned ACOs and owned MSOs are reflected within our consolidated financial results.
+
+
+Below is a table that sets forth in greater detail certain differences between the way we contract with our Owned Medical Groups and the Non-Owned Medical groups:
+
+| (1) | All listed management services are offered to the Non-Owned Medical Groups, but some groups may only choose to 
+ use certain services.                                                                                          |
+
+Our Legal Organizational Chart*
+
+| (1) | For presentation purposes, legal structure chart excludes wholly-owned intermediate legal entities between 
+ Privia Health Group, Inc. and Privia Management Company, LLC.                                              |
+
+| (2) | All subsidiaries are 100% owned except for Owned Medical Groups and two MSOs, which are at least 51% owned. 
+ Variations of these local structures are repeated in each of our markets.                                   |
+
+| * | With representative local market examples. |
+
+We have experienced strong organic revenue growth since inception and meaningful leveraging of our cost structure. GAAP Financial Measures
+
+| • |     | Revenue was $817.1 million, $786.4 million and $657.6 million in 2020, 2019 and 2018, respectively; |
+
+| • |     | Operating income was $25.4 million, $16.1 million and $2.2 million in 2020, 2019 and 2018, respectively; and |
+
+| • |     | Net Income (loss) was $31.2 million, $8.2 million and $(3.0) million, in 2020, 2019 and 2018, respectively. |
+
+
+Key Metrics and Non-GAAP Financial Measures
+
+| • |     | Practice collections was $1,301.1 million, $1,135.7 million and $930.4 million in 2020, 2019 and 2018, 
+ respectively;                                                                                          |
+
+| • |     | Care Margin was $187.6 million, $163.7 million and $129.7 million in 2020, 2019 and 2018, respectively; |
+
+| • |     | Platform Contribution was $82.6 million, $68.5 million and $56.5 million in 2020, 2019 and 2018, respectively; 
+ and                                                                                                            |
+
+| • |     | Adjusted EBITDA was $29.4 million, $18.1 million and $8.9 million in 2020, 2019 and 2018, respectively. |
+
+See “Key Metrics and Non-GAAPFinancial Measures” for more information as to how we define and calculate practice collections, care margin, platform contribution and adjusted EBITDA, and for reconciliations of income from operations, the most comparable GAAP measure, to care margin and to platform contribution, and net income, the most comparable GAAP measure, to adjusted EBITDA. Who We Are Privia Health is a technology-driven, national physician-enablement company designed to transform the healthcare delivery experience for physicians and patients, while increasing value to payers. We enter markets, organize providers, drive operational and clinical improvements, and transition the market to VBC. Among many “pain points” in the healthcare market today, providers across the country are spending less time with patients, losing autonomy, and operating with outdated, fragmented point solution technology. By harnessing a platform built on the foundational principles of talent, tools, and technology, we created a solution for building, scaling and optimizing the performance of both our Owned Medical Groups, through which we provide healthcare services, as well as our managed Non-Owned Medical Groups. Our integrated model and approach seek to reduce Privia Physicians’ administrative burden and help accelerate the transition to VBC. This model creates a differentiated experience that is patient-centric, physician-ledand payer-agnostic. As a result, we enable Privia Physicians to maintain their legacy practice assets while benefiting from being part of a larger Medical Group supported by a national organization. We are helping to drive the transition to VBC while serving FFS needs with an economically sustainable model that builds physicians’ experience and confidence, enabling success with the transition to participate in more advanced VBC programs. Privia Operating Model The Privia operating model has the following characteristics:
+
+| • |     | Proven, scalable, replicable and flexible; |
+
+| • |     | Single Tax-ID Number (“TIN”), primary care-oriented Medical 
+ Group in each local market;                                 |
+
+| • |     | Management services and clinical organization enabled by the Privia Technology Solution; and |
+
+| • |     | Market specific strategies—Accountable Care Organizations (“ACOs”) and ancillary services (e.g., 
+ clinical lab, pharmacy and imaging) based on market dynamics.                                    |
+
+
+The Privia Platform is powered by the Privia Technology Solution, which optimizes provider workflow across
+the full continuum of reimbursement arrangements. The platform supports multiple provider types (48 specialties currently represented), enables scalable operations, and delivers patient centric in-person
+and virtual access to care, attractive quality metrics, and lower cost of care. It efficiently integrates multiple data points to build a single view of the patient, allowing our Privia Providers to serve patients across demographics and medical
+complexities. Our platform scales across different markets by succeeding in all reimbursement models and delivering next generation VBC capabilities. We seek to continuously enhance the Privia Technology Solution to improve Privia Provider
+well-being and patient satisfaction.
+
+At our core, we believe in bringing back to physicians the joy of practicing medicine and the
+passion for their profession. As a physician focused company, we know the vital role providers play in improving patient health outcomes while curbing healthcare spending and waste.
+
+Challenges Physicians Confront Today and Our Market Opportunity
+
+Physicians across the country face tremendous challenges in managing their practices. Care delivery platforms today are not set up to succeed
+in different reimbursement models as healthcare shifts to VBC. We believe there is a multi-decade opportunity for primary care led physician groups to address rising healthcare costs, poor outcomes, and succeed in various VBC models. Success and
+reimbursement in these models are based on managing total cost of care for an underlying patient population and improving various quality metrics. We think these value-based models will evolve differently in terms of program structure and pace of
+progress depending on geographic market, demographic cohort and payer type. However, traditional physician groups face challenges finding ways to lower costs while improving quality and increasing access to care across multiple geographies and
+patient cohorts. Physician practices have seen declines in profitability, limited access to capital and strained cash flows as the administrative burden to manage patients has increased. Complexity in payment models and outdated technology has also
+led to physician burn-out and has hindered physician to patient interactions. Healthcare insurance companies have narrowed their networks, leading to volume pressures that particularly impact independent
+practitioners. Physicians are at the center of these issues and are the key to the solution.
+
+
+A survey of 700+ clinicians, clinical leaders and health care executives conducted by NEJM Catalyst and reported in April 2018 found the following:
+
+| • |     | 83% see physician burnout as a moderate or serious problem; |
+
+| • |     | 82% believe that interventions to alleviate burnout should be targeted at the organizational level 
+ (e.g. systems and infrastructure enhancements); and                                                |
+
+| • |     | 54% identify off-loading clerical tasks (e.g. to scribes, population                                                                                     
+ health facilitators) and 46% feel initiatives to improve electronic medical records and other IT systems would be helpful in reducing physician burnout. |
+
+With these issues in mind, Privia has been purpose-built to address a large market opportunity. Unlike peers who focus only on point solutions or narrow patient cohorts, we offer a national platform with hyper-localized solutions that meet the needs of physicians, patients and payers. Our goal since inception has been to solve problems physicians face regardless of reimbursement environment or patient type. As such, we are able to deploy our solution across the full healthcare continuum. Our model is designed to succeed across all provider specialties and reimbursement environments and with all payer types. We have demonstrated an ability to expand and scale across diverse geographic markets. We know that consumers want on-demandaccess to care, providers want a lower burden of administrative work, and payers want to lower total medical cost. Our platform offers an interoperable and user-friendly technology that is designed to meet the needs of patients, providers, and payers and allows us to access a large TAM. For 2020, the Centers for Medicare and Medicaid Services (“CMS”) expects the commercial beneficiary market to represent approximately $1.4 trillion of aggregate healthcare spend in the United States, with Medicare and Medicaid representing $850 billion and $650 billion, respectively, for a total of $3 trillion in overall U.S. healthcare spend. In its research report dated January 22, 2021 titled “The Dawn of Physician Enablement: Defining Healthcare in the 2020s” (the “2021 Nephron Report”), Nephron Research estimated that the “physician enablement” market in which we participate represents up to $1.9 trillion of that total healthcare spend. We believe the flexibility of our model uniquely positions us to address this large market opportunity. The Privia Platform is Designed to Transform the Way Physicians Practice Medicine Our goal is to reimagine the approach to managing physician organizations and optimize their performance by creating a platform that caters to their unique needs. We do this through five key elements of our platform: (i) focusing on technology and population health, (ii) establishing a single-TINMedical Group and governance model in each geographic market, (iii) owning and operating a management services organization in each local market, (iv) building ACOs to capture VBC opportunities within the geographic market, and (v) offering a high quality, low cost provider network for purchasers and payers. Technology and Population Health:Too often technology works against, rather than for, providers and patients. The Privia Technology Solution is designed with our Privia Physicians’ and patients’ input to enhance their workflows in both FFS and VBC settings, increasing patient engagement across all stages of a visit, including patient access, pre-visit,at the point of care (both in person and virtual) and post-visit. We seek to optimize our Privia Providers’ technology and marketing so patients can easily find a provider online, schedule an appointment and receive appointment reminders, all of which have been shown to improve patient retention and minimize costly no-shows.On our MyPriviaapp, patients can schedule and complete a virtual visit, securely message Privia Providers and their care teams, schedule an office appointment, find care options within the Privia network, and access the patient portal. Our technology and tools embed workflow and insights directly into our electronic medical record (“EMR”) system so Privia Providers can seamlessly assess patients’ health,
+
+
+review their practice performance and provide a superior experience at the point of care (in-person or virtually). Most physician groups deal with an
+onslaught of disparate information coming from different sources—such as multiple payers and hospitals—resulting in confusion and disorganization for providers at the point of care. Unlike other peers, we manage the complexity in the
+background in order to create a unified workflow and experience for our Medical Groups, Privia Providers, their staff and patients. For example, we use application programming interfaces (“APIs”) with systems and data exchanges so that our
+Privia Providers do not need to access other systems during a patient visit, and our EMR interfaces generate approximately 8 million messages on a monthly basis. After the visit, our Privia Providers follow up with patients using automated
+education, transitional and chronic care management, care plans, behavioral health and more. We also use patient-satisfaction feedback to continuously improve the patient experience, refine care protocols and increase our Privia Providers’
+online visibility. In 2019, we received the Healthcare Information and Management Systems Society, Inc. (“HIMSS”) Innovation Award for our exceptional Patient Reported Quality Data (“PRQD”) program that collects required quality
+data directly from patients and automatically loads the results into patient records. Our proprietary virtual visit technology is fully integrated into our platform. As of December 2020, our virtual visit platform had logged over 850,000 visits
+conducted by over 2,000 providers across more than 43 medical specialties, while receiving 96% patient satisfaction. The Privia Technology Solution is the cornerstone to our Medical Groups and ACOs’ ability to succeed across patient demographic
+cohorts and multiple lines of business (Medicare, Medicare Advantage, MSSP, commercial, etc.).
+
+Technology and Population Health
+
+PRIVIA TECHNOLOGY SOLUTION
+
+Single-TINMedical Group:In each of our markets, we build a
+primary care centric single-TIN Medical Group that facilitates payer negotiation, clinical integration and alignment of financial incentives. Our Medical Group governance structure allows Privia Providers to
+build a clinical culture that adapts to consumers’ and a
+
+
+region’s unique and evolving needs. Privia Providers in our Medical Groups collaborate in physician-organized delivery (“POD”) meetings to review performance data, share best
+practices, create an environment of accountability, and advance evidence-based medicine while maintaining significant autonomy. At the local leadership level, Privia Physicians across different practice locations, or care centers, meet regularly
+with support from Privia performance team members to drive local population health initiatives, engagement and performance. At the market Medical Group level, Privia Physicians, along with Privia team members, advise on priorities, set annual
+objectives, and approve payer contracts and performance distribution. Finally, at the national level, our Privia Physicians receive input from each market and establish priorities for operational improvements and clinical priorities. We believe that
+this integrated governance structure allows our Privia Physicians to focus on what is most important, taking care of patients, while having a voice in the strategic direction of business operations. The structure also allows previously disconnected
+providers to share ideas in a broader forum, sharing best practices with each other.
+
+Management Services Organization:We enable
+our Privia Providers to focus on their patients, not paperwork. Our market-level management service organizations leverage our scale to reduce administrative work, increase efficiency, and lower direct costs for our Privia Providers. Our payer
+contracting team works with multiple private and government payers across markets to construct and participate in VBC programs. As a five-time consecutive recipient of the prestigious HFMA MAP Award, our revenue cycle management
+(“RCM”) team meets the high standards for financial results and patient satisfaction. Our team of performance consultants conduct business operations reviews and audits to optimize our Privia Physicians’ finances and productivity. Our
+procurement team develops opportunities to reduce Affiliated Practices’ expenses through participation in group purchasing. Our analytics team enables our Privia Providers to make more data-driven decisions on financial, operational, and
+clinical initiatives, resulting in same store practice growth across both fee-for-service and VBC programs. Our clinical operations and informatics team ensures the
+“doctor’s voice” is present in our technology solutions to drive savings and optimize patient outcomes. Our innovative technology improves data security, bolsters the patient-provider relationship, and offers patients a seamless,
+coordinated experience.
+
+Accountable Care Organization: Privia has created consistent value across multiple markets and
+reimbursement models. Our physician-led, local market-based ACOs lower costs, engage patients, reduce inappropriate utilization, and improve coordination and patient quality metrics to drive VBC. Our scale and
+demonstrated quality metrics allow us to enhance reimbursements for delivering high-quality care. The Privia Technology Solution identifies quality gaps, sends patient satisfaction surveys, automates patient outreach and education, and generates
+reports and alerts to improve care coordination. Our platform proactively shares critical information at various points along the continuum of care to advance population health and streamline Privia Provider workflow. Our integrated tools divert
+costly patient encounters so our Privia Providers can increase revenue through both commercial and federal programs. Patients who meet with a Privia Provider annually for wellness and preventive care experience on average 61% lower hospitalizations,
+47% lower emergency room visits, and 25% lower risk-adjusted total cost of care. In 2019, each ACO across our national network delivered high-value, cost-efficient care to more than 119,000 Medicare beneficiaries, achieving shared savings of
+$57 million through the MSSP. Our total annual expenditures were 14% lower than the median MSSP ACO and 22% lower than total FFS Medicare. Our weighted average emergency room utilization was 20% lower than the median MSSP ACO and 28% lower than
+total FFS Medicare. Our weighted average inpatient utilization was 19% lower than the median MSSP ACO and 24% lower than the total FFS Medicare average utilization. We achieved over 92% in CMS quality scores for each of our regions in 2019 according
+to applicable CMS criteria. Since 2014, we have delivered total shared savings across government programs and commercial payers of more than $430 million, including nearly $195 million through participation in the MSSP. Our approach has
+been successful across Commercial, Medicare Advantage, MSSP, and Medicaid, from simpler pay-for-performance programs to more complex partial capitation and risk-based
+programs.
+
+
+Network for Purchasers and Payers:We strive to bring all parts of the care delivery
+system together for an integrated care plan that is designed to lead to improved outcomes at lower cost.Our Medical Groups enable Privia Providers to connect across our platform to better understand the holistic needs of each patient and
+connect them with other aligned and informed Privia Providers to address their individual medical needs. This is accomplished by leveraging data from numerous sources and utilizing Privia Provider input based on local knowledge to develop aligned
+virtual narrow networks that are designed to address the unique needs of government and commercial payers as well as individual employers. We build these networks within our platform to enhance both the provider and the patient experience by
+removing administrative burden and enhancing efficient and coordinated patient communication. This capability also allows us to work with forward thinking health systems to increase alignment with employed, affiliated and independent physicians to
+optimize resource utilization through our cost-effective, clinically aligned model.
+
+Our Value Proposition
+
+We are a technology-enabled platform designed to transform the healthcare delivery experience for patients and physicians. We believe that
+employed and independent providers are seeking an alternative platform to help them navigate and succeed in an environment of shifting reimbursement mechanisms and consolidation among health systems, payers, and other sectors in the healthcare
+ecosystem. Moreover, state and federal governments, patients, and employers continue to expect primary care providers to provide better access, lower total cost, and higher-quality care, which we believe is a powerful trend in our favor.
+
+Replicable Platform to Enter and Move Markets Toward Transformational Value
+
+Privia is expanding its technology-enabled platform designed to transform the healthcare delivery experience from a traditional FFS to VBC reimbursement model.We believe thatour platform enables us to enter new geographies, establish our primary care centric provider network and move markets toward transformational VBC. We serve
+patients across demographics and medical complexities and also participate in the full spectrum of reimbursement models.
+
+
+We align our success with that of our Privia Physicians and enable them to maximize the potential of their Affiliated Practices across their entire patient panel.Our proven, flexible platform delivers tailored solutions to secure providers’ futures, regardless of their starting point on the transition to value.
+
+| • |     | FFS: At the onset of our relationship, we seek to create value for our Privia Providers through more                                                             
+ competitive payer contracts, improved patient volume, strengthened networks, and revenue cycle and productivity gains driven by our technology-enabled platform. |
+
+| • |     | VBC: Over time, we create incremental value for our Privia Providers by enabling them to succeed in VBC                                                                                                                                                 
+ models which are highly aligned with payers. Our technology, training, robust networks and governance structures are foundational components powering our track record of success in programs such as enhanced reimbursement through the MSSP, Medicare 
+ Advantage, Medicaid, commercial and other direct payer and employer contracting programs.                                                                                                                                                               |
+
+We align incentives with our Privia Physicians and those who fund healthcare spend by designing our revenue model such that we share in the benefit of our Privia Physicians’ achieving better outcomes, regardless of reimbursement environment. Because, when allowed by state law, we are paid a percentage of our Privia Providers’ revenues, our fees are aligned with our Privia Providers’ revenue streams, including both FFS and VBC reimbursements, and particularly the latter as we continue moving into successful long term value-based arrangements. We sign multiyear contracts with our Privia Physicians, creating highly predictable and recurring revenue. This stable revenue stream and our demonstrated ability to scale inform our growth plans as well as our ability to achieve attractive unit economics. Our end-to-end,cloud-based technology-enabled platform improves Medical Group efficiency, patient and Privia Provider experiences and healthcare outcomes.Our technology-enabled platform is designed to increase Privia Providers’ workflow efficiency, enhances patient experience and engagement, achieves lower total cost of care, improves healthcare outcomes and increases income for our Privia Physicians, enabling them to succeed across changing reimbursement environments. In addition, our platform eliminates the need for our Medical Groups to purchase and integrate numerous single-point solutions, thereby removing administrative burden, decreasing costs, and enhancing overall provider experience. Our platform is designed to improve patient outcomes through superior clinical quality.We bring a value-based philosophy of healthcare that leads to higher quality results. Through advanced analytics we identify rising risk and high-risk patients, and ensure that all patients receive the necessary preventive care. We provide additional clinical support to our Privia Providers and patients through an integrated care team model—including nurse care managers, care coordinators, chronic care (such as diabetes), behavioral health, palliative care, and more. Unlike most traditional medical groups, our care team is seamlessly integrated into the entire care experience, working off of the same patient record and integrated into Privia Providers’ workflows, rather than a disconnected third-party vendor. This approach has led to favorable outcomes; for example, patients enrolled in our diabetes management program experience on average 30% lower emergency room visits, 38% lower hospitalizations, and 27% lower cost of care. Privia is also recognized for being in the top 20th percentile of comparable MSSP ACOs nationally in quality measures such as fall risk screening, flu vaccination, and HbA1c control for diabetic patients. We provide the benefit of scale while also offering flexibility with ownership structures. Physicians and providers join our single-TINMedical Group in each geographic market while maintaining significant autonomy and retaining ownership of their legacy practice assets. Physicians and providers are able to join our platform regardless of whether they are independent, affiliated or employed by a larger provider entity, such as a health system, large medical group, or other captive physician models. Our scale, technology-enabled platform, more competitive payer contracts, leading practice operations and physician governance are designed to enable our Privia Providers to grow income and succeed in VBC reimbursement models.
+
+
+Where We Excel and Drive Meaningful Improvement
+
+Ability to enter and move markets to VBC:We believe we have demonstrated our ability to establish a
+market presence in multiple geographies and build cost efficient, high quality provider networks capable of successfully transitioning to VBC. We meet providers where they are in the journey, helping them move forward along the continuum of VBC.
+Privia enables our Privia Providers to succeed in VBC, and provides additional clinical programs to support patients such as care management, transitional care management, behavioral health, remote-patient monitoring, and palliative care.
+
+End-to-end,cloud-based, technology-enabled platform: The Privia Technology Solution integrates key elements of numerous single-point solutions, enabling our Privia Providers to succeed in all forms of VBC and FFS reimbursement environments while creating efficiency across the
+physician workflow and enhancing the patient experience. The Privia Technology Solution utilizes artificial intelligence and machine learning to analyze data, surface suspected medical conditions and close care gaps.
+
+Ability to serve all practice, provider and patient types across a variety of reimbursement models:The flexibility of our model gives
+us the ability to improve operations for a variety of provider types, including primary care, specialists and health system employed and affiliated providers. This positions us to grow into a large market opportunity, consisting of commercial,
+Medicaid, MSSP and Medicare Advantage as well as direct contracting with private and government payers and employers. Our ability to improve outcomes for practices across various medical specialties ultimately accrues to the benefit of a larger set
+of patients than if we were focused on one area of care.
+
+Privia’s capital efficient operations are portable and replicable across geographic markets: We enter a market with an asset-light operating model and employ a disciplined, uniform approach to market structure and development. We affiliate with market leading provider groups and health systems to form anchor
+relationships consisting of a single-TIN Medical Group to which we align our Privia Providers. In contrast to many of our competitors, our model does not rely on buying physician practices or building de-novo medical clinics that require significant capital expenditures nor does it subject us to the costly need to satisfy insurance-based capital requirements. For further discussion of our competitors, see
+“—Competitive Landscape” below. The data we have collected from earlier provider cohorts demonstrate that we consistently improve practice performance in
+
+
+both FFS and VBC metrics over time and inform our expectations for our new markets. As a result, markets see a favorable timeline to profitability and free cash flow contribution. Moreover, our business model gives us flexibility to achieve incremental growth through acquiring minority or majority stakes in our practices and opening de-novo,fully-owned sites of care focused on Medicare Advantage and direct contracting models. Long term, sticky relationships underpin our predictable and profitable operating model: Privia Providers have high average satisfaction with their overall performance on our platform. Our provider NPS of 54 (for the period between March 10, 2020 to April 28, 2020, as surveyed by Press Ganey Associates) is 19 points higher than the average provider score of 35. In addition, we had 95% average provider retention over the past four years. The patients that our providers serve are generally happier as well, as evidenced by a net patient satisfaction score of 85 for 2020. Our pipeline of signed providers who have yet to be implemented, high provider satisfaction and retention, and high patient satisfaction all contribute to more than 90% practice collections predictability on a rolling twelve month forward basis. As a result of these relationships and a high level of patient satisfaction, we are profitable and free cash flow positive, with improving unit economics and margins. Highly experienced executive and physician leadership: Our management team has significant experience leading payer, provider and healthcare information technology organizations. We believe that our healthcare experience and physician leadership model are competitive advantages in improving care. Our market leadership is highly regarded with a demonstrated track record of success over decades, combining diverse expertise with a shared passion for transforming the healthcare delivery experience. Our highly engaged national physician advisory council has helped us develop physician leaders nationally as well as in the markets we serve. We elevate the clinical voice at all levels of leadership to ensure our solutions benefit providers and their patients. Our Growth Strategy Privia currently operates in six states and the District of Columbia, covering over 70 target MPSAs (including 20 out of the largest 100 MPSAs). We have approximately 2,550 implemented provider partners in our existing markets. We believe there are approximately 1,000,000 total physicians and providers in the U.S. Our existing provider penetration and market share provides us with significant opportunity to grow in both our existing and new geographies. Our growth strategy is centered on capturing whitespace opportunity in existing markets and entering multiple new markets nationally over the next decade and consists of the following elements. Organic Growth in Existing Practices
+
+| • |     | Patient panel and volume growth through enhanced patient experience and value-based clinical model, which 
+ increases retention and drives new patient referrals;                                                     |
+
+| • |     | New provider growth through strategic expansion, succession planning, and use of advanced practice practitioners; |
+
+| • |     | Expansion of practice services such as more convenient hours, virtual care, and 
+ in-office ancillaries; and                                                      |
+
+| • |     | Revenue optimization through more competitive payer contracting strategies and strong revenue cycle performance 
+ which drives efficiency and higher revenue realization.                                                         |
+
+
+Moving Markets to VBC
+
+| • |     | Focus on same store growth of patients attributed to value-based contracts in each existing geographic market                   
+ (e.g. we currently have over 170,000 patients aging into Medicare over the next five years in each existing geographic market); |
+
+| • |     | Increase our revenue opportunity on a per patient basis by continuing to improve performance and continuing to                                                                                            
+ take increasing levels of risk in existing value-based programs across commercial, MSSP, Medicare Advantage, Medicaid and other existing and emerging direct payer and employer contracting programs; and |
+
+| • |     | Develop new products and programs in partnership with aligned payers that are built with and around the Privia 
+ network of physicians and providers.                                                                           |
+
+White Space Opportunities in Existing Markets
+
+| • |     | We intend to add primary care and specialist practices in existing markets to enhance growth. Our data-driven                
+ approach allows us to efficiently identify primary care and specialist provider groups that would benefit from our platform; |
+
+| • |     | Expand recently launched Privia Women’s Health and Privia Pediatrics platforms; |
+
+| • |     | Develop value-oriented ancillary services for our Medical Groups. This includes leveraging existing platforms of                  
+ providers and patients to provide ancillary services (e.g., clinical laboratory, imaging and pharmacy) within our Medical Groups; |
+
+| • |     | Expand relationships with self-insured employers, businesses, schools, universities, and third-party                                                                                                                                               
+ administrators seeking population health and virtual care solutions. This includes leveraging our 24/7 Virtual Clinic, our care coordination and high-risk chronic care management programs, and our technology-enabled platform to deliver highly 
+ tailored, scalable solutions;                                                                                                                                                                                                                      |
+
+| • |     | Continue to pursue direct contracting opportunities, including direct primary care and onsite / near-site clinics 
+ fully integrated with our local Privia networks; and                                                              |
+
+| • |     | Expand our clinical research program by designing and executing on clinical trials across multiple therapeutic                                                              
+ areas. Privia currently participates in clinical trials of heart failure, chronic obstructive pulmonary disease (“COPD”), diabetes, and COVID vaccine and treatment trials. |
+
+New Market Development
+
+| • |     | Privia’s in-market operating structure and ability to serve                                                                         
+ providers wherever they are on their transition to VBC is designed to benefit each of the approximately one million U.S. providers; |
+
+| • |     | We believe our solution is applicable across all 50 states; |
+
+| • |     | Our data-driven market selection process identifies attractive expansion opportunities and informs our approach 
+ to opening new geographies;                                                                                     |
+
+| • |     | We prioritize markets with some or all of the following characteristics: |
+
+| • |     | High provider density |
+
+| • |     | High patient density |
+
+| • |     | Demographic tailwinds, such as an aging population |
+
+
+| • |     | Multiple potential medical group partners |
+
+| • |     | Presence of value-oriented health systems |
+
+| • |     | Payers seeking and aligned to high value scaled physician organizations |
+
+| • |     | We evaluate the broader market landscape for attractive opportunities on a continuous basis and proactively 
+ develop relationships before committing to enter a market;                                                  |
+
+| • |     | Due to our active and ongoing new market reviews and evaluations, when we enter a new market, we are able to move 
+ quickly and efficiently to capture and maximize the opportunity; and                                              |
+
+| • |     | We have a longstanding track record of successful, profitable expansion that we will leverage to execute on our 
+ robust pipeline of new markets opportunities.                                                                   |
+
+Acquisitions and Investments in Full Service Care Models
+
+| • |     | Our growth playbook also factors in the opportunity to acquire minority or majority ownership of provider groups 
+ in existing and new markets; and                                                                                 |
+
+| • |     | We may also open de-novo, wholly or partially owned, sites of care                                            
+ focused on Medicare Advantage, direct contracting, and fully capitated contracts in existing and new markets. |
+
+Competitive Landscape We compete in a highly fragmented and competitive U.S. healthcare industry. We face competition in each geographic market from a variety of community-based healthcare provider organizations, including large physician practices, independent physician associations, hospitals and health systems, physician-hospital organizations as well as emerging companies acquiring and rolling up specialty physician practices. In addition, nationally, we face competition for talent, resources, physicians, and payer contracts from existing and emerging companies in the physician enablement industry segment. We believe our practice model and breadth of services offered to all patient types is unique and we therefore compete with different companies across certain lines of business, including companies with: dedicated brick-and-mortar locations which often target patients covered by Medicare Advantage plans (such as Oak Street Health), dedicated direct primary care locations which often target a commercial or employer-based patient population (such as One Medical), the ability to organize providers into accountable care organizations, allowing physicians to participate in VBC arrangements (such as Aledade) and the ability to partner with physicians groups to enable better care delivery primarily for seniors (such as Agilon Health or VillageMD). These competitors may be narrower in their competitive footprint and may not address all the key stakeholders we serve simultaneously. Our indirect competitors also include episodic point solutions, such as telemedicine offerings, as well as urgent care providers. Our competitive success is contingent on our ability to address the needs of our key stakeholders efficiently and cost effectively compared with competitors. We expect to face increasing competition, both from current competitors, who may be well established and enjoy greater resources or other strategic advantages to compete for some or all key stakeholders in our markets, as well as new entrants into our market. Given the size of the healthcare industry, we expect additional competition, including potentially from new companies, smaller emerging companies which could introduce new solutions and services, as well as other incumbent players in the healthcare industry or from broader industry who could develop their own offerings and may have substantial resources and relationships to leverage. With the emergence of new technologies and market entrants, we expect to face increasing competition over time, which we believe will generally increase awareness of the need for modernized care models and other innovative solutions.
+
+
+Recent Developments
+
+Commencing in mid-March 2020, community self-isolation practices and shelter-in-place requirements arising from the COVID-19 pandemic reduced in-office visits, negatively affecting our FFS revenue.
+Utilization volume for in-office visits declined from mid-March 2020 through April 2020 but began recovering thereafter. Notably, commencing in the second half of 2020,
+utilization volume for in-office visits approached pre-COVID-19 levels. In response to the impact on our Medical Groups, Privia
+quickly launched provider and patient communication campaigns to transition from in-person to virtual visits, as clinically appropriate. Privia’s cross-functional Coronavirus Task Force assisted practices
+with managing the financial impact of unprecedented visit volume reductions and securing personal protective equipment. Over 2,000 providers continued to deliver care to patients via Privia’s proprietary telehealth platform. Privia also
+launched its 24/7 virtual clinic which provides on demand access to Privia providers for urgent issues if a patient’s primary care provider is not available, and expanded the offering directly to individuals and employers as they explore
+alternative fully integrated care models to manage a remote workforce. Privia’s virtual visit volumes increased from approximately 100 per day to more than 6,000 per day on average in the span of four weeks without operational disruption.
+Virtual visit volume increased rapidly, from approximately 0.3% of all visits prior to the COVID outbreak to more than 45% at the beginning of April 2020. As of December 31, 2020, approximately 15-20% of our visit volume was delivered virtually
+across our markets and specialties and we anticipate that to hold steady post-COVID.
+
+In October 2020, we commenced operations in
+Tennessee in partnership with a large, primary care-led, multi-specialty Non-Owned Medical Group.
+
+Anthem Private Placement
+
+We have entered into an agreement to sell $92.0 million of shares of our common stock to Anthem in a placement exempt from registration under
+the U.S. Securities Act of 1933, as amended (the “Anthem Placement”). The price per share sold in the Anthem Placement will be the price per share to the public in this offering. The Anthem Placement is conditioned upon the closing of this
+offering and is expected to close on or up to 30 days after the closing of this offering. Accordingly, this offering is not contingent upon the closing of the Anthem Placement and there can be no assurance that the Anthem Placement will be
+consummated. The shares of common stock issued in the Anthem Placement will be subject to a 180-day lock-up agreement in favor of the underwriters substantially similar to the lock-up agreements entered into by our directors, executive officers and
+existing shareholders. Anthem has also agreed with us not to transfer its shares of common stock for three years from the closing date of this offering. Based on the midpoint of the price range set forth on the cover of this prospectus, we expect to
+issue shares of common stock in the Anthem Placement. A $1.00 increase in the offering price per share from the midpoint of the price range set forth on
+the cover of this prospectus would decrease the number of shares issued in the Anthem Placement by shares of common stock. A $1.00 decrease in the
+offering price per share from the midpoint of the price range set forth on the cover of this prospectus would increase the number of shares issued in the Anthem Placement by
+shares of common stock. Upon consummation of this offering, Anthem’s equity interest in Privia will be equal to approximately
+% of our common stock on a fully diluted basis. In connection with the Anthem Placement, we intend to enter into a commercial collaboration agreement
+which would enable our growth in both existing and new markets, including with respect to but not limited to Medicare Advantage products. This agreement would not limit our ability to work with other payors in a given market.
+
+
+Risk Factors Before investing in our stock, you should carefully consider all the information in this prospectus, including matters discussed more fully under the heading “Risk Factors.” These risks include, but are not limited to, the following:
+
+| • |     | we conduct business in a heavily regulated industry, and if we fail to comply with applicable healthcare laws and                                                                                                                                      
+ government regulations, we could incur financial penalties, become excluded from participating in government health care programs, be required to make significant operational changes or experience adverse publicity, which could harm our business; |
+
+| • |     | our business model could be challenged and, if any challenges are successful, we could incur financial penalties,                                                                          
+ become excluded from participating in government health care programs, be required to make significant operational changes or experience adverse publicity, which could harm our business; |
+
+| • |     | our actual or perceived failure to adequately protect the privacy and security of our patients’ information,                                                                                          
+ or a breach of our patient’s information could result in financial penalties, require us to incur significant costs to mitigate such, and result in adverse publicity, which could harm our business; |
+
+| • |     | our history of net losses, and our ability to achieve or maintain profitability in an environment of increasing 
+ expenses;                                                                                                       |
+
+| • |     | the impact of healthcare reform legislation and other changes in the healthcare industry and in healthcare 
+ spending is currently unknown, and may harm our business;                                                  |
+
+| • |     | evolving government regulations may increase costs or negatively impact our results of operations; |
+
+| • |     | the COVID-19 pandemic could have an adverse impact on our business, 
+ operations, and the markets and communities in which we operate;    |
+
+| • |     | the impact on our business of security breaches, loss of data or other disruptions causing the compromise of 
+ sensitive information or preventing us from accessing critical information;                                  |
+
+| • |     | our ability to compete in the healthcare industry; |
+
+| • |     | our dependence on reimbursements by third-party payers and payments by individuals; |
+
+| • |     | our reliance on third-party vendors to host and maintain the Privia Technology Solution; |
+
+| • |     | failure to maintain and renew existing physician practices, Privia Physicians, health system or hospital 
+ partners, or commercial payer customers do not continue to renew their contracts with us;                |
+
+| • |     | failure to adequately expand our direct sales force and our business development staff; |
+
+| • |     | the viability of our growth strategy and our ability to realize expected results; |
+
+| • |     | the impact on our business of disruptions in our disaster recovery systems or management continuity planning; |
+
+| • |     | our ability to develop and maintain proper and effective internal control over financial reporting; |
+
+| • |     | the potential adverse impact of legal proceedings and litigation; |
+
+| • |     | our ability to maintain and enhance our reputation and brand recognition; |
+
+| • |     | our anticipated status as a “controlled company” within the meaning of the rules of the NASDAQ; and |
+
+| • |     | overall business results may suffer from an economic downturn. |
+
+
+Corporate Information We were formed on November 7, 2007, as a Delaware limited liability company pursuant to the Delaware Limited Liability Company Act. Our principal executive offices are located at 950 N. Glebe Rd., Suite 700, Arlington, VA, 22203 and our telephone number is (571) 366-8850.Our internet site is www.priviahealth.com. Our website and the information contained therein or connected thereto is not incorporated into this prospectus or the registration statement of which it forms a part. Implications of Being an Emerging Growth Company As a company with less than $1.07 billion in revenue during our last fiscal year and which has not issued more than $1 billion in non-convertible debt in the past three years, we qualify as an “emerging growth company” as defined in the Jumpstart Our Business Startups Act of 2012 (the “JOBS Act”), enacted in April 2012. An “emerging growth company” may take advantage of exemptions from some of the reporting requirements that are otherwise applicable to public companies that are not emerging growth companies. These exemptions, among others, include:
+
+| • |     | being permitted to present only two years of audited consolidated financial statements and only two years of      
+ related Management’s Discussion and Analysis of Financial Condition and Results of Operations in this prospectus; |
+
+| • |     | not being required to comply with the auditor attestation requirements of Section 404 of the Sarbanes-Oxley                      
+ Act of 2002, as amended (the “Sarbanes-Oxley Act” or “SOX”), in the assessment of our internal control over financial reporting; |
+
+| • |     | reduced disclosure obligations regarding executive compensation in our periodic reports, proxy statements and 
+ registration statements;                                                                                      |
+
+| • |     | an exemption from compliance with the requirement of the Public Company Accounting Oversight Board regarding the 
+ communication of critical audit matters in the auditor’s report on the financial statements; and                 |
+
+| • |     | exemption from the requirements of holding a nonbinding advisory vote on executive compensation and obtaining 
+ stockholder approval of any golden parachute payments not previously approved.                                |
+
+We may take advantage of these reporting exemptions until we are no longer an emerging growth company. We will remain an emerging growth company until the last day of our fiscal year following the fifth anniversary of the completion of this offering. However, if certain events occur prior to the end of such five-year period, including, but not limited to, if we have more than $700.0 million in market value of our common stock held by non-affiliates(assessed as of the most recently completed second fiscal quarter), or if our annual gross revenue exceeds $1.07 billion or we issue more than $1.0 billion of non-convertibledebt in any three-year period, we will become a large accelerated filler and cease to be an emerging growth company prior to the end of such five-year period. We have elected to take advantage of certain of the reduced disclosure obligations in the registration statement of which this prospectus is a part and may elect to take advantage of some, but not all, of the reduced reporting requirements in future filings. As a result, the information that we provide to our stockholders may be different than you might receive from other public reporting companies in which you hold equity interests. In addition, the JOBS Act provides that an emerging growth company can take advantage of an extended transition period for complying with new or revised accounting standards until such time as those standards apply to private companies. We have elected not to opt out of the extended transition related to complying with new or revised accounting standards, which means that when a standard is issued or revised and it has different application dates for public and non-publiccompanies, we can adopt the new or revised standard at the time non-publiccompanies adopt the new or revised standard and can do so until such time that we either irrevocably elect to opt out of such extended transition period or no longer qualifies as an emerging growth company. We may choose to early adopt any new or revised accounting standards whenever such early adoption is permitted for non-publiccompanies. 18
+
+THE OFFERING
+
+| Common stock offered by us | shares |
+
+| Common stock offered by the selling stockholder | shares |
+
+| Common stock to be outstanding after this offering | shares |
+
+| Over-allotment option | The underwriters have an option for a period of 30 days to purchase up to                 additional shares of our common stock at the public offering price, less 
+ the underwriting discounts and commission.                                                                                                                         |
+
+| Use of proceeds | We estimate that the net proceeds to us from this offering will be approximately $         million, or approximately $         million if the underwriters exercise                                                                                      
+ their over-allotment option in full, assuming an initial public offering price of $         per share (the midpoint of the range set forth on the cover page of this prospectus), after deducting estimated                                              
+ underwriting discounts and commissions and estimated offering expenses. Each $1 increase (decrease) in the public offering price per share would increase (decrease) our net proceeds, after deducting estimated underwriting discounts and commissions, 
+ by $         million (assuming no exercise of the underwriters’ over-allotment option). We will not receive any proceeds from the sale of shares of our common stock by the selling stockholder.                                                         |
+
+| We intend to use the net proceeds from this offering primarily for general corporate purposes, including working capital, research and development, business development, sales and marketing activities and capital                             
+ expenditures. We may also use a portion of the net proceeds, to acquire or invest in complementary businesses, technologies or other assets, although we currently have no agreements or understandings with respect to any such acquisitions or 
+ investments.                                                                                                                                                                                                                                     |
+
+| Controlled company | After this offering, assuming an offering size set forth in this section, we expect to be a controlled company within the meaning of the corporate governance standards of the NASDAQ. See “Management—Controlled Company Status.” |
+
+| Conflicts of interest | Goldman Sachs & Co. LLC indirectly holds approximately 38.90% of the equity of Brighton Health Group Holdings, LLC, which is the sole holder of                                                                                       
+ our capital stock as of immediately prior to this offering. Accordingly, Goldman Sachs & Co. LLC is deemed to have a conflict of interest within the meaning of Rule 5121 (“Rule 5121”) of the Financial Industry Regulatory          
+ Authority, Inc. (“FINRA”). Therefore, this offering is being made in compliance with the requirements of Rule 5121. This rule requires, among other things, that a “qualified independent underwriter” participate in the preparation 
+ of, and                                                                                                                                                                                                                               |
+
+
+| exercise the usual standards of “due diligence” with respect to, the registration statement and this prospectus. J.P. Morgan Securities LLC has agreed to act as qualified independent                                                                    
+ underwriter for this offering and to undertake the legal responsibilities and liabilities of an underwriter under the Securities Act. J.P. Morgan Securities LLC will not receive any additional fees for serving as qualified independent underwriter in 
+ connection with this offering. We have agreed to indemnify J.P. Morgan Securities LLC against liabilities incurred in connection with acting as qualified independent underwriter, including liabilities under the Securities Act. Pursuant to FINRA      
+ Rule 5121, Goldman Sachs & Co. LLC will not confirm sales of our common stock to any account over which it exercises discretionary authority without the prior written approval of the customer. For more information, see                                
+ “Underwriting (Conflicts of Interest).”                                                                                                                                                                                                                   |
+
+| Risk factors | Investing in our common stock involves a high degree of risk. See “Risk Factors” elsewhere in this prospectus for a discussion of factors you should carefully consider before deciding to invest in our common stock. |
+
+| Stock symbol | PRVA |
+
+The number of shares of common stock to be outstanding following this offering is based on 95,985,817 shares of common stock outstanding as of December 31, 2020, and excludes:
+
+| • |     | 684,887 shares of common stock, plus future increases, reserved for future issuance under our Second Amended and 
+ Restated Stock Option Plan as of December 31, 2020;                                                              |
+
+unless otherwise indicated, all information in this prospectus assumes:
+
+| • |     | the filing of our amended and restated certificate of incorporation and the adoption of our amended and restated 
+ bylaws, each in connection with the closing of this offering; and                                                |
+
+| • |     | no exercise by the underwriters of their option to purchase up 
+ to                additional shares of common stock.           |
+
+
+SUMMARY CONSOLIDATED FINANCIAL AND OTHER DATA The following tables summarize our consolidated financial data. The summary consolidated statement of operations data for the years ended December 31, 2020, 2019 and 2018 and the consolidated balance sheet data as of December 31, 2020 and 2019 are derived from our audited consolidated financial statements that are included elsewhere in this prospectus. Our historical results are not necessarily indicative of the results that may be expected in the future. You should read the summary historical financial data below in conjunction with the section titled “Management’s Discussion and Analysis of Financial Condition and Results of Operations” and the financial statements and related notes included elsewhere in this prospectus.
+
+|                                                                                              |     | Year Ended December 31, |       2020 |   |     |   |       2019 |   |     |   |       2018 |   |
+|:---------------------------------------------------------------------------------------------|:----|:------------------------|-----------:|:--|:----|:--|-----------:|:--|:----|:--|-----------:|:--|
+| (Amounts in thousands, except share and per share data)                                      |     |                         |            |   |     |   |            |   |     |   |            |   |
+| Revenue                                                                                      |     | $                       |    817,075 |   |     | $ |    786,360 |   |     | $ |    657,609 |   |
+| Operating expenses:                                                                          |     |                         |            |   |     |   |            |   |     |   |            |   |
+| Physician and practice expense                                                               |     |                         |    629,487 |   |     |   |    622,632 |   |     |   |    527,923 |   |
+| Cost of platform                                                                             |     |                         |    105,006 |   |     |   |     95,256 |   |     |   |     73,227 |   |
+| Sales and marketing                                                                          |     |                         |     11,343 |   |     |   |      9,156 |   |     |   |     11,737 |   |
+| General and administrative                                                                   |     |                         |     44,016 |   |     |   |     41,827 |   |     |   |     41,497 |   |
+| Depreciation and amortization                                                                |     |                         |      1,843 |   |     |   |      1,427 |   |     |   |      1,070 |   |
+| Total operating expenses                                                                     |     |                         |    791,695 |   |     |   |    770,298 |   |     |   |    655,454 |   |
+| Operating income                                                                             |     |                         |     25,380 |   |     |   |     16,062 |   |     |   |      2,155 |   |
+| Interest expense                                                                             |     |                         |      1,917 |   |     |   |      6,910 |   |     |   |      6,420 |   |
+| Income (loss) before (benefit from) provision for income taxes                               |     |                         |     23,463 |   |     |   |      9,152 |   |     |   |     (4,265 | ) |
+| (Benefit from) provision for income taxes                                                    |     |                         |     (7,441 | ) |     |   |      1,207 |   |     |   |        (76 | ) |
+| Net income (loss)                                                                            |     |                         |     30,904 |   |     |   |      7,945 |   |     |   |     (4,189 | ) |
+| Less: Net loss attributable to non-controlling                                               
+ interests                                                                                    |     |                         |       (340 | ) |     |   |       (299 | ) |     |   |     (1,145 | ) |
+| Net income (loss) attributable to Privia Health Group, Inc.                                  |     | $                       |     31,244 |   |     | $ |      8,244 |   |     | $ |     (3,044 | ) |
+| Net income (loss) per share attributable to Privia Health Group, Inc. stockholders—basic and 
+ diluted                                                                                      |     | $                       |       0.33 |   |     | $ |       0.09 |   |     | $ |      (0.03 | ) |
+| Weighted average common shares outstanding—basic and diluted                                 |     |                         | 95,950,062 |   |     |   | 95,931,549 |   |     |   | 95,880,506 |   |
+
+|                      | (in thousands) | Year Ended December 31, |    2020 |   |     |   |    2019 |   |     |     |
+|:---------------------|:---------------|:------------------------|--------:|:--|:----|:--|--------:|:--|:----|:----|
+| Balance Sheet Data:  |                |                         |         |   |     |   |         |   |     |     |
+| Cash                 |                | $                       |  84,633 |   |     | $ |  46,889 |   |     |     |
+| Working capital      |                |                         |  43,146 |   |     |   |  14,379 |   |     |     |
+| Total assets         |                |                         | 328,969 |   |     |   | 270,205 |   |     |     |
+| Current liabilities  |                |                         | 146,938 |   |     |   | 115,220 |   |     |     |
+| Total liabilities    |                |                         | 185,317 |   |     |   | 162,749 |   |     |     |
+| Accumulated deficit  |                |                         | (19,878 | ) |     |   | (51,122 | ) |     |     |
+| Stockholder’s equity |                |                         | 143,652 |   |     |   | 107,456 |   |     |     |
+
+Each $1.00 increase or decrease in the assumed initial public offering price of $ per share, which is the midpoint of the price range set forth on the cover page of this prospectus, would increase or decrease, as
+
+
+applicable, the as adjusted amount of each of our cash and cash equivalents, working capital, total assets and stockholders’ equity (deficit) by $ million, assuming that the number of shares offered by us, as set forth on the cover page of this prospectus, remains the same and after deducting the estimated underwriting discounts and commissions and estimated offering expenses payable by us. Similarly, each increase or decrease of 1.0 million shares in the number of shares offered by us at the assumed initial public offering price would increase or decrease, as applicable, each of our cash and cash equivalents, working capital, total assets, and stockholders’ equity (deficit) by $ million. The as adjusted information set forth above is illustrative only and will depend on the actual initial public offering price and other terms of this offering determined at pricing. We define working capital as current assets less current liabilities. See our financial statements appearing elsewhere in this prospectus for further details regarding our current assets and current liabilities. As adjusted amounts give effect to the issuance and sale of shares of common stock by Privia Health in the offering at an assumed initial public offering price of $ per share, the midpoint of the range set forth on the cover page of this prospectus, and the application of the net proceeds of the offering, after deducting estimated underwriting discounts and commissions and offering expenses payable by us, as set forth under “Use of Proceeds.” See “Use of Proceeds” and “Capitalization.” Other Data: Key Metrics
+
+|                                             | (amounts in thousands, except provider data) | Year Ended   
+ December 31, |      2020 |     |   |      2019 |     |   |    2018 |
+|:--------------------------------------------|:---------------------------------------------|:-------------|----------:|:----|:--|----------:|:----|:--|--------:|
+| Implemented Providers (as of end of period) |                                              |              |     2,550 |     |   |     2,482 |     |   |   1,796 |
+| Attributed Lives (as of end of period)      |                                              |              |       682 |     |   |       704 |     |   |     575 |
+| Practice Collections1 ($)                   |                                              | $            | 1,301,074 |     | $ | 1,135,664 |     | $ | 930,413 |
+
+| (1) | We define practice collections as the total collections from all practices in all markets and all sources of                                                                                                                                   
+ reimbursement (FFS, VBC and other) that we receive for delivering care and providing our platform and associated services. Practice collections differ from revenue by including collections from Non-Owned Medical Groups (as defined below). |
+
+Non-GAAP Financial Measures
+
+|                                   | (amounts in thousands, except for percentages) | Year Ended   
+ December 31, |    2020 |   |     |   |    2019 |   |     |   |    2018 |   |
+|:----------------------------------|:-----------------------------------------------|:-------------|--------:|:--|:----|:--|--------:|:--|:----|:--|--------:|:--|
+| Care Margin2 ($)                  |                                                | $            | 187,588 |   |     | $ | 163,728 |   |     | $ | 129,686 |   |
+| Platform Contribution2 ($)        |                                                | $            |  82,582 |   |     | $ |  68,472 |   |     | $ |  56,459 |   |
+| Platform Contribution Margin2 (%) |                                                |              |    44.0 | % |     |   |    41.8 | % |     |   |    43.5 | % |
+| Adjusted EBITDA2 ($)              |                                                | $            |  29,372 |   |     | $ |  18,126 |   |     | $ |   8,931 |   |
+| Adjusted EBITDA Margin2 (%)       |                                                |              |    15.7 | % |     |   |    11.1 | % |     |   |     6.9 | % |
+
+| (2) | In addition to our results determined in accordance with GAAP, we have disclosed care margin, platform                                    
+ contribution, platform contribution margin, adjusted EBITDA and adjusted EBITDA margin, which are non-GAAP financial measures. We define: |
+
+| • |     | Care margin as total revenue less the sum of physician and practice expense. |
+
+| • |     | Platform contribution as total revenue less the sum of (i) physician and practice expense and (ii) cost of 
+ platform.                                                                                                  |
+
+
+| • |     | Platform contribution margin as platform contribution divided by care margin. |
+
+| • |     | Adjusted EBITDA as net income (loss) attributable to Privia Health Group, Inc. shareholders and subsidiaries                                                                                                        
+ excluding minority interests, provision (benefit) for income taxes, interest income, interest expense, depreciation and amortization, stock-based compensation, severance charges and other non-recurring expenses. |
+
+| • |     | Adjusted EBITDA margin as Adjusted EBITDA divided by care margin. |
+
+Care margin, platform contribution, platform contribution margin, adjusted EBITDA and adjusted EBITDA margin are not recognized terms under GAAP and should not be considered as alternatives to measures of financial performance or liquidity derived in accordance with GAAP. See “Selected Consolidated Financial and Other Data-Non-GAAP Financial Measures” for a reconciliation from operating income, the most directly comparable GAAP financial measure, to care margin, for a reconciliation from operating income, the most directly comparable GAAP financial measure, to platform contribution, and a reconciliation from net income (loss) attributable to Privia Health Group, Inc. and Subsidiaries, the most directly comparable GAAP financial measure, to adjusted EBITDA, as well as a discussion about the limitations of care margin, platform contribution, platform contribution margin, adjusted EBITDA and adjusted EBITDA margin.
+
+
+RISK FACTORS Investing in our common stock involves a high degree of risk. You should carefully consider the risks and uncertainties described below, together with all of the other information contained in this prospectus, including our consolidated financial statements and the related notes thereto, before making a decision to invest in our common stock. The risks and uncertainties described below are not the only ones we face. Additional risks and uncertainties that we are unaware of, or that we currently believe are not material, may also become important factors that affect us. If any of the following risks occur, our business, financial condition, operating results and prospectus could be materially and adversely affected. In that event, the price of our common stock could decline, and you could lose all or part of your investment. Risks Related to Our Business and Our Industry We conduct business in a heavily regulated industry, and if we fail to comply with applicable healthcare laws and government regulations, we could incur financial penalties, become excluded from participating in government health care programs, be required to make significant operational changes or experience adverse publicity, which could harm our business. The U.S. healthcare industry is heavily regulated and closely scrutinized by federal, state and local authorities. Comprehensive statutes and regulations govern the manner in which our Medical Groups provide and bill for services and collect reimbursement from governmental health care programs and commercial payers, our contractual relationships with our Privia Providers, vendors, health network partners and customers, how we contract with commercial payers, our marketing activities and other aspects of our operations. Of particular importance are:
+
+| • |     | state laws that prohibit general business corporations, such as us, from practicing medicine, controlling Privia 
+ Physicians’ medical decisions or engaging in practices such as splitting fees with Privia Physicians;            |
+
+| • |     | federal and state laws pertaining to non-physician clinicians, such as                                                                                       
+ nurse practitioners and physician assistants, including requirements for physician supervision of such practitioners and reimbursement-related requirements; |
+
+| • |     | the federal physician self-referral law, commonly referred to as the Stark Law, which, subject to certain                                                                                                                                     
+ exceptions, prohibits physicians from referring Medicare or Medicaid patients to an entity for the provision of certain “designated health services” such as laboratory and other ancillary health care services if the physician or a member 
+ of the physician’s immediate family has a direct or indirect financial relationship (including an ownership interest or a compensation arrangement) with the entity;                                                                          |
+
+| • |     | the federal Anti-Kickback Statute, which, subject to certain exceptions known as “safe harbors,”                                                                                                                                                         
+ prohibits the knowing and willful offer, payment, solicitation or receipt of any bribe, kickback, rebate or other remuneration, directly or indirectly, overtly or covertly in cash or in kind, to induce, or in return for, either the referral of an   
+ individual, or the lease, purchase, order or recommendation of, items or services covered, in whole or in part, by government healthcare programs such as Medicare and Medicaid. A person or entity can be found guilty of violating the statute without 
+ actual knowledge of the statute or specific intent to violate it. In addition, a claim including items or services resulting from a violation of the federal Anti-Kickback Statute constitutes a false or fraudulent claim for purposes of the False     
+ Claims Act, or FCA. There are a number of statutory exceptions and regulatory safe harbors protecting some common activities from prosecution;                                                                                                           |
+
+| • |     | federal civil and criminal false claims laws, including the FCA, which prohibit, among other things, individuals                                                                                                                                      
+ or entities from knowingly presenting, or causing to be presented, false or fraudulent claims for payment to, or approval by Medicare, Medicaid, or other federal health care programs, knowingly making, using or causing to be made or used a false 
+ record or statement material to a false or fraudulent claim or an obligation to pay or transmit money to the federal government, or knowingly concealing or                                                                                           |
+
+
+| knowingly and improperly avoiding or decreasing an obligation to pay money to the federal government. The FCA also permits a private individual acting as a “whistleblower” to bring 
+ actions on behalf of the federal government alleging violations of the FCA and to share in any monetary recovery;                                                                    |
+
+| • |     | the criminal healthcare fraud provisions of the federal Health Insurance Portability and Accountability Act of                                                                                                                                         
+ 1996, as amended by the Health Information Technology for Economic and Clinical Health Act, or HITECH, and their implementing regulations, or collectively, HIPAA, and related rules that prohibit knowingly and willfully executing, or attempting to 
+ execute, a scheme or artifice to defraud any healthcare benefit program or obtain, by means of false or fraudulent pretenses, representations, or promises, any of the money or property owned by, or under the custody or control of, any healthcare  
+ benefit program, regardless of the payer (e.g., public or private), and knowingly and willfully falsifying, concealing or covering up by any trick or device a material fact or making any material false, fictitious or fraudulent statement in       
+ connection with the delivery of or payment for health care benefits, items or services. Similar to the federal Anti-Kickback Statute, a person or entity can be found guilty of violating HIPAA without actual knowledge of the statute or specific    
+ intent to violate it;                                                                                                                                                                                                                                  |
+
+| • |     | civil monetary penalties laws, which impose civil fines for, among other things, the offering or transferring of                                                                                                                                     
+ remuneration to a Medicare or state healthcare program beneficiary if the person knows or should know it is likely to influence the beneficiary’s selection of a particular provider, practitioner, or supplier of services reimbursable by Medicare 
+ or a state healthcare program, unless an exception applies;                                                                                                                                                                                          |
+
+| • |     | federal and state laws that prohibit our Medical Groups from billing and receiving payment from Medicare and                                                                                                                                        
+ Medicaid for services unless the services furnished by our Privia Providers are medically necessary, adequately and accurately documented, timely submitted and billed using codes that accurately reflect the type and level of services rendered; |
+
+| • |     | Medicare and Medicaid regulations, manual provisions, local coverage determinations, national coverage                                                          
+ determinations and agency guidance that impose complex and extensive requirements upon healthcare providers, including our Medical Groups and Privia Providers; |
+
+| • |     | state laws that prohibit physicians from splitting professional fees with                                                                                       
+ non-physicians, whether individuals or entities, or place restrictions on how such professional fees may be split with non-physicians, including, for instance, 
+ prohibitions on percentage-based management fees;                                                                                                               |
+
+| • |     | laws that regulate debt collection practices; |
+
+| • |     | federal and state antitrust laws that prohibit or limit exclusive contracting relationships with healthcare                                                                                                                                              
+ providers, prohibit or limit the sharing of cost and pricing data, prohibit competitors from taking collective action to set commercial payer reimbursement rates, and determine when a joint venture or health care network is sufficiently integrated, 
+ by either sharing substantial financial risk or substantial clinical integration, to jointly contract with commercial payers;                                                                                                                            |
+
+| • |     | federal and state laws and policies related to healthcare providers’ licensure, certification, 
+ accreditation, Medicare and Medicaid program enrollment and reassignment of benefits;          |
+
+| • |     | federal and state laws and policies related to the prescribing and dispensing of pharmaceuticals and controlled 
+ substances;                                                                                                     |
+
+| • |     | state laws related to the advertising and marketing of services by healthcare providers; |
+
+| • |     | federal and state laws related to confidentiality, privacy and security of personal information, including                                                                                                                    
+ medical information and records, that limit the manner in which we may use and disclose that information, impose obligations to safeguard such information and require that we notify third parties in the event of a breach; |
+
+| • |     | federal laws that impose civil administrative sanctions for, among other violations, inappropriate billing of                                                    
+ services to government health care programs or employing or contracting with individuals who are excluded from participation in government health care programs; |
+
+
+| • |     | laws and regulations limiting the use of funds in health savings accounts for individuals with high deductible 
+ health plans;                                                                                                  |
+
+| • |     | federal and state laws regarding such telemedicine services, including necessary technological standards to                    
+ deliver such services, coverage restrictions associated with such services, and the amount of reimbursement for such services; |
+
+| • |     | state laws pertaining to anti-kickback, fee splitting, self-referral and false claims, some of which are not                                                                
+ consistent with comparable federal laws and regulations, including, for example, not being limited in scope to relationships involving government health care programs; and |
+
+| • |     | state insurance laws governing what healthcare entities may bear financial risk and the allowable types of                                                   
+ financial risks, including direct primary care programs, provider-sponsored organizations, ACOs, independent practice associations, and provider capitation. |
+
+Because of the breadth of these laws and the narrowness of the statutory exceptions and safe harbors available, it is possible that some of our business activities could, despite our efforts to comply, be subject to challenge under one or more of such laws. Achieving and sustaining compliance with these laws may prove costly. The risk of our being found in violation of these laws and regulations is increased by the fact that many of them have not been fully interpreted by regulatory authorities or the courts, and their provisions are sometimes complex and open to a variety of interpretations. It is possible that governmental and enforcement authorities will conclude that our business practices may not comply with current or future statutes, regulations or case law interpreting applicable fraud and abuse or other healthcare laws and regulations. Depending on the circumstances, failure to meet applicable regulatory requirements can result in civil, administrative, and criminal penalties such as criminal prosecution, fines, damages, disgorgement, individual imprisonment, recoupments of overpayments, imprisonment, loss of enrollment status, exclusion from participation in federal and state funded health care programs, contractual damages, reputational harm and the curtailment or restricting of our operations, as well as additional reporting obligations and oversight if we become subject to a corporate integrity agreement or other agreement to resolve allegations of non-compliance withthese laws. In addition, in order to achieve compliance with current and future regulatory requirements, we may need to discontinue an aspect of our current business or expend significant costs altering our business structure, operations, or relationship with certain third-parties, including Privia Providers and health system partners, payers, and vendors. Our failure to accurately anticipate the application of these laws and regulations to our business or any other failure to comply with current or future regulatory requirements could create liability for us and negatively affect our business. Any action against us for violation of these laws or regulations, even if we successfully defend against it, could cause us to incur significant legal expenses, divert our management’s attention from the operation of our business and result in adverse publicity. To enforce compliance with the federal laws, the U.S. Department of Justice and the U.S. Department of Health and Human Services Office of Inspector General, or OIG, regularly scrutinizes healthcare providers, which has led to a number of investigations, prosecutions, convictions and settlements in the healthcare industry. Responding to and managing government investigations can be time and resource-consuming, divert management’s attention from the business and generate adverse publicity. Any such investigation or settlement could increase our costs or otherwise have a negative impact on our business, even if we are ultimately found to be in compliance with the relevant laws. Moreover, if one of our physician or health system partners, or another third party fails to comply with applicable laws and becomes the target of a government investigation, government authorities could require our cooperation in the investigation, which could cause us to incur additional legal expenses, divert management’s attention from the business and result in adverse publicity. In addition, because of the potential for large monetary exposure under the federal False Claims Act, which provides for treble damages and penalties of $11,665 to $23,331 per false claim or statement (as of June 19, 2020, and subject to annual adjustments for inflation), healthcare providers often settle allegations without admissions of liability for significant amounts to avoid the potential of penalties and treble damages that may be 26
+
+awarded in litigation proceedings. Such settlements often contain additional compliance and reporting requirements as part of a consent decree, settlement agreement or corporate integrity
+agreement, which may result in significant costs for several years after resolution of the original allegations and may slow our overall growth. Given the significant size of actual and potential settlements, it is expected that the government will
+continue to devote substantial resources to investigating healthcare providers’ compliance with the myriad of healthcare reimbursement rules and fraud and abuse laws.
+
+In addition, with the various government shutdowns, stay at home orders, and restrictions on elective health care services brought about by
+the COVID-19 pandemic, our Owned and Non-Owned Medical Groups have increasingly relied upon the availability of, and reimbursement for, telemedicine and other emerging technologies (such as digital health
+services) to generate revenue. Federal and state laws regarding such services, necessary technological standards to deliver such services, coverage restrictions associated with such services, and the amount of reimbursement for such services are
+subject to changing political, regulatory and other influences. During the first wave of the COVID-19 pandemic in the United States, many states loosened the restrictions in such laws and allowed providers to
+bill for such services at rates comparable to providing such services in a traditional office setting. These changes may be of short duration, may impede us in providing such services to our patients in an economically viable manner in the future,
+and may harm our business. For example, of the jurisdictions in which we currently operate, Virginia, Texas, Florida and Washington, the District of Columbia are not members of the Interstate Medical Licensure Compact, which streamlines the process
+by which physicians licensed in one state are able to practice in other participating states. Failure to comply with these laws could result in denials of reimbursement for our Privia Providers’ services (to the extent such services are
+billed), recoupments of prior payments, professional discipline for our Privia Providers or civil or criminal penalties against our Medical Groups.
+
+The laws, regulations and standards governing the provision of healthcare services may change significantly in the future. New or changed
+healthcare laws, regulations or standards may harm our business. A review of our business by judicial, law enforcement, regulatory or accreditation authorities could result in challenges or actions against us that could harm our business and
+operations.
+
+We are dependent on our relationships with Medical Groups, some of which we do not own, to furnish Privia Providers, to provide professional services to patients on behalf of federal health care programs as defined in 42 U.S.C. 1320a-7(f) (“federal health care programs”) and commercial payers, and our business would be adversely affected if those relationships were disrupted.
+
+We have relationships with Medical Groups in each of our markets which our Privia Providers join to furnish healthcare
+services as an integrated, single-TIN legal entity. When permitted under state law, these are structured as Owned Medical Groups and we own a majority interest in all of our Owned Medical Groups but, even in
+such markets, we and our MSOs are still prohibited from controlling any aspect of the practice of medicine, including, without limitation, decisions regarding professional medical judgment, diagnosis and treatment of patients and supervisory
+responsibility for all licensed non-physician clinicians, unlicensed individuals to whom the physician delegates nondiscretionary duties and any other individual providing any service that could constitute the
+practice of medicine. In other states, such as Texas and Tennessee, we are prohibited from having any ownership interest or governance control in our Medical Groups and these are structured as Non-Owned Medical Groups. In such instances, we have
+appointed a Privia Physician licensed in the market to the governing board of such Non-Owned Medical Groups but we have little in the way of governance control of the Non-Owned Medical Groups other than through our management service agreements.
+Although we expect that these relationships will continue, we cannot guarantee that they will. A material change in any of these relationships, a change in government regulation, a change in interpretation of government regulation or the loss of any
+of our Medical Groups could have a material adverse effect on our business, financial condition and results of operation. For further discussion of the relationship between us and our Owned Medical Groups and Non-Owned Medical Groups, see
+“Business—State Healthcare Laws.”
+
+
+Our revenues and profits could be diminished if we fail to retain our Privia Physicians or fail to recruit new Privia Physicians to affiliate with our Medical Groups.
+
+Our operating model relies significantly on aggregating a
+sufficient number of Privia Physicians in each of our Medical Groups. The number of Privia Physicians in a particular market impacts our ability to negotiate competitive reimbursement rates with commercial payers, impacts our attributed lives for
+VBC purposes, impacts our unit cost in furnishing our services across geographic markets, and, our revenue from the provision of management services through the management services agreement (each a “MSA”) we enter into with the Non-Owned
+Medical Groups. Although the average age of our Privia Physicians is only 51 and our average retention rate for Privia Providers was 95% over the past four years, we still experience provider attrition within our Medical Groups resulting from
+retirement, disability, death and Privia Physicians pursing other opportunities including hospital or health system employment, concierge medicine practices, and the sale of their Affiliated Practices. Although we employ a Privia Provider
+recruitment team to help recruit new Privia Providers into our existing Medical Groups to offset such organic attrition, the departure of large number of Privia Providers, or the departure of key Privia Physicians’ Affiliated Practices with
+large patient populations, could negatively impact our revenue in the short term, and may adversely affect our ability to perform under our VBC arrangements, including our financial performance and our ability to timely and accurately meet reporting
+requirements. Further, the loss of any Privia Physician may result in such Privia Physician’s patient population transferring to a non-Privia Provider, which could reduce our overall revenues and profits. Moreover, we may not be able to attract
+new Privia Physicians to replace the services of departing Privia Physicians or to service our obligations under a government health care program, such as the MSSP or Medicare Advantage plans, or a VBC arrangement with a commercial payer.
+
+Our standard agreements between our Medical Groups and our Privia Physicians do not generally prohibit Privia Physicians from competing with
+us after the term of the agreements. Further, in our deals with certain Medical Groups where we have post-termination non-compete obligations and other restrictive covenants that prohibit our Privia Providers from working with a competitor of ours,
+there can be no assurance that such non-compete agreements when asserted against a departing Privia Provider will be found enforceable if challenged in certain states. In such event, we would be unable to
+prevent such departing Privia Provider and other providers formerly affiliated with us from competing with us and/or our Medical Groups, potentially resulting in the loss of some of our patients, which would negatively affect our overall revenues
+and profits.
+
+Further, as we move into new markets, our success in each market is dependent on our ability to recruit a sufficient number
+of Privia Providers to allow us to fully implement our operating model. Our failure to do so may ultimately result in our inability to compete effectively in such market. Further, as we incur significant upfront time and costs in operating in a new
+market, including management time and attention, our failure to compete effectively in a new market could negatively affect our profits as well as our reputation within the larger physician community.
+
+Our business could be adversely affected by legal challenges to our business model.
+
+Our operating model includes Owned Medical Groups, Non-Owned Medical Groups, MSOs that furnish management services on behalf of our Medical
+Groups and ACOs, a technology-enabled platform that overlays our Privia Providers’ EMR, and, in most markets, a separate legal entity that serves as an ACO under the MSSP as established by the Patient Protection and Affordable Care Act and a
+provider network vehicle for VBC on behalf of our Medical Groups as well as, in certain markets, independent, non-Privia Providers.
+
+Our
+ability to conduct business in each state is dependent upon that specific state’s treatment of each component of the Privia operating model under such state’s laws, regulations and policies governing the practice of medicine, physician fee
+splitting prohibitions, state restrictions on the use and disclosure of patient health information and other confidential information among the various components of our operating model, restrictions on the types of provider entities that can take
+financial risk or the types of financial risks that can be assumed by providers before triggering the state’s insurance laws requiring licensure from the state’s insurance department or agency.
+
+
+The laws of many states, including states in which we currently operate, prohibit us from
+exercising control over the medical judgments or decisions of our Privia Physicians and from engaging in certain financial arrangements, such as splitting professional fees with Privia Providers or incentivizing certain types of utilization. These
+laws and their interpretations vary from state to state, and are enforced by state courts and regulatory authorities, each with broad discretion. We enter into agreements with our Medical Groups in our various markets and through which our Privia
+Providers furnish healthcare services on behalf of our Medical Groups. In addition, we enter into contracts on behalf of our Medical Groups and ACOs with federal health care programs and commercial payers to deliver healthcare services in exchange
+for fees. Such fees may be structured as FFS, VBC or both. We also enter into exclusive MSAs with our Medical Groups pursuant to which the Medical Groups reserve exclusive control and responsibility for all aspects of the practice of medicine and
+the delivery of medical services. Our Medical Groups also enter into services arrangements with our Privia Physicians’ Affiliated Practices to provide certain services to support our Privia Physicians at their historic practice locations.
+
+Although we seek to substantially comply in all material respects with applicable state laws, including prohibitions on the corporate practice
+of medicine and fee splitting, state officials who administer these laws or other third parties may challenge our existing organization and contractual arrangements. If such a claim were successful, we could be subject to civil and criminal
+penalties and could be required to restructure or terminate the applicable contractual arrangements. A determination that these arrangements violate state statutes, or our inability to successfully restructure our relationships with our Medical
+Groups to comply with these statutes, could jeopardize our performance in federal health care programs and commercial payer arrangements, could result in a decrease in management fees under our MSAs, could slow our growth by making it harder to
+recruit Privia Physicians to join our Medical Groups, and could result in a renegotiation of our existing agreements with Privia Physicians, all of which would have a materially adverse effect on our business, financial condition and the results of
+operations.
+
+Our operating model seeks to structure each Medical Group as a “group practice” for purposes of the Stark Law. The
+Stark Law’s “group practice” definition is subject to a nine-factor analysis under the current regulatory scheme with many of the factors having multiple options for compliance. Although we have worked closely with nationally
+recognized healthcare counsel to structure our arrangements to comply with the Stark Law’s “group practice” definition, many of the individual factors have not been subject to meaningful judicial interpretation or regulatory agency
+guidance, and such regulatory agency guidance is subject to change periodically with the most recent changes published in the Federal Register on December 2, 2020. Furthermore, the test is not static, and our Medical Groups and their
+relationships with Privia Physicians must be periodically reviewed to ensure that they continue to meet the definition and that the safeguards built into the various agreements are being implemented and administered as required. A determination that
+any of our Medical Groups is not a “group practice” or a change in the Stark Law, regulations or regulatory agency guidance that would result in any of our Medical Groups no longer being a “group practice” for Stark Law purposes
+would necessitate restructuring our existing Medical Group agreements as well as their underlying agreements with Privia Physicians, and could result in an overpayment, an inability to practice as “group practice” in a given market, or a
+restructuring of our financial relationships with Privia Physicians in a manner that is not as financially advantageous to us or makes it more onerous to recruit physicians to join our Medical Groups. All such results would likely have a materially
+adverse effect on our business, financial condition and the results of operations.
+
+Our operating model also seeks to structure each
+Medical Group with sufficient integration to allow such Medical Group to negotiate on behalf of its Privia Providers with both federal health care programs and commercial payers. That is, from federal and state antitrust law perspectives, each
+Medical Group is structured to be a single entity, with a single-TIN, fully capable of fixing the prices for which it sells its products and services.
+
+Similarly, our operational ACOs, which all participate in the MSSP, have been structured to be substantially clinically integrated in
+accordance with guidance from the Federal Trade Commission on the necessary components of a program of substantial clinical integration to allow us to negotiate payer contracts, including
+
+
+pricing terms, on behalf of our participating providers, including our Medical Groups, in connection with the sale of such integrated services to such payers. We have not, however, requested a
+formal advisory opinion from the Federal Trade Commission or a business review from the Department of Justice Antitrust Division for either our Medical Groups or our ACO model.
+
+With respect to our ACOs, each such entity participates in both the MSSP and commercial VBC arrangements. Given our MSSP participation, under
+the FTC and DOJ’s Statement of Antitrust Enforcement Policy Regarding Accountable Care Organizations Participating in the Medicare Shared Savings Program (the “Policy Statement”), our ACOs would be subject to a rule of reason
+analysis. Although we have not conducted a full calculation of our ACOs’ share of primary specialty services in each ACO participant’s Primary Service Area (“PSA”), our preliminary analysis is that each of our ACOs would fall
+outside of the Policy Statement’s safety zone (i.e., no more than 30% share of services in each PSA) and therefore, the FTC or DOJ could challenge our ACO as anticompetitive. We have, however, adopted policies and practices to ensure our
+compliance with the antitrust laws including limiting the anti-competitive effect of our higher share of physician services within our geographic markets.
+
+A successful challenge of either of these components of our operating model could result in our restructuring our relationships with our
+Medical Groups and ACOs, and where such relationships cannot be successfully restructured could result in our inability to furnish services in certain markets. Further, depending on the enforcement agency an antitrust violation can result in
+enforcement actions against us, our Medical Groups and/or ACOs ranging from a cease and desist demand, to criminal enforcement with the potential for treble damages. Any such outcome could damage our reputation, jeopardize our existing business
+arrangements, and would likely have a materially adverse effect on our business, financial condition and the results of operations. Even a successful defense of an antitrust claim can be very expensive, may distract key management, and can damage
+our reputation and impair our ability to recruit new physicians.
+
+We are dependent on our EMR vendor, athenahealth, Inc., which the Privia Technology Solution is integrated and built upon, and which we require all of our Owned Medical Groups to utilize and which is utilized by all but one of the Non-Owned Medical Groups, and our business would be adversely affected if that relationship were disrupted.
+
+Although we own all aspects of our athenaNet services, the Privia Technology Solution is not currently usable with
+other EMRs, and to move our Privia Providers to another EMR provider we would have to duplicate our services on that platform, which would require considerable effort, time and expense. While we have a positive working relationship with
+athenahealth, Inc., and while being one of their larger enterprise clients gives us priority access in resolving issues with the EMR and preferred pricing relative to going market rates, there is no assurance we will be able to maintain the
+relationship on positive terms. In addition, our dependency on athenahealth, Inc. creates significant risks related to service disruptions, potential cyberattacks experienced by athenaNet, cessation of operations of athenahealth, Inc., or price
+leveraging by athenahealth, Inc. A material change in our relationship with athenahealth, Inc., whether resulting from a dispute, a change in government regulation, or the loss of this relationship, could impair our ability to provide the same level
+of services to our Privia Providers for some period of time and could have a material adverse effect our business, financial condition and results of operations.
+
+We have a history of net losses, we anticipate increasing expenses in the future, and we may not be able to maintain profitability.
+
+We reported a net income of $31.2 million and $8.2 million for the years ended December 31, 2020 and 2019, respectively. We incurred a net loss
+of $3.0 million for the year ended December 31, 2018. Our accumulated deficit is $19.9 million as of December 31, 2020. We expect our aggregate costs will increase substantially in the foreseeable future and we may experience losses as we expect to
+invest heavily in increasing and expanding our operations, hiring additional employees and operating as a public company. These efforts may
+
+
+prove more expensive than we currently anticipate, and we may not succeed in increasing our revenue sufficiently to offset these higher expenses. To date, we have financed our operations
+principally from revenue earned from our Medical Group’s billing and collection for healthcare services furnished by Privia Providers, revenues earned from VBCs with our ACOs, the incurrence of indebtedness and the sale of our equity. We may
+not generate positive cash flow from operations or achieve profitability in any given period, and our limited operating history may make it difficult for you to evaluate our current business and our future prospects.
+
+We have encountered and will continue to encounter risks and difficulties frequently experienced by growing companies in rapidly changing
+industries, including increasing expenses as we continue to grow our business. We expect our operating expenses to increase significantly over the next several years as we continue to hire additional personnel, expand our operations and
+infrastructure, and continue to expand to reach more patients. In addition to the expected costs to grow our business, we also expect to incur additional legal, accounting and other expenses as a newly public company. These investments may be more
+costly than we expect, and if we do not achieve the benefits anticipated from these investments, or if the realization of these benefits is delayed, they may not result in increased revenue or growth in our business. If our growth rate were to
+decline significantly or become negative, it could adversely affect our financial condition and results of operations. If we are not able to achieve or maintain positive cash flow in the long term, we may require additional financing, which may not
+be available on favorable terms or at all and/or which would be dilutive to our stockholders. If we are unable to successfully address these risks and challenges as we encounter them, our business, results of operations and financial condition would
+be adversely affected. Our failure to achieve or maintain profitability could negatively impact the value of our common stock.
+
+Security breaches, loss of data and other disruptions could compromise sensitive information related to our business or our patients, or prevent us from accessing critical information and expose us to liability, which could adversely affect our business, operations and our reputation.
+
+In the ordinary course of our business, we collect, store, use and disclose sensitive data, including
+protected health information, or PHI, and other types of personal data or personally identifiable information, or PII, relating to our employees, our Privia Providers’ patients and others. We also process and store, and use third-party service
+providers to process and store, sensitive information, including intellectual property, trade secrets, confidential information and other proprietary business information. We manage and maintain such sensitive data and information utilizing a
+combination of managed data center systems and cloud-based computing center systems.
+
+We are highly dependent on information technology
+networks and systems, including the internet, to securely process, transmit and store this sensitive data and information. Security breaches of this infrastructure, including physical or electronic break-ins,
+computer viruses, attacks by hackers and similar breaches, and employee or contractor error, negligence or malfeasance, can create system disruptions, shutdowns or unauthorized disclosure or modifications of such sensitive data or information,
+causing PHI or other PII to be accessed or acquired without authorization or to become publicly available. We utilize third-party service providers for important aspects of the collection, storage, processing and transmission of employee and patient
+information, and other confidential and sensitive information, and therefore rely on third parties to manage functions that have material cybersecurity risks. Because of the sensitivity of the PHI, other PII and other sensitive information we and
+our service providers collect, store, transmit, and otherwise process, the security of our technology-enabled platform and other aspects of our services, including those provided or facilitated by our third-party service providers, are critical to
+our operations and business strategy. We take certain administrative, physical and technological safeguards to address these risks, such as evaluating such service providers before granting access to PHI or other PII, and by requiring contractors
+and other third-party service providers who handle this PHI, other PII and other sensitive information for us to enter into agreements that contractually obligate them to use reasonable efforts to safeguard such PHI, other PII, and other sensitive
+information. Measures taken to protect our systems, those of our contractors or third-party service providers, or the PHI, other PII, or other sensitive information we or contractors or third-party service providers process or maintain, may not
+
+
+adequately protect us from the risks associated with the collection, storage, processing and transmission of such sensitive data and information. We may be required to expend significant capital
+and other resources to protect against security breaches or to alleviate problems caused by security breaches. Despite our implementation of security measures, cyber-attacks are becoming more sophisticated and frequent. Additionally, the Department
+of Health and Human Services (“HHS”) and the Federal Bureau of Investigation alerted health care providers on October 28, 2020 that ransomware activity is currently targeting the healthcare and public health sectors. As a result, we
+or our third-party service providers may be unable to anticipate these techniques or to implement adequate protective measures, especially with more workforce members working remotely because of the COVID-19
+pandemic.
+
+A security breach or privacy violation that leads to disclosure or unauthorized use or modification of, or that prevents access
+to or otherwise impacts the confidentiality, security, or integrity of, any PII, patient information, including PHI subject to HIPAA or any other sensitive information we or our contractors or third-party service providers maintain or otherwise
+process, could harm our reputation, compel us to comply with breach notification laws, cause us to incur significant costs for remediation, fines, penalties, notification to individuals and for measures intended to repair or replace systems or
+technology and to prevent future occurrences, potential increases in insurance premiums, and require us to verify the accuracy of database contents, resulting in increased costs or loss of revenue. If we are unable to prevent or mitigate such
+security breaches or privacy violations or implement satisfactory remedial measures, or if it is perceived that we have been unable to do so, our operations could be disrupted, we may be unable to provide access to our systems, and we could suffer a
+loss of Privia Physicians and patients, and we may as a result suffer loss of reputation, adverse impacts on our Privia Providers, patients and investor confidence, financial loss, governmental investigations or other actions, regulatory or
+contractual penalties, and other claims and liability. In addition, security breaches and other inappropriate access to, or acquisition or processing of, information can be difficult to detect, and any delay in identifying such incidents or in
+providing any notification of such incidents may lead to increased organizational harm.
+
+Any such breach or interruption of our systems or
+those of any of our third-party service providers could compromise our networks or data security processes and sensitive information could be made inaccessible or could be accessed by unauthorized parties, publicly disclosed, lost or stolen. Any
+such interruption in access, improper access, disclosure or other loss of information could result in legal claims or proceedings, liability under laws and regulations that protect the privacy of patient information or other personal information,
+such as HIPAA, and regulatory penalties. Unauthorized access, loss or dissemination could also disrupt our operations, including the ability of our Privia Providers to perform healthcare services, access patient health information, collect, process,
+and prepare company financial information, provide information about our current and future services and engage in other patient and clinician education and outreach efforts. Any such breach could also result in the compromise of our trade secrets
+and other proprietary information, which could adversely affect our business and competitive position. While we maintain insurance covering certain security and privacy damages and claim expenses, we may not carry insurance or maintain coverage
+sufficient to compensate for all liability and in any event, insurance coverage would not address the reputational damage that could result from a security incident. Further, we maintain copies of our critical operational information, including our
+EMR data, in different geographic settings and the cloud, and we may not be able to access such copies in the event of a national emergency or widespread natural disaster. Any such breach or interruption of our systems or those of any of our
+third-party service providers could have a material adverse impact on our business, results of operations, financial condition and cash flows.
+
+Our business could be harmed if the Patient Protection and Affordable Care Act is overturned or by any legislative, regulatory or industry change that reduces healthcare spending or otherwise slows or limits the transition to more assumption of risk by healthcare providers.
+
+The United States Supreme Court is currently considering the case of California v. Texas, Case 19-840, which if the respondents are successful, could result in the Affordable Care Act (“ACA”) being struck down in its entirety. Although the statute has survived previous challenges before the Supreme
+Court, we cannot predict
+
+
+the outcome. In the event that the ACA is overturned, our revenue could be negatively impacted as we have historically realized shared savings under the MSSP, which was created by the ACA, in
+excess of $90 million since we started participating in the program in 2014.
+
+The American Rescue Plan Act of 2021, signed into law
+March 11, 2021, included a number of provisions intended to shore up the ACA, including lower premiums for insurance purchased through the exchange marketplace, premium tax credits for insurance purchased by individuals on the exchange marketplace
+and providing significant subsidies for states that have not yet expanded their Medicaid programs under the ACA. These changes as well as other administrative changes such as extending enrollment periods for 2021 and increasing navigator funding for
+2021 may decrease our Medical Groups’ uninsured patient populations while increasing enrollment from higher reimbursed commerc

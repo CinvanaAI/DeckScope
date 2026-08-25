@@ -1,0 +1,807 @@
+Klaviyo, Inc. (KVYO) | S-1 | S-1 | Filed: 2023-08-25
+https://www.sec.gov/Archives/edgar/data/1835830/000162828023030618/klaviyoincs-1.htm
+→ https://www.sec.gov/Archives/edgar/data/1835830/000162828023030618/klaviyoincs-1.htm
+Content-Type: text/html
+
+As filed with the Securities and Exchange Commission on August 25, 2023.
+
+#### Registration No. 333-
+
+### UNITED STATES
+
+### SECURITIES AND EXCHANGE COMMISSION
+
+#### WASHINGTON, D.C. 20549
+
+#### FORM S-1
+
+### REGISTRATION STATEMENT
+
+#### UNDER
+
+#### THE SECURITIES ACT OF 1933
+
+#### Klaviyo, Inc.
+(Exact Name of Registrant as Specified in Its Charter)
+
+| Delaware                        |     |                         7372 |     | 46-0989964            |
+| (State or Other Jurisdiction of 
+ Incorporation or Organization)  |     | -Primary Standard Industrial 
+   Classification Code Number |     | -I.R.S. Employer      
+ Identification Number |
+
+#### 125 Summer Street
+
+#### 6th Floor
+
+#### Boston, MA 02110
+(617) 213-1788
+
+(Address, Including Zip Code, and Telephone Number, Including
+
+Area Code, of Registrant’s Principal Executive Offices)
+
+#### Andrew Bialecki
+
+#### Co-Founder, Chief Executive Officer
+
+#### Klaviyo, Inc.
+
+#### 125 Summer Street
+
+#### 6th Floor
+
+#### Boston, MA 02110
+(617) 213-1788
+
+(Name, Address, Including Zip Code, and Telephone Number, Including
+
+#### Area Code, of Agent for Service)
+Copies to:
+
+| Craig M. Schmitz    
+ Bradley C. Weber    
+ Kim S. de Glossop   
+ Kristin A. Gerber   
+ Goodwin Procter LLP 
+ 100 Northern Avenue 
+ Boston, MA 02210    
+ (617) 570-1000      |     | Landon R. Edmond    
+ Cameron S. Vermette 
+ Klaviyo, Inc.       
+ 125 Summer Street   
+ 6th Floor           
+ Boston, MA 02110    
+ (617) 213-1788      |     | Frank F. Rahmani        
+ Samir A. Gandhi         
+ Helen Theung            
+ Sidley Austin LLP       
+ 555 California Street   
+ Suite 2000              
+ San Francisco, CA 94104 
+ (415) 772-7400          |
+
+Approximate date of commencement of proposed sale to the public: As soon as practicable after this registration statement becomes effective.
+
+If any of the securities being registered on this Form are to be offered on a delayed or continuous basis pursuant to Rule 415 under the Securities Act, check the following box: ☐
+
+If this Form is filed to register additional securities for an offering pursuant to Rule 462(b) under the Securities Act, please check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering. ☐
+
+If this Form is a post-effective amendment filed pursuant to Rule 462(c) under the Securities Act, check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering. ☐
+
+If this Form is a post-effective amendment filed pursuant to Rule 462(d) under the Securities Act, check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering. ☐
+
+Indicate by check mark whether the registrant is a large accelerated filer, an accelerated filer, a non-accelerated filer, smaller reporting company, or an emerging growth company. See the definitions of “large accelerated filer,” “accelerated filer,” “smaller reporting company,” and “emerging growth company” in Rule 12b-2 of the Exchange Act.
+
+| Large accelerated filer |     | ☐ |     | Accelerated filer         |     | ☐ |
+| Non-Accelerated filer   |     | ☒ |     | Smaller reporting company |     | ☐ |
+|                         |     |   |     | Emerging growth company   |     | ☒ |
+
+If an emerging growth company, indicate by check mark if the registrant has elected not to use the extended transition period for complying with any new or revised financial accounting standards provided to Section 7(a)(2)(B) of the Securities Act. ☐
+
+The registrant hereby amends this registration statement on such date or dates as may be necessary to delay its effective date until the registrant shall file a further amendment which specifically states that this registration statement shall thereafter become effective in accordance with Section 8(a) of the Securities Act of 1933 or until the registration statement shall become effective on such date as the Commission, acting pursuant to said Section 8(a), may determine.
+
+The information in this preliminary prospectus is not complete and may be changed. These securities may not be sold until the registration statement filed with the Securities and Exchange Commission is effective. This preliminary prospectus is not an offer to sell, nor does it seek an offer to buy these securities in any jurisdiction where the offer or sale is not permitted.
+
+Subject to Completion, dated , 2023 .
+
+Shares
+
+Klaviyo, Inc.
+
+Series A Common Stock
+
+This is an initial public offering of shares of Series A common stock of Klaviyo, Inc. We are offering shares of our Series A common stock and the selling stockholders identified in this prospectus, which include one of our directors, are selling shares of our Series A common stock. We will not receive any proceeds from the sale of shares to be offered by the selling stockholders.
+
+Prior to this offering, there has been no public market for our Series A common stock. It is currently estimated that the initial public offering price will be between $ and $ per share. We have applied to list our Series A common stock on the New York Stock Exchange under the symbol “KVYO”.
+
+Following this offering, we will have two series of common stock: Series A common stock and Series B common stock. The rights of the holders of Series A common stock and Series B common stock are identical, except with respect to voting and conversion rights. Each share of Series A common stock is entitled to one vote. Each share of Series B common stock is entitled to ten votes and is convertible at any time into one share of Series A common stock. All shares of our capital stock outstanding immediately following the effectiveness of the registration statement of which this prospectus forms a part, including all shares held by our executive officers, employees and directors, and their respective affiliates, will be reclassified into shares of our Series B common stock immediately following such effectiveness. The holders of our outstanding Series B common stock will hold approximately % of the voting power of our outstanding capital stock following this offering (or % if the underwriters’ option to purchase additional shares as described below is exercised in full).
+
+We are an “emerging growth company” as defined under the federal securities laws and, as such, we have elected to comply with certain reduced reporting requirements for this prospectus and may elect to do so in future filings.
+
+#### See the section titled “
+
+#### Risk Factors
+
+#### ” beginning on page
+
+#### 21
+to read about factors you should consider before buying our Series A common stock.
+
+Neither the Securities and Exchange Commission nor any other regulatory body has approved or disapproved of these securities or passed upon the accuracy or adequacy of this prospectus. Any representation to the contrary is a criminal offense.
+
+|                                                        |     | Per Share |     | Total |
+|:-------------------------------------------------------|:----|:----------|:----|:------|
+| Initial public offering price                          |     | $         |     | $     |
+| Underwriting discount(1)                               |     | $         |     | $     |
+| Proceeds, before expenses, to us                       |     | $         |     | $     |
+| Proceeds, before expenses, to the selling stockholders |     | $         |     | $     |
+
+______________
+
+(1) See the section titled “Underwriting” for additional information regarding compensation payable to the underwriters.
+
+The underwriters have the option to purchase up to an additional shares of Series A common stock from the selling stockholders at the initial public offering price, less the underwriting discount, for 30 days after the date of this prospectus.
+
+The underwriters expect to deliver the shares against payment in New York, New York on or about , 2023.
+
+| Goldman Sachs & Co. LLC |     | Morgan Stanley |     | Citigroup |
+
+| Barclays |     | Mizuho |     | William Blair |
+
+| Piper Sandler |     | Truist Securities |
+
+| Baird |     | Canaccord Genuity |     | Needham & Company |     | TD Cowen |
+
+#### The date of this prospectus is
+
+#### , 2023
+
+### TABLE OF CONTENTS
+
+#### Prospectus
+|                                                                                                |     | Page |
+| SELECT DEFINED TERMS                                                                           |     |    i |
+| PROSPECTUS SUMMARY                                                                             |     |    1 |
+| RISK FACTORS                                                                                   |     |   21 |
+| SPECIAL NOTE REGARDING FORWARD-LOOKING STATEMENTS                                              |     |   65 |
+| INDUSTRY AND MARKET DATA                                                                       |     |   67 |
+| USE OF PROCEEDS                                                                                |     |   68 |
+| DIVIDEND POLICY                                                                                |     |   69 |
+| CAPITALIZATION                                                                                 |     |   70 |
+| DILUTION                                                                                       |     |   73 |
+| MANAGEMENT’S DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS          |     |   76 |
+| LETTER FROM ANDREW BIALECKI AND ED HALLEN, CO-FOUNDERS                                         |     |  108 |
+| BUSINESS                                                                                       |     |  110 |
+| MANAGEMENT                                                                                     |     |  136 |
+| EXECUTIVE COMPENSATION                                                                         |     |  145 |
+| CERTAIN RELATIONSHIPS AND RELATED PARTY TRANSACTIONS                                           |     |  155 |
+| PRINCIPALAND SELLINGSTOCKHOLDERS                                                               |     |  163 |
+| DESCRIPTION OF CAPITAL STOCK                                                                   |     |  167 |
+| SHARES ELIGIBLE FOR FUTURE SALE                                                                |     |  174 |
+| MATERIAL U.S. FEDERAL INCOME TAX CONSEQUENCES TO NON-U.S. HOLDERS OF OUR SERIES A COMMON STOCK |     |  177 |
+| UNDERWRITING                                                                                   |     |  182 |
+| LEGAL MATTERS                                                                                  |     |  189 |
+| EXPERTS                                                                                        |     |  189 |
+| WHERE YOU CAN FIND ADDITIONAL INFORMATION                                                      |     |  189 |
+| INDEX TO CONSOLIDATED FINANCIAL STATEMENTS                                                     |     |  F-1 |
+
+Through and including , 2023 (the 25th day after the date of this prospectus), all dealers effecting transactions in these securities, whether or not participating in this offering, may be required to deliver a prospectus. This is in addition to the dealers’ obligation to deliver a prospectus when acting as underwriters and with respect to their unsold allotments or subscriptions.
+
+You should rely only on the information contained in this prospectus or contained in any free writing prospectus filed by us with the Securities and Exchange Commission, or the SEC. Neither we, the selling stockholders, nor any of the underwriters have authorized anyone to provide any information or make any representations other than those contained in this prospectus or in any free writing prospectus we have prepared. We, the selling stockholders, and the underwriters take no responsibility for and can provide no assurance as to the reliability of, any other information that others may give you. We and the selling stockholders are offering to sell, and seeking offers to buy, shares of our Series A common stock only in jurisdictions where offers and sales are permitted. The information contained in this prospectus is accurate only as of the date of this prospectus, regardless of the time of delivery of this prospectus or of
+
+any sale of our Series A common stock. Our business, financial condition, results of operations, and prospects may have changed since that date.
+
+For investors outside of the United States: Neither we, the selling stockholders, nor any of the underwriters have done anything that would permit this offering or possession or distribution of this prospectus in any jurisdiction where action for that purpose is required, other than in the United States. Persons outside of the United States who come into possession of this prospectus must inform themselves about, and observe any restrictions relating to, the offering of the shares of our Series A common stock and the distribution of this prospectus outside of the United States.
+
+### SELECT DEFINED TERMS
+
+#### Annualized Recurring Revenue.
+We define Annualized Recurring Revenue, or ARR, for any date of determination, as the annualized value of existing paid subscriptions, which we calculate by taking the Monthly Recurring Revenue as of that date of determination and multiplying that Monthly Recurring Revenue by twelve.
+
+#### Customer Acquisition Cost Payback Period.
+We define our Customer Acquisition Cost, or CAC, payback period as the number of months it would take for our non-GAAP gross profit to exceed our adjusted selling and marketing expenses. We calculate our CAC payback period as of any date of determination by first calculating the change in revenue from the date that was twelve months prior to the date of determination to the revenue on the date of determination. We then multiply the change in revenue by our gross margin as calculated over the twelve months preceding the date of determination, but excluding any impact of stock-based compensation expense. We then divide that amount by our selling and marketing expense over the same preceding twelve month period, adjusted to exclude the impact of stock-based compensation expense and amortization of a prepaid marketing expense associated with the Shopify Warrants (as defined in the section titled “Certain Relationships and Related Party Transactions”). We then obtain the quotient of (i) 12 and (ii) the resulting amount to arrive at our CAC payback period.
+
+#### Customers.
+We define a customer as a distinct paid subscription to our platform. A single organization could have multiple discrete contracting divisions or subsidiaries or brands each with paid subscriptions to our platform, which would, in general, constitute multiple distinct customers. In some cases at the customer’s request, we allow subscriptions under the same parent organization to be consolidated into a single paid subscription in which case such consolidated paid subscriptions would constitute a single customer. We measure our total number of customers as a point-in-time calculation measured as of the end of a particular period. Customers do not include persons or entities that use our platform on a free trial basis.
+
+#### Customers Generating Over $50,000 of ARR.
+We calculate our number of customers generating over $50,000 of ARR as those customers that have an average ARR of greater than $50,000 over the prior twelve months (or the entire duration of the customer’s paying relationship, if it is less than twelve months) as of the date of determination.
+
+#### Dollar-Based Net Revenue Retention Rate.
+We calculate our Dollar-Based Net Revenue Retention rate, or NRR, by first identifying the cohort of customers as of twelve months prior to the date of determination. We then calculate the ARR from this customer cohort as of twelve months prior to the date of determination, or the Prior Period ARR, and the ARR from this customer cohort as of the date of determination, or the Current Period ARR. Current Period ARR includes any expansion, price increases, and customer subscriptions that are deactivated and subsequently reactivated during the applicable twelve-month period and reflects contraction or attrition over the last twelve months from this customer cohort, but excludes any ARR from new customers in the current period. We then divide the total Current Period ARR by the total Prior Period ARR to arrive at the point-in-time NRR. We then calculate the weighted average point-in-time NRR as of the last day of each month in the current trailing twelve-month period to arrive at the NRR, with the weightings determined by the total ARR at the end of each period.
+
+#### Klaviyo Attributed Value.
+We define Klaviyo Attributed Value, or KAV, as the amount of revenue our customers generated through orders placed by consumers within a specified period of time after a message is sent using our platform, which in the case of email is five days from when the message is sent, and in the case of SMS is twenty-four hours from when the message is sent. For email, the message also needs to be opened or clicked in order for the transaction to fall within our definition. KAV excludes orders placed with customers that do not opt-in to sharing data on placed orders, orders for which we cannot determine the currency or value, or unusual orders that appear to us to be anomalies. Since our definition of a customer does not include persons or entities that use our platform on a free trial basis, any revenue generated through orders placed with these persons or entities is also excluded from
+
+i
+
+our definition of KAV. We do not net chargebacks or sales refunds from our calculation of KAV. If a customer leaves Klaviyo, we stop counting that customer’s KAV after their last contracted month. KAV does not represent revenue earned by us and does not directly correlate to our revenue or results of operations. We use KAV as an internal estimate to track the value we drive to customers through our platform.
+
+#### Monthly Recurring Revenue.
+We define Monthly Recurring Revenue, or MRR, as the amount of revenue that we expect to receive in the next monthly period for our existing paid subscriptions, assuming no changes to such subscriptions in the next month. We measure MRR as a point-in-time calculation measured as of a particular date. MRR is a legal and contractual determination made by assessing the contractual terms of each paid subscription. MRR is not determined by reference to historical revenue, deferred revenue or any other U.S. GAAP financial measure over any period. It is forward looking and contractually derived as of the date of determination.
+
+ii
+
+### PROSPECTUS SUMMARY
+This summary highlights selected information that is presented in greater detail elsewhere in this prospectus. This summary does not contain all of the information you should consider before investing in our Series A common stock. You should read this entire prospectus carefully, including the sections titled “Risk Factors” and “Management’s Discussion and Analysis of Financial Condition and Results of Operations” and our consolidated financial statements and the related notes included elsewhere in this prospectus, before making an investment decision. Unless the context otherwise requires, the terms “Klaviyo,” “the Company,” “we,” “us,” and “our” in this prospectus refer to Klaviyo, Inc. and its consolidated subsidiaries.
+
+#### Klaviyo, Inc.
+We founded Klaviyo in 2012 to provide businesses of all sizes with powerful technology that captures, stores, analyzes, and predictively uses their own data to drive measurable, high-value outcomes. Klaviyo enables businesses to drive revenue growth by making it easy to bring their first-party data together and use it to create and deliver highly personalized consumer experiences across digital channels.
+
+Our modern and intuitive SaaS platform combines our proprietary data and application layers into one vertically-integrated solution with advanced machine learning and artificial intelligence capabilities. This enables business users of any skill level to harness their data in order to send the right message at the right time across email, SMS, and push notifications, more accurately measure and predict performance, and deploy the specific actions and campaigns that drive the highest impact. By combining easy implementation, rapid time-to-value, and clearly attributable outcomes, which we measure and refer to as KAV, we drive substantial ROI for our customers. We focused on marketing automation within retail and eCommerce as our first application use case, and we believe our software is highly extensible across a broad range of functions and verticals. As of June 30, 2023, our platform had efficiently scaled to over 130,000 customers, and in 2022 we delivered over $37 billion of KAV to our customers.
+
+Businesses today struggle to deliver impactful consumer experiences because they cannot effectively harness increasingly complex consumer data. At a time when consumers expect more personalized, relevant, and consistent interactions across digital channels, they are instead inundated with an overwhelming number of inconsistent and ineffective marketing messages. As user tracking rules change, third-party data has become unreliable, complicated, and expensive to use. Meanwhile, the proliferation of first-party data has made it difficult for businesses to aggregate, synthesize, and use these disparate data sets.
+
+Other software solutions were not purpose-built to harness customers’ first-party data to deliver impactful consumer experiences. Data-focused offerings, such as cloud data warehouses or operational databases, provide the ability to store and analyze significant volumes of data for general-purpose use cases but are not purpose-built for consumer data and lack the front-end application layer. Marketing solutions are insufficient because they lack the underlying data intelligence. Simple marketing solutions use a flattened and narrowed view of a consumer’s historical data. This basic profile data alone significantly limits the granularity of segmentation businesses can use. Profile data is also difficult to combine with event data, which includes all digital touch points of a consumer’s engagement with a brand and provides necessary real-time information. Point marketing solutions tend to focus on single engagement channels, driving inconsistent and disjointed consumer experiences across digital channels. In an attempt to bridge this gap, other marketing solutions use a patchwork of third-party technologies, such as separate consumer data, learning, and messaging applications. These solutions often require significant technical expertise to implement, operate, and maintain, which limits flexibility, reduces speed, and increases costs. Furthermore, these solutions are not able to provide clear revenue attribution, minimizing ROI.
+
+We built Klaviyo to address these challenges. By vertically integrating our data layer and marketing application, we make it easy for businesses to create and store unified consumer profiles and then use
+
+
+those profiles to derive new insights and ultimately drive revenue generation. We purpose-built a centralized, scalable, and flexible cloud-native data store for our customers to intelligently aggregate and process first-party consumer profile and event data without friction. This approach enables our customers to seamlessly generate unified and highly-granular consumer profiles, populated with data from customers’ systems and from over 300 third-party integrations, from eCommerce platforms – such as Shopify, Salesforce Commerce Cloud, and WooCommerce – to loyalty, customer service, and shipping solutions. We built an application layer on top of our data layer to provide a comprehensive set of tools and features that enable our customers to easily turn consumer preferences into insights and actions. Combining our data layer and application layer into one vertically-integrated platform allows our customers to rapidly segment their consumers, easily create highly-personalized experiences, and automatically send messages customized to their unique brands. This integrated approach also means our customers do not have to pre-configure their data or manage complex integrations.
+
+Our platform and customers benefit from significant network effects. As of June 30, 2023, we assembled over 6.9 billion consumer profiles across our customer base, and in the twelve month period ended June 30, 2023, we processed over 695 billion events, which are data on how consumers engage across channels, such as opening an email, browsing a website, or placing an order. As we add more customers and more anonymized data on our platform, we are able to better refine our predictive models of consumer behavior. These network effects also enable us to continually refine our guided software recommendations to drive more impactful campaigns and specific actions.
+
+Our land-and-expand strategy aligns our own success with that of our customers. We generate revenue through the sale of subscriptions to our customers for the use of our platform. Our subscription plans are tiered based on the number of active consumer profiles stored on our platform combined with the number of emails and SMS messages sent. As our customers’ businesses grow, they utilize more consumer profiles and send more emails and SMS messages, which naturally increases their usage of our platform. Our revenue also expands when our customers add additional channels, such as SMS, or when their other brands, business units, and geographies start using the platform. In addition, we recently launched our reviews and Customer Data Platform, or CDP, products. Klaviyo reviews allows customers to collect product reviews alongside consumer data and messages. Klaviyo CDP gives customers user-friendly ways to transform and cleanse data, run more advanced reporting and predictive analysis to drive revenue growth, and sync data into and out of Klaviyo at scale. Our CDP offering provides enhanced features and functionality to our core platform offering, including advanced reporting and improved data management tools with minimal additional implementation required. The success of our land-and-expand strategy is evidenced by our highly-attractive NRR. Our NRR was 111%, 115%, 119%, 121%, 121%, 120%, 119%, 119%, 119%, and 119% as of March 31, 2021, June 30, 2021, September 30, 2021, December 31, 2021, March 31, 2022, June 30, 2022, September 30, 2022, December 31, 2022, March 31, 2023, and June 30, 2023, respectively.
+
+Our go-to-market strategy is primarily product-led, and we attract the majority of our new customers through inbound channels, such as word-of-mouth, agency partnerships, and platform integrations. Many of our customers come through our self-service channel by simply signing up for our platform without the need for a salesperson's involvement. We have built a large and growing ecosystem of major eCommerce platforms, agency partnerships, and developers, which helps us efficiently attract new customers. More recently, we have developed an outbound sales team focused on larger accounts. Our strong product reputation makes our customer acquisition strategy highly-efficient, as reflected by our CAC payback period of only 14 months for the quarter ended June 30, 2023. Once customers access the Klaviyo platform, they can easily integrate with more than 300 critical third-party data sources to import and explore their first-party data and design and run campaigns and automations, providing rapid time-to-value.
+
+Today, our customers primarily operate within the retail and eCommerce vertical, and we are also seeing organic demand from customers in other verticals, such as education, events and entertainment, restaurants, and travel, as well as from business-to-business, or B2B, companies. We have begun to explore ways to serve these new verticals more intentionally, and to that end we launched Klaviyo for
+
+
+Wellness in June 2023. When we first launched our platform, we intentionally focused on serving entrepreneurs and small and medium-sized businesses, or SMBs. As our customers have scaled and become mid-market companies and larger enterprises themselves, their success with Klaviyo has attracted more interest from similarly sized businesses that are looking to drive better engagement with their consumers. As such, we have continued to build out a sales team to focus on mid-market and enterprise customers. As of June 30, 2023, we had 1,458 customers generating over $50,000 of ARR, representing growth of 94% year-over-year.
+
+Efficiency is part of our DNA. We have raised $454.8 million in primary capital since our inception, of which we have utilized only $15.0 million in the operation of our business as of June 30, 2023, which is net of the $439.8 million of cash, cash equivalents, and restricted cash on our balance sheet as of June 30, 2023 and capital used for share repurchases and tender offers. We grew our revenue 62.7% year-over-year, from $290.6 million in 2021 to $472.7 million in 2022. Our net losses for 2021 and 2022 were $79.4 million and $49.2 million, respectively, representing a year-over-year decrease of 38.0%. We grew our gross profit 67.4% year-over-year, from $205.9 million in 2021 to $344.7 million in 2022, representing gross profit margins of 70.9% and 72.9%, respectively. In 2021 and 2022, our operating cash flow was $(22.7) million and $(23.6) million, respectively.
+
+#### Challenges Facing Our Customers
+Businesses today struggle to harness the data they need to deliver impactful consumer experiences. The primary reasons include:
+
+• Third party data has become increasingly unreliable, complicated, and expensive to use. In recent years, consumer privacy and tracking has faced greater scrutiny. Tracking consumer behavior now requires users to specifically opt-in, but as more consumers have chosen not to share their data, marketing channels that are based on third-party data, such as social media platforms, have become less reliable and efficient, and more complicated and expensive to use. Accordingly, businesses are seeking to shift their focus to marketing channels based on first-party data that they own, such as direct consumer interactions with company websites, applications, and products.
+
+• Increasing volume and complexity of first-party data makes it difficult to bring data together in a consistent, usable form. As technology has evolved, businesses are engaging with consumers across a wider range of devices and channels. This has led to a dramatic increase in the number of first-party consumer profile and event data points, making it complex and difficult for businesses to aggregate, synthesize, and use these disparate data sets.
+
+• Businesses need personalized content to break through a saturated market. Consumers today are overwhelmed by the massive amount of inconsistent and ineffective messages they receive from businesses across digital channels, leading to marketing fatigue and skepticism. As a result, consumers increasingly demand more personalized, relevant, and consistent interactions from the businesses with which they engage.
+
+• Consumer channel preferences are dynamic and evolving. Businesses have an unprecedented number of ways to engage with consumers, including via email, SMS, and push notifications, among other channels. However, the way in which consumers want to engage with businesses often differs greatly by channel. Rather than viewing these touchpoints with consumers in isolation, businesses need to create personalized and consistent brand experiences with their consumers across channels.
+
+#### Key Limitations of Existing Solutions
+Other software solutions were not purpose-built to harness customers’ first-party data. Data-focused offerings, such as cloud data warehouses or operational databases, provide the ability to store and analyze significant volumes of data for general-purpose use cases but are not purpose-built for consumer
+
+
+data and lack the front-end application layer. Marketing solutions are insufficient because they lack the underlying data intelligence, driving a number of key limitations, including:
+
+•
+
+#### A lack of usable, comprehensive consumer data.
+Many existing solutions lack the ability to combine both consumer profile and event data to quickly provide a comprehensive, real-time view of consumers. Some solutions attempt to store this data in disparate databases, which is costly and time consuming. Other solutions attempt to simplify consumer data, which limits the insights required to drive successful engagements.
+
+• A patchwork of third-party solutions that limit speed and agility. Many traditional marketing solutions rely on patched-together front-end applications and a separate back-end database. This can be time-consuming and expensive to integrate due to the need to reconfigure the data integration for each new idea. This also creates a time lag between live consumer interactions and the engagement actions taken by the business. This often leads to companies sending marketing messages with content that is outdated and no longer relevant, while making it difficult to determine the impact of an engagement.
+
+• Basic analytical features with limited effectiveness. Many simple marketing solutions have prescriptive capabilities to summarize historical consumer performance, but lack predictive analytics. This approach offers only basic insights, limiting other solutions’ ability to recommend effective consumer engagement strategies.
+
+• Complicated solutions that require significant technical expertise. More robust marketing solutions have typically not been built with the business user in mind and often include complicated workflows that require significant technical expertise to deploy and use. However, many potential users who oversee client engagement do not have technical backgrounds or developer resources at their disposal, making more complicated solutions and tools challenging and time consuming.
+
+• Narrow point marketing solutions focused on single channels driving disjointed consumer experiences. Many existing marketing solutions focus on a single engagement channel, forcing businesses to use a range of point solutions to engage with their consumers. This leads to a disjointed consumer experience, friction from working across siloed architectures, and difficulty in measuring attribution.
+
+• Complex and costly integrations with an inability to accurately measure attributable value to drive ROI. Implementing and integrating many existing consumer engagement solutions can be complicated, costly, and time consuming. Meanwhile, continuous maintenance is often required, driving up costs. Finally, without a vertically-integrated tech stack, many existing solutions are not able to accurately measure any attributable value they may deliver, making their ROI unclear.
+
+#### Key Benefits of Our Platform
+We founded Klaviyo in 2012 with a data-first approach to enable our customers to effectively harness their first-party data to deliver impactful consumer experiences. This approach has enabled us to deliver the following key benefits:
+
+• Granular segmentation with real-time action by unifying profile and event data. Our customer data store was designed to consolidate customers’ first-party data at scale, synchronizing and unifying data from over 300 integrations seamlessly into a single system-of-record. To ensure companies have the right information to engage with consumers effectively, our data store is optimized for very large data sets with the capacity to combine and store the entire consumer history of profile and event data of our customers in real time.
+
+
+•
+
+#### Vertical integration that enables fast execution.
+Our platform combines our centralized data layer with our front-end application layer in one vertically-integrated technology stack. This offers our customers the ability to store and rapidly analyze consumer data in real-time, then send automated messages with targeting based on these analytics, all within one single platform. This approach also allows our customers to get up-and-running quickly without having to pre-configure their data and manage complex integrations. Going forward, our vertically-integrated technology stack also gives us the ability to easily extend our platform into new channels and applications.
+
+• Predictive insights enhanced by machine learning and artificial intelligence to drive revenue growth. Our advanced predictive analytics capabilities utilize machine learning and artificial intelligence so businesses can estimate consumer lifetime value, predict a consumer’s next order date, and calculate potential churn risk. Our platform also allows our customers to compare their performance against similar companies in their respective industries and makes recommendations on how to optimize future engagements. With over 6.9 billion consumer profiles as of June 30, 2023 and 11 years developing and refining our analytics, our customers gain insights from anonymized consumer experiences across all of our customers, resulting in substantial network effects as we scale.
+
+• Easy-to-use functionality purpose-built for business users of any technical skill level. Our easy-to-use platform gives business users of any technical skill level the ability to easily build consumer segments, personalize content, create new automations, run tests, engage with their consumers, and launch marketing campaigns with differentiated experiences. Our platform offers simple, one-click drag-and-drop customizable templates for designing messages and generative artificial intelligence tools for creating content, allowing our customers to easily create impactful experiences customized to their unique brands. For advanced functionality, we offer a suite of tools to enable developers to build rapid automations for different use cases and quickly integrate with other systems efficiently, all from a simple and intuitive user interface.
+
+•
+
+#### Coordinated engagement across channels.
+We enable our customers to coordinate their multi-channel consumer engagement strategy across digital channels, such as email, SMS, and push notifications, without friction. Our predictive analytics solutions also provide recommendations on which channel to use to drive higher engagement. Our multi-channel capability results in fewer integrations to maintain and reduces the number of tools that our customers need to learn, while ensuring the right communication is used for the right channel, ultimately increasing speed and efficiency while reducing costs. Our vertical integration also allows us to easily expand into new channels, enabling our platform to evolve with consumer preferences.
+
+• Rapid and efficient implementation with clear, attributable value to drive high ROI
+
+#### .
+
+Due to our pre-configured data model and automatic integrations, our platform offers rapid and efficient implementation. Meanwhile, due to our advanced technological architecture and vertical integration, we can ascribe the amount of revenue that our customers generate with specific engagements through our platform, quickly and easily quantifying their success through the KAV they generate. For customers who joined Klaviyo during the year ended December 31, 2022 and configured their account to track KAV, approximately 90% of those customers had generated KAV as of March 31, 2023. For those customers, the median time to generate KAV was less than 30 days, and even our customers generating over $50,000 of ARR generated KAV in a median of less than nine weeks. As a result, our customers can not only experience rapid time-to-value, but also can clearly measure the ROI of our platform.
+
+#### Our Market Opportunity
+Today, the customers we serve primarily operate within the retail vertical, with retailers spanning both online and offline channels. Our estimated serviceable addressable market opportunity within this vertical is over $16 billion. We calculate this opportunity using business count data sourced from Analysys Mason, focusing on the number of businesses in the geographies we primarily operate in today, including
+
+
+North America, Western Europe, New Zealand, and Australia, and segmenting them into Micro, Small, Medium, and Enterprise segments based on the number of employees. We then multiply the total number of companies in each segment by our respective average ARR per customer per segment as of December 31, 2022. The average ARR is based on customers in each segment in all geographies that have been using our email and SMS offering for more than twelve months.
+
+While our first use cases were focused on the retail and eCommerce vertical, we believe our platform is highly extensible across a broad range of verticals, including education, events and entertainment, restaurants, and travel, as well as B2B companies. As we continue to scale our platform, we expect that our total addressable market will expand to businesses in all verticals that engage with third parties, including customers and clients, through email, SMS or push. Accordingly, we estimate that the total addressable market opportunity for our platform across all of these verticals is $34 billion in the United States alone. We calculate the market size using the number of businesses in the United States provided by Statista and segmenting them into Micro, Small, Medium, and Enterprise segments based on the number of employees. We then multiply the total number of companies in each segment by our respective average ARR per customer per segment, as described above. We believe our opportunity outside of the United States is at least as large as our domestic opportunity, implying a total global addressable market of $68 billion.
+
+#### Our Growth Strategies
+We intend to leverage our differentiated approach to capitalize on our large market opportunity and leading market position to fuel future growth with the following key growth strategies:
+
+•
+
+#### Attract new customers.
+We have rapidly expanded our customer base to over 130,000 as of June 30, 2023 due to our product-led growth strategy. We expect to continue to acquire new customers through inbound channels, such as word-of-mouth, expanding platform integrations and agency partnerships, and growing our sales team that focuses on larger accounts. As the customers on our platform continue to grow, this creates a powerful network effect for our brand when existing Klaviyo users change employment and advocate for the adoption of our platform at their new employer. The efficiency of our go-to-market strategy is reflected in our rapid CAC payback period, which was 14 months for the quarter ended June 30, 2023.
+
+•
+
+#### Expand sales within our existing customer base.
+We believe our product-led growth strategy enables us to efficiently expand penetration within our existing customer base. We are maniacally focused on making our platform intuitive and exceptionally easy-to-deploy, driving our customers to expand their usage of our platform in a self-serve manner. We focus on expansion in three primary ways. First, as our customers increase their usage of our platform through the number of active consumer profiles they have and email and SMS messages they send, they move to higher subscription tiers. Second, adding more communication channels and use cases, such as SMS and reviews, further expands the sales we generate from existing customers. We also recently launched our CDP offering, which gives our customers user-friendly ways to transform and cleanse data, run more advanced reporting and predictive analysis to drive revenue growth, and sync data into and out of Klaviyo at scale. Finally, we expect to continue to see growth from selling our platform to our customers’ other brands, business units, and geographies. Our successful land-and-expand strategy is reflected in our strong NRR of 119% as of June 30, 2023.
+
+•
+
+#### Grow our mid-market and enterprise presence.
+While we started with SMB customers, we have also driven significant growth with mid-market companies and have an emerging presence with large enterprises. As customers drive growth and value by using our platform, their success with Klaviyo has attracted more interest from other mid-market companies and enterprises that are looking to drive better engagement with their consumers, bringing our business and sales motion up-market. As of June 30, 2023, we had 1,458 customers generating over $50,000 of ARR, representing growth of 94% year-over-year. Going forward, we expect to continue to grow
+
+
+our mid-market and enterprise presence as we further invest in our outbound sales team and add new product capabilities.
+
+•
+
+#### Expand internationally.
+We believe we have significant expansion opportunities in international markets. We initially started by serving customers in North America and, in 2019, we opened our London, England office to serve the European region, followed by our Sydney, Australia office in 2022 to target the Asia Pacific region. We have seen great success in these international markets, as sales outside of Americas represented 29.3% of our revenue in the year ended December 31, 2022 and 30.7% of our revenue in the six months ended June 30, 2023. We currently offer our platform and service only in English and only bill in US Dollars. Based on these successful expansions, we believe we have significant international opportunities ahead, especially as we add additional languages and currencies to our platform.
+
+•
+
+#### Invest in our platform.
+We have a history of innovation and will continue to develop and invest in our platform to provide more value to our customers over time. We launched with our data platform and email offering, and have since added additional communication channels, such as SMS and push notifications, and additional use cases, such as reviews and our CDP offering. Near term, we have a clear product roadmap ahead of us, including the launch of other marketing applications. Given the broad applicability of our platform, we believe that long-term we have an enormous opportunity to launch new channels and capabilities to attract new customers as well as cross-sell to our existing customers.
+
+•
+
+#### Expand into new verticals and use cases.
+We chose eCommerce as our initial focus area because we found that there was a massive need for our technology solution in that market. We believe that our technology platform has broad applicability across a range of industry verticals and use cases. We have already seen organic adoption of our platform in verticals such as education, events and entertainment, restaurants, and travel, as well as from B2B companies. This market expansion motion has largely been driven by our customers, without any marketing or product development investments by us. Over time, we intend to invest in selling and marketing to specifically target industry verticals outside retail and eCommerce, such as wellness. We also intend to make platform investments in the future to align our platform with industry-specific needs, as relevant.
+
+#### Risk Factors Summary
+Our business is subject to numerous risks and uncertainties that you should consider before investing in our company. These risks are described more fully in the section titled “Risk Factors” immediately following this prospectus summary. These risks include, but are not limited to, the following:
+
+• Our rapid historical revenue growth is not indicative of our future revenue growth, and we may not be able to sustain our historical revenue growth rate, in the near term and in the future;
+
+• Our business has experienced rapid growth, and we may fail to effectively manage our growth or anticipated growth;
+
+• We have a limited operating history in a rapidly changing industry, which makes it difficult to evaluate our current business and future prospects and increases the risk of your investment;
+
+• We operate in a highly competitive industry, and we may not compete effectively with established companies or new market entrants;
+
+• Our business and success depend, in part, on our ability to successfully integrate with third-party platforms, especially with eCommerce platforms such as Shopify, and our business would be harmed as a result of any disruptions to these third-party platform integrations or our relationships with third-party platform providers;
+
+
+• Our business and success depend, in part, on the success of our relationships with third parties, such as our marketing agency and technology partners;
+
+• We may experience unfavorable conditions in our industry or the global economy, or reductions in spending on marketing;
+
+• We may not be able to add new customers, retain existing customers, or increase sales to existing customers;
+
+• We have a history of net losses, we anticipate increasing operating expenses in the future, and we may not be able to achieve and maintain profitability in the future;
+
+• As we seek to move up-market, we expect our sales cycle with enterprise customers to be longer than with small-and-mid size businesses and we will be required to scale our operations, including by expanding our sales efforts, which may require considerable time and expense;
+
+• We have historically invested significantly in research and development and expect this investment to continue;
+
+• If we fail to adapt and respond effectively to technological changes, evolving industry standards, changing regulations or changing customer or consumer needs, requirements or preferences, our platform may become less competitive;
+
+• We depend on our senior management team, and may lose one or more members of our senior management team or our key employees, or be unable to attract and retain highly skilled employees;
+
+• We collect, process, store, share, disclose, and use personal information and other data, which subjects us to legal obligations related to privacy and security, and we may fail to comply with these obligations;
+
+• We may fail to protect our proprietary technology and intellectual property rights;
+
+• There has been no prior public market for our Series A common stock. The trading price of our Series A common stock may be volatile or may decline regardless of our operating performance, and you may not be able to resell your shares at or above the initial public offering price;
+
+• The dual series structure of our common stock has the effect of concentrating voting control with those stockholders who held our capital stock prior to this offering, including our directors, executive officers, and their respective affiliates. This ownership will limit or preclude your ability to influence corporate matters, including the election of directors, amendments of our organizational documents, and any merger, consolidation, sale of all or substantially all of our assets, or other major corporate transaction requiring stockholder approval; and
+
+• Other factors discussed under “Risk Factors.”
+
+If we are unable to adequately address these and other risks we face, our business, results of operations, financial condition, and prospects may be harmed, the trading price of our Series A common stock could decline, and you could lose all or part of your investment.
+
+#### Channels for Disclosure of Information
+Following the completion of this offering, we intend to announce material information to the public through filings with the SEC, the investor relations page on our website, blog posts on our website, press releases, public conference calls, webcasts, our Twitter feed (@klaviyo), our Instagram page (@klaviyo), and our LinkedIn page.
+
+
+The information disclosed through the foregoing channels could be deemed to be material information. As such, we encourage investors, the media, and others to follow the channels listed above and to review the information disclosed through such channels.
+
+Any updates to the list of disclosure channels through which we will announce information will be posted on the investor relations page on our website. Information contained on or accessible through any of the foregoing channels is not incorporated by reference into this prospectus.
+
+#### Corporate Information
+We were incorporated in 2012 under the name Klaviyo, Inc. as a Delaware corporation. Our principal executive offices are located at 125 Summer Street, 6th Floor, Boston, MA 02110, and our telephone number is (617) 213-1788. Our website address is www.klaviyo.com. Information contained on or that can be accessed through our website does not constitute part of this prospectus and the inclusion of our website address in this prospectus is an inactive textual reference only. You should not consider information contained on our website to be part of this prospectus or in deciding whether to purchase shares of our Series A common stock.
+
+“Klaviyo” is our registered trademark in the United States, the European Union, the United Kingdom, Australia, and other jurisdictions. The Klaviyo design logo and our other registered or common law trademarks, service marks or trade names appearing in this prospectus are the property of Klaviyo, Inc. This prospectus includes our trademarks and trade names, including, without limitation, “Customer-First Data”, “Owned”, “Owned Marketing”, and “Own Your Data. Own Your Growth.”, which are our property and are protected under applicable intellectual property laws. Other trademarks and trade names referred to in this prospectus are the property of their respective owners.
+
+#### Emerging Growth Company
+We are an emerging growth company within the meaning of the Jumpstart Our Business Startups Act of 2012, or the JOBS Act. As an emerging growth company, we may take advantage of certain exemptions from various public reporting requirements, including the requirement that our internal control over financial reporting be audited by our independent registered public accounting firm pursuant to Section 404 of the Sarbanes-Oxley Act of 2002, or the Sarbanes-Oxley Act, certain requirements related to the disclosure of executive compensation in this prospectus and in our periodic reports and proxy statements, and the requirement that we hold a nonbinding advisory vote on executive compensation and any golden parachute payments. We may choose to take advantage of some but not all of these exemptions. We have taken advantage of reduced reporting requirements in this prospectus. Accordingly, the information contained herein may be different from the information you receive from other public companies in which you hold stock. We may take advantage of these exemptions for up to five years or such earlier time that we are no longer an emerging growth company.
+
+We will remain an emerging growth company until the earliest to occur of (i) the last day of the fiscal year in which we have more than $1.235 billion in annual revenue; (ii) the date we qualify as a “large accelerated filer,” with at least $700 million of equity securities held by non-affiliates; (iii) the date on which we have issued, in any three-year period, more than $1.0 billion in non-convertible debt securities; and (iv) the last day of the fiscal year ending after the fifth anniversary of the completion of this offering.
+
+In addition, under the JOBS Act, emerging growth companies can delay adopting new or revised accounting standards until such time as those standards apply to private companies. We have elected to use this extended transition period until we are no longer an emerging growth company or until we affirmatively and irrevocably opt out of the extended transition period. Accordingly, our financial statements may not be comparable to companies that comply with new or revised accounting pronouncements as of public company effective dates.
+
+For certain risks related to our status as an emerging growth company, see the section titled “Risk Factors—Risks Relating to Our Initial Public Offering and Ownership of Our Common Stock—We are an
+
+
+emerging growth company, and any decision on our part to comply only with certain reduced reporting and disclosure requirements applicable to emerging growth companies could make our Series A common stock less attractive to investors.”
+
+
+The Offering
+
+| Series A common stock offered by us                                                         |     | shares                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Series A common stock offered by the selling stockholders                                   |     | shares                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Series A common stock to be outstanding after this offering                                 |     | shares  (or         shares if the underwriters’ option to purchase additional shares in this offering is exercised in full)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Series B common stock to be outstanding after this offering                                 |     | shares  (or         shares if the underwriters’ option to purchase additional shares in this offering is exercised in full)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Option to purchase additional shares of Series A common stock from the selling stockholders |     | The selling stockholders have granted the underwriters an option, exercisable for 30 days after the date of this prospectus, to purchase up to an additional            shares of Series A common stock.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Total Series A common stock and Series B common stock to be outstanding after this offering |     | shares.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Use of proceeds                                                                             |     | We estimate that the net proceeds from the sale of shares of our Series A common stock that we are selling in this offering will be approximately $         million, based upon an assumed initial public offering price of $         per share, which is the midpoint of the estimated offering price range set forth on the cover page of this prospectus, after deducting estimated underwriting discounts and commissions and estimated offering expenses payable by us. We will not receive any proceeds from the sale of the shares of Series A common stock being offered by the selling stockholders.                                                                                                             
+ We currently intend to use the net proceeds of this offering for working capital, other general corporate purposes, and to fund our growth strategies discussed in this prospectus.  We may also use a portion of the net proceeds to acquire or invest in complementary businesses, products, services, technologies, or other assets. We do not, however, have agreements or commitments to enter into any acquisitions or investments at this time.  We intend to use a portion of the net proceeds we receive from this offering to satisfy the anticipated tax withholding and remittance obligations related to the settlement of our outstanding restricted stock unit, or RSUs, in connection with this offering. 
+ The principal purposes of this offering are to increase our capitalization, increase our financial flexibility, create a public market for our Series A common stock and enable access to the public equity markets for our stockholders and us.                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+ See the section titled “Use of Proceeds” for additional information.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+
+
+| Voting rights                                   |     | We will have two series of common stock: Series A common stock and Series B common stock.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+ Shares of our Series A common stock are entitled to one vote per share.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+ Shares of our Series B common stock are entitled to ten votes per share.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+ Holders of our Series A common stock and Series B common stock will generally vote together as a single class, unless otherwise required by law or our amended and restated certificate of incorporation that will be in effect on the completion of this offering. The holders of our outstanding Series B common stock will hold approximately         % of the voting power of our outstanding capital stock following the completion of this offering (or    % if the underwriters’ option to purchase additional shares is exercised in full) and will have the ability to control the outcome of matters submitted to our stockholders for approval, including the election of our directors and the approval of any change in control transaction. See the sections titled “Principal and Selling Stockholders” and “Description of Capital Stock” for additional information. |
+| Concentration of ownership                      |     | Upon the completion of this offering, our executive officers and directors, and their affiliates, will beneficially own, in the aggregate, approximately         % of our outstanding shares of common stock, representing approximately         % of the voting power of our outstanding shares of common stock (or      % and      %, respectively, if the underwriters’ option to purchase additional shares is exercised in full).                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Risk factors                                    |     | See the section titled “Risk Factors” for a discussion of factors you should carefully consider before deciding to invest in our Series A common stock.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Proposed New York Stock Exchange trading symbol |     | “KVYO”                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+
+The number of shares of our Series A common stock and Series B common stock that will be outstanding after this offering is based on no shares of our Series A common stock and shares of our Series B common stock outstanding as of June 30, 2023, including 8,932 shares of unvested restricted Series B common stock that are subject to our right to repurchase, and excludes: • 33,022,561 shares of our Series B common stock issuable upon the exercise of options to purchase shares of our Series B common stock that were outstanding as of June 30, 2023, with a weighted-average exercise price of $0.57 per share; • 10,483,603 shares of our Series B common stock that are issuable in connection with the settlement of RSUs upon the satisfaction of both a time and service condition and a liquidity event condition outstanding as of June 30, 2023, for which the time and service condition was not yet satisfied as of June 30, 2023 (the time and service condition for certain of these RSUs was satisfied as of August 15, 2023, which we expect will result in the net issuance of shares of our Series B common stock in connection with this offering, after withholding an aggregate of shares of Series B common stock to satisfy associated estimated income tax obligations (based on the assumed initial public offering price of $ per share, which is the midpoint of
+
+
+the price range set forth on the cover page of this prospectus, and an assumed % tax withholding rate));
+
+• 2,030,073 shares of our Series B common stock that are issuable in connection with the settlement of RSUs upon satisfaction of both a time and service condition and a liquidity event condition that were granted after June 30, 2023 (the time and service condition for certain of these RSUs was satisfied as of August 15, 2023, which we expect will result in the net issuance of shares of our Series B common stock in connection with this offering, after withholding an aggregate of shares of Series B common stock to satisfy associated estimated income tax obligations (based on the assumed initial public offering price of $ per share, which is the midpoint of the price range set forth on the cover page of this prospectus, and an assumed % tax withholding rate));
+
+• 10,036,275 shares of our Series B common stock issuable upon the exercise of common stock warrants held by Shopify Strategic Holdings 3 LLC, or Shopify Strategic, outstanding as of June 30, 2023, with a weighted-average exercise price of $0.01 per share, of which (i) 590,369 shares became fully vested and were exercised after June 30, 2023 and (ii) 3,935,793 shares will become fully vested and exercisable upon the consummation of this offering;
+
+• 15,743,174 shares of our Series B common stock issuable upon the exercise of an investment option held by Shopify Strategic pursuant to that certain Stock Purchase Agreement, dated as of June 24, 2022, or the Investment Option, with an exercise price of $88.9274 per share;
+
+• 976,375 shares of our Series B common stock reserved for future issuance pursuant to our 2015 Stock Incentive Plan, as amended, or our 2015 Plan; and
+
+• shares of our Series A common stock reserved for future issuance under our share-based compensation plans to be adopted in connection with this offering, consisting of:
+
+◦ shares of our Series A common stock reserved for future issuance under our 2023 Stock Option and Incentive Plan, or our 2023 Plan; and
+
+◦ shares of our Series A common stock reserved for future issuance under our 2023 Employee Stock Purchase Plan, or our ESPP.
+
+Our 2023 Plan and ESPP provide for annual automatic increases in the number of shares of our Series A common stock reserved thereunder and increases to the number of shares of our Series A common stock that may be granted under our 2023 Plan based on shares underlying any awards under our 2015 Plan that expire, are forfeited or are otherwise terminated, as more fully described in the section titled “Executive Compensation—Employee Benefits and Stock Plans.”
+
+Except as otherwise indicated, all information in this prospectus assumes:
+
+• the filing and effectiveness of our amended and restated certificate of incorporation in Delaware and the adoption of our amended and restated bylaws, each of which will occur immediately following the effectiveness of the registration statement of which this prospectus forms a part;
+
+• the reclassification of our outstanding existing common stock into an equivalent number of shares of our Series B common stock and the authorization of our Series A common stock, which will occur immediately following the effectiveness of this registration statement of which this prospectus forms a part;
+
+• the net issuance of shares of our Series B common stock issuable pursuant to the vesting and settlement of 5,293,538 RSUs for which the time and service condition was satisfied as of June 30, 2023, and for which we expect the liquidity event condition to be satisfied in connection with this offering, after withholding an aggregate of shares of Series B common stock to satisfy associated estimated income tax obligations (based on the assumed initial public offering
+
+
+price of $ per share, which is the midpoint of the price range set forth on the cover page of this prospectus, and an assumed % tax withholding rate);
+
+• no exercise of the Investment Option subsequent to June 30, 2023;
+
+• no exercise of outstanding stock options or warrants or settlement of outstanding RSUs subsequent to June 30, 2023, except as described above;
+
+• the conversion of shares of Series B common stock into shares of Series A common stock in connection with the sale of shares in this offering by the selling stockholders; and
+
+• no exercise by the underwriters of their option to purchase up to an additional shares of Series A common stock from the selling stockholders in this offering.
+
+
+### Summary Consolidated Financial and Other Data
+The following tables summarize our consolidated financial and other data. We derived the summary consolidated statements of operations and comprehensive loss data for the years ended December 31, 2022 and 2021 from our audited consolidated financial statements included elsewhere in this prospectus. We derived the summary consolidated statements of operations data for the six months ended June 30, 2023 and 2022, and the consolidated balance sheet data as of June 30, 2023, from our unaudited consolidated financial statements included elsewhere in this prospectus. In our opinion, such financial statements include all adjustments, consisting only of normal recurring adjustments, that we consider necessary for a fair presentation of the financial information set forth in those statements. Our historical and interim results are not necessarily indicative of the results that may be expected for our full 2023 fiscal year or any other period in the future. You should read the following summary consolidated financial and other data below in conjunction with the section titled “Management’s Discussion and Analysis of Financial Condition and Results of Operations” and our consolidated financial statements and related notes included elsewhere in this prospectus.
+
+
+|                                                                                                                                  |     | 2022                                                          | Year Ended December 31, |     | 2021 |             |     | 2023 | Six Months Ended June 30, |         |     | 2022 |             |         |
+|:---------------------------------------------------------------------------------------------------------------------------------|:----|:--------------------------------------------------------------|------------------------:|:----|:-----|------------:|:----|:-----|--------------------------:|--------:|:----|:-----|------------:|--------:|
+|                                                                                                                                  |     | -in thousands, except share and per share amounts or as noted |                         |     |      |             |     |      |                           |         |     |      |             |         |
+| Consolidated Statements of Operations and Comprehensive Income (Loss) Data:                                                      |     |                                                               |                         |     |      |             |     |      |                           |         |     |      |             |         |
+| Revenue                                                                                                                          |     | $                                                             |                 472,748 |     | $    |     290,640 |     | $    |                   320,674 |         |     | $    |     208,345 |         |
+| Cost of revenue(1)                                                                                                               |     |                                                               |                 128,025 |     |      |      84,696 |     |      |                    74,050 |         |     |      |      58,075 |         |
+| Gross profit                                                                                                                     |     |                                                               |                 344,723 |     |      |     205,944 |     |      |                           | 246,624 |     |      |             | 150,270 |
+| Operating expenses:                                                                                                              |     |                                                               |                         |     |      |             |     |      |                           |         |     |      |             |         |
+| Selling and marketing(1)                                                                                                         |     |                                                               |                 213,848 |     |      |     156,342 |     |      |                           | 123,970 |     |      |             |  91,919 |
+| Research and development(1)                                                                                                      |     |                                                               |                 104,077 |     |      |      65,599 |     |      |                           |  68,087 |     |      |             |  45,275 |
+| General and administrative(1)                                                                                                    |     |                                                               |                  81,834 |     |      |      63,236 |     |      |                           |  46,657 |     |      |             |  38,372 |
+| Total operating expenses                                                                                                         |     |                                                               |                 399,759 |     |      |     285,177 |     |      |                           | 238,714 |     |      |             | 175,566 |
+| Operating income (loss)                                                                                                          |     |                                                               |                 -55,036 |     |      |     -79,233 |     |      |                     7,910 |         |     |      |     -25,296 |         |
+| Other income (expense):                                                                                                          |     |                                                               |                         |     |      |             |     |      |                           |         |     |      |             |         |
+| Other income (expense), net                                                                                                      |     |                                                               |                     388 |     |      |          28 |     |      |                       -79 |         |     |      |         174 |         |
+| Interest income                                                                                                                  |     |                                                               |                   5,538 |     |      |         139 |     |      |                     8,301 |         |     |      |         426 |         |
+| Interest expense                                                                                                                 |     |                                                               |                       — |     |      |          -8 |     |      |                         — |         |     |      |           — |         |
+| Total other income (expense), net                                                                                                |     |                                                               |                   5,926 |     |      |         159 |     |      |                     8,222 |         |     |      |         600 |         |
+| Income (loss) before income taxes                                                                                                |     |                                                               |                 -49,110 |     |      |     -79,074 |     |      |                    16,132 |         |     |      |     -24,696 |         |
+| Provision for income taxes                                                                                                       |     |                                                               |                      83 |     |      |         319 |     |      |                       967 |         |     |      |        -131 |         |
+| Net income (loss)                                                                                                                |     |                                                               |                 -49,193 |     |      |     -79,393 |     |      |                    15,165 |         |     |      |     -24,565 |         |
+| Comprehensive income (loss)                                                                                                      |     |                                                               |                 -49,193 |     |      |     -79,393 |     |      |                    15,165 |         |     |      |     -24,565 |         |
+| Net income (loss) per share attributable to common stockholders, basic(2)                                                        |     | $                                                             |                   -0.21 |     | $    |       -0.36 |     | $    |                      0.06 |         |     | $    |       -0.11 |         |
+| Net income (loss) per share attributable to common stockholders, diluted(2)                                                      |     | $                                                             |                   -0.21 |     | $    |       -0.36 |     | $    |                      0.06 |         |     | $    |       -0.11 |         |
+| Weighted-average shares used in computing net income (loss) per share attributable to common stockholders, basic(2)              |     |                                                               |             229,857,206 |     |      | 220,865,179 |     |      |               236,047,282 |         |     |      | 226,389,791 |         |
+| Weighted-average shares used in computing net income (loss) per share attributable to common stockholders, diluted(2)            |     |                                                               |             229,857,206 |     |      | 220,865,179 |     |      |               268,577,570 |         |     |      | 226,389,791 |         |
+| Pro forma net income (loss) per share attributable to common stockholders, basic(3)                                              |     | $                                                             |                         |     |      |             |     | $    |                           |         |     |      |             |         |
+| Pro forma net income (loss) per share attributable to common stockholders, diluted(3)                                            |     |                                                               |                         |     |      |             |     |      |                           |         |     |      |             |         |
+| Weighted-average shares used in computing pro forma net income (loss) per share attributable to common stockholders, basic(3)    |     |                                                               |                         |     |      |             |     |      |                           |         |     |      |             |         |
+| Weighted-average shares used in computing pro forma net income (loss) per share attributable to common stockholders,  diluted(3) |     |                                                               |                         |     |      |             |     |      |                           |         |     |      |             |         |
+
+
+(1) Includes stock-based compensation expense as follows (in thousands):
+
+|                                                      |     | 2022 | Year Ended December 31, |     | 2021 |        |     | 2023 | Six Months Ended June 30, |     | 2022 |       |
+|:-----------------------------------------------------|:----|:-----|------------------------:|:----|:-----|-------:|:----|:-----|--------------------------:|:----|:-----|------:|
+| Cost of revenue                                      |     | $    |                     129 |     | $    |    960 |     | $    |                        43 |     | $    |    80 |
+| Selling and marketing                                |     |      |                     985 |     |      | 29,713 |     |      |                       179 |     |      |   813 |
+| Research and development                             |     |      |                   1,230 |     |      |  8,193 |     |      |                       813 |     |      |   634 |
+| General and administrative                           |     |      |                   5,958 |     |      | 13,123 |     |      |                     1,307 |     |      | 4,196 |
+| Stock-based compensation, net of amounts capitalized |     |      |                   8,302 |     |      | 51,989 |     |      |                     2,342 |     |      | 5,723 |
+| Capitalized stock-based compensation expense         |     |      |                       — |     |      |      2 |     |      |                         — |     |      |     — |
+| Total stock-based compensation expense               |     | $    |                   8,302 |     | $    | 51,991 |     | $    |                     2,342 |     | $    | 5,723 |
+
+(2) See Note 2. Summary of Significant Accounting Policies and Note 12. Earnings Per Share in the notes to our consolidated financial statements included elsewhere in this prospectus for an explanation of the method used to calculate basic and diluted net income (loss) per share attributable to common stockholders. (3) See the section titled “Management’s Discussion and Analysis of Financial Condition and Results of Operations” for further information on the calculation of pro forma net income (loss) per share and pro forma weighted-average number of shares outstanding.
+
+|                                             |     | As of June 30, 2023 |            |         |     |              |     |                             |
+|:--------------------------------------------|:----|:--------------------|-----------:|--------:|:----|:-------------|:----|:----------------------------|
+|                                             |     | Actual              |            |         |     | Pro forma(1) |     | Pro forma as adjusted(2)(3) |
+|                                             |     | -in thousands       |            |         |     |              |     |                             |
+| Consolidated Balance Sheet Data:            |     |                     |            |         |     |              |     |                             |
+| Cash, cash equivalents, and restricted cash |     | $                   |    439,803 |         |     | $            |     | $                           |
+| Working capital(4)                          |     |                     |    387,653 |         |     |              |     |                             |
+| Total assets                                |     |                     |    690,584 |         |     |              |     |                             |
+| Total liabilities                           |     |                     |            | 147,234 |     |              |     |                             |
+| Redeemable common stock                     |     |                     |  1,625,825 |         |     |              |     |                             |
+| Total stockholders’ deficit                 |     |                     | -1,082,475 |         |     |              |     |                             |
+
+(1) The pro forma column in the consolidated balance sheet data table above gives effect to (i) the filing and effectiveness of our amended and restated certificate of incorporation and the adoption of our amended and restated bylaws, (ii) the reclassification of our outstanding common stock as Series B common stock and the authorization of our Series A common stock, (iii) the net issuance of shares of our Series B common stock issuable pursuant to the vesting and settlement of RSUs for which the time and service condition was satisfied as of June 30, 2023, and for which we expect the liquidity event condition to be satisfied in connection with this offering, after withholding an aggregate of shares of Series B common stock to satisfy associated estimated income tax obligations (based on the assumed initial public offering price of $ per share, which is the midpoint of the price range set forth on the cover page of this prospectus, and an assumed % tax withholding rate), (iv) the increase in other accrued liabilities and an equivalent decrease in additional paid-in capital in connection with tax withholding and remittance obligations related to such RSUs, based upon the initial public offering price of $ per share, which is the midpoint of the estimated offering price range set forth on the cover page of this prospectus, all of which will occur immediately following the effectiveness of the registration statement of which this prospectus forms a part, as if such actions had occurred on June 30, 2023, and (v) $ million of cumulative share-based compensation expense related to the RSUs for which the time and service condition was satisfied as of June 30, 2023 and for which we expect the liquidity event condition to be satisfied in connection with this offering. (2) The pro forma as adjusted column in the balance sheet data table above gives effect to (i) the pro forma adjustments set forth in footnote (1) above and (ii) the sale and issuance by us of shares of our Series A common stock in this offering, based on an assumed initial public offering price of $ per share, which is the
+
+
+midpoint of the estimated offering price range set forth on the cover page of this prospectus, after deducting the estimated underwriting discounts and commissions and estimated offering expenses payable by us.
+
+(3) Each $1.00 increase or decrease in the assumed initial public offering price of $ per share, which is the midpoint of the estimated offering price range set forth on the cover page of this prospectus, would increase or decrease, as applicable, our pro forma as adjusted cash and restricted cash, working capital, total assets, and total stockholders’ deficit by approximately $ million, assuming that the number of shares offered by us, as set forth on the cover page of this prospectus, remains the same and after deducting the estimated underwriting discounts and commissions and estimated offering expenses payable by us. Similarly, each increase or decrease of 1.0 million shares in the number of shares of our Series A common stock offered by us would increase or decrease, as applicable, our pro forma as adjusted cash and restricted cash, working capital, total assets, and total stockholders’ deficit by approximately $ million, assuming the assumed initial public offering price remains the same, and after deducting the estimated underwriting discounts and commissions and estimated offering expenses payable by us.
+
+(4) Working capital consists of current assets (including cash, current portion of restricted cash, accounts receivable, current deferred contract acquisition costs, current prepaid expenses and other current assets), less current liabilities (including accounts payable, accrued expenses, current lease liabilities, and deferred revenue, all of which is current).
+
+
+Non-GAAP Financial Measures The following table presents certain non-GAAP financial measures, along with the most directly comparable U.S. GAAP measure, for each period presented below. In addition to our results determined in accordance with GAAP, we believe that non-GAAP operating income (loss) and free cash flow, or FCF, both non-GAAP financial measures, are useful in evaluating our operational performance. We believe these non-GAAP financial measures, together with GAAP financial measures, such as revenue, gross profit, and cash flow from operations, are useful to assess our historical and prospective operating performance, to provide meaningful comparisons of operating performance across periods, and to better understand trends in our business. We additionally use these for internal planning purposes, and to enhance our understanding of our operating performance.
+
+|                                                            |     | 2022 | Year Ended December 31, |   |     | 2021 |         |   |     | 2023 | Six Months Ended June 30, |   |     | 2022 |         |   |
+|:-----------------------------------------------------------|:----|:-----|------------------------:|:--|:----|:-----|--------:|:--|:----|:-----|--------------------------:|:--|:----|:-----|--------:|:--|
+| Operating income (loss)                                    |     | $    |                 -55,036 |   |     | $    | -79,233 |   |     | $    |                     7,910 |   |     | $    | -25,296 |   |
+| Non-GAAP operating income (loss)(1)                        |     | $    |                 -26,194 |   |     | $    | -43,985 |   |     | $    |                    44,066 |   |     | $    | -19,573 |   |
+| Operating margin                                           |     |      |                   -11.6 | % |     |      |   -27.3 | % |     |      |                       2.5 | % |     |      |   -12.1 | % |
+| Non-GAAP operating margin(2)                               |     |      |                    -5.5 | % |     |      |   -15.1 | % |     |      |                      13.7 | % |     |      |    -9.4 | % |
+| Net cash provided by (used in) operating activities        |     | $    |                 -23,552 |   |     | $    | -22,738 |   |     | $    |                    57,026 |   |     | $    | -27,142 |   |
+| Free cash flow(3)                                          |     | $    |                 -41,797 |   |     | $    | -36,748 |   |     | $    |                    53,421 |   |     | $    | -38,048 |   |
+| Net cash provided by (used in) operating activities margin |     |      |                    -5.0 | % |     |      |    -7.8 | % |     |      |                      17.8 | % |     |      |   -13.0 | % |
+| Free cash flow margin(4)                                   |     |      |                    -8.8 | % |     |      |   -12.6 | % |     |      |                      16.7 | % |     |      |   -18.3 | % |
+
+(1) Non-GAAP operating income (loss) is a non-GAAP financial measure that is calculated as operating income (loss) adjusted for non-cash, non-operational and non-recurring items, which currently consist only of amortization of prepaid marketing expense, restructuring expense, and stock-based compensation. (2) Non-GAAP operating margin is a non-GAAP financial measure that is calculated as non-GAAP operating income (loss) divided by total revenue. (3) Free cash flow is a non-GAAP financial measure that is calculated as net cash used in operating activities less capital expenditures and capitalized software development costs. (4) Free cash flow margin is a non-GAAP financial measure that is calculated as free cash flow divided by total revenue. The non-GAAP financial measures are presented here because we believe they are useful to investors in assessing the operating performance of our business without the effect of non-cash items and other items as detailed below and elsewhere in this prospectus. The non-GAAP financial measures should not be considered in isolation or as alternatives to net loss, loss from operations, net cash used in operating activities or any other measure of financial performance calculated and prescribed in accordance with GAAP. Particularly regarding non-GAAP operating income (loss), the principal limitation is that it excludes significant expenses and income that are required by GAAP to be recorded in our consolidated financial statements. Some of these limitations are: • non-GAAP operating income (loss) does not reflect non-cash expenditures or future requirements for contractual commitments; • non-GAAP operating income (loss) does not reflect employer payroll tax related to stock-based compensation; and • non-GAAP operating income (loss) does not reflect the impact of certain cash charges resulting from matters we do not consider to be indicative of our ongoing core operations.
+
+
+Particularly regarding FCF, FCF is not a substitute for net cash used in operating activities and it does not represent the total increase or decrease in our cash balance for a given period.
+
+In addition, our non-GAAP financial measures may not be comparable to similarly titled measures in other organizations because other organizations may not calculate non-GAAP financial measures in the same manner as we do, thus limiting its usefulness as a comparative measure.
+
+For additional information about our non-GAAP financial measures and the reconciliation of the non-GAAP financial measures to their most directly comparable GAAP financial measures, see the section titled “Management’s Discussion and Analysis of Financial Condition and Results of Operations—Non-GAAP Financial Measures.”
+
+
+### RISK FACTORS
+Investing in our Series A common stock involves a high degree of risk. You should carefully consider the risks and uncertainties described below, together with all of the other information in this prospectus, before making a decision to invest in our Series A common stock. If any of these risks actually occur, our business, results of operations, financial condition, and prospects could be materially adversely affected. In that event, the trading price of our Series A common stock could decline, and you could lose part or all of your investment. Certain statements contained in the risk factors described below are forward-looking statements. See the section titled “Special Note Regarding Forward-Looking Statements” for more information.
+
+### Risks Relating to Our Business and Industry
+Our rapid historical revenue growth is not indicative of our future revenue growth, and we may not be able to sustain our historical revenue growth rate, in the near term and in the future.
+
+We have experienced rapid revenue growth in recent periods. Our revenue was $472.7 million and $290.6 million for the years ended December 31, 2022 and 2021, respectively, representing a growth rate of 62.7%. For the six months ended June 30, 2023 and 2022, our revenue was $320.7 million and $208.3 million, respectively, representing an increase of 53.9%. Our rapid revenue growth has been driven by increases in our customer count, growth of existing customers, our expansion into international markets, our sales to mid-market businesses, and the cross-selling of our SMS offering alongside our data platform and email offering. In addition, we implemented a price increase in September 2022, which positively increased revenue growth in 2022. This price increase also impacted the various measures we use to assess our usage and subscription levels based on revenue, such as ARR, MRR, and NRR, and following its implementation, those measures experienced corresponding increases as a result. We may see a decline in these measures as we reach the one year anniversary of this price increase. We anticipate that our revenue growth rate will decelerate over time as a result of a variety of factors, including the maturation of our business, and you should not rely on our historical revenue growth as an indication of our future performance. Overall growth of our revenue depends on several factors, including our ability to:
+
+• expand subscriptions to our platform for our existing customers;
+
+• increase the number of products we sell;
+
+• improve the functionality of our products and our platform and achieve and/or maintain market acceptance for them;
+
+• retain existing customers;
+
+• attract new customers;
+
+• succeed in selling our products in new verticals and in markets outside the United States;
+
+• keep pace with technological developments;
+
+• price our platform subscriptions competitively;
+
+• increase pricing on sales of our products, which may differ from product to product;
+
+• provide our customers with support that meets their needs;
+
+• successfully identify and acquire or invest in businesses, products, or technologies that we believe could complement or expand our platform; and
+
+• increase awareness of our brand on a global basis and successfully compete with other companies.
+
+
+We may not successfully accomplish any of these objectives. If we do not, or if the assumptions that we use to plan our business are incorrect or change in reaction to changes in our market, or if we are unable to maintain our revenue growth for any reason, including the reasons listed above, it may be difficult to achieve and maintain profitability, the trading price of our Series A common stock may be volatile, demand for our products and our platform could decline, and our business, financial condition, and results of operations may be adversely affected.
+
+Our business has experienced rapid growth, and if we fail to effectively manage our growth or anticipated growth, our business, results of operations, and financial condition could be adversely affected.
+
+We have experienced rapid growth in our business since inception, and we may continue to experience rapid growth. For example, our headcount has grown from 1,442 employees as of June 30, 2022 to 1,548 employees as of June 30, 2023. In addition, we have been expanding our international operations over the past four years. We opened offices in the United Kingdom and Australia in 2019 and 2022, respectively. We have also experienced significant growth in the number of customers using our platform, including the number of international customers, which increased from 52,335 on June 30, 2022 to 68,119 on June 30, 2023. We plan to continue to expand our international operations in the future. We have also experienced significant growth in the number of products and features we offer (such as adding SMS and push offerings alongside our data platform and email offering) and the usage and amount of data that our platform and associated infrastructure support. This growth has placed and may continue to place significant demands on our operational infrastructure, financial resources, corporate culture, and management team.
+
+In addition, our organizational structure has become more complex over time. In order to manage these increasing complexities, we will need to continue to scale and adapt our operational, financial and management controls, as well as our reporting systems and procedures. The expansion of our systems and infrastructure will require us to commit substantial operational, financial, and management resources before our revenue increases and without any assurances that our revenue will increase.
+
+In order to successfully manage our future growth and manage our business effectively, we will need to continue to improve our operating and administrative systems, and our ability to manage headcount, capital, and internal processes. Continued growth could challenge our ability to develop and improve our operational, financial, and management controls, enhance our reporting systems and procedures, recruit, train, and retain highly skilled personnel in a timely manner or at all, and maintain user satisfaction. If we fail to achieve the necessary level of efficiency in our organization as we grow, then our business, results of operations, and financial condition could be adversely affected.
+
+Further, as our customer base continues to grow, we will need to expand our account management and customer service teams and continue to scale our platform. If we are not able to continue to provide high levels of customer service, our reputation could suffer, which could adversely affect our business, results of operations, and financial condition.
+
+We have a limited operating history in a rapidly changing industry, which makes it difficult to evaluate our current business and future prospects and increases the risk of your investment.
+
+We were founded and launched our platform in 2012. As a result of our limited operating history, our ability to forecast our future results of operations is limited and subject to a number of uncertainties, including our ability to plan for future growth. Our historical growth should not be considered indicative of our future performance. We have encountered and will encounter risks and uncertainties frequently experienced by growing companies in rapidly changing industries, such as risks and uncertainties related to:
+
+• retention of customers;
+
+• adding new customers, particularly in the mid-market and enterprise categories;
+
+
+• competition;
+
+• our ability to control costs, particularly our operating expenses;
+
+• network outages or security breaches and any associated expenses;
+
+• foreign currency exchange rate fluctuations;
+
+• executing acquisitions and integrating the acquired businesses, technologies, products, and other assets; and
+
+• general economic and political conditions.
+
+If we do not address these risks successfully, our business, results of operations, and financial condition could be adversely affected.
+
+We operate in a highly competitive industry, and if we do not compete effectively with established companies or new market entrants, our business, results of operations, and financial condition could be adversely affected.
+
+We operate in a highly competitive industry, and we expect competition to continue to increase. We face competition from a number of companies, including Adobe, Salesforce, Mailchimp, and Braze. We believe that our ability to compete depends upon many factors both within and beyond our control, including:
+
+• fast time-to-value and ROI for customers;
+
+• ease of deployment, implementation, and use;
+
+• unified data architecture, with the ability to synchronize unaggregated, historical customer profile data with real-time event data in a single system-of-record;
+
+• integrations with third-party applications, data sources, and open-source technologies;
+
+• breadth and depth of features and functionality;
+
+• quality and accuracy of data and predictive intelligence;
+
+• ability to support multiple use cases and verticals;
+
+• strength of sales & marketing and partnership efforts;
+
+• market vision and product strategy;
+
+• pace of innovation;
+
+• brand awareness and reputation;
+
+• performance, scalability, security, and reliability; and
+
+• quality of service and customer satisfaction.
+
+Many of our current and potential competitors have or may have significantly greater financial, technical, marketing, and other resources than we do. They may secure better terms from partners, adopt more aggressive or alternative pricing policies, or devote more resources to technology, infrastructure, sales, marketing, and customer service. These competitors may engage in more extensive research and development efforts, undertake more far-reaching marketing campaigns, and adopt more aggressive or alternative pricing policies which may allow them to attract customers or partners. For example, for our SMS offering, we do not currently separate carrier fees from the fees that our customers pay for our
+
+
+product. In contrast, some of our competitors separate carrier fees from their product fees, which may create the appearance of a lower product fee and which may appear more attractive. Our competitors may also develop a platform or products that are similar to ours or that achieve greater market acceptance than ours. This could attract customers or partners away from our platform or our products and reduce our market share.
+
+In addition, if one or more of our competitors were to merge or partner with another of our competitors, our ability to compete effectively could be adversely affected. Our competitors may also establish or strengthen cooperative relationships with our current or future strategic distribution and technology partners or other parties with whom we have relationships, thereby limiting our ability to promote and increase the usage and adoption of our platform. We expect to encounter new competitors, which may include any of our current or future third-party platform providers or technology partners, both geographically and in our market verticals in and outside of retail and eCommerce. We may not be able to compete successfully against current or future competitors, and competitive pressures could adversely affect our business, results of operations, and financial condition.
+
+Our business and success depend, in part, on our ability to successfully integrate with third-party platforms, especially with eCommerce platforms such as Shopify, and our business would be harmed as a result of any disruptions to these third-party platform integrations or our relationships with third-party platform providers.
+
+We depend on product integrations with various third-party platforms, especially eCommerce platforms, to sustain and grow our business. The integration of our platform and our products with these third-party platforms, including eCommerce platforms, provides us with substantial amounts of additional first-party data that would otherwise be costly or difficult to obtain. These integrations also allow us to attract customers that use these platforms to conduct their business activity. Further, our customers’ experience with our platform is dependent on our ability to connect easily to these third-party platforms as well as the effectiveness and utility of these integrations. The companies that operate these third-party platforms generally dictate, to varying degrees, the terms of use of their respective platforms, including the manner and procedure by which we integrate with their respective platforms. We may fail to maintain and improve upon these integrations or relationships for many reasons, including due to our or the third parties’ failure to maintain, support, or secure their third-party platforms in general and our integrations in particular, or errors, bugs, or defects in our or their technology, or changes in our or their technology platforms or our relationship with such third parties due to actual or perceived competing platforms or offerings. Any such failure to integrate data from a third-party platform, or any disruption on an eCommerce platform that prevents us from integrating with that platform or reduces the interoperability between our platform and the respective third-party platform, could harm our relationship with our customers, adversely impact our reputation and brand, and adversely affect our business, financial condition, and operating results.
+
+As of December 31, 2022, approximately 77.5% of our ARR was derived from customers who also use Shopify’s platform, while only approximately 10.6% of our new ARR was derived from customers that came to us through the Shopify app store. Shopify also helps to promote our brand by referring new customers to us, and under our partnership with Shopify Inc., or Shopify, we are the recommended email solution for Shopify Plus customers globally. Any disruption to the functionality of our integration with Shopify, including our removal from their app store, could create delays in data synchronization for our customers and adversely affect the customer experience. Further, if Shopify is unable or unwilling to continue to integrate with our platform for any reason, or if our products or our platform no longer integrate with Shopify’s platform, our customers that use Shopify’s eCommerce platform could be required to switch to another eCommerce platform in order to continue using our platform and our products. However, the termination or degradation of our integration with Shopify could cause us to lose customers if these customers do not transition to a new eCommerce platform, or if they transition to a platform that does not integrate with our platform. We also have integrations with other third-party eCommerce platforms, such as BigCommerce, Centra, Magento, Nuvemshop, PrestaShop, Salesforce Commerce Cloud, Square, Wix, and WooCommerce, and some of our customers transition from one
+
+
+third-party eCommerce platform to another while remaining on our platform each month. Further, diversifying our contractual relationships and operations with other platforms could increase the complexity of our operations and lead to increased costs. The current term of our agreement with Shopify expires in 2029, and Shopify could refuse to renew such agreement or renegotiate such agreement on terms that are neither favorable to us nor commercially reasonable. If our contract with Shopify is not renewed, if there are any disruptions to our Shopify integration or if we are unsuccessful in maintaining our relationship with Shopify, for any reason, including actual or perceived competing offerings, the utility of and demand for our platform and our products could decline, and our business, financial condition, and operating results could be materially and adversely affected.
+
+Our business and success depend, in part, on the success of our relationships with third parties, such as our marketing agency and technology partners.
+
+We rely on third-party relationships, such as marketing agency and technology partners, to attract customers and enhance the utility of our platform. If any of the third parties on which we rely fails to perform as expected, breaches or terminates their agreement with us, or becomes engaged in a dispute with us, our reputation could be adversely affected and our business could be harmed.
+
+For example, we rely on third-party agency partners and other marketing partners to help us acquire and retain customers. If these partners fail to promote our platform or refer new customers to us, fail to support our existing customers, begin promoting competing brands in addition to or instead of ours, are forced to change their marketing practices in response to new or existing regulations or cease to be viewed as credible sources of information by our potential customers, we may face decreased demand for our solutions, higher than expected Customer Acquisition Costs and loss of revenue.
+
+We also collaborate with third-party technology partners, including systems integrators and third-party developers, to enhance the utility of our platform. For example, these partners build integrations that extend our platform’s core product functionality or bring additional data into our platform. These technology partners may fail to maintain, support, or improve their integrations, which could reduce the utility of our platform and in turn could decrease demand for our platform and products, harm our reputation and brand, and have a negative effect on our business, financial condition, and operating results.
+
+In order to grow our business, we anticipate that we will continue to depend on relationships with third parties. Identifying, negotiating, and documenting relationships with partners require significant time and resources. Our competitors may be more effective in providing incentives to third parties to favor their products or services or to prevent or reduce use of our services. In addition, acquisitions of our partners by our competitors could result in a decrease in the number of our current and potential customers, as our partners may no longer facilitate the adoption of our service by potential customers.
+
+If we are unsuccessful in establishing or maintaining our relationships with third parties, our ability to compete in the marketplace or grow our revenues could be impaired and our business, financial condition, and operating results may suffer.
+
+Unfavorable conditions in our industry or the global economy, or reductions in spending on marketing, could adversely affect our business, financial condition, and results of operations.
+
+Our results of operations may vary based on changes in our industry, particularly changes in the retail and eCommerce industry, as well as the impact of the global economy on our customers. Our results of operations currently depend, in part, on the demand for marketing and related services, of which the vast majority are for retail and eCommerce businesses. In addition, our revenue is dependent on the usage of our platform and the demand for our products, which in turn are influenced by the amount of business that our customers conduct. To the extent that weak or volatile economic conditions, including due to the COVID-19 pandemic, labor shortages, supply chain disruptions, inflation, geopolitical developments (such as the war in Ukraine and the implementation of, or changes to or further expansions of, trade sanctions, export restrictions, tariffs, and embargoes), deterioration of the financial services industry and other
+
+
+events outside of our control, result in a reduced volume of business for our customers and prospective customers, demand for, and use of, our platform and our products may decline. Specifically, because we currently operate primarily in the retail and eCommerce space, any disruption caused to the customers in this space, such as a weak global economy causing a shift in the economic viability of the retail and eCommerce businesses, may require us to adapt our business model and our operations accordingly. Furthermore, weak economic conditions may make it more difficult to collect on outstanding accounts receivable and increase our expenses. Specifically, customers may fail to make payments when due, default under their agreements with us, or become insolvent or declare bankruptcy, or a supplier may determine that it will no longer do business with us as a customer. Additionally, we generate a significant portion of our revenue from small businesses, which may be affected by economic downturns and other adverse macroeconomic conditions, as small businesses may be more likely to reduce their marketing expenses during such periods and do so to a greater extent than larger enterprises and typically have more limited financial resources, including capital borrowing capacity. In addition, a customer or supplier could be adversely affected by any of the liquidity or other risks that are described above as factors that could result in material adverse impacts on us, including but not limited to delayed access or loss of access to uninsured deposits or loss of the ability to draw on existing credit facilities involving a troubled or failed financial institution. If our customers reduce their use of our platform, or prospective customers delay adoption or elect not to adopt our platform or purchase our products, as a result of a weak economy or rising inflation and increased costs or otherwise, our business, results of operations, and financial condition could be adversely affected.
+
+We may not be able to add new customers, retain existing customers, or increase sales to existing customers, which could adversely affect our business, results of operations, and financial condition.
+
+We derive, and expect to continue to derive, the significant majority of our revenue from the sale of subscriptions to our platform. Our business and our growth are dependent on our ability to continue to attract and acquire new customers while retaining existing customers and expanding both their usage of our platform and the products we sell to them. The demand for our products may be inhibited, and we may be unable to grow our business and customer base, for a number of reasons, including, but not limited to:
+
+• our failure to develop or offer new or enhanced products or features in a timely manner that keeps pace with new technologies, competitor offerings, and the evolving needs of our customers;
+
+• difficulties providing or maintaining a high level of customer satisfaction, which could cause our existing customers to cancel or decrease their subscriptions or stop referring prospective customers to us;
+
+• increases in our customer churn, decreases in our customer renewals or our failure to convert customers from lower tiers to higher tier priced subscriptions;
+
+• perceived or actual security, availability, integrity, privacy, reliability, quality, or compatibility problems with our platform, including unscheduled downtime, outages, or security breaches;
+
+• changes in search engine ranking algorithms or in search terms used by potential customers;
+
+• our inability to market our platform in a cost-effective manner to new customers or to our existing customers due to changes in regulation, or changes in the enforcement of existing regulation, that would affect our marketing or pricing practices;
+
+• unexpected increases in the costs of acquiring new customers;
+
+• our ability to expand into new industry verticals and use cases; and
+
+
+• our ability to expand into new geographic regions.
+
+In order for us to sustain demand for our products and maintain or increase our revenue growth, it is important that our customers renew and/or expand their subscriptions. Most of our customers’ subscriptions with us are month-to-month, and they therefore have no obligation to renew their subscriptions or maintain their usage levels. Some of our customers have elected not to renew their subscriptions with us in the past, and it is difficult to accurately predict long-term customer retention. Further, to achieve continued growth, we must not only maintain our relationships with our existing customers, but expand our commercial relationships with our existing customers and encourage them to increase usage of our platform.
+
+In order to increase our sales to new and existing customers, we may need to significantly expand our selling and marketing operations, including our sales force and third-party referral and marketing agency partners, and continue to dedicate significant resources to selling and marketing programs, both domestically and internationally. We rely on our marketing agency partners to provide certain services to our customers, as well as refer new customers to our platform. Our ability to increase our customer base and achieve broader market acceptance of our platform will depend, in part, on our ability to effectively organize, focus, and train our selling and marketing personnel, attract new marketing agency partners and retain existing marketing agency partners.
+
+Any failure to continue to attract new customers, retain existing customers or increase usage of our platform by existing customers could have a material adverse effect on our business, results of operations, and financial condition.
+
+We have a history of net losses, we anticipate increasing operating expenses in the future, and we may not be able to continue to be profitable.
+
+We incurred net losses of $49.2 million and $79.4 million in the years ended December 31, 2022 and 2021, respectively, and while we achieved profitability during the six month period ended June 30, 2023, we are not certain whether we will continue to be profitable. Based on our current planned operations, we expect our cash and cash equivalents, in addition to the net proceeds from this offering, will enable us to fund our operating expenses for at least the next twelve months. We have based this estimate on assumptions that in the future may prove to be wrong, and we could use our capital resources sooner than we currently expect. We also expect our costs and expenses to increase in future periods as we continue to invest in our business and increase our product offerings, which could negatively affect our future results of operations if our revenue does not continue to increase. In particular, we intend to continue to expend substantial financial resources on:
+
+• our technology infrastructure and operations;
+
+• including systems architecture, scalability, availability, performance, and security;
+
+• platform development, including investments in our platform development team and the development of new products and functionality for our platform as well as investments in further improving our existing platform and infrastructure;
+
+• international expansion;
+
+• our selling and marketing organization, to engage our existing and prospective customers, increase brand awareness and drive adoption of our products;
+
+• acquisitions or strategic investments; and
+
+• general administration, including increased insurance, legal, and accounting expenses associated with being a public company.
+
+
+We may not achieve the benefits anticipated from these investments, which could be more costly than we currently anticipate, or the realization of these benefits could be delayed. These investments may not result in increased revenue or growth in our business. If we are unable to maintain or increase our revenue at a rate sufficient to offset the expected increase in our costs, our business, financial condition, and results of operations could be adversely affected, and the trading price of our Series A common stock could decline as a result.
+
+As we seek to move up-market, we expect our sales cycle with enterprise customers to be longer than with small-and-mid size businesses and we will be required to scale our operations, including by expanding our sales efforts, which may require considerable time and expense.
+
+The majority of our customers are small to mid-size businesses and subscribe to our platform on a month-to-month basis. However, as we scale our business and enter into agreements with larger customers, such as enterprise customers, we expect that we will enter into longer-term agreements for usage of our platform and products. We anticipate that these prospective enterprise customers may have lengthy sales cycles for the evaluation and procurement of our platform and the timing of our sales cycles with these enterprise customers and the related revenue may be difficult to predict. For deals that were closed by our sales team in the year ended December 31, 2022 and in the six month period ended June 30, 2023, our median sales cycle was approximately 8 weeks. This measure excludes any business generated through self-serve channels. Any delays in our sales cycles may increase the amount of time between when we incur the operating expenses related to these sales efforts and, upon successful sales, the generation of corresponding revenue. Further, we may incur additional selling and marketing expenses as we move up-market and shift our sales strategy to adapt not only to longer sales cycles but to the nature of a new sales motion associated with enterprise sales. As we seek to acquire these enterprise customers, we also anticipate that we will need to increase our sales and customer support capabilities. We may also be required to spend a significant amount of time and resources to train our sales and customer support teams for interfacing with enterprise customers, as well as educating our potential enterprise customers and familiarizing them with our platform. Additionally, these large organizations may have large data sets that require us to evaluate our existing data storage, collection and processing capabilities, and enhance the features and scalability of our platform. Enterprise customers may also view a subscription to our platform and products as a strategic decision with significant investment. As a result, these customers may require considerable time to evaluate, test, and qualify our platform prior to entering into or expanding a subscription. As we engage with enterprise customers, we may expend a greater amount of time and money on selling and marketing and contract negotiation activities, which may not result in a sale. Additional factors that may influence the length and variability of our sales cycle include:
+
+• the effectiveness of our sales team as we hire and train our new salespeople to sell to large enterprise customers;
+
+• the discretionary nature of purchasing, budget cycles and decisions;
+
+• the obstacles placed by customers’ procurement processes;
+
+• economic conditions and other factors impacting customer budgets;
+
+• customers’ familiarity with our products;
+
+• customers’ evaluation of competing products during the purchasing process; and
+
+• evolving customer demands.
+
+In light of these factors, it is difficult to predict whether and when a sale will be completed, and if completed, the additional customer engagement and services we will need to provide for the duration of the agreement. Consequently, our efforts to expand up-market and enter into agreements with larger organizations may be difficult and could have a material adverse effect on our business, results of
+
+
+operations, and financial condition if we do not adapt our business to the needs of the enterprise customer base.
+
+We have historically invested significantly in research and development and expect this investment to continue. If these investments do not translate into new products or enhancements to our current products or product features, or if we do not use those investments efficiently, our business, financial condition, and results of operations could be adversely affected.
+
+For the years ended December 31, 2022 and 2021, and the six months ended June 30, 2023, our research and development expenses were 22.0%, 22.6% and 21.2% of our revenue, respectively. Research and development projects can be technically challenging and expensive, particularly as we work to expand both the channels through which we offer our products and the use cases for our products beyond marketing. In addition, our products have varying associated communication sending costs, and our research and development team may not be able to mitigate the impact of growth in any of those higher-cost channels, such as SMS, by maintaining efficiency. The nature of research and development cycles may cause us to experience delays between the time we incur expenses associated with research and development and the time we are able to offer compelling products and generate revenue, if any, from this investment. Additionally, anticipated customer demand for a product we are developing could decrease after the development cycle has commenced, and we would nonetheless be unable to avoid substantial costs associated with the development of any such product. If we expend a significant amount of resources on research and development and our efforts do not lead to the successful introduction or improvement of products that are competitive in our current or future markets or if we do not spend our research and development budget efficiently or effectively on compelling innovation and technologies, our competitive advantage may be adversely affected, which could materially adversely affect our business, financial condition and, results of operations.
+
+If we fail to adapt and respond effectively to technological changes, evolving industry standards, changing regulations or changing customer or consumer needs, requirements or preferences, our platform may become less competitive.
+
+The market in which we compete is relatively new and subject to rapid technological change, evolving industry standards, and changing regulations, as well as changing customer and consumer needs, requirements, and preferences, including changes in the use of channels through which consumers desire to communicate with brands. For example, while email marketing has been the primary product on our platform, our SMS offering is relatively new, and customers may prefer SMS or push marketing campaigns or campaigns using other new types of communication channels to email campaigns in the future. Further, as consumer preferences with respect to communication channels evolve, we may need to adapt to the varying margin profiles of these new technologies and address potential margin compression. The success of our business will depend, in part, on our ability to adapt and respond effectively to changes in customer and consumer preference on a timely basis in the markets that we currently serve, such as retail and eCommerce, and in markets we may enter in the future. Our ability to attract new customers and increase revenue from existing customers depends in large part on our ability to enhance and improve our platform and products, offer new features as part of our existing products, offer new products, and increase adoption and usage of our platform and products. For example, we expect that the number of integrations with our customers’ infrastructure that we will need to support will continue to expand as customers and developers adopt new software solutions, and we may have to develop new integrations to work with those new solutions. The success of any enhancements to our existing or new products depends on several factors, including timely completion, adequate quality testing, actual performance quality, market-accepted pricing levels, and overall market acceptance. Enhancements to our existing and new products that we develop may not be introduced in a timely or cost-effective manner, may contain errors or defects, may have interoperability difficulties with our platform or products, or may not achieve the broad market acceptance necessary to generate significant revenue. Further, the use of machine learning and artificial intelligence is becoming increasingly prevalent in our industry, and, although we intend to continue developing our platform’s machine learning and artificial intelligence capabilities to meet the needs of our customers and partners, we may be unable to
+
+
+accurately or efficiently integrate machine learning and artificial intelligence features or functionalities of the quality or type sought by our customers and partners or offered by our competitors. These development efforts may also require significant engineering, sales, and marketing resources, all of which could require significant capital and management investment. If we are unable to enhance our platform and product offerings to keep pace with rapid technological and regulatory change, or if new technologies, including machine learning and artificial intelligence solutions, emerge that are able to deliver competitive products at aggressive or alternative prices, more efficiently, more conveniently or more securely than our platform, demand for our platform and product offerings may decline, and our business, financial condition, and results of operations may be adversely affected.
+
+We depend on our senior management team, and the loss of one or more members of our senior management team or our key employees, or an inability to attract and retain highly skilled employees, could adversely affect our business.
+
+Our success depends upon the continued service and contributions of our executive officers. We rely on our leadership team for research and development, marketing, sales, services, and general and administrative functions, and on mission-critical individual contributors. In particular, we depend on the vision, skills, experience, and effort of our co-founder and Chief Executive Officer, Andrew Bialecki. From time to time, our executive management team may change due to the hiring or departure of executives, which could disrupt our business. We do not maintain key person life insurance policies on any of our employees, so the loss of one or more of our executive officers or key employees (including any limitation on the performance of their duties or short-term or long-term absences as a result of illness or disability) could adversely affect our business.
+
+Our future success also depends, in part, on our ability to continue to attract and retain highly skilled personnel. Competition for this type of personnel is intense, especially for experienced software engineers and senior sales executives. In addition, partially in response to the COVID-19 pandemic, we have a large, remote workforce, which adds to the complexity of our business operations. We expect to continue to experience difficulty in hiring and retaining employees with appropriate qualifications. Many of the companies with which we compete for experienced personnel have greater resources than we have. If we hire employees from competitors or other companies, their former employers may attempt to assert that these employees or we have breached legal obligations, resulting in a diversion of our time and resources.
+
+Many of our key personnel are, or will soon be, vested in a substantial amount of shares of Series A common stock, restricted stock units, or stock options. Employees may be more likely to terminate their employment with us if the shares they own or the shares underlying their vested restricted stock units or options have significantly appreciated in value relative to the original purchase prices of the shares or the exercise price of the options or grant date values of the RSUs, or, conversely, if the exercise price of the options that they hold are significantly above the trading price of our Seri

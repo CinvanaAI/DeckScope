@@ -1,0 +1,1028 @@
+agilon health, inc. (AGL) | S-1 | FORM S-1 | Filed: 2021-03-18
+https://www.sec.gov/Archives/edgar/data/1831097/000119312521085566/d10763ds1.htm
+→ https://www.sec.gov/Archives/edgar/data/1831097/000119312521085566/d10763ds1.htm
+Content-Type: text/html
+
+As filed with the Securities and Exchange Commission on March 18, 2021 Registration No. 333- UNITED STATES SECURITIES AND EXCHANGE COMMISSION WASHINGTON, D.C. 20549 FORM S-1 REGISTRATION STATEMENT UNDER THE SECURITIES ACT OF 1933 agilon health, inc. (Exact Name of Registrant as Specified in its Charter)
+
+| Delaware                          |     |                         8090 |     | 37-1915147            |
+| (State or Other Jurisdiction      
+ of Incorporation or Organization) |     | -Primary Standard Industrial 
+   Classification Code Number |     | -I.R.S. Employer      
+ Identification Number |
+
+1 World Trade Center, Suite 2000 Long Beach, CA 90831 (562) 256-3800 (Address, including zip code, and telephone number, including area code, of registrant’s principal executive offices) Steven J. Sell Chief Executive Officer agilon health, inc. 1 World Trade Center, Suite 2000 Long Beach, CA 90831 (562) 256-3800 (Name, address, including zip code, and telephone number, including area code, of agent for service) Copies to:
+
+| Peter J. Loughran, Esq.  
+ Paul M. Rodel, Esq.      
+ Debevoise & Plimpton LLP 
+ 919 Third Avenue         
+ New York, New York 10022 
+ (212) 909-6000           |     | William V. Fogg, Esq.       
+ Cravath, Swaine & Moore LLP 
+ 825 Eighth Avenue           
+ New York, New York 10019    
+ (212)                       
+ 474-1000                    |
+
+Approximate date of commencement of proposed sale to the public:As soon as practicable after this registration statement becomes effective. If any of the securities being registered on this Form are to be offered on a delayed or continuous basis pursuant to Rule 415 under the Securities Act of 1933, check the following box. ☐ If this Form is filed to register additional securities for an offering pursuant to Rule 462(b) under the Securities Act, please check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering. ☐ If this Form is a post-effective amendment filed pursuant to Rule 462(c) under the Securities Act, check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering. ☐ If this Form is a post-effective amendment filed pursuant to Rule 462(d) under the Securities Act, check the following box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering. ☐ Indicate by check mark whether the registrant is a large accelerated filer, an accelerated filer, a non-acceleratedfiler, a smaller reporting company, or an emerging growth company. See the definitions of “large accelerated filer,” “accelerated filer,” “smaller reporting company” and “emerging growth company” in Rule 12b-2of the Exchange Act.
+
+| Large accelerated filer |     | ☐ |     | Accelerated filer         |     | ☐ |
+| Non-accelerated filer   |     | ☒ |     | Smaller reporting company |     | ☐ |
+|                         |     |   |     | Emerging growth company   |     | ☒ |
+
+If an emerging growth company, indicate by check mark if the registrant has elected not to use the extended transition period for complying with any new or revised financial accounting standards provided pursuant to Section 7(a)(2)(B) of the Securities Act.☐ CALCULATION OF REGISTRATION FEE
+
+| Title of Each Class of                  
+ Securities to be Registered             |     |             Proposed 
+              Maximum 
+            Aggregate 
+ Offering Price(1)(2) |     |        Amount of 
+ Registration Fee |
+| Common Stock, par value $0.01 per share |     |         $100,000,000 |     |          $10,910 |
+
+| (1) | Estimated solely for the purpose of calculating the registration fee in accordance with Rule 457(o) of the 
+ Securities Act of 1933, as amended.                                                                        |
+
+| (2) | Includes shares of common stock subject to the underwriters’ option to purchase additional shares. |
+
+The registrant hereby amends this registration statement on such date or dates as may be necessary to delay its effective date until the registrant shall file a further amendment which specifically states that this registration statement shall thereafter become effective in accordance with Section 8(a) of the Securities Act of 1933 or until the registration statement shall become effective on such date as the U.S. Securities and Exchange Commission, acting pursuant to said Section 8(a), may determine.
+
+The information in this preliminary prospectus is not complete and may be changed. We may not sell these securities until the U.S. Securities and Exchange Commission declares our registration statement effective. This preliminary prospectus is not an offer to sell these securities and we are not soliciting offers to buy these securities in any state or jurisdiction where the offer or sale is not permitted. SUBJECT TO COMPLETION, DATED , 2021 Shares agilon health, inc. Common Stock This is the initial public offering of shares of common stock of agilon health, inc. (“agilon health”). We are offering shares of common stock. We anticipate that the initial public offering price will be between $ and $ per share. Prior to this offering, there has been no public market for our common stock. Upon the completion of this offering, we intend to apply to list our common stock on the New York Stock Exchange (the “NYSE”) under the symbol “AGL”. After the completion of this offering, we expect to be a “controlled company” within the meaning of the corporate governance standards of the NYSE. We will be treated as an “emerging growth company,” as defined in the Jumpstart Our Business Startups Act of 2012, for certain purposes until we complete this offering. As such, in this prospectus, we have taken advantage of certain reduced disclosure obligations that apply to emerging growth companies. See “Prospectus Summary—Implications of Being an Emerging Growth Company.” Investing in our common stock involves risks. See “ Risk Factors” beginning on page 23 of this prospectus to read about factors you should consider before buying shares of our common stock.
+
+|                                                   |     | Per   
+ Share |     | Total |
+|:--------------------------------------------------|:----|:------|:----|:------|
+| Initial public offering price                     |     | $     |     | $     |
+| Underwriting discounts and                        
+ commissions(1)                                    |     | $     |     | $     |
+| Proceeds, before expenses, to agilon health, inc. |     | $     |     | $     |
+
+| (1) | See “Underwriting” for a description of the compensation payable to the underwriters. |
+
+The underwriters also may purchase up to additional shares from us at the initial offering price less the underwriting discounts and commissions, within 30 days from the date of this prospectus. Neither the U.S. Securities and Exchange Commission nor any state securities commission has approved or disapproved the securities described herein or determined if this prospectus is truthful or complete. Any representation to the contrary is a criminal offense. The underwriters expect to deliver the shares to purchasers on or about , 2021.
+
+| J.P. Morgan |     | Goldman Sachs & Co. LLC |     | BofA Securities |
+
+| Deutsche Bank Securities |     | Wells Fargo Securities |
+
+| William Blair |     | Truist Securities |     | Nomura |
+
+Prospectus dated , 2021
+
+TABLE OF CONTENTS
+
+| Prospectus Summary                                                      |     |   1 |
+| Risk Factors                                                            |     |  23 |
+| Special Note Regarding Forward-Looking Statements and                   
+ Information                                                             |     |  67 |
+| Use of Proceeds                                                         |     |  70 |
+| Dividend Policy                                                         |     |  71 |
+| Capitalization                                                          |     |  72 |
+| Dilution                                                                |     |  74 |
+| Management’s Discussion and Analysis of Financial Condition and Results 
+ of Operations                                                           |     |  76 |
+| Business                                                                |     | 103 |
+| Management                                                              |     | 142 |
+| Executive Compensation                                                  |     | 149 |
+| Principal Stockholders                                                  |     | 159 |
+| Certain Relationships and Related Party Transactions                    |     | 161 |
+| Description of Capital Stock                                            |     | 164 |
+| Shares Available for Future Sale                                        |     | 170 |
+| Description of Certain Indebtedness                                     |     | 172 |
+| Certain U.S. Federal Income Tax Considerations for Non-U.S. Holders     |     | 175 |
+| Underwriting                                                            |     | 179 |
+| Validity of Common Stock                                                |     | 190 |
+| Experts                                                                 |     | 190 |
+| Where You Can Find More Information                                     |     | 190 |
+| Index to Consolidated Financial Statements                              |     | F-1 |
+
+You should rely only on the information contained in this prospectus and any free writing prospectus we may authorize to be delivered to you. We have not, and the underwriters have not, authorized anyone to provide you with information different from, or in addition to, that contained in this prospectus and any related free writing prospectus. We and the underwriters take no responsibility for, and can provide no assurances as to the reliability of, any information that others may give you. This prospectus is an offer to sell only the shares offered hereby, but only under circumstances and in jurisdictions where it is lawful to do so. The information contained in this prospectus is only accurate as of the date of this prospectus, regardless of the time of delivery of this prospectus and any sale of shares of our common stock. i
+
+Certain Important Terms
+
+| • |     | “We,” “us,” “our,” “agilon” and the “Company” mean agilon                                                                                                                                    
+ health, inc., a Delaware corporation and its consolidated subsidiaries, unless the context refers only to agilon health, inc., as a corporate entity (which we refer to as “agilon health”). |
+
+| • |     | “Anchor geography” means the geographies in which our anchor physician groups operate. |
+
+| • |     | “Anchor physician groups” means the physician groups with which we have long-term contractual                                                                
+ arrangements, typically including joint governance, operations and leadership, and surplus sharing, and does not include physicians in our Hawaii geography. |
+
+| • |     | “Capitation” means a payment arrangement in which a set amount for each enrolled beneficiary is paid to                               
+ a provider or entity during an agreed upon period, regardless of whether or not such beneficiary seeks medical services or treatment. |
+
+| • |     | “CMS” means the Centers for Medicare & Medicaid Services. |
+
+| • |     | “CMS Innovation Center” means the Center for Medicare & Medicaid Innovation. |
+
+| • |     | “DCE” means a Direct Contracting Entity participating in the CMS Innovation Center Direct Contracting 
+ Model.                                                                                                |
+
+| • |     | “FFS” means      
+ fee-for-service. |
+
+| • |     | “Independent physicians” means physicians not employed by health systems or insurance providers. |
+
+| • |     | “Live,” when referring to a physician partner or a geography, means implementation of our platform with                                              
+ the physician partner or in the geography is complete, and we are generating revenue and assuming financial risk pursuant to agreements with payors. |
+
+| • |     | “MA” means Medicare Advantage. |
+
+| • |     | “Members” means the MA patients who are attributed to our PCPs (as defined below) by our payors (as 
+ defined below).                                                                                     |
+
+| • |     | “Payors” means health insurance providers. |
+
+| • |     | “Our PCPs” means PCPs contracted by our anchor physician groups and our network of contracted 
+ physicians.                                                                                   |
+
+| • |     | “PCP” means primary care physician. |
+
+| • |     | “Physician partners” means our anchor physician groups and all other physicians with whom we have 
+ contractual arrangements.                                                                         |
+
+| • |     | “PMPM” means per member per month. |
+
+| • |     | “RBE” means a risk-bearing entity. |
+
+| • |     | “STAR rating” means annual ratings awarded by CMS to health plans which measure the quality of health 
+ services received by beneficiaries enrolled in MA based on various calculated quality metrics.        |
+
+| • |     | “Total Care Model” means a PCP-led global capitation                                                                                                   
+ reimbursement model in which physicians receive a monthly payment from health plans to manage the total healthcare needs of their attributed patients. |
+
+Market and Industry Data This prospectus includes estimates regarding market and industry data and forecasts, which are based on publicly available information, industry publications and surveys, reports from government agencies, reports by market research firms and our own estimates based on our management’s knowledge of, and experience in, the ii
+
+healthcare industry. Third-party industry publications and forecasts generally state that the information contained therein has been obtained from sources generally believed to be reliable.
+
+Throughout this prospectus, all references to “net promoter score” or “NPS” are to a measure of satisfaction widely used
+in the healthcare industry. We calculate patient and provider net promoter score based on responses to patient and provider surveys, administered as electronic surveys annually, that ask the patient or provider to rank, on a scale of 0 to 10, how
+likely they are to recommend their (or their provider’s) practice to a friend or family member. We assign the designation of “Promoter” to respondents who provide a score of 9 or 10, the designation of “Passive” to
+respondents who provide a score of 7 or 8, and the designation of “Detractor” to respondents who provide a score of 0 to 6. We then subtract the percentage of Detractors from Promoters to determine our overall net promoter score. We
+believe that this method of calculation aligns with industry standards and that this metric is meaningful for investors because of the correlation that we believe exists between net promoter score and patient and provider satisfaction.
+
+Our estimates involve risks and uncertainties and are subject to change based on various factors, including those discussed under the captions
+“Risk Factors,” “Special Note Regarding Forward-Looking Statements and Information” and “Management’s Discussion and Analysis of Financial Condition and Results of Operations.”
+
+Service Marks, Trademarks and Trade Names
+
+We hold various service marks, trademarks and trade names, such as “agilon health,” “agilon” and our logo design, that we
+deem particularly important to the advertising activities conducted by each of our businesses. This prospectus also contains trademarks, service marks and trade names of other companies which are the property of their respective holders. We do not
+intend our use or display of such names or marks to imply relationships with, or endorsements of us by, any other company.
+
+Basis of Presentation
+
+During 2020, we implemented a plan to divest all of our California operations, which includes the entirety of our Medicaid line of
+business, via three separate transactions with different parties. In February 2021, we completed the divestiture of our California operations. As a result of the divestiture of all of our California operations, our financial statements included in
+this prospectus reflect discontinued operations presentation for all California operations. Financial and operating information contained in this prospectus is presented without California operations data unless expressly stated otherwise. See
+“Management’s Discussion and Analysis of Financial Condition and Results of Operations—California Operations” for additional information.
+
+iii
+
+PROSPECTUS SUMMARY
+
+The following summary highlights selected information contained elsewhere in this prospectus. Because this is only a summary, it does not contain all of the information you should consider before investing in our common stock. You should carefully read the entire prospectus, including the sections entitled “Risk Factors” and “Management’s Discussion and Analysis of Financial Condition and Results of Operations,” as well as our consolidated financial statements included elsewhere in this prospectus, before making an investment decision.
+
+Overview
+
+Our business is transforming healthcare by empowering the primary care physician (“PCP”) to be the agent for change in the
+communities they serve. We believe that PCPs, with their intimate patient-physician relationships, are best positioned to drive meaningful change in quality, cost and patient experience when provided with the right infrastructure and payment model.
+Through our combination of the agilon platform, a long-term partnership model with existing physician groups and a growing network of like-minded physicians, we are poised to revolutionize healthcare for seniors across communities throughout the
+United States. Our purpose-built model provides the necessary capabilities, capital and business model for existing physician groups to create a Medicare-centric, globally capitated line of business. Our model operates by forming risk-bearing
+entities (each, an “RBE”) within local geographies, that enter into arrangements with payors providing for monthly payments to manage the total healthcare needs of our physician partners’ attributed patients (or, global capitation
+arrangements), contract with agilon to perform certain functions and enter into long-term professional service agreements with one or more anchor physician groups pursuant to which the anchor physician groups receive a base compensation rate and
+share in the savings from successfully improving quality of care and reducing costs.
+
+Our company was formed in 2016, and we established
+our inaugural partnership with an anchor physician group in 2017. Our ability to rapidly build scaled positions in local communities has allowed us to grow to 16 anchor physician groups and 17 geographies in fewer than five years. Our platform has
+enabled us to grow our total membership by 45% and revenue by 53% from December 31, 2019 to December 31, 2020. Currently, the PCPs on our platform serve approximately 210,000 patients enrolled in Medicare Advantage (“MA”), which
+includes approximately 49,000 patients with physician groups contracted to go-live on January 1, 2022 (we refer to these patients as the “members on our platform”). In addition, through our
+participation in the Center for Medicare & Medicaid Innovation (“CMS Innovation Center”) Direct Contracting Model, our PCPs are expected to serve over 50,000 Medicare
+fee-for-service (“FFS”) beneficiaries through our five currently approved Direct Contracting Entities (“DCEs”). For the year ended December 31, 2020,
+our DCEs did not contribute to our revenue.
+
+
+Empower PCPs to Transform Care in Their Communities The current state of the U.S. healthcare system is defined by the following key factors:
+
+| • |     | Unsustainably high and rising costs characterized by waste, unnecessary variation in care and poor patient 
+ experience and health outcomes;                                                                            |
+
+| • |     | FFS reimbursement model focused on units of service rather than a coordinated approach to meet the unique needs 
+ of individual patients;                                                                                         |
+
+| • |     | The Medicare population is projected to grow from approximately 62 million in 2020 to more than                                                                                                                      
+ 70 million individuals in 2025 with a total spend of approximately $1.25 trillion, and MA enrollment is projected to comprise 47% of total Medicare enrollment (which we refer to as the “MA penetration rate”); and |
+
+| • |     | PCPs are positioned—but not currently empowered or incentivized—to act as the quarterback for                                      
+ healthcare delivery, with their decisions estimated to influence up to 90% of total healthcare spending according to a 2017 study. |
+
+We believe that failing to empower PCPs has fostered waste, needless variability in care and unsustainable growth in healthcare costs. According to a 2019 article entitled “Waste in the US Health Care System: Estimated Costs and Potential for Savings” published in the Journal of the American Medical Association, failure of care delivery, failure of care coordination and overtreatment or low-value care were estimated to represent $205.3 billion to $345.1 billion of waste annually in the U.S. healthcare system. While there is broad recognition of the need to move beyond a volume-based, FFS reimbursement model, structural hurdles have impeded rapid adoption of a PCP-ledglobal capitation reimbursement model in which physicians receive a monthly payment from health plans to manage the total healthcare needs of their attributed patients, which we refer to as a Total Care Model. In this prospectus, we refer to “capitation” as a payment arrangement in which a set amount for each enrolled beneficiary is paid to a provider or entity during an agreed upon period, regardless of whether or not such beneficiary seeks medical services or treatment. To overcome these hurdles and achieve our mission of being the trusted long-term partner to community-based physicians, we have developed what we believe is a first-of-its-kindTotal Care Model for community-based physicians that focuses exclusively on Medicare and manages subscription-like per member per month (“PMPM”) arrangements with health plans or directly with the government. The agilon Total Care Model is powered by our platform, enabled through a long-term partnership model and reinforced via our growing national
+
+
+network of like-minded physicians. Our position as innovators is demonstrated by a series of transformative accomplishments since the formation of the company in July 2016, and our first partnership in 2017, many of which we believe to be industry-firsts:
+
+| • |     | Implemented the first MA multi-payor, globally capitated risk model with a community-based physician group in all 
+ of our diverse geographies in which our anchor physician groups operate (“anchor geographies”);                   |
+
+| • |     | Exported the Total Care Model from one to 17 geographies ranging from communities as small as Zanesville, Ohio to 
+ large and rapidly growing communities such as Austin, Texas;                                                      |
+
+| • |     | Grew from approximately 24,000 patients attributed to our PCPs by our payors (“members”) to 
+ approximately 210,000 MA members on our platform;                                           |
+
+| • |     | Expanded from two payors to 15 payors on our platform; and |
+
+| • |     | Poised to participate in the Direct Contracting Model, with over 50,000 Medicare FFS beneficiaries expected to be 
+ served by our existing PCPs contracted through our five currently approved DCEs.                                  |
+
+Our business model is differentiated by its focus on existing community-based physician groups and is built around three key elements:
+
+| • |     | agilon’s platform, which is holistic in enabling the rapid transformation to risk, is comprised of an                                                            
+ integrated set of capabilities designed to continuously improve, and is delivered to our anchor physician groups through an aligned long-term partnership model; |
+
+| • |     | agilon’s long-term physician partnership approach with community-based physician groups, which is designed                                                        
+ to move healthcare closer to the physician, be outcome-centric and optimize the long-term sticky relationship between a patient and their existing physician; and |
+
+| • |     | agilon’s network of leading community-based physician partners, functioning as a collaborative group which                                             
+ can share best practices, influence the development of the platform, compare notes on the transition to a Total Care Model and learn from one another. |
+
+With our model, our goal is to remove the barriers that prevent community-based physicians from evolving to a Total Care Model, where the physician is empowered to manage health outcomes and the total healthcare needs of their attributed Medicare patients. The combination of subscription-like PMPM agreements with payors, the sticky patient-physician relationship and our long-term partnership model, which is typically 20 years in duration, results in a growing and recurring revenue stream and provides significant visibility into the near-term and long-term financial trajectory for both agilon and our anchor physician groups. In January of each year, we typically have visibility into greater than 90% of that year’s projected revenue. The result is PCPs transforming their historical transaction-based model to a long-term, holistic membership-based model that is reflective of the intimate and trusted relationship between physician and patient. Despite our history of net losses, we believe this membership-based model results in a recurring revenue stream and provides our anchor physician groups with access to an incremental profit margin opportunity based on delivering high-quality care and health outcomes. Freed from the constraints of the transactional FFS reimbursement model, our PCPs are empowered to practice team-based, coordinated care when addressing individual patient needs and transition to a sustainable long-term business model for their senior patients. We believe enabling PCPs to unlock the value of a Medicare-centric, globally capitated line of business while remaining independent can transform the community-based physician business model.
+
+
+In this prospectus, when referring to a physician partner or a geography, “live”
+means implementation of our platform with the physician partner or in the geography is complete, and we are generating revenue and assuming financial risk pursuant to agreements with health insurance providers (“payors”). In addition,
+“anchor physician groups” means the physician groups with which we have long-term contractual arrangements, typically including joint governance, operations and leadership, and surplus sharing, and does not include physicians in our Hawaii
+geography. We refer to our anchor physician groups and the other physicians with whom we have contracted arrangements as our “physician partners.” Finally, “our PCPs” means PCPs contracted by our anchor physician groups and our
+network of contracted physicians.
+
+The agilon Flywheel Effect: Our platform, partnership and network model enable our physician partners to be the quarterback for healthcare delivery in their community, and successfully operate a Medicare-centric, globally capitated line of business. This generates improving quality and cost outcomes, growing membership and increasing medical margin per member, which we share with our physician partners pursuant to our long-term partnership model. We believe this continuous improvement in patient and physician engagement and experience leads to more PCPs joining our platform and ultimately improves the success of each physician partner on the platform. As our platform grows, we believe we will be able to leverage our scale to drive additional investment in our geographies to accelerate this flywheel for the benefit of our physician partners and their patients. The power of the agilon flywheel is highlighted by our total membership growth of 45%, of which 42% was driven by same geography membership growth and 58% was driven by entry into new geographies from December 31, 2019 to December 31, 2020, and general and administrative expenses per member contracted by 23% over the same period. Over the same period, we had revenue of $1.2 billion and a net loss of $60.1 million.
+
+Our Market
+
+In 2020, approximately 62 million Americans were enrolled in Medicare nationally, of which we estimate approximately 27 million to be
+affiliated with independent physicians. We define independent physicians as physicians not employed by health systems or insurance providers. We consider our current addressable market to be the estimated 17.5 million Medicare beneficiaries
+affiliated with independent PCPs in states in which we
+
+
+already have a physician partner or a signed letter of intent with a physician group as of January 2021, and those in which we have identified near-term prioritized geographies. Based on 2021 estimated average annual revenue per Medicare member to us of approximately $10,000, we estimate that this represents a total addressable market (“TAM”) size of approximately $175 billion in 2020. We believe this addressable market will increase to nearly 20 million Medicare beneficiaries and $253 billion by 2025, based on the Centers for Medicare & Medicaid Services’ (“CMS”) projected Medicare enrollment and spending per beneficiary growth rates.
+
+| (1) | 2020 Medicare spend for total Medicare beneficiaries is based on CMS spend per beneficiary. |
+
+| (2) | 2025 Medicare spend for total Medicare beneficiaries, beneficiaries attributed to independent PCPs and agilon     
+ total addressable market is based on CMS projected Medicare enrollment and spending per beneficiary growth rates. |
+
+Of our estimated 2020 addressable market, $80 billion is concentrated in states in which we currently have a physician partner or a signed letter of intent with a physician group as of January 2021, and $24 billion is based in counties in which we currently have a physician partner or a signed letter of intent with a physician group as of January 2021. In addition to the MA members our physician partners currently serve, we estimate our physician partners also serve approximately 375,000 patients that are addressable, which includes all Medicare FFS beneficiaries and commercial patients expected to age into Medicare over the next five years. This represents a 2020 market size of approximately $3.8 billion, using the same assumed annual revenue per Medicare member to us. In addition, we see an additional opportunity for growth of our addressable market in physicians currently affiliated with health systems or insurance providers who become increasingly dissatisfied with those models. In considering our total addressable market, please also see “Risk Factors—Risks Related to Our Business.” Industry Challenges and Our Opportunity We believe there is a significant opportunity to impact growth in U.S. healthcare costs and change the trajectory of the primary care business model through a platform, such as ours, in which PCPs are empowered to manage health outcomes and the total healthcare needs of their attributed Medicare patients and share in the financial surplus created to the extent premiums received exceed the cost of medical care. Unsustainably high and rising U.S. healthcare costs According to CMS, U.S. national healthcare expenditures are expected to increase from $3.81 trillion in 2019 to $4.01 trillion in 2020. CMS projects that by 2028, healthcare expenditures will reach $6.20 trillion and will account for 19.7% of the U.S. GDP, up from 17.7% in 2018.
+
+
+Patients are dissatisfied with the fragmented and uncoordinated healthcare experience In the current FFS model, reimbursement is focused on units of service rather than a coordinated approach to meet the unique needs of individual patients. As a result, care delivery is often uncoordinated, leaving patients frustrated and responsible to navigate their own way through a fragmented and complex healthcare system. PCPs are well-positioned to be agents of change According to Oregon’s Patient-Centered Primary Care Home Program, every $1 spent on primary care services can save $13 of future healthcare costs. Across the U.S., there are more than 486,000 active PCPs who serve as patients’ first and most frequent point of contact for their healthcare experience. The trajectory of the current independent primary care business model is unsustainable In the current FFS reimbursement model, as average reimbursement rates decline, PCPs must increase the number of patients they see to sustain their practice. This volume-based model perpetuates physician burnout and jeopardizes the long-term sustainability of the independent primary care business model. According to a 2019 report, more than 50% of family physicians show symptoms of burnout, driven in part the FFS reimbursement model and increasing administrative burden. We believe this has been exacerbated by the effects of COVID-19. Growth of the complex and costly Medicare population is accelerating pressure on primary care The Medicare population is expected to grow from approximately 62 million individuals in 2020 to approximately 70 million individuals by 2025. As the medically complex Medicare population disproportionately drives utilization and cost, and is typically reimbursed at a lower rate than the commercial population, the primary care delivery system and the overall healthcare system are further strained. Structural Hurdles to Adoption of a Total Care Model We believe that all key stakeholders—patients, physicians and payors—benefit significantly from an environment where PCPs are empowered to manage health outcomes and the total healthcare needs of their attributed Medicare patients versus operating in the current FFS reimbursement model that primarily rewards units of service. However, over time, the existing FFS system has created structural hurdles that now impede rapid and broad adoption of a PCP-ledTotal Care Model.
+
+| • |     | PCPs lack the incentive structure to reorganize the healthcare delivery system. |
+
+| • |     | PCPs lack the infrastructure to participate in a multi-payor model. |
+
+| • |     | PCPs lack the breadth of capabilities and resources necessary to transition to a Total Care Model. |
+
+| • |     | PCP groups are highly fragmented and lack the benefits of scale. |
+
+| • |     | Limited long-term, deep collaboration between payors and physicians. |
+
+Our Answer We have created a Total Care Model for community-based physicians that focuses exclusively on Medicare and manages the comprehensive healthcare needs of our members through subscription-like PMPM arrangements with health plans or directly with CMS—powered by the agilon platform, enabled through a long-term partnership model and reinforced via a growing national network. The agilon Platform:The agilon platform is focused on existing community-based physician groups, senior patients within these practices and enabling our physician partners to rapidly move to a subscription-like Total
+
+
+Care Model. Our platform is holistic in supporting the rapid transition to a Total Care Model with technology, people, process and capital, and recognizes that enhanced capabilities are needed at multiple levels and must be deeply integrated within existing physician group operating processes to successfully execute the transition. The agilon platform was co-developedand has been continuously refined with our physician partners since the formation of the company. The agilon platform comprises an integrated set of capabilities, delivered as a unified platform to enable successful partnerships at the community level, create a national network of PCPs and physician groups and empower our PCPs to improve health outcomes for their patients. Our platform capabilities include:
+
+| • |     | Payor Engagement: In each community, we connect multiple payors, patients and physicians around a                                                      
+ single, purpose-built platform for MA patients with one approach to quality, patient experience, clinical program management and financial management. |
+
+| • |     | Direct Contracting Model: In each community we serve, our Total Care Model can be extended to         
+ patients enrolled in traditional Medicare through the CMS Innovation Center Direct Contracting Model. |
+
+| • |     | Data Integration and Management: Our purpose-built and flexible platform enables ease of                                                                                                 
+ integration with payor systems, physician electronic medical record (“EMR”) systems, labs, pharmacies and other third-party platforms, encompassing millions of data records each month. |
+
+| • |     | Clinical Programs and Product Development: Combining insights from evidence-based medicine and                                                                                                                                  
+ patient-level data, our medical leadership and local physician leaders develop high-value actionable playbooks for partner physicians to deliver quality care, which include operational plans, analytics and tracking metrics. |
+
+| • |     | Quality (Clinical and Experience): The agilon platform provides actionable consolidated                                                                                                  
+ information, centralized and local resources and processes to expand access, strengthen the patient-physician relationship and reduce medically unnecessary drivers of healthcare costs. |
+
+| • |     | Growth: We enable our partners to extend their local brand into a senior care brand for their Total                                                                                                                                                  
+ Care Model that embodies the history and culture of their local physician group. Through the development of this local brand and a Medicare-centric education approach, we enable our physician partners to actively engage with their approximately 
+ 220,000 patients that are currently Medicare-eligible but are not covered by an MA plan and their approximately 156,000 60-64 year-old patients, to enable their patients                                                                            
+ to make educated healthcare choices. These patients represent an embedded growth opportunity.                                                                                                                                                        |
+
+| • |     | Performance Management Analytics: One of the most powerful parts of our platform is enabled by the peer-to-peer comparison of efficiency and clinical metrics at the physician, population and network level. |
+
+| • |     | Financial Management: Leveraging our dedicated team of subject-matter experts, and our robust                 
+ technologies and capabilities, our platform operationalizes the finance elements of a risk-bearing structure. |
+
+| • |     | National Policy: We believe we are able to unite the voices of our community-based physician 
+ leaders to inform and advance policy in Washington, D.C.                                     |
+
+agilon’s Long-term Physician Partner Model Physician Relationships We built the agilon platform to be deployed through an aligned long-term partnership model with community-based physician groups to address the need to move healthcare closer to the physician, be outcome-
+
+
+centric and optimize the long-term sticky relationship between a patient and their existing physician. Our anchor physician group relationships have the following characteristics:
+
+| • |     | Long-term partnership model that allows both agilon and physicians to take the long-term view and benefit from 
+ the maturity of a growing number of members on the platform;                                                   |
+
+| • |     | Shared governance and co-location of staff to manage our local 
+ partnerships;                                                  |
+
+| • |     | Local dyad leadership structure that includes a medical director from the local anchor physician group; |
+
+| • |     | Local brand which reflects the local anchor physician group or geography; |
+
+| • |     | Capital from agilon to support value-based care infrastructure supporting the delivery of high-quality                        
+ healthcare, and 100% downside protection, which removes a major obstacle to physicians making the leap to a Total Care Model; |
+
+| • |     | Operating leverage created by amortizing centralized investments in the platform infrastructure across a growing 
+ number of physician partners; and                                                                                |
+
+| • |     | Surplus dollars generated locally due to improvements in quality of care and healthcare costs are shared with the 
+ local anchor physician group.                                                                                     |
+
+Under the Total Care Model, we typically operate by RBE’s within local geographies. These wholly-owned RBEs enter into risk-bearing, global capitation agreements with payors, contract with agilon to perform certain functions and enter into long-term professional service agreements with one or more anchor physician groups. Individual MA members whose care is provided by PCPs employed or affiliated with our anchor physician groups are attributed to the RBE, which bears financial responsibility for the associated medical costs of such members. Through incentive compensation arrangements, we share with our anchor physician groups a portion of the RBE’s savings from successfully improving the quality of care and reducing costs. Typically, our anchor physician groups receive a FFS base compensation rate for services rendered which is paid directly by health plan payors to our anchor physician groups or, in certain arrangements, paid from the health plan payor to the applicable RBE, who pays the compensation received to our anchor physician groups. In certain cases, our anchor physician groups may be entitled to a guaranteed minimum FFS base compensation rate from the RBE in the event that the FFS base compensation rate paid by the health plan payor does not meet the negotiated base compensation rate as agreed between the RBE and the anchor physician group, or if the FFS base compensation rate paid by the health plan payor falls below what the anchor physician group had received prior to joining our platform. Historically, the base compensation rates paid directly by the health plan payors to our anchor physician groups have met or exceeded applicable guaranteed minimum FFS base compensation rates. Most of our contracts with our anchor physician groups contain exclusivity provisions, as well as termination rights that are triggered upon certain events. Payor Relationships In each of our geographies, we enter into subscription-like PMPM agreements with payors to manage the total healthcare costs of our attributed members. Through this partnership model, we believe we:
+
+| • |     | empower PCPs to act as the quarterback for healthcare delivery; |
+
+| • |     | enable PCPs to define a tailored patient experience across multiple payors; |
+
+| • |     | create an operating partnership and economic model built around improved health outcomes instead of a 
+ transaction-based model; and                                                                          |
+
+| • |     | align the physician business model with the strength of their long-term patient relationships enabling the 
+ long-term growth of independent, community-based physician groups.                                         |
+
+
+Under a typical agreement, we are entitled to monthly PMPM fees, which are typically based
+on a defined percentage of the corresponding premium which payors receive from CMS. We generally accept full financial risk for members attributed to us through our contracted PCPs and, therefore, are responsible for the cost of all healthcare
+services required by those members, which generally includes healthcare costs which CMS considers Part A and B costs. Our agreements with payors may delegate claims payment to us, or such responsibility may be retained by the payor, as is the
+case today in the majority of our payor agreements. The majority of our agreements are for terms ranging from one to three years and contain automatic annual renewal provisions as well as various termination rights. We also typically agree to
+indemnify our payors against certain third-party claims. As we continue to expand the agilon platform and enter into additional long-term partnerships, we will negotiate payor agreements in new geographies, including with Humana, Aetna and United
+Healthcare.
+
+The power of our local partnership model is defined by the scale, breadth and local brand of our physician partners. On
+average, our anchor physician groups have been serving their communities for more than 40 years, have a PCP tenure of approximately 13 years, and receive exceptionally strong NPS from their PCPs and patients in live geographies of 73 and 83,
+respectively. We believe this gives us the ability to influence the local healthcare delivery system at scale. We expect our physician partner patient panels to systematically migrate to MA as the patient population ages and our partnerships mature.
+We estimate that the number of Medicare FFS patients, Medicare-eligible patients and patients expected to age into Medicare over the next five years in our existing physician partner patient populations is approximately 375,000.
+
+The table below presents an overview of our anchor physician groups:
+
+In addition to our anchor physician groups in the table above, we have broadly contracted with PCPs across
+the state of Hawaii and have developed select deeper primary care relationships within that network.
+
+
+Our Network We believe the agilon network creates significant value for our patients, our physician partners, our payors and our organization. The ability to share best practices, compare notes on the transition to a Total Care Model and learn from one another represents a valuable opportunity for physicians who intentionally choose an independent path rather than joining a health system or insurance provider. Our physician partners are both collaborative and constructively competitive in service of their patients. We believe the power of a like-minded group of community-based physicians, many of whom are leaders in their community, will enhance innovation, growth, quality of care and patient experience, and ultimately strengthen the power of the independent physician business model in local communities across the country. Value Proposition to Stakeholders Our Total Care Model empowers community-based physician groups to lead local healthcare transformation and ensure the long-term sustainability of the community-based physician model. We believe the benefits of this differentiated model to community-based physician groups and the patients they serve include:
+
+| • |     | Rapid creation of a Medicare Total Care Model that enables our PCPs to take a long-term view of their 
+ relationships with their patients and allocate resources to meet individual member health needs.      |
+
+| • |     | Sustainable long-term business model alongside commercial and Medicare FFS. |
+
+| • |     | Provides access to network of like-minded partners. |
+
+| • |     | Improved economics. |
+
+| • |     | Improving the physician experience. |
+
+| • |     | Improving the patient experience. |
+
+| • |     | Supporting superior health outcomes. |
+
+We have also become an important strategic partner for our payors, as we are a material portion of their membership base, delivery network and annual membership growth in many of the geographies we serve. Through our subscription-like agreements, we ensure a consistent gross margin on a growing membership base. The strength of our relationships with payors has resulted in our establishment of national joint-operating committees with five national health plans through which we develop, execute and monitor a strategy for growth and performance as part of their Medicare delivery network. Our Strengths Local and National Leadership and First-Mover Dynamics Core to our model is partnering in local geographies with leading physician groups that have already built significant scale and strong brands in the communities they serve. Our local leadership is highlighted by our position in Columbus, Ohio, where we have more than 200 PCPs on our platform, whose patient panels include approximately 50% of total MA lives among independent PCPs. We believe we are pioneers in providing a full-risk, multi-payor Total Care Model within our local geographies, our growing regional hubs and the country. We believe we are the only MA multi-payor, globally capitated risk vehicle available for independent physician groups to access a Total Care Model in our local geographies. The sustainability of this local leadership position is also enhanced by our long-term partnerships with our anchor physician groups.
+
+
+We’ve established a strong local leadership position in 17 geographies creating what we believe to be the first national platform for a Medicare-centric, globally capitated line of business. We believe our position as a first-mover creates a competitive advantage, resulting in other independent physician groups viewing us as an established and trusted partner. Long-Term Economic Model We believe our membership and per-memberprofitability will grow over time due to structural characteristics inherent to our long-term partnerships, durable and growing MA membership within our physician partners and the nature of the MA economic model. The key strengths of our economic model include:
+
+| • |     | We believe we have the ability to generate significant, recurring and growing medical margin in concert with our           
+ physician partners over the course of our long-term partnerships and the inherently sticky physician-patient relationship. |
+
+| • |     | Our physician partnerships are typically 20 years. |
+
+| • |     | Average physician tenure within our anchor physician groups is 13 years. |
+
+| • |     | Patients 65 years of age and older remain with their PCP for an average of 10 years, according to a 2004 study. |
+
+| • |     | Embedded same-geography, long-term organic membership growth resulting from our physician partners’ existing                                         
+ patients who age into Medicare and elect to enroll in MA or who elect to convert from Medicare FFS to MA over the life of our long-term partnership. |
+
+Although we have incurred net losses since our formation in 2016, we believe that the combination of a growing membership base and improving medical margin over the life of our long-term partnerships creates a significant lifetime value (“LTV”) for the geographies we enter. We are able to access this attractive LTV through what we believe to be a low-cost and increasingly cost-efficient model. We believe this low-cost and increasingly cost-efficient growth model represents a significant advantage supporting our rapid scaling to new geographies and sustainable existing geography growth. Model for Long-Term Sustainable Growth We have created a multi-pronged growth strategy that has powerful tailwinds for our physician partners and our business by leveraging existing physician capacity in local geographies, establishing long-term partnerships with significant embedded growth opportunities and expanding through multiple regional levels. The “flywheel” nature of our model has allowed us to expand from one geography to 17 in fewer than five years and has resulted in an additional approximately 186,000 MA lives being attributed to our platform over the same time period.
+
+
+Purpose-Built, Exportable, Scalable Platform
+
+The creation of the agilon platform and an aligned physician partnership approach has enabled the consistent deployment of a Medicare-centric,
+globally capitated line of business across 17 heterogeneous geographies, 16 anchor physician groups and multiple payors. The components of our Total Care Model (including, data, payor engagement, clinical programs and growth) are discrete but are
+delivered as a unified platform through a highly-aligned model with physicians to optimize success. Our platform has enabled us to grow revenue 53% year-over-year for the year ended December 31, 2020, while operating costs to support live
+geographies and enterprise functions grew 12% over the same period. Our net loss for the year ended December 31, 2020 was $60.1 million, a 79% decline from losses of $282.7 million in the year ended December 31, 2019.
+
+Network Feedback Loop
+
+We believe
+our growing network of community-based physicians at the national, regional and local level drives continuous improvement of our platform, enables best practices sharing and innovation and accelerates the growth of independent physicians joining the
+agilon network. Many of our physician partners and individual physicians have joined our platform based on references from existing like-minded physician partners, and the credibility and quality of our physician partners is consistently cited as a
+deciding factor for joining the platform.
+
+Differentiated Physician and Patient Experience
+
+We designed our platform, partnership and network approach with the goal of delivering a superior and continuously improving experience to our
+physician partners and their patients. We believe our model enables PCPs to unlock the value in a Medicare-centric, globally capitated line of business while remaining independent. Subsequent to joining our platform, our PCPs have increased their
+average annual income by successfully managing healthcare costs and improving health outcomes. We believe that our PCPs’ engagement is manifested through deeper relationships with patients and results in a greater opportunity to improve our
+members’ health. For example, in 2019, 78% of our members attributed to our live anchor physician groups attended their wellness visits, compared to the FFS national average CMS Annual Wellness Visit completion rate of 35% in 2019.
+
+Mission-Driven Team and Culture
+
+We have a world-class management team, which is differentiated by its breadth and depth of expertise in healthcare. Our senior management team
+has an average of more than 15 years of experience in the healthcare industry and has significant exposure across all components of the payment and delivery continuum. We believe our management team’s collective robust, diverse and
+complementary exposure to different facets of the healthcare industry positions our team to navigate and enable the shift to a physician-driven Total Care Model.
+
+Our team is united by our mission of being the trusted long-term partner to community-based physicians and driven by our vision of
+transforming healthcare at the community level through exceptional patient-physician relationships.
+
+
+Our Growth Strategy
+
+We intend to utilize our competitive strengths and capitalize on favorable industry trends to increase the number of regional hubs, local
+markets within those hubs and ultimately physicians and members we serve. The key elements of our growth include:
+
+The power of our model at work: Case study of Ohio expansion
+
+Establish New Regional Hubs across the Country
+
+We believe we are well-positioned to expand the number of our physician partners nationally across a diverse set of geographies. We have
+developed sophisticated business development capabilities and have established a robust pipeline with an array of physician groups across the country. We are also benefitting from the network effect of our growing network of like-minded physician
+partners.
+
+Access the Large and Embedded Membership Opportunity within Our Existing Networks
+
+We estimate that the number of Medicare FFS patients, Medicare-eligible patients and patients expected to age into Medicare over the next five
+years in our existing physician partner patient populations is approximately 375,000. As these patients enroll in MA through our payors, they become attributed to our platform with little incremental cost to us.
+
+Facilitate and Capitalize on the Growth of Our Physician Partners
+
+As the PCP base of our physician partners grows, our physician partners are better positioned to serve a growing Medicare population.
+
+
+Expand into Adjacent Geographies
+
+Once we establish a presence in a geography, we have the opportunity to accelerate the addition of new physician partnerships in the region. We
+leverage our multi-payor MA risk platform and regional infrastructure to efficiently grow into adjacent geographies. Of our estimated 2020 addressable market, $80 billion is concentrated in states in which we currently have a physician partner
+or a signed letter of intent with a physician group as of January 2021.
+
+Increase Quality and Improve Health Outcomes to Drive Profitability
+
+We believe our Total Care Model drives increased profitability per member over time through increasing quality and improving
+health outcomes. As members and physicians mature on our platform, we increasingly recognize the benefits of improved quality of care and effectively managed healthcare costs. We believe there is significant opportunity to improve profitability per
+member over the course of our long-term partnerships by improving healthcare outcomes and effectively managing costs, with 70% of our MA members as of December 31, 2020 on our platform for fewer than three years.
+
+Demonstrate Operating Leverage
+
+We
+expect to drive increasing profitability by leveraging both our market-level operating costs and centralized infrastructure, as we manage increased MA and DCE membership on our platform that has maturing medical margin over time.
+
+Capitalize on Emerging Value-Based Care Opportunities
+
+We believe we are positioned to capitalize on the shift from FFS towards a Total Care Model across the broader healthcare system. Through five
+currently approved DCEs, which encompass more than 500 of our existing PCPs, we expect to provide care to over 50,000 traditional Medicare members in seven geographies. For the year ended December 31, 2020, our DCEs did not contribute to our
+revenue.
+
+Impact of COVID-19Pandemic on Our Business
+
+Commencing in March 2020, we implemented various measures to protect the health and safety of our employees, physicians and members in
+connection with the COVID-19 pandemic. These measures included relocating employees to home-based work settings, coordinating with physician partners to accelerate telehealth activity and coordinating daily
+huddles for physicians and team members on clinical and operational impacts of COVID, which included participation by nationally-recognized experts in infectious disease and epidemiology. Despite the challenges and uncertainties created by the COVID-19 pandemic, we believe that our response to the pandemic has reinforced the value of our platform, long-term partnership model and network.
+
+Throughout most of 2020, our members incurred lower healthcare costs than we would have otherwise expected, which resulted in lower medical
+services expenses incurred. These costs may be incurred at future points in time and it is possible that the deferral of healthcare services could cause additional health problems in our existing members, which could increase our costs in the
+future. Additionally, our members’ risk adjustment factors, which are reflective of documented clinical conditions during 2020 and which impact our 2021 revenues, may be lower than would have occurred without the impact of the COVID-19 pandemic, resulting from members’ avoidance or deferral of care during 2020. We cannot accurately estimate the net ultimate impact, positive or negative, to revenue or medical services expense at
+this time.
+
+Also see “Risk Factors—Risks Related to Our Business— The spread of, and response to, the novel coronavirus, or
+COVID-19, underscores certain risks we face and the rapid development and fluidity of this
+
+
+situation precludes any prediction as to the ultimate adverse impact to us of COVID-19,” “Management’s Discussion and Analysis of Financial Condition and Results of
+Operations—Impact of COVID-19” and “Business—Impact of COVID-19 Pandemic on Our Business.”
+
+Company History
+
+The Company is ultimately controlled by an investment fund associated with Clayton Dubilier & Rice, LLC (“CD&R”), a
+private equity firm headquartered in New York, NY. Our business was formed in 2016 through the completion of two acquisitions by CD&R: In July 2016, Primary Provider Management Company, Inc. (“PPMC”) was acquired, which, together with
+its affiliated independent practice associations (“California IPAs”), operated in Southern California. Also in July 2016, Cyber-Pro Systems, Inc. (“CPS”) was acquired, which, together with
+its subsidiaries and affiliates, operates a network of contracted physicians in Hawaii and provides software and medical billing solutions to independent healthcare organizations. During 2020, we implemented a plan to divest all of our California
+operations, which includes the entirety of our Medicaid line of business, via three separate transactions with different parties. In February 2021, we completed the divestiture of our California operations. See “Management’s Discussion and
+Analysis of Financial Condition and Results of Operations—California Operations” for additional information.
+
+agilon health,
+inc., the issuer in this offering, was incorporated in the State of Delaware in April 2017 in connection with our entry into a physician partnership with Central Ohio Primary Care Physicians, Inc. (“COPC”), a physician-owned medical group,
+to establish a Medicare-centric, globally capitated line of business in the Columbus, Ohio region. Since that time, we have expanded and entered into new partnerships in Austin, Akron, Pittsburgh, North Carolina, Hartford, Buffalo, Toledo, Dayton
+and Southeast Ohio. In March 2021, we changed our name from Agilon Health Topco, Inc. to agilon health, inc., and changed the name of our subsidiary, agilon health, inc., to agilon health management, inc.
+
+Our Majority Shareholder and Organizational Structure
+
+Clayton, Dubilier& Rice, LLC.Founded in 1978, CD&R employs a distinctive approach to private equity
+investing, bringing together investment professionals and operating executives to pursue a strategy predicated on building stronger, more profitable businesses. Since inception, CD&R has managed the investment of more than $30 billion in 95
+businesses with an aggregate transaction value of over $150 billion. CD&R has a disciplined and clearly defined investment strategy and has extensive experience investing across the healthcare industry.
+
+After the completion of this offering, we expect that CD&R Vector Holdings, L.P. (the “CD&R Investor”), which is owned by
+investment funds managed by, or affiliated with, CD&R, will hold approximately % of our common stock (or approximately % if the underwriters exercise in full their option to purchase additional
+shares). As a result, we expect to be a “controlled company” within the meaning of the NYSE rules following the completion of this offering. This election will allow us to rely on exemptions from certain corporate governance requirements
+otherwise applicable to NYSE-listed companies. See “Management—Corporate Governance.”
+
+
+The following chart presents an overview of our ownership and organizational structure, after giving effect to this offering. For additional information with respect to our ownership structure, see “Principal Stockholders”:
+
+| 1 | Includes COPC and certain private investment funds. |
+
+| 3 | Operating subsidiaries include wholly-owned RBEs, independent practice associations and other immaterial 
+ subsidiaries, which have been omitted from this chart for convenience.                                   |
+
+Our Corporate Information agilon health, inc. is a Delaware corporation. Our principal executive offices are located at 1 World Trade Center, Suite 2000, Long Beach, CA 90831, and our telephone number is (562) 256-3800.Our website is www.agilonhealth.com. None of the information contained on, or that may be accessed through, our website or any other website identified herein is part of, or incorporated into, this prospectus, and you should not rely on any such information in connection with your decision to invest in our common stock.
+
+
+Summary Risk Factors Our business is subject to a number of risks, including risks that may prevent us from achieving our business objectives or may adversely affect our business, financial condition, cash flows and results of operations that you should consider before making a decision to invest in our common stock. These risks are discussed more fully under the caption “Risk Factors.” These risks include, but are not limited to, the following:
+
+| • |     | our history of net losses and the expectation that our expenses will increase in the future; |
+
+| • |     | failure to identify and develop successful new geographies, physician partners and payors or execute upon our 
+ growth initiatives;                                                                                           |
+
+| • |     | success in executing our operating strategies or achieving results consistent with our historical performance; |
+
+| • |     | significant reductions in membership; |
+
+| • |     | challenges for our physician partners in the transition to a Total Care Model; |
+
+| • |     | inaccuracies in the estimates and assumptions we use to project the size, revenue or medical expense amounts of                                                    
+ our target geographies, our members’ risk adjustment factors, medical services expense, incurred but not reported claims and earnings pursuant to payor contracts; |
+
+| • |     | the spread of, and response to, the novel coronavirus, or COVID-19, and 
+ the inability to predict the ultimate impact on us;                     |
+
+| • |     | dependence on a limited number of key payors, including for membership attribution and assignment, data and 
+ reporting accuracy and claims payment;                                                                      |
+
+| • |     | dependence on physician partners and other providers to effectively manage the quality and cost of care and                                                                                                                                             
+ perform obligations under payor contracts, which contracts generally provide that if the cost of care exceeds the corresponding capitation revenue we receive from payors in respect of attributed members we may realize operating deficits, which are 
+ typically not capped, and could lead to substantial losses;                                                                                                                                                                                             |
+
+| • |     | dependence on physician partners to accurately, timely and sufficiently document their services and potential   
+ False Claims Act or other liability if any diagnosis information or encounter data are inaccurate or incorrect; |
+
+| • |     | reductions in reimbursement rates or methodology applied to derive reimbursement from, or discontinuation of, 
+ federal government healthcare programs, from which we drive substantially all of our total revenue;           |
+
+| • |     | statutory or regulatory changes, administrative rulings, interpretations of policy and determinations by                         
+ intermediaries and governmental funding restrictions, and any impact on government funding, program coverage and reimbursements; |
+
+| • |     | the impact on our revenue of CMS modifying the methodology used to determine the revenue associated with MA 
+ members;                                                                                                    |
+
+| • |     | ability to comply with federal, state and local regulations and laws we are subject to, or to adapt to changes in                                                                       
+ or new regulations or laws, including as such regulations and laws that relate to our physician alignment strategies with our physician partners or the corporate practice of medicine; |
+
+| • |     | our physician partners’ compliance with federal and state healthcare fraud and abuse laws and regulations; 
+ and                                                                                                        |
+
+| • |     | the influence of the CD&R Investor and our status as a “controlled company.” |
+
+
+Implications of Being an Emerging Growth Company As a company with less than $1.07 billion in annual gross revenue for the year ended December 31, 2019, we were an “emerging growth company” as defined in the Jumpstart Our Business Startups Act of 2012 (the “JOBS Act”). An emerging growth company may take advantage of specified reduced reporting and other reduced requirements that are otherwise applicable generally to public companies. These provisions include:
+
+| • |     | in this prospectus, we may present only two years of audited financial statements and only two years of related 
+ Management’s Discussion and Analysis of Financial Condition and Results of Operations disclosure; and           |
+
+| • |     | in this prospectus, we are permitted to provide less extensive disclosure about our executive compensation                                                                         
+ arrangements such as the correlation between executive compensation and performance and comparisons of the chief executive officer’s compensation to median employee compensation. |
+
+In addition, under the JOBS Act, emerging growth companies can also delay adopting new or revised financial accounting standards until such time as those standards would otherwise apply to private companies. We have elected to avail ourselves of this exemption from new or revised accounting standards and, therefore, will not be subject to the new or revised accounting standards other public companies will implement that are not emerging growth companies. As a result, our consolidated financial statements may not be comparable to companies that comply with new or revised accounting pronouncements as of the effective dates applicable to public companies. We ceased to be an emerging growth company on December 31, 2020 because our annual gross revenues exceeded $1.07 billion for the year ended December 31, 2020. However, we will continue to be treated as an emerging growth company for disclosure purposes in this prospectus until the completion of our initial public offering. We have elected to take advantage of certain of the foregoing reduced burdens in this prospectus and, as such, the information in this prospectus may be different than the information provided by other public companies. Some investors could find our common stock less attractive as a result of our utilization of these or other exemptions. This could result in a less active trading market for our common stock and increased volatility in the price of our common stock.
+
+
+THE OFFERING
+
+| Common stock offered by us | shares. |
+
+| Common stock to be outstanding after this offering | shares. |
+
+| Option to purchase additional shares | The underwriters also may purchase up to                  additional shares from us at the initial offering price less the underwriting discounts and commissions, 
+ within 30 days from the date of this prospectus.                                                                                                                   |
+
+| Use of proceeds | We estimate that the net proceeds to us from this offering, after deducting estimated underwriting discounts and commissions and estimated offering expenses, will be approximately 
+ $                 million, or approximately $                 million if the underwriters                                                                                           
+ exercise in full their option to purchase additional shares.                                                                                                                        |
+
+| We intend to use the net proceeds of this offering for working capital and other general corporate purposes. See “Use of Proceeds.” |
+
+| Dividend policy | We do not currently anticipate paying dividends on our common stock for the foreseeable future. Any future determination to pay dividends on our common stock will be subject to the discretion of our board of directors and depend upon various 
+ factors. See “Dividend Policy.”                                                                                                                                                                                                                   |
+
+| Risk Factors | Our business is subject to a number of risks that you should consider before making a decision to invest in our common stock. See “Risk Factors.” |
+
+| Reserved Share Program | At our request, an affiliate of BofA Securities, Inc., a participating underwriter, has reserved for sale, at the public offering price, up to 5% of the shares offered by this prospectus. If purchased, these shares of common stock will not be    
+ subject to a lock-up restriction. The number of shares of common stock available for sale to the general public will be reduced to the extent such shares of common stock are purchased pursuant to this program. Any reserved shares that are not so 
+ purchased will be offered by the underwriters to the general public on the same terms as the other shares of common stock offered by this prospectus. The underwriters will receive the same underwriting discounts and commissions on any shares of  
+ common stock purchased pursuant to this program as they will on any other shares of common stock sold to the public in this offering.                                                                                                                 |
+
+| Proposed symbol | “AGL”. |
+
+The number of shares of our common stock to be outstanding immediately following this offering is based on shares outstanding as of , 2021, and excludes:
+
+| • |     | shares of common                                                                                                         
+ stock issuable upon exercise of options outstanding as of                 , 2021 at a weighted average exercise price of 
+ $                 per share, of which                  shares will be exercisable as of                                  
+ the consummation of this offering;                                                                                       |
+
+
+| • |     | shares of common                                                                                          
+ stock reserved for future issuance following this offering under our Omnibus Incentive Plan and ESPP; and |
+
+| • |     | shares of our                                                  
+ common stock subject to outstanding RSUs granted to directors. |
+
+Unless otherwise indicated, all information in this prospectus:
+
+| • |     | gives effect to a                                                 
+ -for-                 stock split on our common stock effected on 
+ , 2021;                                                           |
+
+| • |     | gives effect to the issuance of          
+ shares of common stock in this offering; |
+
+| • |     | assumes no exercise by the underwriters of their option to purchase additional shares; |
+
+| • |     | assumes that the initial public offering price of our common stock will be                                             
+ $                 per share (which is the midpoint of the price range set forth on the cover page of this prospectus); |
+
+| • |     | assumes the issuance of                                                                                                         
+ shares of common stock issuable under partner physician group equity agreements conditioned on completion of this offering; and |
+
+| • |     | gives effect to amendments to our amended and restated certificate of incorporation (the “Certificate of                 
+ Incorporation”) and amended and restated by-laws (the “By-laws”) to be adopted prior to the completion of this offering. |
+
+
+SUMMARY HISTORICAL CONSOLIDATED FINANCIAL DATA The following tables set forth our summary historical consolidated financial data derived from our consolidated financial statements as of the dates and for each of the periods indicated. The summary historical consolidated financial data as of and for the years ended December 31, 2019 and December 31, 2020 are derived from our audited consolidated financial statements included elsewhere in this prospectus. Our historical results are not necessarily indicative of the results to be expected for any future period. You should read this summary historical consolidated financial data in conjunction with “Management’s Discussion and Analysis of Financial Condition and Results of Operations” and our consolidated financial statements included elsewhere in this prospectus.
+
+|                                                                         | (dollars in thousands) | Year Ended   
+ December 31, |      2020 |   |     |   |     2019 |   |
+|:------------------------------------------------------------------------|:-----------------------|:-------------|----------:|:--|:----|:--|---------:|:--|
+| Consolidated Statement of Operations Data:                              |                        |              |           |   |     |   |          |   |
+| Revenues:                                                               |                        |              |           |   |     |   |          |   |
+| Medical services revenue                                                |                        | $            | 1,214,270 |   |     | $ |  788,566 |   |
+| Other operating revenue                                                 |                        |              |     4,063 |   |     |   |    5,845 |   |
+| Total revenues                                                          |                        |              | 1,218,333 |   |     |   |  794,411 |   |
+| Expenses:                                                               |                        |              |           |   |     |   |          |   |
+| Medical services expense                                                |                        |              | 1,021,877 |   |     |   |  725,374 |   |
+| Other medical expenses                                                  |                        |              |   102,306 |   |     |   |   40,526 |   |
+| General and administrative                                              |                        |              |   137,292 |   |     |   |  122,832 |   |
+| Depreciation and amortization                                           |                        |              |    13,531 |   |     |   |   12,253 |   |
+| Total expenses                                                          |                        |              | 1,275,006 |   |     |   |  900,985 |   |
+| Income (loss) from operations                                           |                        |              |   (56,673 | ) |     |   | (106,574 | ) |
+| Other income (expense):                                                 |                        |              |           |   |     |   |          |   |
+| Other income (expense), net                                             |                        |              |     2,465 |   |     |   |      955 |   |
+| Interest expense                                                        |                        |              |    (8,135 | ) |     |   |   (9,068 | ) |
+| Income (loss) before income taxes                                       |                        |              |   (62,343 | ) |     |   | (114,687 | ) |
+| Income tax benefit (expense)                                            |                        |              |      (865 | ) |     |   |      232 |   |
+| Income from continuing operations                                       |                        |              |   (63,208 | ) |     |   | (114,455 | ) |
+| Discontinued operations:                                                |                        |              |           |   |     |   |          |   |
+| Income (loss) before impairments, gain (loss) on sales and income taxes |                        |              |   (20,049 | ) |     |   |  (86,108 | ) |
+| Impairments                                                             |                        |              |         — |   |     |   |  (98,343 | ) |
+| Gain (loss) on sales of assets, net                                     |                        |              |    20,401 |   |     |   |        — |   |
+| Income tax benefit (expense)                                            |                        |              |     2,804 |   |     |   |   16,166 |   |
+| Total discontinued operations                                           |                        |              |     3,156 |   |     |   | (168,285 | ) |
+| Net income (loss)                                                       |                        |              |   (60,052 | ) |     |   | (282,740 | ) |
+| Noncontrolling interests’ share in discontinued operations              |                        |              |         — |   |     |   |      152 |   |
+| Net income (loss) attributable to common shares                         |                        | $            |   (60,052 | ) |     | $ | (282,588 | ) |
+| Consolidated Balance Sheet Data (at period end):                        |                        |              |           |   |     |   |          |   |
+| Cash and cash equivalents                                               |                        | $            |   106,795 |   |     | $ |  123,633 |   |
+| Total assets                                                            |                        | $            |   446,361 |   |     | $ |  402,794 |   |
+| Total liabilities                                                       |                        | $            |   421,591 |   |     | $ |  353,822 |   |
+
+
+|                                      | (dollars in thousands) | Year Ended   
+ December 31, |     2020 |   |     |   |     2019 |   |
+|:-------------------------------------|:-----------------------|:-------------|---------:|:--|:----|:--|---------:|:--|
+| Contingently redeemable common stock |                        | $            |  309,500 |   |     | $ |  281,000 |   |
+| Total stockholders’ deficit          |                        | $            | (284,730 | ) |     | $ | (232,028 | ) |
+
+| (dollars in thousands)                     |     | Year Ended December 31, 
+                    2020 |         |   |     | 2019 |          |   |
+|:-------------------------------------------|:----|------------------------:|--------:|:--|:----|-----:|---------:|:--|
+| Consolidated Statement of Cash Flows Data: |     |                         |         |   |     |      |          |   |
+| Cash flows from:                           |     |                         |         |   |     |      |          |   |
+| Operating activities                       |     |                       $ | (53,204 | ) |     |    $ | (103,861 | ) |
+| Investing activities                       |     |                       $ |  22,066 |   |     |    $ |   (5,060 | ) |
+| Financing activities                       |     |                       $ |  24,621 |   |     |    $ |  176,298 |   |
+|                                            |     | Year Ended December 31, |         |   |     |      |          |   |
+| (dollars in thousands)                     |     |                    2020 |         |   |     | 2019 |          |   |
+| Other Financial Data:                      |     |                         |         |   |     |      |          |   |
+| Medical margin(1)                          |     |                       $ | 192,393 |   |     |    $ |   63,192 |   |
+| Network contribution(2)                    |     |                       $ |  99,016 |   |     |    $ |   25,598 |   |
+| Adjusted EBITDA(3)                         |     |                       $ |   5,827 |   |     |    $ |  (56,711 | ) |
+
+| (1) | Medical margin represents medical services revenue after deducting medical services expense. |
+
+| (2) | Network contribution is a non-GAAP financial measure. Network contribution represents medical services revenue                                                                                                                                  
+ less the sum of: (i) medical services expense and (ii) other medical expenses excluding costs incurred in implementing geographies. Income (loss) from operations is the most directly comparable U.S. generally accepted accounting principles 
+ (“GAAP”) measure to network contribution. See “Management’s Discussion and Analysis of Financial Condition and Results of Operations—Non-GAAP Financial Measures” for more information regarding network contribution and a                     
+ reconciliation to income (loss) from operations.                                                                                                                                                                                                |
+
+| (3) | Adjusted EBITDA is a non-GAAP financial measure. We define Adjusted EBITDA as net income (loss) adjusted to                                                                                                                                
+ exclude: (i) income (loss) from discontinued operations, net of income taxes, (ii) interest expense, (iii) income tax expense (benefit), (iv) depreciation and amortization expense, (v) geography entry costs, (vi) share-based           
+ compensation expense, (vii) severance and related costs and (viii) certain other items that are not considered by us in the evaluation of ongoing operating performance. Net income (loss) is the most directly comparable GAAP measure to 
+ Adjusted EBITDA. See “Management’s Discussion and Analysis of Financial Condition and Results of Operations—Non-GAAP Financial Measures” for more information regarding Adjusted EBITDA and a reconciliation to net income (loss).         |
+
+
+RISK FACTORS
+
+Risks Related to Our Business
+
+We have a history of net losses, we anticipate increasing expenses in the future and we may not achieve or maintain profitability.
+
+We have incurred significant net losses in the past, including net losses (including discontinued operations) of
+$60.1 million for the year ended December 31, 2020 and $282.7 million for the year ended December 31, 2019. As a result of these losses, we had accumulated deficits of $551.2 million as of December 31, 2020 and
+$491.1 million as of December 31, 2019. We expect that our expenses will increase substantially in the foreseeable future and our losses will continue, including for the year ended December 31, 2021, in part as we invest in growing
+our business, expanding our management team, building relationships with physician partners and payors, developing new services and complying with the requirements associated with being a public company. These expenses may prove to be more
+significant than we currently anticipate, and we may encounter unforeseen expenses, difficulties, complications, delays and other unknown factors that may adversely affect our business. We may not succeed in sufficiently increasing our revenue to
+offset these expenses. Consequently, we may not be able to achieve and maintain profitability for the current or any future fiscal year. Our prior losses and potential for future losses have had and will continue to have an adverse effect on our
+stockholders’ equity and working capital.
+
+Any failure by us to identify and develop successful new geographies, physician partners and payors and to successfully execute upon our growth initiatives may have a material adverse effect on our business, financial condition, cash flows and results of operations.
+
+Our business depends on our ability to identify and develop successful geographies and relationships with physician partners and payors, and to
+successfully execute upon our growth initiatives to increase the profitability of our physician partners. In order to pursue our strategy successfully, we must effectively implement our platform, partnership and network model, including identifying
+suitable candidates and successfully building relationships with and managing integration of new physician partners and payors. We contract with a limited number of physician partners and rely on physician partners within each geography. Our growth
+initiatives in our existing geographies depend, in part, on our physician partners’ ability to grow their practices through the addition of PCPs to increase their capacity to service Medicare patients, and to effectively meet increased patient
+demand. Our physician partners may encounter difficulties in recruiting additional PCPs to their practices due to many factors, including significant competition in their geographies. Accordingly, the loss or dissatisfaction of any physician
+partners, our inability to recruit and integrate physician partners into our model, or the failure of our physician partners to recruit additional PCPs or manage and scale capacity to timely meet patient demand, could substantially harm our brand
+and reputation, impact our competitiveness, inhibit widespread adoption of our platform, partnership and network model and impair our ability to attract new physician partners and maintain existing physician partnerships, both in new geographies and
+in geographies in which we currently operate, which could have a material adverse effect on our business, financial condition, cash flows and results of operations.
+
+Further, our growth strategy depends, in part, on securing and integrating new high-caliber physician partners and expanding into new
+geographies in which we have little or no operating experience. Integration and other risks can be more pronounced for larger and more complicated relationships or relationships outside of our core business space, or if multiple relationships are
+pursued simultaneously. Additionally, new geographies may be characterized by stakeholder preferences for, and experience with, a Total Care Model, rates of MA enrollment, MA reimbursement rates, payor concentration and rates of unnecessary
+variability in and utilization of medical care that differ from those in the geographies where our existing operations are located. Likewise, new geographies into which we seek to expand may have laws and regulations that differ from those
+applicable to our current operations. As an immature and rapidly growing company, we may be unfamiliar with the regulatory requirements in each geography that we enter, and we may be forced to incur significant expenditures
+
+
+to ensure compliance with requirements to which we are subject. If we are unable or unwilling to incur such costs, our growth in new geographies may be less successful than in our current geographies. Further, our growth to date has increased the significant demands on our management, operational and financial systems, infrastructure and other resources. We must continue to improve our existing systems for operational and financial management, including our reporting systems, procedures and controls. These improvements could require significant capital expenditures and place increasing demands on our management. We may not be successful in managing or expanding our operations or in maintaining adequate financial and operating systems and controls. If we do not successfully manage these processes, our business, financial condition, cash flows and results of operations could be harmed. We may be unsuccessful in executing our operating strategies, or we may not achieve results consistent with our historical performance. Our success is dependent on our ability to successfully execute upon defined operating strategies in our existing and future geographies. Such strategies include successfully growing our geographies through the addition of PCPs and our physician partners’ capacity to serve new members, providing medical services for our members at appropriate levels of utilization and cost, and generating medical services revenue through appropriate and effective contracting strategies with our MA payors. We may not be successful in executing upon these strategies, or we may fail to implement such strategies in future markets as effectively as with our initial markets. The failure to successfully execute upon such strategies or to produce results consistent with our historical results or the financial and operational models used in the analysis of our potential relationships may result in an inability to grow our business; may cause ongoing operating losses, asset write-offs, restructuring costs or other expenses; and may have a material adverse effect on our business, financial condition, cash flows and results of operations. Further, as a rapidly growing and relatively immature company with a limited operating history, it is uncertain whether our platform, partnership and network model will achieve and sustain high levels of demand, physician and payor acceptance and market adoption. Due to our limited operating history, it is also difficult for us to evaluate our business compared to prior periods. If we do not develop, if we develop more slowly than we expect, if we encounter negative publicity or if our value propositions for physician partners, patients and payors do not drive sufficient member growth, the growth of our business will be harmed. Our success will depend to a substantial extent on our ability to demonstrate the value of our platform, partnership and network model to physicians and payors. Our ability to replicate the success of our model also enables us to attract and retain skilled physician partners. Accordingly, if we are unable to effectively manage our growth and replicate the success of our platform, partnership and network model in new geographies and with new partners, our business, financial condition, cash flows and results of operations could be harmed. Amounts of medical expenses which are incurred on behalf of our members may exceed the amount of medical revenues we receive to provide care for such members. Under our agreements with our payors, we receive a PMPM-based capitation payment, and we assume financial risk for the expense of providing medical services on behalf of our physician partners. To the extent that utilization of medical services or the cost of providing such services increases beyond our expectations, the total cost to provide medical services to our members may exceed the corresponding amount of revenue we receive, which may result in losses and adversely impact our business, financial condition, cash flows and results of operations. Additionally, factors which impact medical costs incurred by our members, and medical expenses we incur, may be subject to fluctuations which we may not be able to control. Such factors include the following:
+
+| • |     | Changes to the Medicare fee schedule or other rate schedules which serve as the basis for payments issued to 
+ hospitals, specialty and ancillary physicians and other providers;                                           |
+
+
+| • |     | Contractual rates paid to hospitals, specialty and ancillary physicians and other providers; |
+
+| • |     | The utilization rates of healthcare services, including inpatient hospitalization, by our members; |
+
+| • |     | Changes to member benefit levels established annually by payors; and |
+
+| • |     | The utilization rate and cost of pharmaceuticals or specialty drugs utilized by our members. |
+
+Fluctuations in the magnitude of the hospital and physician network, including the discontinuation of a hospital or specialty or ancillary physician’s participation in our MA payors’ provider network, could adversely impact our business, financial condition, cash flows and results of operations. As we expand into new geographies, we may be unable to secure contracts with MA payors, or such contracts may be established at less favorable financial terms than are necessary to meet our financial targets. As we enter into new geographies, potential physician partners will typically provide care to members affiliated with one or more MA payors, in a structure other than a Total Care Model. Our ability to successfully operate in a market is dependent upon our ability to enter into contractual relationships with MA payors which have an existing presence in that market under a global risk structure. MA payors may take the position that it is not in their strategic or financial interests to enter into a contract with us, or they may have already established exclusive relationships with other value-based care providers or affiliates in a geography and ,therefore, elect to not enter into a similar arrangement with us. Therefore, we may be unsuccessful in executing contractual relationships with MA payors, or such contracts may be established at financial terms which result in lower revenues or higher costs than we project or which are necessary to generate profits in a given geography. To the extent we are unsuccessful in establishing contractual relationships with MA payors in new geographies, or such relationships are established at less favorable terms than we project, we may not be able to successfully launch into a given geography, or the membership or revenue levels we are able to attain will be lower than our projections. We incur startup costs during the initial stages of development of our physician partner relationships and program initiatives, and if we are unable to maintain and grow these physician partner relationships or program initiatives over time, we may not recover these costs. We devote resources to the establishment of new physician partner relationships, including costs relating to physician recruiting to enhance access and support growth of the network, physician incentives to support the transition to a Total Care Model and operational support. Our startup investment in new physician partners can be significant and the associated revenue must be earned and sustained over time in order for us to recoup these costs. As a result, as our business grows, our physician partnership startup costs could outpace our buildup of recurring revenue if we do not achieve economies of scale, and we may be unable to achieve profitability until our revenues associated with new partnerships are more mature. We may never recoup our startup costs in a physician partner relationship, including as a result of such physician partner’s difficulty transitioning to a Total Care Model. If we fail to achieve appropriate economies of scale, if we fail to manage or anticipate the evolution of the Total Care Model or if we fail to raise necessary capital to fund our startup costs, our business, financial condition, cash flows and results of operations could be materially adversely affected. We also devote resources to establishing program initiatives to ensure a successful transition to a Total Care Model for members, physician partners and payors. Establishment of these program initiatives requires investments that may not be recouped. For example, investment in preventive care and incentivizing physician partners to complete annual wellness visits may increase our total medical services expense, particularly in the short term, and may fail to generate expected cost savings in the long term. If we fail to realize quality of care outcomes and projected revenues or cost savings due to effectively managed healthcare costs with these program initiatives, our business, financial condition, cash flows and results of operations could be materially adversely affected. 25
+
+We may require substantial additional capital to support our business in the future, and this capital might not be available on acceptable terms, or at all. Our operations have consumed substantial amounts of cash since inception, and we expect to spend substantial amounts of cash for the foreseeable future. As of December 31, 2020 and December 31, 2019, our cash and cash equivalents were $106.8 million and $123.6 million, respectively. If our cash and cash equivalents and any cash generated from operations are not sufficient to meet our future cash requirements, we will need to access additional capital to fund our operations and our continued growth and expansion. We may seek to raise capital by, among other things, issuing additional shares of our common stock or other equity securities, issuing debt securities or borrowing funds under a credit facility. In the past, the securities and credit markets have experienced extreme volatility and disruption, which has increased due to the effects of COVID-19. The availability of credit, from virtually all types of lenders, has at times been limited. In the event we need access to additional capital to pay our operating expenses, fund subsidiary surplus requirements, make payments on or refinance our indebtedness, pay capital expenditures, or fund acquisitions, our ability to obtain such capital may be limited and the cost of any such capital may be significant, particularly if we are unable to access our Credit Facilities. Our access to additional financing will depend on a variety of factors such as prevailing economic and credit market conditions, the general availability of credit, the overall availability of credit to our industry, our credit ratings and credit capacity and perceptions of our financial prospects. Similarly, our access to funds may be impaired if regulatory authorities or rating agencies take negative actions against us. If one or any combination of these factors were to occur, our internal sources of liquidity may prove to be insufficient, and in such case, we may not be able to successfully obtain sufficient additional financing on favorable terms, within an acceptable time, or at all. Financings, if available, may be on terms that restrict our operational flexibility, dilute the economic or voting rights of our stockholders or reduce the market price of our common stock. If we require new sources of financing but they are insufficient or unavailable, we would be required to modify our operating plans to take into account the limitations of available funding, which would harm our ability to maintain or grow our business. Significant reduction in our membership could have an adverse effect on our business, financial condition, cash flows and results of operations. A significant reduction in membership could adversely affect our business, financial condition ,cash flows and results of operations because our payor contracts compensate us on a per-memberbasis. Many factors that could cause such a reduction are outside our control. Factors that could contribute to a reduction in membership include:
+
+| • |     | failure to obtain new physician partners or members or to retain existing physician partners or members; |
+
+| • |     | decision by a payor to not renew the existing contractual agreement upon termination of such contract; |
+
+| • |     | low quality of care by our physician partners, including as a result of our failure to provide tools and 
+ information to deliver high-quality care;                                                                |
+
+| • |     | alternative care opportunities that are more attractive than those provided by our physician partners; |
+
+| • |     | premium increases, benefit revisions or other similar changes, which cause our current payor relationships to be                             
+ less attractive to members than other alternatives, including traditional Medicare or MA plans with which we do not maintain a relationship; |
+
+| • |     | negative publicity, through social media, news coverage or otherwise, related to us, our physician partners, 
+ payors or MA;                                                                                                |
+
+
+| • |     | failure of our payors to maintain their annual ratings awarded by CMS to health plans which measure the quality                                                                     
+ of health services received by beneficiaries enrolled in MA based on various calculated quality metrics (“STAR ratings”), which leads to members disenrolling from such payors; and |
+
+| • |     | federal and state regulatory changes. |
+
+We contract with a limited number of payors, and our membership is dependent on such payors attracting and retaining members. In addition, if a payor fails to renew its contract with us or members disenroll from such payor, the members such payor attributes to our platform could transition to another payor which is not on our platform, which could have a material adverse effect on our business, financial condition, cash flows and results of operations. We may also fail to address factors within our control that could contribute to a reduction in enrollment, including providing our physician partners the tools and information to provide high-quality care. The transition to a Total Care Model may be challenging for physician partners. The transition to a Total Care Model may be challenging for our physician partners, and fully capitated or other provider-risk arrangements have had a history of financial challenges for physicians. It may take time for physician partners to acclimate to a capitation model, and some physician partners may not be successful at transitioning to a Total Care Model. If we are not able to attract or retain physician partners who are successful at transitioning to a Total Care Model, our business, financial condition, cash flows and results of operations could be materially adversely affected. If the estimates and assumptions we use to project the size, revenue or medical expense amounts of our target geographies are inaccurate, our future growth rate may be impacted and we may generate losses in such markets, or we may fail to attain financial performance targets. We often do not have access to reliable historical data regarding the size, revenue or medical expense levels of our target geographies or potential physician partners. As a result, our market opportunity estimates and financial forecasts developed as we enter into a new geography are subject to significant uncertainty and are based on assumptions and estimates that may not prove to be accurate. The estimates and forecasts in this prospectus relating to the size and expected growth of the market for our services and the estimates of our market opportunity may prove to be inaccurate. Principal assumptions relating to our market opportunity include estimates of the total number and average length of relationships between MA patients and their physicians, historical MA patient growth rates, amount of revenue and medical expenses associated with MA members expected to be attributed to our physician partners and historical experience that physician partners have with a Total Care Model. Our opportunity is based on the assumption that our platform, partnership and network model will be more attractive to potential physician partners than competing options. However, potential physician partners may elect to pursue a different strategic option. The spread of, and response to, the novel coronavirus, or COVID-19,underscores certain risks we face and the rapid development and fluidity of this situation precludes any prediction as to the ultimate adverse impact to us of COVID-19. COVID-19continues to spread in the United States and throughout the world. COVID-19and the efforts to contain the outbreak have led to significant economic disruption, including extreme volatility in financial markets, reduced economic activity and a sharp increase in unemployment claims, as well as disruption in some of our physician partners’ businesses. The spread of COVID-19underscores certain risks we face in our business described herein. Governmental and non-governmentalorganizations may not effectively combat the spread and severity of COVID-19,increasing the potential for harm for our members. If the spread of COVID-19is not contained, the 27
+
+medical services revenue we receive may prove to be insufficient to cover the cost of healthcare services delivered to our enrolled members, which could increase significantly as a result of
+higher utilization rates of medical facilities and services and other increases in associated medical claims and related costs. Over time, we may also experience increased costs or decreased revenues if, as a result of our enrolled members being
+unable to see their PCPs due to actions taken to mitigate the spread of COVID-19, we are unable to implement clinical initiatives to manage healthcare costs and chronic conditions of our enrolled members and
+appropriately document their risk profiles. In addition, the clinical disease burdens of our members may increase over time to the extent that members have received reduced preventative care to manage their existing clinical conditions, and the
+amount of medical care which has been deferred during the pandemic may exceed our expectations. Furthermore, we may experience reduced revenues as a result of changes to future capitation payment rates if Medicare members use fewer services due to COVID-19. For example, restrictions imposed as a result of COVID-19 may continue to decrease utilization of preventative or
+non-emergency healthcare, significantly decreasing provider costs. Should CMS adjust reimbursement rates based on margins during the pendency of COVID-19, our revenues
+in future periods and financial results may be materially adversely affected. Such measures and any further steps taken by us, or governmental action, to expand or otherwise modify the services delivered to our enrolled members, provide relief for
+the healthcare provider community, or in connection with the relaxation of stay-at-home and physical distancing orders and other restrictions on movement and economic
+activity intended to reduce the spread of COVID-19, including enhanced measures to implement widespread testing as a component of lifting these measures, could adversely impact our business, financial
+condition, cash flows and results of operations.
+
+The spread of COVID-19, or actions taken to
+mitigate this spread, including the efficacy, ability to administer or extent of adoption of COVID-19 vaccines, could have material and adverse effects on our ability to operate effectively, including as a result of the complete or partial closure
+of facilities or labor shortages. Disruptions in public and private infrastructure, including communications, financial services and supply chains, could materially and adversely disrupt our normal business operations. We have transitioned a
+significant subset of our employee population to a remote work environment in an effort to mitigate the spread of COVID-19, which could exacerbate certain risks to our business, including an increased demand
+for information technology resources, increased risk of phishing and other cybersecurity attacks as well as other risks to the privacy and confidentiality of data, and increased risk of unauthorized dissemination of sensitive personal information or
+proprietary or confidential information about us or our members or other third parties. We have taken, and may take, further actions that alter our business operations as may be required by local, state, or federal authorities or that we determine
+are in the best interests of our employees. Such measures could negatively affect our ability to provide care to members, relationship with physician partners, marketing efforts, employee productivity, or customer retention, any of which could harm
+our business, financial condition, cash flows and results of operations.
+
+Further, due to the
+COVID-19 pandemic, physician partners may not be able to complete the required annual wellness visits necessary to assess and document the health conditions of our members as comprehensively as we have in the
+past. Medicare pays capitation using a “risk adjustment model,” which compensates providers based on the health status (acuity) of each individual patient, based on each patient’s documented clinical diagnoses activity in the
+preceding calendar year. Medicare requires that a patient’s health issues be clinically assessed and sufficiently documented annually regardless of the permanence of the underlying clinical conditions. Historically, this clinical assessment and
+documentation was required to be completed during an in-person visit with a patient. As part of the Coronavirus Aid, Relief and Economic Security Act, or “CARES Act,” Medicare is allowing
+documentation for conditions identified during video visits with patients. However, given the disruption caused by COVID-19, it is unclear whether our physician partners will be able to conduct patient
+interactions to clinically assess and accurately and sufficiently document the health conditions of our members, which could adversely impact our revenue in 2021 and beyond.
+
+The rapid development and fluidity of this situation precludes any prediction as to the ultimate impact on us of COVID-19. We are continuing to monitor the spread of COVID-19, changes to our payors’ benefit coverages, the
+
+
+ongoing costs and business impacts of dealing with COVID-19, including the potential costs associated with lifting restrictions on movement and economic
+activity and with administering vaccines, and related risks, as well as potential costs associated with provision of care to our members suffering from COVID-19. The magnitude and duration of the pandemic and
+its ultimate impact on us is uncertain as this continues to evolve globally, but such impacts could be material to our business, financial condition, cash flows and results of operations.
+
+Our estimates of our members’ risk adjustment factors, medical services expense, incurred but not reported claims and earnings pursuant to payor contracts could be inaccurate.
+
+Medical services revenue related to our members is based on clinical disease
+conditions identified and documented by physicians during patient visits during the preceding calendar year, as well as other factors such as the age and gender of the member, which is summarized in a risk-adjustment factor assigned to each member.
+To estimate the related amount of revenue that will ultimately be realized for the periods presented, we estimate our members’ risk adjustment factors based on our knowledge of members’ health status, which is in turn based on
+physicians’ clinical assessment and documentation of members’ health status, existing risk adjustment factors and applicable Medicare guidelines. These factors may not be predictive of our members’ risk adjustment factors, or we may
+otherwise fail to accurately estimate such score, which could cause our revenue estimates for the relevant period to be inaccurate.
+
+We
+establish liabilities on our balance sheet for the amount of medical services which have been incurred but not reported (“IBNR”) or paid as of the given balance sheet date. IBNR estimates are developed using actuarial methods and are based
+on many variables, including the utilization of healthcare services, historical payment patterns, cost trends, product mix, seasonality, changes in membership and other factors. These estimation methods and the resulting reserves are periodically
+reviewed and updated. COVID-19 has also resulted in fluctuations in our medical expenses and increased challenges in accurately estimating the amount of medical expenses which have been incurred by our
+members.
+
+Given the numerous uncertainties inherent in such estimates, our actual medical claims liabilities for a particular quarter or
+other period could differ significantly from the amounts estimated and reserved for that quarter or period. Our actual medical claims liabilities have varied and will continue to vary from our estimates, particularly in times of significant changes
+in utilization, medical cost trends and populations and geographies served. If our actual liability for claims payments is higher than previously estimated, our earnings in any particular quarter or annual period could be negatively affected. Our
+estimates of IBNR liabilities may be inadequate in the future, which would negatively affect our results of operations for the relevant time period. Furthermore, if we are unable to accurately estimate adequate IBNR levels, our ability to take
+timely corrective actions may be limited, further exacerbating the extent of the negative impact on our results.
+
+When we enter into a new
+physician partner relationship or when we prepare operating and financial forecasts, we and our payors estimate medical services expense. Our medical services expense may exceed our or our payors’ estimates, which may result in our establishing
+unfavorable financial terms in our contractual agreements with our payors, or may result in our payors’ actuarial projections submitted to CMS being inaccurate. In either case, we may incur higher medical expenses than we anticipated or in
+excess of the revenues we receive, which could in turn have a material adverse effect on our business, financial condition, cash flows and results of operations. Additionally, we cannot be certain that the stop-loss coverage we maintain to protect
+us against certain severe or catastrophic medical claims currently is or will be adequate or available to us in the future or that the cost of such stop-loss coverage will not limit our ability to obtain it.
+
+Restrictive clauses in some of our contracts with physician partners may prohibit us from establishing new RBEs within certain geographies in the future, and as a result may limit our growth.
+
+Most of our contracts with our physician partners include
+restrictive provisions that, among other things, preclude us from establishing new RBEs within certain geographies in the future. These restrictive provisions
+
+
+typically preclude us or our RBEs from contracting to provide a Total Care Model in specific geographic areas other than through the relevant RBE, and in certain circumstances may limit the
+providers with which the RBE may contract. Any contracts with restrictive provisions may limit our ability to conduct business with certain potential partners, including partnering with or providing services to other physicians or purchasing
+services from other physicians within certain time periods, and in certain regions. Accordingly, these restrictive provisions may limit growth and prevent us from entering into long-term relationships with potential partners and could cause our
+business, financial condition, cash flows and results of operations to be harmed.
+
+Exclusivity provisions in some of our agreements with physician partners could subject us to investigations or litigation.
+
+Most of our contracts with our physician partners
+contain restrictive provisions that preclude our physician partners from providing specified services for the duration of our contracts. Such provisions could be the subject of investigations and enforcement actions by regulatory authorities and
+litigation by payors or physicians operating in the geographic areas where such contracts exist. Any such investigations, enforcement actions or litigation could require us to take actions which would adversely affect our business, financial
+condition, cash flows and results of operations or could require us to pay substantial amounts of money. Additionally, defending against these lawsuits and proceedings may involve significant expense and diversion of management’s attention and
+resources from other matters.
+
+We rely on our management team and key employees and our business, financial condition, cash flows and results of operations could be harmed if we are unable to retain qualified personnel.
+
+Our success depends, in part, on the
+skills, working relationships and continued services of our senior management team and other key personnel. All of our employees are “at-will” employees or have offer letters or employment agreements
+that allow their employment to be terminated by us or them at any time, for any reason and without notice, subject, in certain cases, to severance payment rights. Prior to this offering, in order to retain and motivate valuable employees, in
+addition to salary and cash incentives, we provided stock options that either vest over time or are based on the equity return realized by our controlling stockholder. The value to employees of these stock options is significantly affected by
+movements in our stock price that are outside our control. The compensation and benefits we provide to our employees, together with the value of stock options that we have granted, may at any time be insufficient to counteract offers from other
+organizations. The departure of key personnel could adversely affect the conduct of our business, financial condition, cash flows and results of operations. In such event, we would be required to hire other personnel to manage and operate our
+business, and we may not be able to employ a suitable replacement for the departing individual at favorable terms, or at all. Following the offering, we intend to continue to use equity awards as part of our executive compensation program, and
+volatility or lack of performance in our stock price may also affect our ability to attract any replacements or retain these employees.
+
+Competition for qualified personnel in our field is intense due to the limited number of individuals who possess the skills and experience
+required by our industry, particularly with respect to a Total Care Model. As a result, as we enter new geographies, it may be difficult for us to hire additional qualified personnel with the necessary skills to work in such geographies. If our
+hiring efforts in new or existing geographies are not successful, our business will be harmed. In addition, we have experienced employee turnover and expect to continue to experience employee turnover in the future. New hires require significant
+training and, in most cases, take significant time before they achieve full productivity. New employees may not become as productive as we expect, and we may be unable to hire or retain sufficient numbers of qualified individuals. If our retention
+efforts are not successful or our employee turnover rate increases in the future, our business, financial condition, cash flows and results of operations will be harmed.
+
+
+We may never realize the full value of our intangible assets, which could cause us to record impairments that may negatively affect our financial condition and results of operations.
+
+We have a significant amount of
+intangible assets on our balance sheet, and we may never realize the full value of such assets. As of December 31, 2020 and December 31, 2019, respectively, we had $102.0 million and $112.7 million of net intangible assets, including
+$41.5 million of goodwill. In addition to our annual goodwill impairment test in the fourth quarter, our intangible assets, including goodwill, are subject to impairment tests when events or circumstances indicate that the carrying value of the
+asset, or related group of assets, may not be recoverable. There are several factors that may be considered a change in circumstances indicating that the carrying value of our intangible assets, including goodwill may not be recoverable, including
+macroeconomic conditions, industry considerations, our overall financial performance (including an analysis of our current and projected cash flows), revenue and earnings, a sustained decrease in our share price and other relevant entity-specific
+events (including changes in strategy, physicians, members or litigation). Where the carrying value of the asset, or related group of assets, is not recoverable, we would record an impairment charge that may negatively impact our financial condition
+and results of operations. A detailed discussion of our impairment testing is included in “Management’s Discussion and Analysis of Financial Condition and Results of Operations—Critical Accounting Estimates.”
+
+Due to the continued deterioration in the performance of our California reporting unit, in the fourth quarter of 2019, we initiated a process
+to evaluate strategic alternatives for our California operations, including a sale or abandonment of all or substantially all of such operations. We therefore performed an assessment of the long-lived assets in the California reporting unit for
+impairment and determined that the carrying value of certain of those assets was not recoverable. Accordingly, we wrote-down such assets to fair value, resulting in the recognition of a $98.3 million impairment charge included in discontinued
+operations in the audited consolidated statement of operations for the year ended December 31, 2019. See “Note 19. Discontinued Operations” in our consolidated financial statements included elsewhere in this prospectus.
+
+Any future impairments could be significant and have a material adverse effect on our business, financial condition, cash flows and results of
+operations.
+
+Adverse determinations of tax matters could adversely affect our business, financial condition, cash flows and results of operations.
+
+We are subject to tax laws in the various jurisdictions in which we operate, and the application of these laws to
+us may be unclear. Some interpretations adopted by us could be challenged by the relevant tax authorities. A successful challenge could result in adverse consequences for us, including potentially the payment of taxes, penalties or interest in
+amounts that may be material. See “Note 11. Commitments and Contingencies” in our audited consolidated financial statements included elsewhere in this prospectus.
+
+Security breaches, loss of data and other disruptions to our data platforms could compromise sensitive information related to our business and expose us to liability, which could adversely affect our operations, financial condition, cash flows and results of operation.
+
+In the ordinary course of our business, we collect, store, use and disclose sensitive data, including what the law defines as protected health
+information (“PHI”) and other types of personal or identifying information. Our member information is encrypted but not always de-identified. We manage and maintain our business and data through a
+combination of data center systems and cloud-based computing center systems.
+
+We are highly dependent on information technology networks
+and systems, including the internet, to securely process, transmit and store this information. We utilize third-party service providers for important aspects of the collection, storage and transmission of PHI and other sensitive information and,
+therefore, we may be unable to control the use of such information or the security protections employed by such third parties. The
+
+
+security of our technology platform and other aspects of our services, including those provided or facilitated by our third-party service providers, is important to our operations and business
+strategy because of the sensitivity of the PHI and other confidential information we and our providers collect, store, process and transmit. Our information technology and infrastructure, and that of our third-party service providers, may be
+vulnerable to various forms of attacks by hackers or to viruses, other technical failures or breaches due to third-party action, or due to employee and contractor negligence, error or malfeasance. We may also experience cybersecurity and other
+breach incidents that may remain undetected for an extended period of time. Because the techniques used to obtain unauthorized access or to otherwise disrupt computer systems change frequently and generally are not identified until they are launched
+against a target, we or our third-party service providers may be unable to implement adequate preventative measures or effectively respond to breaches in a timely fashion. Examples of currently known data security threats facing us and our
+third-party service providers include ransomware, phishing, business email compromise and credential stuffing.
+
+We have experienced
+cybersecurity incidents in the past and may experience them in the future. Such breaches of our infrastructure or information, or that of our third-party providers, whether as a result of physical break-ins,
+computer viruses, cyberattacks, or employee or contractor error, negligence or malfeasance, can create system disruptions, shutdowns or unauthorized disclosure or modification of sensitive information, including PHI. As a result, such data security
+breaches could result in the loss of data or inappropriate use of information. Any interruption in access to member information, unauthorized access to information, improper disclosure or other loss of information could also result in federal or
+state government investigations and liability under laws and regulations that protect the privacy of member information, such as the Health Insurance Portability and Accountability Act of 1996 (“HIPAA”), potentially resulting in damages
+and regulatory penalties. See “Business—Healthcare and Other Applicable Regulatory Matters—Federal and State Privacy and Security Requirements.” Sustained or repeated system failures could damage our reputation and reduce the
+attractiveness of our platform, partnership and network model to members and physician partners, possibly resulting in contract terminations and reductions in revenue. Additionally, the detection, prevention and remediation of known or unknown
+security vulnerabilities, including those arising from third-party hardware or software, may result in additional material direct or indirect costs.
+
+Any or all of these issues could adversely affect our ability to attract new physician partners and members, cause existing physician partners
+to fail to renew their agreements with us, cause existing members to disenroll or switch their coverage to non-contracted payors and result in reputational damage. Our general liability or data security
+insurance policies may not be adequate to cover all potential claims to which we are exposed and may not be adequate to indemnify us for the liability that may be imposed or the losses associated with such events, and in any case, such insurance may
+not cover all of the specific costs, expenses and losses we could incur in responding to and remediating a security breach.
+
+We rely on third-party internet infrastructure and bandwidth providers for our operations, and any failure or interruption in the services provided by these third parties could negatively impact our ability to operate and our relationships with members and physician partners and adversely affect our business, financial condition, cash flows and results of operations.
+
+Our ability to
+aggregate and evaluate member, physician partner, payor and other relevant data to facilitate our operations, including to process and adjudicate claims payments, provide data analytics and store data, depends on the development and maintenance by
+third parties of the internet infrastructure we use to operate our business. We rely on internal systems as well as third-party bandwidth and telecommunications equipment providers and other service providers to maintain and operate our
+internet-based services. This includes maintenance of a reliable network backbone with the necessary speed, data capacity, bandwidth capacity and security. Our services are designed to operate without interruption. However, we may experience future
+interruptions and delays in services and availability from time to time. In the event of an interruption or a catastrophic event with respect to one or more of the systems we use, we may experience an extended period of
+
+
+system unavailability, which could negatively impact our relationship with members, physician partners and payors. To operate without interruption, both we and our service providers must guard against:
+
+| • |     | damage from fire, power loss, natural disasters and other events outside our control; |
+
+| • |     | communications failures; |
+
+| • |     | software and hardware errors, failures and crashes; |
+
+| • |     | data security breaches, ransomware attacks, computer viruses, hacking, denial-of-service attacks and similar disruptions; and |
+
+| • |     | other potential interruptions. |
+
+If any of the foregoing occur, our reputation, operations and financial results may be materially adversely impacted. Further, any failure of or by the systems we use to handle the volume of use, either by us or others on such systems, or any increased volume of use, could significantly harm our business. We have limited control over our third-party internet infrastructure and bandwidth providers, and, as a result, limited ability to independently address problems with services they provide. Any errors, failures, interruptions or delays experienced in connection with these providers’ services could negatively impact our relationships with members, physician partners or payors. If we are unable to protect the confidentiality of our know-howand other proprietary and internally developed information, our operations could be adversely affected. Our business depends on internally developed information, including our databases, confidential information and know-how,the protection of which is crucial to the success of our business. We may not be able to protect our know-howand other internally developed information, including clinical and analytical outcomes generated from data we collect from physician partners, payors and other relevant sources. Our physician partners, employees, consultants and other parties (including independent contractors and companies with which we conduct business) may unintentionally or willfully disclose our information to competitors. Enforcing a claim that a third party illegally disclosed or obtained and is using any of our internally developed information is difficult, expensive and time-consuming, and the outcome is unpredictable. In addition, courts outside the United States are sometimes less willing to protect know-howand other proprietary information. We rely, in part, on non-disclosureor confidentiality agreements with our physician partners, independent contractors, consultants and companies with which we conduct business to protect our know-howand internally developed information. These agreements may not be self-executing, or they may be breached and we may not have adequate remedies for such breach. Moreover, third parties may independently develop similar or equivalent proprietary information or otherwise gain access to our know-howand other internally developed information. Our failure to protect the confidentiality of our know-howand other proprietary and internally developed information could have a material adverse effect on our business, financial condition, cash flows and results of operations. We could be required to devote significant attention and resources to the provision of certain transition services in connection with the disposition of our California Operations. In February 2021, we completed the divestiture of our California Operations. See “Management’s Discussion and Analysis of Financial Condition and Results of Operations” and the notes in our financial statements included elsewhere in this prospectus. In connection with the divestiture, we have agreed to continue to provide administrative support and transition services for a specified period of time. The transition services to be provided by us could require significant management attention and resources which could negatively affect our ongoing business. Additionally, we could experience operational difficulties and increased costs that exceed our estimates to provide the transition services if we are unable to perform such services with our existing resources at an acceptable level, or at all, or obtain them from a third party on reasonable terms. 33
+
+For the Southern California and Fresno divestiture transactions, we will continue to be
+responsible for any liabilities arising from the business prior to the closing date of each transaction, including the payment of claims for medical services incurred prior to the effective date of each transaction. We may not be successful in
+managing the risks associated with the divestiture of our California operations.
+
+Our subsidiaries’ lack of performance or ability to fund their operations could require us to fund such losses.
+
+If our subsidiaries suffer losses due to their lack of
+performance, our physician partners’ failure to perform under their contracts or other reasons, we may be required to fund such losses or our subsidiaries may breach their payor contracts or incur regulatory consequences. We have in the past
+chosen to or been required to, and may in the future choose to or be required to, fund our subsidiaries’ losses. If unfunded, such losses have in the past, and could in the future, result in substantial doubt related to such subsidiary’s
+ability to continue operating as a going concern, and the contractual and regulatory consequences of such failure could have a material adverse effect on our business, financial condition, cash flows and results of operations.
+
+Risks Related to Our Reliance on Third Parties
+
+We are economically dependent on maintaining our contracts with a limited number of key payors.
+
+We contract with a limited number of key payors, and we are economically dependent on maintaining our contracts with such payors. See
+“Note 3. Concentration of Credit Risk” in our audited consolidated financial statements included elsewhere in this prospectus. As a result, our key payors may have increased bargaining power, and we may be required to accept less favorable
+contractual terms with them. Because we rely on a limited number of payors for a significant portion of our revenue, we depend on their creditworthiness. Our payors are subject to a number of risks including reductions in payment rates from
+governmental programs, higher than expected healthcare costs and lack of predictability of financial results when entering into new lines of business, particularly with high-risk populations. If the financial condition of our payors declines, our
+credit risk could increase. Should one or more of our significant payors declare bankruptcy, be declared insolvent or otherwise be restricted by state or federal laws or regulation from continuing in some or all of their operations, such payor may
+be unable to reimburse us for expenses incurred in managing patient care, and the members such payor attributes to our platform could transition to another payor who is not on our platform, which could have a material adverse effect on our business,
+financial condition, cash flows and results of operations. Future consolidation of payors in the healthcare industry could reduce the number of payors even further, increasing these risks.
+
+Our contracts with our payors are for limited terms, and may not be renewed upon their expiration.
+
+Our contracts with payors generally have terms of one to three years and are typically renewed for
+one-year periods unless terminated in accordance with the terms of such agreements. In the ordinary course of business, we engage in active discussions and renegotiations with our payors in respect of the
+services we collectively provide and the terms of our payor agreements. As our payors’ businesses respond to market dynamics and financial pressures, and as our payors make strategic business decisions in respect of the lines of business they
+pursue and programs in which they participate, certain of our payors have sought, and we expect that in the future additional payors will, from time to time, seek to renegotiate or terminate their contracts with us. These negotiations could result
+in reductions to the economic terms and changes to the scope of services contemplated by our existing payor contracts and consequently could negatively impact our revenues, business and prospects and render our assumptions, estimates and reserves
+inaccurate. If any of our contracts with our payors is terminated, we may experience a reduction in the number of members attributed to our platform, which may result in a reduction of our revenues and may have a material adverse effect on our
+business. We have in the past, with respect to certain of our discontinued operations, and may in the future, recognize impairment charges for such terminations.
+
+
+If a payor does terminate or elects not to renew its relationship with us, our ability to
+retain members associated with that payor is limited. We and our physician partners must comply with the CMS Medicare Marketing Guidelines regarding communication and information provided to members, which limits the types of permissible
+communications that may be made to members. In addition, in Ohio, we are contractually prohibited from forming our own health plan, which effectively prohibits us from directly marketing to members in accordance with the CMS Medicare Marketing
+Guidelines.
+
+Additionally, if a payor with which we contract for these services loses its Medicare contract or CMS decides to discontinue
+its MA or commercial plans, decides to contract with another company to provide capitated care services to its members or decides to directly provide care, our contract with that payor could be at risk and we could lose revenue. Additionally, payor

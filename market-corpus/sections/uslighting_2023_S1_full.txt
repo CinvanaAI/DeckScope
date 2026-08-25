@@ -1,0 +1,1615 @@
+U.S. Lighting Group, Inc. | S-1 | REGISTRATION STATEMENT | Filed: 2023-09-01
+https://www.sec.gov/Archives/edgar/data/1536394/000121390023072929/ea184419-s1_uslighting.htm
+→ https://www.sec.gov/Archives/edgar/data/1536394/000121390023072929/ea184419-s1_uslighting.htm
+Content-Type: text/html
+
+| UNITED STATES                                                                                                                                                                                                                                                                                                                                             
+ SECURITIES AND EXCHANGE COMMISSION                                                                                                                                                                                                                                                                                                                        
+ Washington, D.C. 20549                                                                                                                                                                                                                                                                                                                                    |                         |
+| FORM                                                                                                                                                                                                                                                                                                                                                      
+ S-1                                                                                                                                                                                                                                                                                                                                                       
+ REGISTRATION                                                                                                                                                                                                                                                                                                                                              
+ STATEMENT UNDER THE SECURITIES ACT OF 1933                                                                                                                                                                                                                                                                                                                |                         |
+| US Lighting Group, Inc.                                                                                                                                                                                                                                                                                                                                   |                         |
+| (Exact name of registrant as specified in its corporate charter)                                                                                                                                                                                                                                                                                          |                         |
+| Florida                                                                                                                                                                                                                                                                                                                                                   |                         |
+| (State or other jurisdiction of incorporation or organization)                                                                                                                                                                                                                                                                                            |                         |
+| 3792                                                                                                                                                                                                                                                                                                                                                      |                         |
+| (Primary Standard Industrial Classification Code Number)                                                                                                                                                                                                                                                                                                  |                         |
+| 46-35556776                                                                                                                                                                                                                                                                                                                                               |                         |
+| (I.R.S. Employer Identification Number)                                                                                                                                                                                                                                                                                                                   |                         |
+| 1148 East 222nd Street                                                                                                                                                                                                                                                                                                                                    
+ Euclid, Ohio 44117                                                                                                                                                                                                                                                                                                                                        
+ 216-896-7000                                                                                                                                                                                                                                                                                                                                              |                         |
+| (Address, including zip code, and telephone number,                                                                                                                                                                                                                                                                                                       
+ including area code, of registrant’s principal                                                                                                                                                                                                                                                                                                            
+ executive offices)                                                                                                                                                                                                                                                                                                                                        |                         |
+| Registered Agents Inc.                                                                                                                                                                                                                                                                                                                                    
+ 7901 4th St. Ste 300                                                                                                                                                                                                                                                                                                                                      
+ St Petersburg, Florida 33702                                                                                                                                                                                                                                                                                                                              
+ 302-241-0613                                                                                                                                                                                                                                                                                                                                              |                         |
+| (Name, address, including zip code, and telephone                                                                                                                                                                                                                                                                                                         
+ number,                                                                                                                                                                                                                                                                                                                                                   
+ including area code, of agent for service)                                                                                                                                                                                                                                                                                                                |                         |
+| Copies to:                                                                                                                                                                                                                                                                                                                                                |                         |
+| Christopher J. Hubbert, Esq.                                                                                                                                                                                                                                                                                                                              
+ Kohrman Jackson & Krantz LLP                                                                                                                                                                                                                                                                                                                              
+ 1375 East 9th Street, 29th Floor                                                                                                                                                                                                                                                                                                                          
+ Cleveland, Ohio 44114                                                                                                                                                                                                                                                                                                                                     
+ 216-696-8700                                                                                                                                                                                                                                                                                                                                              | Anthony Corpora         
+ US Lighting Group, Inc. 
+ 1148 East 222nd Street  
+ Euclid, Ohio 44117      
+ 216-896-7000            |
+| From time to time after this registration statement                                                                                                                                                                                                                                                                                                       
+ becomes effective,                                                                                                                                                                                                                                                                                                                                        
+ as determined by the selling shareholder                                                                                                                                                                                                                                                                                                                  |                         |
+| (Approximate date of commencement of proposed sale to the public)                                                                                                                                                                                                                                                                                         |                         |
+| If any of the securities                                                                                                                                                                                                                                                                                                                                  
+ being registered on this Form are to be offered on a delayed or continuous basis pursuant to Rule 415 under the Securities Act of 1933                                                                                                                                                                                                                    
+ check the following box: ☒                                                                                                                                                                                                                                                                                                                                |                         |
+| If this Form is                                                                                                                                                                                                                                                                                                                                           
+ filed to register additional securities for an offering pursuant to Rule 462(b) under the Securities Act, please check the following                                                                                                                                                                                                                      
+ box and list the Securities Act registration statement number of the earlier effective registration statement for the same offering.                                                                                                                                                                                                                      
+ ☐                                                                                                                                                                                                                                                                                                                                                         |                         |
+| If this Form is                                                                                                                                                                                                                                                                                                                                           
+ a post-effective amendment filed pursuant to Rule 462(c) under the Securities Act, check the following box and list the Securities Act                                                                                                                                                                                                                    
+ registration statement number of the earlier effective registration statement for the same offering. ☐                                                                                                                                                                                                                                                    |                         |
+| If this Form is                                                                                                                                                                                                                                                                                                                                           
+ a post-effective amendment filed pursuant to Rule 462(d) under the Securities Act, check the following box and list the Securities Act                                                                                                                                                                                                                    
+ registration statement number of the earlier effective registration statement for the same offering. ☐                                                                                                                                                                                                                                                    |                         |
+| Indicate by check mark whether the registrant is a large accelerated filer, an accelerated filer, a non-accelerated filer, smaller reporting company, or an emerging growth company. See the definitions of “large accelerated filer,” “accelerated filer,” “smaller reporting company,” and “emerging growth company” in Rule 12b-2 of the Exchange Act. |                         |
+
+| Large accelerated 
+ filer ☐           
+ Non-accelerated   
+ filer ☐           | Accelerated         
+ filer ¨             
+ Smaller             
+ reporting company ☒ 
+ Emerging            
+ growth company ☐    |
+
+| If an emerging growth company,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+ indicate by check mark if the registrant has elected not to use the extended transition period for complying with any new or revised                                                                                                                                                                                                                                                                                                                                                                                 
+ financial accounting standards provided pursuant to Section 7(a)(2)(B) of the Securities Act. ☐                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| The registrant hereby amends this registration statement on such date or dates as may be necessary to delay its effective date until the registrant shall file a further amendment which specifically states that this registration statement shall thereafter become effective in accordance with section 8(a) of the Securities Act of 1933 or until the registration statement shall become effective on such date as the Securities and Exchange Commission acting pursuant to said section 8(a), may determine. |
+
+The information in this preliminary prospectus is not complete and may be changed. The selling shareholder may not sell these securities until the registration statement filed with the Securities and Exchange Commission is effective. This preliminary prospectus is not an offer to sell these securities and it is not soliciting an offer to buy these securities in any jurisdiction where the offer or sale is not permitted.
+
+Subject to Completion, Dated September 1, 2023
+
+PROSPECTUS
+
+Up to 22,900,433 Shares of Common Stock
+
+US Lighting Group, Inc.
+
+This prospectus relates to the offer and sale of up to 22,900,433 shares
+of common stock, $0.0001 par value, of US Lighting Group, Inc., a Florida corporation, by the selling shareholder, Alumni Capital LP.
+Alumni may acquire shares of our stock pursuant to a stock purchase agreement that we entered into with Alumni and upon the exercise of
+a warrant that we issued to Alumni. The stock purchase agreement with Alumni establishes an equity line pursuant to which we can elect
+to sell shares to Alumni for up to $1.0 million. In addition, Alumni Capital may acquire up to 6,666,667 shares of our stock upon
+exercise of the warrant. Alumni Capital does not currently own any shares of our stock. Please see Selling Shareholder beginning
+on page 20 for more information about how Alumni Capital may acquire the shares being registered pursuant to this prospectus.
+
+We are not selling any securities under this prospectus and will not
+receive any of the proceeds from the sale of shares by Alumni Capital. However, we may receive up to $1.0 million in proceeds from the
+sale of our common stock to Alumni if we draw on the equity line and an indeterminant amount from the exercise of the warrant. We will
+use any funds we receive from Alumni for general corporate purposes and working capital requirements. We have not yet drawn on the Alumni
+equity line.
+
+Alumni Capital may sell the shares described in this prospectus in
+a number of different ways and at varying prices. Please see Plan of Distribution beginning on page 23 for more information about
+how Alumni may sell the shares being registered pursuant to this prospectus.
+
+Alumni Capital may sell any, all or none of the shares offered by this
+prospectus, and we do not know when or in what amounts Alumni may sell its shares following the effective date of the registration statement.
+Alumni will pay all brokerage fees and commissions and similar expenses. We will pay the expenses incurred in registering the shares,
+including legal and accounting fees.
+
+Our shares of common stock are traded on the OTC Pink Market under
+the symbol “USLG.” On August 28, 2023, the last reported sale price of our stock on the OTC Pink Market was $0.057 per share.
+
+Investing in our stock involves a high degree of risk. Please see Risk Factorsbeginning on page 4 and in the documents incorporated by reference in this prospectus. You should carefully consider these risk factors, as well as the other information contained in this prospectus, before you invest.
+
+Neither the Securities and Exchange Commission nor any state securities commission has approved or disapproved of these securities or determined if this prospectus is truthful or complete. Any representation to the contrary is a criminal offense.
+
+The date of this Prospectus is , 2023
+
+Table of Contents
+
+| About This Prospectus                                                               |     | ii |
+| Summary                                                                             |     |  1 |
+| Business Overview                                                                   |     |  1 |
+| Corporate Information                                                               |     |  2 |
+| Implications of Being a Smaller Reporting Company                                   |     |  2 |
+| The Offering                                                                        |     |  3 |
+| Risk Factors                                                                        |     |  4 |
+| Risks Related to our Business and Operations                                        |     |  4 |
+| Risks Related to Our Company and Stock                                              |     |  6 |
+| Risks Related to the Offering                                                       |     |  9 |
+| Forward-Looking Statements                                                          |     | 11 |
+| The Company                                                                         |     | 11 |
+| Overview                                                                            |     | 11 |
+| Cortes Campers                                                                      |     | 12 |
+| RV Industry Overview                                                                |     | 12 |
+| Principal RV Products                                                               |     | 13 |
+| Futuro Houses                                                                       |     | 14 |
+| Fusion X Marine                                                                     |     | 14 |
+| Manufacturing Process                                                               |     | 15 |
+| Distribution and Current Market                                                     |     | 15 |
+| Patents                                                                             |     | 15 |
+| Suppliers — International and Domestic                                              |     | 15 |
+| Competition                                                                         |     | 16 |
+| Seasonality                                                                         |     | 16 |
+| Product Safety and Environment Regulation                                           |     | 16 |
+| Human Capital                                                                       |     | 17 |
+| Corporate Structure and History                                                     |     | 17 |
+| Our Management Team                                                                 |     | 18 |
+| Use of Proceeds                                                                     |     | 20 |
+| Selling Shareholder                                                                 |     | 20 |
+| Dividend Policy                                                                     |     | 21 |
+| Description of Capital Stock                                                        |     | 21 |
+| General                                                                             |     | 21 |
+| Common Stock                                                                        |     | 21 |
+| Preferred Stock                                                                     |     | 21 |
+| Authorized but Unissued Shares                                                      |     | 22 |
+| Derivative Securities                                                               |     | 22 |
+| Registration Rights                                                                 |     | 22 |
+| Anti-Takeover Effects of Our Corporate Documents                                    |     | 22 |
+| Market Information                                                                  |     | 22 |
+| Transfer Agent and Registrar                                                        |     | 22 |
+| Plan of Distribution                                                                |     | 23 |
+| Experts                                                                             |     | 24 |
+| Legal Matters                                                                       |     | 24 |
+| Where You Can Find More Information                                                 |     | 25 |
+| Incorporation by Reference                                                          |     | 25 |
+| Disclosure of Commission Position on Indemnification for Securities Act Liabilities |     | 25 |
+
+i
+
+About This Prospectus
+
+This prospectus forms part of a registration statement that we filed
+with the Securities and Exchange Commission (the “SEC”) and that includes exhibits that provide more detail of the matters
+discussed in this prospectus. You should read this prospectus and the related exhibits filed with the SEC, together with the additional
+information described under the headings Where You Can Find More Information and Incorporation by Reference before making
+your investment decision.
+
+You should rely only on the information provided in this prospectus
+or in a prospectus supplement or any free writing prospectuses or any amendments. Neither we, nor the selling shareholder, have authorized
+anyone else to provide you with different information. If anyone provides you with different or inconsistent information, you should not
+rely on it. You should assume that the information in this prospectus is accurate only as of the date on the cover. Our business, financial
+condition, results of operations and prospects may have changed since that date. Other than our filings with the SEC, information found
+on our website, or that may be accessed by links on our website, is not part of this prospectus.
+
+Neither we, nor the selling shareholder, are offering to sell or seeking
+offers to purchase stock in any jurisdiction where the offer or sale is not permitted. We have not done anything that would permit this
+offering or possession or distribution of this prospectus in any jurisdiction where action for that purpose is required, other than in
+the United States. Persons outside the United States who come into possession of this prospectus must inform themselves about, and observe
+any restrictions relating to, the offering of the shares as to distribution of the prospectus outside of the United States.
+
+Unless the context otherwise requires, references in this prospectus
+to “USLG,” the “company,” “we,” “us” and “our” refer to US Lighting Group,
+Inc. and its wholly-owned subsidiaries.
+
+ii
+
+Summary
+
+This summary highlights, and is qualified in its entirety by, the more detailed information included elsewhere or incorporated by reference in this prospectus. This summary does not contain all of the information that may be important to you. You should read and carefully consider the entire prospectus, especially the matters described in Risk Factors beginning on page 4, before making an investment decision. You should be able to bear a complete loss of your investment.
+
+Business Overview
+
+We are an innovative composite manufacturer utilizing advanced fiberglass
+technologies in growth sectors such as high-end recreational vehicles (RVs), prefabricated off-grid houses, and high-performance powerboats.
+We derive expertise and inspiration from the marine industry, where the harshest conditions are expected and met with superior engineering
+and the latest in composite technology. Molded fiberglass products are exceptionally strong, lightweight and durable. Composite materials
+are also corrosion resistant and provide efficient insulation, making them attractive for both outdoor enthusiasts and residential housing
+needs. Molded construction allows for the creation of irregular, unusual or circular objects, which permits the innovative shapes and
+features of our products. As of June 30, 2023, our revenue was driven by shipments of fiberglass campers marketed under Cortes Campers
+brand.
+
+Cortes Campers designs and manufactures high-end molded fiberglass
+RV travel trailers and campers designed for comfort, style and durability. We utilize superior quality materials and fiberglass construction
+resulting in significantly stronger, more durable and lighter weight products. Cortes Campers’ first product is the Cortes 17, a
+17-foot long single axle tow-behind molded fiberglass camper. In the second quarter of 2023, we introduced a new floorplan, Cortes 16,
+which has expanded sleeping capacity with a king size bed. We are currently developing additional models, including a larger, family-oriented
+all composite 22-foot travel trailer. Cortes Campers has established a network of professional RV dealerships to market and distribute
+its products. As of June 30, 2023, Cortes Campers are available through 37 dealer locations in US and Canada.
+
+Recognizing that we could utilize many of the same technologies and
+manufacturing processes we have perfected for the Cortes Campers line of RVs to make small, prefabricated homes, we began exploring the
+market in early 2022. The international tiny-house movement has gained new relevance in the recent years as the quest for off-grid, rugged,
+prefabricated homes has entered the mainstream and was further fueled by the COVID-19 pandemic. We named our modular housing line Futuro
+Houses after the Futuro Pod, the iconic “UFO house” designed by Finnish architect Matti Suuronen, of which fewer than one
+hundred were built during the late 1960s and early 1970s. Our first home design is an update of the original Futuro utilizing modular
+construction and fiberglass for structural integrity and energy efficiency and designed to address modern residential requirements in
+a 600-square-foot living space. The Futuro can also serve as a commercial structure as it is currently available as a “shell kit”
+to be outfitted by consumers to meet their needs. We exhibited the Futuro house at the Cleveland Home & Remodeling Expo in March 2023,
+signed our first distributor in New York, and sold our first home in May 2023.
+
+In early 2021, we formed Fusion X Marine to design, manufacture and
+distribute high-performance speed boats utilizing advanced fiberglass composites. Our first boat model is the X-15, a miniature speed
+boat designed for rental sites and excursions, as well as to serve as an entry-level boat for first time buyers. Tooling and molds have
+been developed for this model and the X-15 is expected to go into production in the fourth quarter of 2023. The similarly styled X-27
+is a 27-foot fiberglass V-hull speedboat and is designed for speed and superior maneuverability. The tooling and molds for the X-27 are
+currently under development and the model is not yet available for pre-orders. As of June 30, 2023, Fusion X Marine has not generated
+revenue for us.
+
+We plan to expand our manufacturing footprint, enhance production techniques,
+and develop more products in the RV, marine and composite housing sectors. Our current R&D efforts are focused on future tow-behind
+camper models under Cortes Campers brand as well as prefabricated housing segment.
+
+Our headquarters, manufacturing and research and development facilities
+are located at 1148 East 222nd Street, Euclid, Ohio, 44117. Our phone number is 216-896-7000 and our website is www.USLightingGroup.com.
+
+
+Corporate Information
+
+US Lighting Group, Inc. is a holding company with four operating subsidiaries:
+Cortes Campers, LLC, a brand of high-end molded fiberglass campers; Futuro Houses, LLC, focused on design and sales of molded fiberglass
+homes; Fusion X Marine, LLC, a high-performance boat designer; and MIGMarine Corporation, a composite manufacturing company that produces
+proprietary molded fiberglass products for our three business lines.
+
+The company was originally incorporated in the State of Florida on
+October 17, 2003, under the name Luxurious Travel Corp. Initially the company developed hotel booking software, but subsequently exited
+that business. On July 13, 2016, we acquired a company named US Lighting Group, Inc. (founded in 2013) and changed our corporate name
+to US Lighting Group, Inc. on August 9, 2016. At the time, the company designed and manufactured commercial LED lighting. Ultimate we
+decided to exit the LED lighting market, which was being negatively impacted by inexpensive import products, and enter new business lines
+focused on recreational products manufactured from advanced composite materials.
+
+Implications of Being a Smaller Reporting Company
+
+We are a “smaller reporting company” as defined in Rule
+12b-2 of the Exchange Act because the market value of our stock held by non-affiliates is less than $250 million and our annual revenue
+was less than $100 million during our most recently completed fiscal year. We may continue to be a smaller reporting company if either
+the market value of our stock held by non-affiliates is less than $250 million, or our annual revenue was less than $100 million during
+the most recently completed fiscal year and the market value of our stock held by non-affiliates is less than $700 million. We may continue
+to rely on exemptions from certain disclosure requirements that are available to smaller reporting companies. For so long as we remain
+a smaller reporting company, we are permitted and intend to rely on exemptions from certain disclosure and other requirements that are
+applicable to public companies that are not smaller reporting companies.
+
+
+The Offering
+
+| Selling shareholders |     | We are registering shares of our common stock for resale by Alumni Capital LP. |
+
+| Share of common stock currently outstanding |     | 101,786,188 as of August 8, 2023 |
+
+| Shares of common stock registered for resale |     | We are registering shares of our common stock to be issued to Alumni                                                                     
+ Capital LP as follows:                                                                                                                   
+ Shares that we sell to Alumni pursuant to a common stock purchase agreement                                                              
+ we entered into with Alumni on July 14, 2023. The stock purchase agreement establishes an equity line pursuant to which we can elect to  
+ sell shares to Alumni for up to $1.0 million, subject to the terms and conditions of the purchase agreement. We have not yet sold any    
+ stock to Alumni pursuant to the purchase agreement.                                                                                      
+ Shares that Alumni acquires upon exercise of a common stock purchase                                                                     
+ warrant that we issued to Alumni when we entered into the purchase agreement. Alumni may purchase up to 6,666,667 of our shares pursuant 
+ to the warrant.                                                                                                                          |
+
+| Plan of Distribution |     | Alumni may sell all or a portion of its shares from time to time directly to purchasers or through one or more underwriters, broker-dealers or agents, by a variety of methods. Alumni may sell the shares it purchases pursuant to the purchase agreement in its discretion for market prices prevailing at the time of sale, prices related to market prices, a fixed price or prices subject to change, or privately negotiated prices. Alumni may only sell the warrant shares for $0.05 per share until our common stock is listed on a national securities exchange or quoted on the OTCQX or OTCQB Market, at which time Alumni may also sell these shares for market or privately negotiated prices. |
+
+| Use of proceeds |     | We will not receive any proceeds from the sale of our shares by Alumni pursuant to this prospectus. However, we may receive up to an aggregate of $1.0 million in proceeds from the sale of our stock to Alumni pursuant to the stock purchase agreement and an indeterminant amount from the exercise of a warrant. |
+
+| Risk factors |     | Investing in our shares involves a high degree of risk. Please carefully consider the risks described in Risk Factors below before making an investment decision. |
+
+
+Risk Factors
+
+Risks Related to our Business and Operations
+
+We have incurred substantial losses and only recently began
+generating significant revenue.
+
+We incurred losses as we developed our Cortes Camper products and repositioned
+the company as an innovative composite technology provider. Although we have begun generating revenue, if we are not successful in expanding
+our sales network and controlling costs, among many other factors, we may not be able to achieve or sustain profitability as planned.
+
+We may need to raise substantial funds for operations and to
+fund expansion.
+
+We may need substantial additional funding, on an ongoing basis, in
+order to continue execution of our business plan, to develop new products and increase production of existing products, to develop and
+optimize our manufacturing and distribution arrangements, and for other corporate purposes. Any financing, if available, may include restrictive
+covenants and provisions that could limit our ability to take certain actions, preference provisions for the investors, and/or discounts,
+warrants, conversion rights, anti-dilution rights, the provision of collateral, or other incentives. Any financing will involve issuance
+of equity and/or debt, and these issuances will be dilutive to existing shareholders. For example, the shares we are issuing to Alumni
+Capital are being priced at a discount to the current market price and in that sense are dilutive to our current shareholders. There can
+be no assurance that we will be able to complete any financing or that the terms will be acceptable. If we are unable to obtain additional
+funds on a timely basis or on acceptable terms, we may be required to curtail our plans.
+
+Our sales may be negatively impacted by numerous macroeconomic
+events.
+
+Sales of recreational vehicles could decline for many reasons outside
+our control, such as a financial crisis, recession, inflation, higher interest rates, higher fuel costs, or significant geopolitical events.
+In times of economic uncertainty, consumers may have less discretionary income and may defer spending on high-cost, discretionary products
+such as RVs which may in turn adversely affect our financial performance. Although the RV industry has experienced increased sales and
+operating results as a result of the unique consumer demand for recreational vehicles since the start of the COVID-19 pandemic, demand
+for RVs could decrease amid high inflation and rising interest rates.
+
+Our business is affected by the availability and terms of financing
+to independent dealers and retail purchasers.
+
+Generally, independent recreational vehicle dealers finance their purchases
+of inventory with financing provided by lending institutions. A decrease in the availability of this type of wholesale financing, more
+restrictive lending practices or an increase in the cost of such wholesale financing could limit or prevent independent dealers from carrying
+adequate levels of inventory, which may limit product offerings and could lead to reduced demand for our products. Further, a decrease
+in availability of consumer credit resulting from unfavorable economic conditions, or an increase in the cost of consumer credit, may
+cause consumers to reduce discretionary spending which could, in turn, reduce demand for our products and negatively affect our sales
+and profitability.
+
+
+Our ability to attract and retain talented and highly skilled
+employees is critical to our future success and competitiveness.
+
+Our success depends on the existence of an available, qualified workforce
+to manufacture our products, including skilled composite technicians, and on our ability to continue to recruit and retain our workforce.
+Competition for skilled employees is intense and could require us to pay higher wages to attract and retain a sufficient number of qualified
+employees. We may be unable to recruit and retain highly skilled employees we depend on. Further, if we lose existing employees with needed
+skills or are unable to train and develop existing employees, it could have an adverse effect on our business.
+
+We also rely upon the knowledge, experience and skills of our executive
+management team. Our future success depends on, among other factors, our ability to attract and retain executive management and key leadership
+level personnel. The loss of our executive management or other key employees could have a material adverse effect on the company.
+
+We may outgrow our current manufacturing facility.
+
+While our manufacturing facilities in Euclid, Ohio currently meet our
+needs, future growth may require a larger manufacturing footprint. If we are unable to expand our manufacturing to meet demand, we may
+not realize the full potential of new product lines and our operations and profitability may be harmed.
+
+Our success will depend on the results of our R&D investments
+and acceptance of new products.
+
+Our business plan involves introducing several new product lines, such
+as our Futuro homes, and we continue to invest heavily in research and development. Our future success will depend on whether our investment
+yields new products that are accepted by the public.
+
+Significant product repair and/or replacement costs due to product
+warranty claims could adversely impact the company.
+
+We receive warranty claims from our dealers in the ordinary course
+of our business. Warranty expense levels may not remain at current levels. A significant increase in warranty claims exceeding our current
+warranty expense levels could have a material adverse effect on our results of operations, financial condition, and cash flows.
+
+Increased costs associated with environmental compliance could
+negatively impact our financial results.
+
+Both federal and state authorities also have various environmental
+control standards relating to air, water, noise pollution, and hazardous waste generation and disposal that affect us and our operations.
+Our failure to comply with present or future laws and regulations could result in fines being imposed on us, potential civil and criminal
+liability, suspension of production or operations, alterations to the manufacturing process, or costly cleanup or capital expenditures,
+any or all of which could have a material adverse effect on our results of operations. In addition, various governmental bodies have proposed
+further regulatory measures relating to climate change, greenhouse gas emissions, and energy policies. Additional regulation could increase
+our energy, environmental, and other costs and capital expenditures for compliance. We cannot currently determine how future regulation
+might impact us.
+
+Our diversification plans could distract us from Cortes Campers.
+
+Currently we are growing our Cortes Campers business and have achieved
+material revenues from RV sales. We also in the process of developing our Futuro Houses and Fusion X Marine product lines, which have
+not yet generated significant revenue. By diverting limited resources to these unproven product lines, we may unintentionally impede the
+growth of Cortes Campers.
+
+
+Risks Related to Our Company and Stock
+
+You may experience dilution of your ownership interests because
+of the future issuance of additional shares of our common stock for general corporate purposes.
+
+In the future, we may issue additional equity securities for capital
+raising purposes, in connection with hiring or retaining employees, to fund acquisitions, or for other business purposes. The future issuance
+of any additional shares of common stock will dilute our current shareholders and may create downward pressure on the value of our shares.
+
+Our former CEO currently has the ability to determine the election
+of our directors and the outcome of matters submitted to our shareholders.
+
+As of August 8, 2023, our former chief executive officer Paul Spivak
+owns 49.4% of our outstanding shares of common stock and his wife, Olga Smirnova, owns 1.0% of our outstanding shares. As a result, together
+they control a majority of our stock and have the ability to determine the outcome of all matters submitted to our shareholders, including
+the election of directors. As a consequence, it may be difficult for the other shareholders to remove our board members. Mr. Spivak’s
+voting control could also deter unsolicited takeovers, including transactions in which our shareholders might otherwise receive a premium
+for their shares over then current market prices.
+
+Our auditors have issued a “going concern” audit
+opinion.
+
+Management has determined and our independent auditors have indicated
+in their report on our December 31, 2022 financial statements that there is substantial doubt about our ability to continue as a going
+concern. A “going concern” opinion indicates that the financial statements have been prepared assuming we will continue as
+a going concern and do not include any adjustments to reflect the possible future effects on the recoverability and classification of
+assets, or the amounts and classification of liabilities that may result if we do not continue as a going concern. Therefore, you should
+not rely on our consolidated balance sheet as an indication of the amount of proceeds that would be available to satisfy claims of creditors,
+and potentially be available for distribution to shareholders, in the event of liquidation.
+
+Our management and our independent auditors previously identified
+certain internal control deficiencies which, while now considered remediated, had been considered by our management and our independent
+auditor as material weaknesses.
+
+In connection with the preparation of our financial statements for
+the year ended December 31, 2021, our management and our independent auditor identified internal control deficiencies that, in the aggregate,
+represent material weaknesses, as described more fully in our 2022 Form 10-K. As of December 31, 2022, our management team concluded that
+the material weakness had been addressed and that our internal controls were effective. If we do not successfully maintain a strong controlled
+environment this could lead to heightened risk for financial reporting mistakes and irregularities, and/or lead to a loss of public confidence
+in our internal controls that could have a negative effect on the market price of our common stock.
+
+
+Our articles of incorporation allow for our board to create
+a new series of preferred stock without further approval by our shareholders, which could adversely affect the rights of the holders of
+our common stock.
+
+We are authorized to issue ten million shares of preferred stock that
+has not been previously designated or issued, and our board has the authority to define the relative rights and preferences of these shares
+of preferred stock without further shareholder approval. As a result, our board could authorize the issuance of a series of preferred
+stock that would grant to holders the preferred right to our assets upon liquidation, the right to receive dividend payments before dividends
+are distributed to the holders of common stock and the right to the redemption of the shares, together with a premium, prior to the redemption
+of our common stock. In addition, our board could authorize the issuance of a new series of preferred stock that has greater voting power
+than our common stock or that is convertible into our common stock, which could decrease the relative voting power of our common stock
+or result in dilution to our existing shareholders. The issuance of additional shares of preferred stock could materially adversely affect
+the rights of the holders of our common stock, and therefore, reduce the value of our common stock. Although we have no present intention
+to issue any additional shares of preferred stock or to create any additional series of preferred stock, we may issue such shares in the
+future.
+
+Our articles of incorporation and bylaws have provisions that
+could discourage, delay or prevent a change in control.
+
+Our articles of incorporation and bylaws contain provisions which could
+make it more difficult for a third party to acquire us, even if closing such a transaction would be beneficial to our shareholders. We
+are authorized to issue more than ten million shares of preferred stock that has not been previously designated or issued. This preferred
+stock may be issued in one or more series, the terms of which may be determined at the time of issuance by our board without shareholder
+approval. Specific rights granted to future holders of preferred stock could be used to restrict our ability to merge with, or sell our
+assets to, a third party and, as a result, preserve control by the present management.
+
+We have nearly 400 million shares of authorized but unissued common
+stock. Our authorized but unissued shares of common stock are available for future issuance without shareholder approval. These additional
+shares may be used for a variety of corporate finance transactions, acquisitions, and employee benefit plans. The existence of authorized
+but unissued and unreserved common stock could make it more difficult or discourage an attempt to obtain control of us by means of a proxy
+contest, tender offer, merger or otherwise.
+
+Provisions of our articles of incorporation and bylaws also could have
+the effect of discouraging potential acquisition proposals or tender offers or delaying or preventing a change in control, including changes
+a shareholder might consider favorable. These provisions may also prevent or frustrate attempts by our shareholders to replace or remove
+our management. In particular, the articles of incorporation and bylaws, among other things: provide our board with the ability to alter
+the bylaws without shareholder approval; place limitations on the removal of our directors; and provide that vacancies on our board may
+be filled by a majority of directors in office, although less than a quorum.
+
+The market price of our common stock is volatile and can be
+adversely affected by numerous factors.
+
+The share prices of publicly traded microcap and emerging companies,
+particularly companies without consistent product revenues and earnings, can be highly volatile and are likely to remain highly volatile
+in the future. The price which investors may realize in sales of their shares of our stock may be materially different than the price
+at which our stock is quoted, and will be influenced by a large number of factors, some specific to us and our operations, and some unrelated
+to our operations. These factors may cause the price of our stock to fluctuate frequently and substantially. Relevant factors may include
+large purchases or sales of our common stock, shorting of our stock, positive or negative events, commentaries or publicity relating to
+our company, management or products, positive or negative events relating to recreational vehicle companies generally, the publication
+of research by securities analysts and changes in recommendations of securities analysts, legislative or regulatory changes, and/or general
+economic conditions. In the past, shareholder litigation, including class action litigation, has been brought against other companies
+that experienced volatility in the market price of their shares or unexpected or adverse developments in their business. Whether or not
+meritorious, litigation can result in substantial costs, divert management’s attention and resources, and harm the company’s
+financial condition and results of operations.
+
+
+Our common stock is considered a “penny stock” and
+may be difficult to sell.
+
+The SEC has adopted regulations which generally define “penny
+stock” to be an equity security that has a market price of less than $5.00 per share or an exercise price of less than $5.00 per
+share, subject to specific exemptions. Historically, the price of our stock has fluctuated greatly. As of the date of this filing, the
+market price of our common stock is less than $5.00 per share, and therefore is a “penny stock” according to SEC rules. The
+“penny stock” rules impose additional sales practice requirements on broker-dealers who sell securities to persons other than
+established customers and accredited investors (generally those with assets in excess of $1.0 million or annual income exceeding $200,000
+or $300,000 together with their spouse). For transactions covered by these rules, the broker-dealer must make a special suitability determination
+for the purchase of securities and have received the purchaser’s written consent to the transaction before the purchase. Additionally,
+for any transaction involving a penny stock, unless exempt, the broker-dealer must deliver, before the transaction, a disclosure schedule
+prescribed by the SEC relating to the penny stock market. The broker-dealer also must disclose the commissions payable to both the broker-dealer
+and the registered representative and current quotations for the securities. Finally, monthly statements must be sent disclosing recent
+price information on the limited market in penny stocks. These additional burdens imposed on broker-dealers may restrict the ability or
+decrease the willingness of broker-dealers to sell our stock and may result in decreased liquidity for our stock and increased transaction
+costs for sales and purchases of our stock as compared to other securities.
+
+FINRA sales practice requirements may also limit your ability
+to buy and sell our stock.
+
+In addition to the “penny stock” rules described above,
+the Financial Industry Regulatory Authority (FINRA) has adopted rules that require that in recommending an investment to a customer, a
+broker-dealer must have reasonable grounds for believing that the investment is suitable for that customer. Prior to recommending speculative
+low-priced securities to their customers, broker-dealers must make reasonable efforts to obtain information about the customer’s
+financial status, tax status, investment objectives and other information. Under interpretations of these rules, FINRA believes that there
+is a high probability that speculative low-priced securities will not be suitable for at least some customers. FINRA requirements make
+it more difficult for broker-dealers to recommend that their customers buy our stock, which may limit your ability to buy and sell our
+stock and have an adverse effect on the market for our shares.
+
+Our former CEO and one of our directors have been indicted for
+securities fraud.
+
+An indictment was filed on September 16, 2021 and unsealed on October
+8, 2021 against Paul Spivak, our former chief executive officer and a major shareholder of the company, Mr. Spivak’s wife,
+Olga Smirnova, our vice president of finance and administration and a member of our board of directors, and others, alleging fraudulent
+sales of stock of USLG by Mr. Spivak and others (United States of America v. P. Spivak, O. Smirnova, et al., Case No. L21CR491,
+United States District Court for the Northern District of Ohio, Eastern Division). The events outlined in the indictment allegedly occurred
+between June 2016 and June 2021. The alleged acts include issuing favorable press releases to artificially inflate the price of USLG’s
+stock, selling shares that benefited Mr. Spivak and others while the price was artificially inflated, and paying illegal commissions
+to unlicensed brokers to sell USLG’s shares. On June 29, 2023, a second superseding indictment was filed in the case naming additional
+defendants not affiliated with USLG and making additional allegations against Mr. Spivak, including engaging in a conspiracy to obstruct
+justice and making false declarations before the court. We have been advised that Mr. Spivak and Ms. Smirnova have pled not
+guilty, vehemently deny the charges, and are defending themselves aggressively. Although USLG is not a party to this case, the ongoing
+matter has impacted the willingness of some parties to invest in or work with the company and has impaired the company’s ability
+to have its shares traded on an exchange other than the OTC Pink Market. In addition, if the case is decided against Mr. Spivak or
+Ms. Smirnova, the company will be unable to utilize certain exemptions for private securities sales, which could negatively impact
+the ability of the company to raise capital.
+
+
+The requirements of the Sarbanes-Oxley Act of 2002 and other
+U.S. securities laws impose substantial costs, and may drain our resources and distract our management.
+
+We are subject to certain of the requirements of the Sarbanes-Oxley
+Act of 2002, as well as the reporting requirements under the Exchange Act of 1934 (the “Exchange Act”). The Sarbanes-Oxley
+Act requires, among other things, that we maintain effective disclosure controls and procedures and internal controls over financial reporting.
+We have previously identified material weaknesses in our internal controls. Substantial efforts and resources must be expended to maintain
+a controlled environment, which is difficult for a small company like ours. Continued additional investments and management time to meet
+these requirements will be necessary since control weaknesses raise the risk of future material errors in our financial statements. We
+may not be able to maintain effective controls over time. If we have material weaknesses in the future, this may subject us to an SEC
+enforcement action, which could include monetary fines or other equitable remedies that could be detrimental to our ongoing business.
+
+We do not intend to pay any cash dividends in the foreseeable
+future and, therefore, any return on your investment in our stock must come from increases in the market price of our stock.
+
+We have not paid any cash dividends on our stock to date in our history,
+and we do not intend to pay cash dividends on our stock in the foreseeable future. We intend to retain future earnings, if any, for reinvestment
+in the development and expansion of our business. Also, any credit agreements which we may enter into with institutional lenders may restrict
+our ability to pay dividends. Therefore, any return on your investment in our stock must come from increases in the fair market value
+and trading price of our stock, which may not occur.
+
+Risks Related to the Offering
+
+Alumni Capital will pay less than the then-prevailing market
+price of our stock, which could cause the price to decline.
+
+Pursuant to our purchase agreement with Alumni Capital, they will purchase
+our shares at 80% of the lowest traded price of our stock over the six business days before closing the sale. Alumni Capital has a financial
+incentive to sell our shares immediately upon receiving them to realize the profit between the discounted price and the market price.
+If Alumni Capital sells a large number of our shares, the price of our stock may decrease. If our stock price decreases, Alumni Capital
+may have further incentive to sell their shares, creating downward pressure on the stock price. Accordingly, the discounted sales price
+in the Alumni Capital purchase agreement may cause the price of our stock to decline.
+
+Our existing stockholders may experience significant dilution
+from our sale of shares to Alumni Capital.
+
+Our sale of a significant number of shares to Alumni Capital at a discount
+to the market price could have a significant dilutive effect upon our existing shareholders. If our stock price decreases, we will have
+to issue a greater number of shares to Alumni Capital to obtain the same amount of funds. As a result, if our stock price decreases, then
+our existing shareholders would experience greater dilution for any given dollar amount raised through the offering.
+
+
+The risk of dilution could cause the market price of our stock
+to decline.
+
+The perceived risk of dilution may cause our shareholders to sell their
+shares, which may cause a decline in the price of our stock. In addition, the perceived risk of dilution and the resulting downward pressure
+on our stock price could encourage investors to engage in short sales of our stock. By increasing the number of shares offered for sale,
+material amounts of short selling could further contribute to progressive price declines in our stock.
+
+We may not have access to the full $1.0 million investment
+from Alumni Capital.
+
+Our agreement with Alumni Capital provides that we may sell them up
+to $1.0 million of our stock. However, under the agreement Alumni Capital is also limited to owning less than 5% of our outstanding
+stock. On August 8, 2023, 5% of our stock equaled 5,089,309 shares. On that date the lowest traded price of our stock during the six previous
+business days was $0.077. At that price, after the 20% discount, we would be able to sell shares to Alumni Capital for $0.062 a share.
+At that discounted price, we would only be able to raise $313,501 while remaining below the 5% limit. After that, Alumni Capital would
+have to sell some of our shares before we could sell more shares to them. Alumni Capital’s sales could negatively impact the market
+price of our stock and further reduce the amount of funds we could raise from Alumni Capital.
+
+The exercise of Alumni Capital’s warrant could dilute
+our existing stockholders.
+
+When we entered into the stock purchase agreement with Alumni Capital
+we issued to Alumni a warrant to acquire up to 6,666,667 shares of our stock for a five-year term. The per share warrant exercise price
+is not fixed, but is instead determined at the time of exercise by dividing $15.0 million by the number of shares of our common stock
+then outstanding. On August 8, 2023, the per share exercise price is $0.147. However, in the future, we may issue additional stock for
+capital raising purposes, in connection with hiring or retaining employees, to fund acquisitions, or for other business purposes, in which
+case the warrant purchase price will decrease even if the market price of our stock has increased. Alumni Capital’s purchase of
+shares under the warrant could have a significant dilutive effect on our existing shareholders. In addition, Alumni Capital might be willing
+to sell the warrant shares for less than the current market price, creating downward pressure on the value of our stock. Just the potential
+for the issuance of a significant amount of our common stock pursuant to the warrant could create a circumstance commonly referred to
+as an “overhang” and in anticipation of which the market price of our stock could fall. The existence of an overhang, whether
+or not sales have occurred or are occurring, could also hinder our ability to raise additional equity capital at a time and price that
+we deem reasonable or appropriate.
+
+
+Forward-Looking Statements
+
+This prospectus contains statements that are forward-looking within
+the meaning of Section 21E of the Exchange Act. Forward-looking statements are statements other than historical facts, including,
+without limitation, statements that are identified by words like “may,” “could,” “would,” “should,”
+“will,” “believe,” “expect,” “anticipate,” “plan,” “predict,”
+“estimate,” “target,” “project,” “intend,” or similar expressions. These statements include,
+among others, statements regarding our current expectations, estimates and projections about future events and financial trends affecting
+the financial condition and operations of our business. These statements are inherently subject to a variety of risks and uncertainties
+that could cause actual results to differ materially from those expressed. You should not rely solely on these forward-looking statements
+and should consider all uncertainties and risks discussed throughout this prospectus. Forward-looking statements are only predictions
+and not guarantees of performance and speak only as of the date they are made. We do not undertake to update any forward-looking statement
+in light of new information or future events.
+
+Although we believe that the expectations, estimates and projections
+reflected in the forward-looking statements in this prospectus are based on reasonable assumptions when they were made, we cannot assure
+you that these expectations, estimates and projections will be achieved. We believe the forward-looking statements in this report are
+reasonable; however, you should not place undue reliance on any forward-looking statement, as they are based on current expectations.
+Future events and actual results may differ materially from those discussed in the forward-looking statements. Factors that could cause
+actual results to differ materially from our expectations include, but are not limited to:
+
+| ● | RVs are discretionary purchases, and our sales may be impacted by macroeconomic conditions that reduce discretionary spending, such 
+ as rising inflation and interest rates.                                                                                             |
+
+| ● | RV dealers rely on floor plan financing to restock inventory, and our sales may be impacted if we are unable to provide additional 
+ floor plan financing options to our dealers.                                                                                       |
+
+Additional risks and uncertainties not presently known to us or that
+we currently deem immaterial also may impair our business operations and also could cause actual results to differ materially from those
+included, contemplated or implied by the forward-looking statements made in this prospectus, and you should not consider the factors listed
+above to be a complete set of all potential risks or uncertainties. All subsequent written or oral forward-looking statements concerning
+USLG or other matters addressed in this prospectus and attributable to us or any person acting on our behalf are expressly qualified in
+their entirety by the cautionary statements contained or referred to in this section of this prospectus, the other information contained
+or incorporated by reference in this prospectus, especially in the “Risk Factors” and “Management’s Discussion
+and Analysis of Financial Condition and Results of Operations” sections of our Annual Report on Form 10-K and quarterly reports
+on Form 10-Q, which are available on the SEC’s website at SEC.gov.
+
+The Company
+
+In this prospectus we refer to US Lighting Group, Inc. and its subsidiaries
+as USLG, the company, we and our, unless the context requires otherwise.
+
+Overview
+
+We are an innovative composite manufacturer utilizing advanced fiberglass
+technologies in growth sectors such as high-end recreational vehicles (RVs), prefabricated off-grid houses, and high-performance powerboats.
+We derive expertise and inspiration from the marine industry, where the harshest conditions are expected and met with superior engineering
+and the latest in composite technology. Molded fiberglass products are exceptionally strong, lightweight and durable. Composite materials
+are also corrosion resistant and provide efficient insulation, making them attractive for both outdoor enthusiasts and residential housing
+needs. Molded construction allows for the creation of irregular, unusual or circular objects, which permits the innovative shapes and
+features of our products. As of June 30, 2023, our revenue was driven by shipments of fiberglass campers marketed under Cortes Campers
+brand.
+
+
+We plan to expand our manufacturing footprint, enhance production techniques,
+and develop more products in the RV, marine and composite housing sectors. Our current R&D efforts are focused on future tow-behind
+camper models under Cortes Campers brand as well as prefabricated housing segment.
+
+Our headquarters, manufacturing and research and development facilities
+are located at 1148 East 222nd Street, Euclid, Ohio, 44117. Our website is www.USLightingGroup.com.
+
+Cortes Campers
+
+Cortes Campers is our brand of high-end molded fiberglass RV travel
+trailers and campers designed for comfort, style and durability. We utilize superior quality materials and fiberglass construction resulting
+in significantly stronger, more durable and lighter weight products.
+
+Cortes Campers will exhibit at the largest RV industry consumer and
+trade shows in the fall of 2023, the Hershey RV show in Pennsylvania and the Elkhart RV Dealer Open House in Indiana.
+
+RV Industry Overview
+
+According to Recreational Vehicle Industry Association research, the
+RV industry has demonstrated growth over the last several years with an unprecedented surge in 2021. Results for the RV Industry Association’s
+December 2022 survey of manufacturers determined the total shipments for 2022 ended with 493,268 shipments, the third best year on record.
+According to a Facts & Factors research report, the global RV market was estimated at US $51 billion in 2019 and is expected
+to reach US $77 billion by 2026. The new forecast projects 2023 RV shipments to range between 307,000 to 287,200 units with a median of
+297,100 units. In 2024, wholesale shipments are inspected to increase to a range of 354,400 to 342,500 units, with a median of 348,400
+units.
+
+Reasons for growth include a general increase in popularity, rising
+household incomes and new demographics entering the market. The COVID-19 pandemic further fueled interest in RV recreation as more people
+were able to work remotely. RV trips also became a preferred mode of tourism for many Americans as the pandemic impacted traditional travel.
+While wholesale shipments of towable RVs declined after lifting of COVID-related restrictions, interest in RVing remains high with campgrounds
+reporting full utilization over summer 2023 and a third of leisure travelers indicating that they would like to buy an RV.
+
+A recent survey has found that 37% of American leisure travelers, representing
+67 million, plan on taking an RV trip this year. Among leisure travelers, who are defined as any US resident who has taken some type of
+leisure trip in the past year, the top reasons for RV travel are exploring the outdoors and having additional flexibility through remote
+work or school. While spending time outdoors has consistently remained a top reason for RVing, the number of respondents who cited flexibility
+in work have increased by 12% in the past year. The survey also showed that finances are a driving reason for people’s plans to
+take an upcoming RV trip. On average, RV vacations cost 50% less than comparable hotel and plane travel trips and a third less than hotel
+and car travel trips, making RVing an attractive option for people looking for the freedom to travel while also controlling their travel
+expenses. The industry continues to experience both private and public sector investments in its infrastructure, particularly installations
+of pull-through electric vehicle charging stations to meet the needs of RVers today and well into the future.
+
+
+The most popular RV trip destinations include state and national parks,
+with the latter remaining the most popular destination among all age groups. However, the highest interest in RVing overall comes from
+the younger age groups. Surveys indicate that 49% of Generation Z and 48% of Millennials plan to take an RV trip in the next year. Their
+purchase intent is also higher, with 41% of Generation Z and 35% of Millennials planning to buy an RV in the next year. Among RVers, defined
+as people who have taken a trip in an RV they rent, own, or borrow in the past twelve months, 50% plan to buy an RV in the next year.
+This is up 14% from last year.
+
+The increased demand for RV units also fuels innovation as manufacturers
+seek to satisfy the needs of a new, younger demographic, most of whom are first time buyers. Cortes Campers saw these market trends as
+an opportunity to introduce lightweight, towable, composite-built campers that feature luxury amenities in a small footprint.
+
+Principal RV Products
+
+Traditional RVs are built using wooden structures and corrugated aluminum
+shells, also referred to in the industry as “stick and tin” construction, or with aluminum skeleton and fiberglass wall panels
+also known as “laminated” RVs. While these methods dominate the manufacturing landscape of the industry, traditional RVs are
+known for frequent structural damage, mold and rot, rapid deterioration, and lack the ability to perform in harsher, colder environments.
+Additionally, both manufacturing techniques require highly skilled manual labor in such fields as carpentry, wood-working and interior
+finish.
+
+Molded composite manufacturing, including fiberglass, has been the
+primary construction process for many high-tech industries such as aerospace, the wind power industry and marine. Composite materials
+offer unparalleled structural integrity, while being lightweight and resistant to the elements, allowing us to provide an industry-leading
+seven-year fiberglass warranty. In addition, molded construction utilizes a master mold which consistently yields production units with
+minimal variances.
+
+Cortes Campers’ first product is the Cortes 17, a 17-foot long
+single axle tow-behind molded fiberglass camper. The innovative design challenges construction techniques currently used by the RV industry.
+Drawing from expertise in the marine industry, our unique “no-wood” construction replaces all wood with composite alternatives
+or corrosion resistant materials, producing a truly durable camper designed to last a lifetime. Other innovations include plug-and-play
+wiring harnesses, all stainless-steel fasteners, axle-less independent suspension, corrosion resistant chassis, and four-season insulation.
+Amenities include a gas oven, three-burner cooktop, microwave oven, 8.0 cubic-foot refrigerator, kitchen workstation, bathroom and shower,
+air conditioner, and LED television, as well as ample storage and many large windows. The Cortes 17 camper sleeps two and is rated at
+3,500 pounds maximum towable weight. These amenities are not typically available in competitor campers of this size.
+
+In the second quarter of 2023, Cortes Campers introduced a new floorplan,
+Cortes 16, which has expanded sleeping capacity with a king size bed. We are currently developing additional models, including a larger,
+family-oriented all composite 22-foot travel trailer.
+
+We are also developing partnerships with other industry players and
+offer design and manufacturing services for camper models to be private-labeled and sold under other established industry brands. This
+will also help bring awareness to the benefits of molded fiberglass construction and its advantages to the end consumer.
+
+
+Futuro Houses
+
+Recognizing that we could utilize many of the same technologies and
+manufacturing processes we have perfected for the Cortes Campers line of RVs to make small, prefabricated homes, we began exploring the
+market in early 2022. The international tiny-house movement has gained new relevance in the recent years as the quest for off-grid, rugged,
+prefabricated homes has entered the mainstream and was further fueled by the COVID-19 pandemic. The tiny homes market is expected to grow
+by US $3.3 billion from 2021 to 2025.
+
+We named our modular housing line after the Futuro Pod, the iconic
+“UFO house” designed by Finnish architect Matti Suuronen, of which fewer than one hundred were built during the late 1960s
+and early 1970s. The shape, reminiscent of a flying saucer, and the structure’s airplane hatch entrance, has made the houses sought
+after by collectors and by Airbnb renters.
+
+Our first home design is an update of the original Futuro utilizing
+modular construction and fiberglass for structural integrity and energy efficiency and designed to address modern residential requirements
+in a 600-square-foot living space. The Futuro can also be used as a rental property or for commercial use. We are developing a distribution
+model and plan to make our homes available for sale through a network of exclusive distributors. We exhibited the Futuro house at the
+Cleveland Home & Remodeling Expo in March 2023, signed our first distributor in New York, and sold our first home in May 2023.
+
+Futuro houses are currently available as fiberglass shell kits, to
+be outfitted by the end purchaser based on their needs. In the future, we plan to introduce factory-installed interior lay-outs, which
+will feature built-in furniture and appliances. Our vision for the future also includes energy independent and off-grid living amenities,
+such as rainwater collection, and wind and solar power options.
+
+Since launching Futuro Houses we have added two additional tiny house
+designs ranging from more traditional to futuristic and from 200 to 300 square feet.
+
+Fusion X Marine
+
+In early 2021, we formed Fusion X Marine to design, manufacture and
+distribute high-performance speed boats utilizing advanced fiberglass composites. Our first boat model is the X-15, a miniature speed
+boat designed for rental sites and excursions, as well as to serve as an entry-level boat for first time buyers. At just 15 feet long,
+an ocean-capable X-15 can be stored in a standard garage space, towed with virtually any vehicle and provides a powerful and exciting
+experience on the water. The X-15 features a traditional V-hull design, is suitable for three people, and takes an outboard motor of up
+to 50 HP. Tooling and molds have been developed for this model and the X-15 is expected to go into production in the fourth quarter of
+2023. We intend to develop a chain of rental locations that would rent and sell the X-15 directly to the consumer.
+
+The similarly styled X-27 is a 27-foot fiberglass V-hull speedboat
+and is designed for speed and superior maneuverability. While offering all the thrill and power on the water, this model is expected to
+be affordable compared to other boats in its class. The X-27 is designed for up to five people and features an interior cabin that sleeps
+two. The X-27 can be equipped with either inboard or outboard motors with a minimum of 300 HP rating. The tooling and molds for the X-27
+are currently under development and the model is not yet available for pre-orders.
+
+Our speedboat division is still in the development phase as we have
+focused on expanding our Cortes Campers line and launching Futuro Houses. As of June 30, 2023, Fusion X Marine has not generated revenue
+for us. More information about these products can be found at FusionXMarine.com.
+
+
+Manufacturing Process
+
+The manufacturing of molded fiberglass products involves constant cycling
+of master molds that require curing time before the finished parts can be freed form the mold. Currently Cortes campers and Futuro houses
+are built out of a single mold for each body component, however, more molds can be created to increase the number of units that can be
+produced. Each mold can be cycled once a day. The fabrication schedule includes processes such as gel coat spray application, fiberglass
+lamination, reinforcement, curing time, cutting and final assembly. Manufacturing is performed in-house in our 26,000 square-foot industrial
+facility located just outside of Cleveland, Ohio.
+
+Distribution and Current Market
+
+Cortes Campers has established a network of professional RV dealerships
+to market and distribute its products. Throughout 2022, Cortes Campers added several multi-location dealers who represent the brand and
+serve markets in Florida, Texas, New England, Tennessee and others. Cortes Campers also has three established dealers in Canada. We continue
+to focus on nurturing our already well-established dealer network for Cortes Campers and adding distribution partners in North America
+and beyond. As of June 30, 2023, Cortes Campers are available through 37 dealer locations in US and Canada. A full list of our current
+dealers can be viewed on our Cortes Campers website at www.CortesCampers.com.
+
+In 2022, we secured several floor planning arrangements for banks to
+finance dealer purchases through their floor planning programs. This has allowed Cortes Campers to attract additional dealer interest
+and made inventory purchases more attractive for dealers. As we grow, we expect to build and strengthen our relationships with leading
+industry lenders to provide floor plan arrangements and fuel dealers’ ability to keep campers on their lots available for immediate
+sale.
+
+We are in the process of developing a distribution network for Futuro
+Houses.
+
+Patents
+
+We are in the process of obtaining access to intellectual property
+that we believe will enable meaningful product innovation and significant cost reductions in the current and future Cortes Campers models.
+
+Some of the issued patents that we have access to or are pursuing exclusive
+access to are listed below.
+
+| Document/Patent    
+ number             |     | Title                                               |     | Inventor Name |     | Publication 
+ Date        |
+| US-20220379796-A1  |     | Integrally Molded Recreational Vehicle Body         |     | Paul Spivak   |     | 2022-12-01  |
+| US-20220274649-A1  |     | Chassis for Recreational Vehicle                    |     | Paul Spivak   |     | 2022-09-01  |
+| US-20220131379-A1  |     | Energy Management System for a Recreational Vehicle |     | Paul Spivak   |     | 2022-04-28  |
+| US-20210053626-A1  |     | Heat-Reflective Recreational Vehicle Body           |     | Paul Spivak   |     | 2021-02-25  |
+| EU- 015011617-0001 |     | European Union Design Patent for “House”            |     | Paul Spivak   |     | 2023-02-16  |
+
+In addition, Mr. Spivak has filed a pending U.S. Design Patent
+Application for “House” Serial No.: 29/866,039.
+
+Suppliers — International and Domestic
+
+Raw materials utilized in composite manufacturing include fiberglass,
+gelcoats and resins. We manufacture the fiberglass shells of our products, as well as certain interior components. However, we purchase
+other components for our products from third party suppliers, including custom fabricated chassis, water tanks, wheels and tires, appliances,
+electrical, plumbing and other interior components. Currently Cortes Campers and Futuro Houses’ specifications call for materials
+that can be sourced domestically from United States or Canadian based manufacturers and suppliers. However, many of those components have
+origins in Asia, and recent supply chain disruptions, driven by the COVID-19 pandemic as well as increased demand for RV components, might
+dramatically alter the supplier base of the company and its vendors. Although we have developed alternative sources for critical components,
+we cannot guarantee that there will be no supply chain disruptions.
+
+
+Competition
+
+Cortes Campers directly competes with several molded fiberglass camper
+manufacturers such as Casita, Oliver Travel Trailers, and Scamp. Another notable competitor is Airstream. As of June 30, 2023, Cortes
+Campers is the only fiberglass RV manufacture with a dealer network, which we believe provides us with a competitive advantage. Indirect
+competition includes traditionally built tow-behind campers in the same length from large established RV manufacturers such as Thor, Forest
+River and Jayco.
+
+Futuro Houses operates in a highly fragmented competitive space with
+numerous small builders of tiny homes. However, some of our larger competitors are Cavco Industries Inc., CMH Services Inc., Handcrafted
+Movement and Heirloom Inc. To our knowledge, there are currently no other factory-built all-fiberglass residential homes on the market.
+
+Competition for the Fusion X Marine X-15 model includes jet-ski and
+other small watercraft. The X-27 model’s competition would include powerboat manufacturers such as SeaRay, Checkmate Boats, Mastercraft,
+Pantera and others who offer watercraft models in the same size and price range. However, the style and performance of the X-27 is intended
+to compare with industry leading high-performance manufacturers, such as Cigarette Racing.
+
+Seasonality
+
+Historically, because RVs are used primarily by vacationers and campers,
+RV sales tend to be seasonal, with lower sales during the winter months than in other periods. However, we have experienced continuous
+sales growth the last few quarters after the release of our Cortes Campers line. We currently expect that our RV sales will vary based
+on historical seasonal patterns in the future.
+
+Product Safety and Environment Regulation
+
+In the countries where our products are sold, we are subject to various
+vehicle safety and compliance standards. Within the United States, we are a member of the RVIA, a voluntary association of recreational
+vehicle manufacturers which promulgates recreational vehicle safety standards in the US. We place a RVIA seal on each of our North American
+recreational vehicles to certify that the RVIA’s standards have been met. We also comply with the National Highway Traffic Safety
+Administration (NHTSA) in the US and with similar standards in Canada relating to the safety of our products.
+
+Various environmental regulations relating to air, water and noise
+pollution affect our business and operations. For example, these standards, which are generally applicable to all companies, control our
+choice of paints, our air compressor discharge, the handling of our wastewater and the noise emitted by our facility. We believe that
+our products and plant comply in all material respects with applicable vehicle safety (including those promulgated by NHTSA), environmental,
+industry, health, safety and other required regulations.
+
+We do not believe that ongoing compliance with existing regulations
+will have a material effect in the foreseeable future on our capital expenditures, earnings or competitive position. However, future developments
+could impose additional costs on our business operations, particularly as we increase our fiberglass manufacturing operations.
+
+
+Human Capital
+
+As of June 30, 2023, we had 22 full-time employees and one part time
+employee. We rely on a skilled workforce, particularly fiberglass laminators, to manufacture our products. We believe that we offer competitive
+compensation packages and that we have good working relationships with our employees. Our employees are not members of a union.
+
+Corporate Structure and History
+
+US Lighting Group, Inc. is a holding company with four operating subsidiaries:
+Cortes Campers, LLC, a brand of high-end molded fiberglass campers; Futuro Houses, LLC, focused on design and sales of molded fiberglass
+homes; Fusion X Marine, LLC, a high-performance boat designer; and MIGMarine Corporation, a composite manufacturing company that produces
+proprietary molded fiberglass products for our three business lines.
+
+The company was originally incorporated in the State of Florida on
+October 17, 2003, under the name Luxurious Travel Corp. Initially the company developed hotel booking software, but subsequently exited
+that business. On July 13, 2016, we acquired a company named US Lighting Group, Inc. (founded in 2013) and changed our corporate name
+to US Lighting Group, Inc. on August 9, 2016. At the time, the company designed and manufactured commercial LED lighting, both for retrofits
+and new construction. Applications included commercial spaces such as board rooms, offices, factories, stores, gymnasiums, schools, hospitals,
+warehouses, and greenhouses, as well as some residential applications such as garages. Distribution channels included Home Depot and a
+chain of regional dealers.
+
+On December 1, 2016, we acquired Intellitronix Corp., an automotive
+electronics manufacturer, serving a niche market of aftermarket electronics for customer installations as well as several emerging original
+equipment manufacturer (OEM) applications. At the time of acquisition, Intellitronix had access to the automotive electronics market and
+an established distributor and consumer base.
+
+Through supplying OEMS with electronic components, we were introduced
+to the RV industry. Management identified a fast growing and underserved niche of small, tow-behind fully molded fiberglass travel trailers.
+We started developing a new business plan to create a luxury 17-foot travel camper to appeal to young professionals working remotely as
+well as retirees and other consumers intrigued by the travelling lifestyle. Ultimately, we decided to exit the LED lighting market, which
+was being negatively impacted by inexpensive import products, and enter new business lines focused on recreational products manufactured
+from advanced composite materials.
+
+On January 11, 2021, we formed Cortes Campers, LLC to design, manufacture
+and distribute innovative fiberglass composite travel trailers. We developed the product, created a dealer network and started supplying
+campers in the second part of 2022. Financial results for the year ending December 31, 2022 reflect revenue of $1.1 million generated
+by Cortes Campers.
+
+On April 12, 2021, we formed Fusion X Marine, LLC to design, manufacture
+and distribute high-performance speed boats utilizing advanced fiberglass composites. Our speedboat division is still in the development
+phase.
+
+
+On May 14, 2021, we sold selected assets of Intellitronix to Ohio INTX
+Cooperative, a Northeast Ohio based non-profit organization, to focus on pursuing our new business in the RV industry.
+
+On January 12, 2022, we formed Futuro Houses, LLC to design, manufacture
+and distribute molded fiberglass homes. Throughout 2022, Futuro Houses engaged in engineering and development of our first “UFO”
+themed home model inspired by the original Futuro house designed by Finnish architect Matti Suuronen. We sold our first Futuro house in
+May 2023.
+
+On August 5, 2022, we acquired MIGMarine Corporation, a fiberglass
+manufacturing company founded in 2003. With the acquisition of Mig Marine, we were able to streamline our manufacturing processes, improve
+production cycles and scale to meet the demand of Cortes Campers generated order back-log.
+
+Our Management Team
+
+The following table provides summary information about our board members
+and executive officers. All directors serve until the next annual meeting of shareholders or until their successors are elected and qualified.
+Officers are appointed by our board of directors and their terms of office are at the discretion of our board.
+
+| Name                    |     | Age |     | Title                                                                          |     | Joined USLG |
+| Anthony R. Corpora      |     |  47 |     | Chief Executive Officer, President and Director                                |     | 08-09-2021  |
+| Donald O. Retreage, Jr. |     |  69 |     | Chief Financial Officer                                                        |     | 09-06-2022  |
+| Michael A. Coates       |     |  47 |     | Corporate Controller and Treasurer                                             |     | 02-13-2023  |
+| Patricia A. Salaciak    |     |  76 |     | Director of Marketing and Director                                             |     | 02-02-2022  |
+| Olga Smirnova           |     |  40 |     | Vice President of Finance and Administration, Corporate Secretary and Director |     | 08-09-2021  |
+
+Biographical information about our board members and executive
+officers is summarized below.
+
+Anthony R. Corpora, Chief Executive Officer, President and Director
+
+Mr. Corpora joined USLG as the CEO, president and a director in
+2021. Mr. Corpora continues to be responsible for USLG and its subsidiaries collectively. Mr. Corpora has a strong dynamic leadership
+background that is strategic, democratic, transformational and motivational. These leadership traits intrinsically develop a holistic
+growth-mindset within the company to develop the team that will continue driving and executing the vision of USLG. Prior to joining USLG,
+Mr. Corpora worked for Mayfield City Schools and he utilizes his 21 years of intense public-school background and experience to drive
+the same leadership and management principles at USLG. Mr. Corpora holds a master’s degree in educational leadership from Ursuline
+College. Notable milestones under Mr. Corpora’s leadership were driving revenues to over $1.0 million for the second half of
+2022 and over $1.2 million for the first quarter of 2023, USLG’s best quarter ever. Mr. Corpora continues to drive the day-to-day
+operations of USLG and leads planning and preparation with his team for the long-term growth and success of the company.
+
+Donald O. Retreage, Jr., Chief Financial Officer
+
+Mr. Retreage most recently served as senior vice president and
+chief financial officer of Lightpath Technologies, Inc. from 2018 through 2021 where he drove finance and accounting strategies for domestic
+and international (China and Latvia) operations. Prior to that, he served as senior vice president of Houser Logistics, where he was responsible
+for aligning strategic initiatives with corporate targets for customer service, revenue, and cost control. In 2017, Mr. Retreage
+was a financial specialist at Robert Half/Accountemps, and from 2016 to 2017 he served as a senior business consultant for International
+Services Inc., where he worked with business owners to develop management processes, practices, and policies to drive profitability and
+grow businesses. He received a Bachelor of Science in Business Administration, Accounting and Finance from University of Louisiana at
+Lafayette. Mr. Retreage is experienced in directing international business operations and aligning strategic initiatives with corporate
+targets for revenue, cost control, and employee development and engagement.
+
+
+Michael A. Coates, Corporate Controller and Treasurer
+
+Mr. Coates is responsible for directing and coordinating our accounting
+functions, managing the consolidation of financial data for accurate reporting and analysis, and preparing internal and external financial
+statements. Prior to joining USLG, Mr. Coates was a senior tax analyst at PNC Private Bank Hawthorn, a business dedicated to serving
+the needs of individuals and families with investable assets in excess of $20 million. Before Mr. Coates transitioned to the senior
+tax analyst role in 2016, he was a wealth strategist at PNC for more than nine years. Prior to joining PNC, he was a staff accountant
+at a regional public accounting firm. He is a certified public accountant, a certified financial planner, and a member of the Ohio Society
+of CPAs and the American Institute of Certified Public Accountants. Mr. Coates holds a Master of Business Administration in Accounting
+and a Bachelor of Business Administration from Cleveland State University and served five years in the US Navy. Mr. Coates’s
+experience and expertise will strengthen our analysis and reporting functions as our business grows.
+
+Patricia A. Salaciak, Director of Marketing and Director
+
+Mrs. Salaciak has served as our marketing director since April
+2019 and joined our board last year. Mrs. Salaciak is a results-driven marketing and communications leader, having worked extensively
+with international companies. Prior to joining USLG, she gained more than sixteen years of experience in marketing communications with
+a global refractory metals solutions and manufacturing company overseeing market planning and communication, brand awareness, market research,
+product launches, and public relations. Mrs. Salaciak spent twenty years working as an IT professional with a global paint and coatings
+company. She holds an Associate Degree in Applied Business and an Associate Degree in Graphic Design from Lakeland Community College in
+Kirtland, Ohio. She attended Lake Erie College in Painesville, Ohio majoring in Business and Accounting. Mrs. Salaciak brings keen
+marketing, sales, and public relations insights to our board of directors.
+
+Olga Smirnova, Vice President of Finance and Administration,
+Corporate Secretary and Director
+
+Ms. Smirnova has been involved with USLG since its inception and
+joined our board in 2021. Her roles with the company have included logistics manager, head of procurement, and more recently, vice president
+of finance and administration. Ms. Smirnova also served as director of logistics and international operations as well as finance
+director of Intellitronix Corporation, a former subsidiary of USLG. She has over fifteen years of combined business experience in the
+United States and Europe, which allowed her to design and implement flexible and resilient supply chain and organizational planning solutions
+for domestic manufacturing companies, as well as several European import companies. Ms. Smirnova’s education includes a master’s
+degree in Linguistics and Intercultural Communications from St. Petersburg State University of Culture in Russia. Her strong experience
+in setting up international business networks, supply chain management, and integrated global solutions makes her an asset to USLG as
+we expand into global markets. Ms. Smirnova is married to Paul Spivak, a significant shareholder of USLG and the company’s
+former chief executive officer. Mr. Spivak and Ms. Smirnova are the subject of an indictment alleging violations of the Securities
+Act of 1933. Both Mr. Spivak and Ms. Smirnova have pled not guilty, vehemently deny the charges, and are defending themselves
+aggressively.
+
+
+Use of Proceeds
+
+We are filing the registration statement of which this prospectus forms
+a part to permit Alumni Capital LP to distribute or resell its shares. Alumni will receive all of the net proceeds from those sales, and
+we will not receive any of the proceeds from the sale of the shares being offered by Alumni. However, we may receive up to an aggregate
+of $1.0 million in proceeds from the sale of our common stock to Alumni pursuant to a stock purchase agreement and an indeterminant amount
+from the exercise of a warrant. The Alumni Capital purchase agreement and warrant are described under Selling Shareholder below.
+We will use any funds we receive from Alumni for general corporate purposes and working capital requirements.
+
+Selling Shareholder
+
+On July 14, 2023, we entered into a common stock purchase agreement
+(the “purchase agreement”) with Alumni Capital LP (“Alumni”). The stock purchase agreement with Alumni establishes
+an equity line pursuant to which we can elect to sell to Alumni up to $1.0 million of our common stock (the “Alumni shares”),
+subject to the terms of the purchase agreement. The purchase agreement will expire on the earlier of March 31, 2024 or when Alumni has
+purchased the full $1.0 million of our stock. In the purchase agreement, we agreed to file a registration statement to register the resale
+of the Alumni shares, and to use our best efforts to cause the registration statement to be declared effective and remain effective until
+the Alumni shares have been sold. Once the registration statement is effective, we may request that Alumni purchase shares of our stock,
+subject to the limitations discussed below and included in the purchase agreement. We have not yet sold any stock to Alumni pursuant to
+the purchase agreement and Alumni does not currently own any shares of our stock.
+
+The per share purchase price that Alumni will pay for our shares pursuant
+to the purchase agreement is based on the trading price of our shares and is equal to 80% of the lowest traded price of our stock during
+the six business days prior to the date the sale of the shares closes. The closing will occur no more than six business days after we
+request that Alumni purchase shares. Within one business day of the closing, Alumni will then pay to us an amount equal to the per share
+purchase price multiplied by the number of shares that we delivered to Alumni (less a $5,000 clearing fee).
+
+There are limitations on the number of shares we can request that Alumni
+purchase. The amount we request must have an aggregate value of at least $20,000 and cannot exceed $500,000. In addition, we cannot request
+that Alumni purchase shares if: (a) the volume-weighted average price of our stock is at or below $0.01 during the previous six business
+days; or (b) the requested purchase of shares would cause Alumni to beneficially own more than 4.99% of our outstanding shares of
+common stock. Given these limitations, on August 8, 2023 we could not request that Alumni purchase more than 5,089,309 shares for a total
+of $313,501.
+
+When we entered into the purchase agreement, we also issued a common
+stock purchase warrant (the “warrant”) to Alumni to purchase up to 6,666,667 shares of our common stock (the “warrant
+shares”). The warrant has a term of five years and will expire on July 14, 2028. The warrant exercise price is variable and is equal
+to $15.0 million divided by the number of our outstanding shares of common stock at the time of exercise. On August 8, 2023, the exercise
+price was $0.147. Alumni may exercise the warrant on a cashless basis if we do not maintain an effective registration statement for the
+resale of the warrant shares.
+
+
+Dividend Policy
+
+We have never declared or paid any cash dividends on our common stock
+and we do not intend to pay cash dividends in the foreseeable future. We currently expect to retain any future earnings to fund the operation
+and expansion of our business.
+
+Description of Capital Stock
+
+General
+
+The following description of our capital stock is intended as a summary
+only and as a result is not complete. This description is based upon, and is qualified by reference to, our articles of incorporation
+and bylaws, and by applicable provisions of the Florida Business Corporation Act. You should read our articles of incorporation and bylaws,
+which are filed as exhibits to the registration statement of which this prospectus forms a part, for the provisions that are important
+to you. The following description of our capital stock and provisions of our articles of incorporation and bylaws are summaries and are
+qualified by reference to our articles of incorporation and bylaws.
+
+Our authorized capital stock consists of 500.0 million shares of common
+stock, $0.0001 par value, and 10.0 million shares of preferred stock, $0.0001 par value. As of August 8, 2023, 101,786,188 shares of common
+stock were outstanding. The terms of our shares of preferred stock have not been designated by our board and there are no preferred shares
+outstanding.
+
+Common Stock
+
+Voting Rights. Each holder of common stock is entitled to one
+vote for each share on all matters submitted to a vote of the shareholders, including the election of directors. Shareholders do not have
+cumulative voting rights for the election of directors.
+
+Dividends. Holders of common stock are entitled to receive proportionately
+any dividends as may be declared and paid on common stock from funds lawfully available therefor as and when determined by the board of
+directors, subject to any preferential dividend rights of outstanding preferred stock.
+
+Liquidation and Dissolution. In the event of our liquidation
+or dissolution, the holders of common stock are entitled to receive proportionately all assets available for distribution to shareholders
+after the payment of all debts and other liabilities and subject to the prior rights of any outstanding preferred stock.
+
+Other Rights. Holders of common stock have no preemptive, subscription,
+redemption or conversion rights. The rights, preferences and privileges of holders of common stock are subject to and may be adversely
+affected by the rights of the holders of shares of any series of preferred stock. Outstanding shares of common stock are non-assessable.
+Holders of common stock are not, and will not be, subject to any liability as shareholders.
+
+Preferred Stock
+
+There are no shares of our preferred stock issued and outstanding.
+However, our board is authorized to amend our articles of incorporation without shareholder approval to create classes of preferred stock
+and to define the voting, dividend, liquidation, redemption, conversion and other rights of the preferred shareholders. As a result, we
+could issue shares of preferred in the future that would be senior to the rights of our common shares. However, we currently have no plans
+to issue any preferred shares.
+
+
+Authorized but Unissued Shares
+
+We have nearly 400.0 million shares of authorized but unissued common
+stock and 10.0 million shares of authorized but undesignated and unissued shares of preferred stock. Our board has the ability to define
+the terms of the undesignated preferred shares. Our authorized but unissued shares of common and authorized and undesignated shares of
+preferred stock are available for future issuance without shareholder approval. These additional shares may be used for a variety of corporate
+finance transactions, acquisitions and employee benefit plans. The existence of authorized but unissued and unreserved common stock and
+preferred stock could make it more difficult or discourage an attempt to obtain control of us by means of a proxy contest, tender offer,
+merger or otherwise.
+
+Derivative Securities
+
+Other than the warrant that we issued to Alumni Capital in July 2023,
+there are no outstanding options, warrants, convertible notes or other securities convertible by the holder into shares of our stock.
+The exercise of the Alumni warrant for up to 6.7 million shares of our stock would dilute the ownership of our current shareholders and
+may create downward pressure on the value of our shares.
+
+Registration Rights
+
+We agreed to file a registration statement to register the resale of
+the shares of our common stock that Alumni purchases pursuant to the purchase agreement or acquires upon exercise of the warrant we issued
+to Alumni in connection with the purchase agreement, and to use our best efforts to cause the registration statement to be declared effective
+and remain effective until the Alumni shares have been sold. We are registering these shares in the registration statement of which this
+prospectus is a part. For more information, please see Selling Shareholders. We have not agreed to register the shares of any other
+shareholder. The registration and resale of a significant number of shares by Alumni could negatively impact the trading price of our
+stock.
+
+Anti-Takeover Effects of Our Corporate Documents
+
+Provisions of our articles of incorporation and bylaws could have the
+effect of discouraging potential acquisition proposals or tender offers or delaying or preventing a change in control, including changes
+a shareholder might consider favorable. In particular, the articles of incorporation and bylaws: provide our board with the ability to
+alter the bylaws without shareholder approval; require the vote of two-thirds of our outstanding shares to remove a director from office;
+and provide that vacancies on our board may be filled by a majority of directors in office, although less than a quorum. In addition,
+our articles of incorporation do not provide our shareholders with cumulative voting rights in the election of our directors. The lack
+of cumulative voting and the super-majority vote required to remove a director makes it more difficult for shareholders to replace the
+company’s board of directors or for a third party to obtain control of the company by replacing its board of directors.
+
+Market Information
+
+Our common stock is traded on OTC Pink Market under the symbol “USLG.”
+
+Transfer Agent and Registrar
+
+The transfer agent and registrar for our common stock is VStock Transfer,
+LLC, 18 Lafayette Place, Woodmere, New York 11598.
+
+
+Plan of Distribution
+
+This prospectus is part of a registration statement that registers
+for resale the shares of our common stock issuable to Alumni under the purchase agreement as well as the warrant shares issuable to Alumni
+upon exercise of the warrant. Alumni may sell the shares it purchases pursuant to the purchase agreement in its discretion for market
+prices prevailing at the time of sale, prices related to market prices, a fixed price or prices subject to change, or privately negotiated
+prices. Alumni may only sell the warrant shares for $0.05 per share until our common stock is listed on a national securities exchange
+or quoted on the OTCQX or OTCQB Market, at which time Alumni may also sell these shares for market or privately negotiated prices.
+
+Alumni may sell all or a portion of its shares from time to time directly
+to purchasers or through one or more underwriters, broker-dealers or agents, by a variety of methods including the following:
+
+| ● | on any national securities exchange or over-the-counter market         
+ on which our common stock may be listed or quoted at the time of sale; |
+
+| ● | ordinary brokerage transactions and transactions in which 
+ the broker-dealer solicits purchasers;                    |
+
+| ● | block trades in which a broker-dealer may attempt to sell                                                          
+ the shares as agent but may position and resell a portion of the block as principal to facilitate the transaction; |
+
+| ● | purchases by a broker-dealer, as principal, and a subsequent 
+ resale by the broker-dealer for its account;                 |
+
+| ● | in “at the market” offerings to or through market    
+ makers into an existing market for the common stock; |
+
+| ● | an exchange distribution in accordance with the rules of 
+ the applicable exchange;                                 |
+
+| ● | privately negotiated transactions; |
+
+| ● | in transactions otherwise than on such exchanges or in the 
+ over-the-counter market;                                   |
+
+| ● | through a combination of any such methods; or |
+
+| ● | through any other method permitted under applicable law. |
+
+We will pay the expenses incident to the registration and offering
+of the shares included in this prospectus. We intend to keep this prospectus effective until Alumni may sell the Alumni shares and warrant
+shares without limitations under Rule 144 of the Securities Act of 1933 or Alumni has sold all of its shares.
+
+We understand that Alumni may use unaffiliated broker-dealers to effectuate
+sales of our shares. These sales would be made at prices and at terms then prevailing or at prices related to the then current market
+price. We understand that each broker-dealer would receive commissions from Alumni that will not exceed customary brokerage commissions.
+Neither we nor Alumni can presently estimate the amount of compensation that any broker-dealer will receive. We know of no existing arrangements
+between Alumni or any other shareholder, broker, dealer, underwriter or agent relating to the sale or distribution of the shares offered
+by this prospectus. At the time a particular offer of shares is made, a prospectus supplement, if required, will be distributed that will
+include the names of any agents, underwriters or dealers and any compensation from the selling shareholders, and any other required information.
+
+
+Alumni and any broker-dealers or agents that are involved in selling
+any Alumni shares pursuant to this prospectus are deemed to be “underwriters” within the meaning of the Securities Act in
+connection with sales of shares acquired by Alumni pursuant to the purchase agreement. As a result, any commissions received by Alumni’s
+broker-dealers or agents and any profit on the resale of any shares purchased by them may be deemed to be underwriting commissions or
+discounts under the Securities Act, and the broker-dealers or agents will be subject to the prospectus delivery requirements of the Securities
+Act. We have requested that Alumni confirm that there is no underwriter or coordinating broker acting in connection with the proposed
+sale of the Alumni shares. We are not aware of any existing arrangements between Alumni or any other shareholder, broker, dealer, underwriter
+or agent relating to the sale or distribution of the shares of our stock included in this prospectus.
+
+Alumni has indicated to us that at no time has it engaged in or effected,
+directly or indirectly, any short sale (as that term is defined in Rule 200 of Regulation SHO of the Exchange Act) of our stock or any
+hedging transaction, which establishes a net short position with respect to our stock. Alumni has agreed that will not enter into or effect,
+directly or indirectly, any of these transactions while the purchase agreement is in effect.
+
+We have advised Alumni that it may be required to comply with Regulation
+M promulgated under the Exchange Act. With certain exceptions, Regulation M precludes Alumni, any affiliated purchasers, and any broker-dealer
+or other person who participates in the distribution from bidding for or purchasing, or attempting to induce any person to bid for or
+purchase any security which is the subject of the distribution until the entire distribution is complete. Regulation M also prohibits
+any bids or purchases made in order to stabilize the price of a security in connection with the distribution of that security. These limitations
+may affect the marketability of the shares of our stock offered by this prospectus.
+
+In order to comply with the securities laws of some states, shares
+of our stock sold in those jurisdictions may only be sold through registered or licensed brokers or dealers. In addition, in some states,
+shares of our stock may not be sold unless the shares have been registered or qualified for sale in that state or an exemption from registration
+or qualification is available and is complied with.
+
+Alumni may also sell shares under Rule 144 of the Securities Act, if
+available, rather than under this prospectus.
+
+Our common stock is traded on OTC Pink Market under the symbol “USLG.”
+
+Experts
+
+Our financial statements as of and for the years ended December 31,
+2022 and 2021 are incorporated by reference in this prospectus and in the registration statement that this prospectus is a part of in
+reliance on the report (also incorporated by reference) of BF Borgers CPA PC, an independent registered public accounting firm, given
+on the authority of BF Borgers as experts in auditing and accounting. BF Borgers’s report on the financial statements contains an
+explanatory paragraph regarding the company’s ability to continue as a going concern.
+
+Legal Matters
+
+The validity of our shares of common stock offered by this prospectus
+will be passed upon for us by Kohrman Jackson & Krantz LLP, Cleveland, Ohio.
+
+
+Where You Can Find More Information
+
+We have filed a registration statement on Form S-1 with the SEC under
+the Securities Act of 1933. This prospectus is part of the registration statement, but the registration statement includes and incorporates
+by reference additional information and exhibits. We file annual, quarterly and current reports, proxy statements and other information
+with the SEC. The SEC also maintains a web site that contains reports, proxy and information statements and other information regarding
+companies, such as ours, that file documents electronically with the SEC. The SEC’s website, SEC.gov, contains the reports, proxy
+and information statements, and other information about us, that we file electronically with the SEC. The information on the SEC’s
+website is not part of this prospectus, and any references to the SEC’s website or any other website are inactive textual references
+only.
+
+Incorporation by Reference
+
+The SEC permits us to “incorporate by reference” the information
+contained in documents that we have filed with the SEC, which means that we can disclose important information to you by referring you
+to those documents rather than by including them in this prospectus. Information that is incorporated by reference is considered to be
+part of this prospectus and you should read it with the same care that you read this prospectus. We have filed with the SEC, and incorporate
+by reference in this prospectus our:
+
+We are not, however, incorporating any documents or information that
+we are deemed to furnish and not file in accordance with SEC rules.
+
+Any statement contained in the document incorporated by reference in
+this prospectus will be deemed to be modified or superseded for purposes of this prospectus to the extent that a statement contained in
+this prospectus or any prospectus supplement modifies or supersedes the statement incorporated by reference. Any statement modified or
+superseded will not be deemed, except as modified or superseded, to constitute a part of this prospectus.
+
+All reports and other documents we subsequently file pursuant to Sections 13(a),
+13(c), 14 or 15(d) of the Exchange Act after the date of the initial registration statement and prior to the termination of the registration
+statement, but excluding any information furnished to, rather than filed with, the SEC, will also be incorporated by reference into this
+prospectus and deemed to be part of this prospectus from the date of the filing of these reports and documents.
+
+We will provide without charge to each person, including any beneficial
+owner, to whom this prospectus is delivered, upon written or oral request, a copy of any or all documents that are incorporated by reference
+into this prospectus, but not delivered with the prospectus (other than exhibits to these documents unless the exhibits are specifically
+incorporated by reference into the documents that this prospectus incorporates). You may request documents that are incorporated by reference
+into this prospectus by one of the following methods: by mail at Attention: Investor Relations, US Lighting Group, Inc., 1148 East 222nd
+Street, Euclid, Ohio 44117; by email at Shareholder-Relations@USLightingGroup.com; or by telephone at 216-896-7000. In addition, these
+documents are linked on our website at USLightingGroup.com. Other information found on our website, or that may be accessed by links on
+our website, is not part of this prospectus. We have included our website address solely as an inactive textual reference. Investors should
+not rely on any information posted on our website in deciding whether to purchase our common stock.
+
+Disclosure of Commission Position on Indemnification
+for Securities Act Liabilities
+
+To the extent that indemnification for liabilities arising under the
+Securities Act of 1933 may be permitted to directors, officers or persons controlling USLG, we have been informed that in the opinion
+of the SEC this indemnification is against public policy as expressed in the Securities Act and is therefore unenforceable.
+
+
+PART II — INFORMATION NOT REQUIRED IN
+PROSPECTUS
+
+Item 13. Other Expenses of Issuance and Distribution.
+
+The following table lists the various expenses to be incurred in connection
+with the sale and distribution of the securities being registered pursuant to this Registration Statement, all of which will be borne
+by us (except any underwriting discounts and commissions and expenses incurred by the selling shareholders for brokerage, accounting,
+tax or legal services or any other expenses incurred by the selling stockholder in disposing of the shares). All amounts shown are estimates,
+except for the SEC registration fee.
+
+| SEC registration fee         |     | $ |    152.08 |
+| Accounting fees and expenses |     |   | 33,000.00 |
+| Legal fees and expenses      |     |   | 25,000.00 |
+| Miscellaneous expenses       |     |   |  3,250.00 |
+| Total expenses               |     | $ | 61,402.08 |
+
+Item 14. Indemnification of Directors and Officers.
+
+The Florida Business Corporation Act (the “FBCA”) provides
+that under certain circumstances a corporation may indemnify any person who was or is a party to any proceeding (other than an action
+by, or in the right of, the corporation), by reason of the fact that such person is or was a director, officer, employee, or agent of
+the corporation or is or was serving at the request of the corporation as a director, officer, employee, or agent of another corporation,
+partnership, joint venture, trust, or other enterprise against liability incurred in connection with such proceeding, including any appeal
+thereof, if such person (1) acted in good faith and in a manner he or she reasonably believed to be in, or not opposed to, the best interests
+of the corporation and (2) with respect to any criminal action or proceeding, had no reasonable cause to believe his or her conduct was
+unlawful.
+
+Additionally, a corporation may indemnify any person, who was or is
+a party to any proceeding by or in the right of the corporation to procure a judgment in its favor by reason of the fact that such person
+is or was a director, officer, employee, or agent of the corporation or is or was serving at the request of the corporation as a director,
+officer, employee, or agent of another corporation, partnership, joint venture, trust, or other enterprise, against expenses and amounts
+paid in settlement not exceeding, in the judgment of the board of directors, the estimated expense of litigating the proceeding to conclusion,
+actually and reasonably incurred in connection with the defense or settlement of such proceeding, including any appeal thereof. Such indemnification
+shall be authorized if such person acted in good faith and in a manner he or she reasonably believed to be in, or not opposed to, the
+best interests of the corporation, except that no indemnification shall be made under this subsection in respect of any claim, issue,
+or matter as to which such person shall have been adjudged to be liable unless, and only to the extent that, the court in which such proceeding
+was brought, or any other court of competent jurisdiction, shall determine upon application that, despite the adjudication of liability
+but in view of all circumstances of the case, such person is fairly and reasonably entitled to indemnity for such expenses which such
+court shall deem proper.
+
+To the extent that a director, officer, employee or agent of a corporation
+has been successful on the merits or otherwise in defense of any proceeding referred to above, the corporation is required to indemnify
+him or her against expenses actually and reasonably incurred by him or her in connection with the defense.
+
+A corporation may pay for expenses incurred by a director or officer
+of the corporation in advance of the final disposition of a proceeding upon receipt of an undertaking by or on behalf of such director
+or officer to repay such amount if he or she is ultimately found not to be entitled to indemnification by the corporation. Expenses incurred
+by other employees and agents may be paid in advance upon such terms or conditions that the board of directors of the corporation deems
+appropriate.
+
+A corporation may also purchase and maintain insurance on behalf of
+any person who is or was a director, officer, employee, or agent of the corporation or is or was serving at the request of the corporation
+as a director, officer, employee, or agent of another corporation, partnership, joint venture, trust, or other enterprise against any
+liability asserted against such person and incurred by him or her in any such capacity or arising out of his or her status as such, whether
+or not the corporation would have the power to indemnify the person against such liability under the provisions of the FBCA.
+
+Our bylaws incorporate the indemnification provisions of the FBCA and
+our articles of incorporation generally require us to indemnify our directors, officers, employees and agents if permissible under the
+FBCA. Our articles also permit us to advance expenses and to obtain insurance.
+
+II-1
+
+Item 15. Recent Sales of Unregistered Securities.
+
+On July 14, 2023, we issued a common stock purchase warrant (the “warrant”)
+to Alumni Capital LP (“Alumni”) to purchase up to 6,666,667 shares of our common stock (the “warrant shares”).
+The warrant has a term of five years and will expire on July 14, 2028. The warrant exercise price is variable and is equal to $15.0 million
+divided by the number of our outstanding shares of common stock at the time of exercise. On July 14, 2023, the exercise price was $0.147.
+Alumni may exercise the warrant on a cashless basis if we do not maintain an effective registration statement for the resale of the warrant
+shares. The issuance of the warrant to Alumni was exempt from registration under Section 4(a)(2) of the Securities Act of 1933 (the “Securities
+Act”).
+
+On July 5, 2023, we issued 120,113 unregistered shares of our common
+stock valued at $0.10 a share to a law firm for legal services provided to the Company. The issuance of shares was exempt from registration
+under Section 4(a)(2) of the Securities Act.
+
+On June 30, 2023, we issued 10,000 unregistered shares of our common
+stock valued at $0.10 a share to an outside consultant for consulting services provided to the Company. The issuance of shares was exempt
+from registration under Section 4(a)(2) of the Securities Act.
+
+On June 30, 2023, we issued a total of 46,250 unregistered shares of
+our common stock valued at $0.10 a share to four employees of the Company as bonuses and for expense reimbursement. The issuances of shares
+to our employees were exempt from registration under Section 4(a)(2) of the Securities Act.
+
+During the quarter end of March 31, 2023, we offered unregistered shares
+of our common stock in a private placement to investors to fund our working capital needs. During the quarter we sold to four investors
+1,675,000 shares for an aggregate amount of $167,500. The issuance of shares in the private placement was exempt from registration under
+Section 4(a)(2) of the Securities Act and Rule 506(b) under the Securities Act. We discontinued the Rule 506(b) private placement at the
+end of March.
+
+During the quarter end of December 31, 2022, we offered unregistered
+shares of our common stock in a private placement to accredited investors to fund our working capital needs. During the quarter we sold
+to two investors 600,000 shares for an aggregate amount of $60,000. The issuance of shares in the private placement was exempt from registration
+under Section 4(a)(2) of the Securities Act and Rule 506(b) under the Securities Act.
+
+On December 31, 2022, we issued a total of 39,000 unregistered shares
+of our common stock to five employees of the Company as a bonus reflecting their contribution to the company in 2022. The issuance of
+bonus shares to our employees was exempt from registration under Section 4(a)(2) of the Securities Act.
+
+On December 31, 2022, we issued a total of 647,090 unregistered shares
+of our common stock valued at $0.10 and $0.11 a share to four outside consultants for investor relations and legal services provided to
+the Company during the fourth quarter. The issuances of shares to our service providers were exempt from registration under Section 4(a)(2)
+of the Securities Act.
+
+During the quarter ended September 30, 2022, we offered unregistered
+shares of our common stock in a private placement to accredited investors to fund our working capital needs. In August, we sold to investors
+800,000 shares for an aggregate amount of $80,000. The issuance of shares in the private placement was exempt from registration under
+Section 4(a)(2) of the Securities Act and Rule 506(b) under the Securities Act.
+
+During the nine months ended September 30, 2021, we received proceeds
+of $301,000 on the private placement of 2,012,000 shares of common stock, at an average price of $0.15 per share. The issuance of shares
+in the private placement was exempt from registration under Section 4(a)(2) of the Securities Act and Rule 506(b) under the Securities
+Act. We used the proceeds to pay for ongoing public company obligations (auditors, legal, etc.) as well as other operational costs, such
+as transfer agents and investor relations services.
+
+During the nine months ended September 30, 2021, 16,000 shares of common
+stock were issued to correct an issuance of shares in 2020. The issuance of shares was exempt from registration under Section 4(a)(2)
+of the Securities Act.
+
+During the six months ended June 30, 2021, we issued 350,000 shares
+of common stock, 300,000 of which were issued to a third-party service provider as non-cash compensation for consulting services provided
+to us, and 50,0000 of which were issued to settle a sales commission invoice from a third-party service provider, for total non-cash expense
+of $55,000. The issuances of shares were exempt from registration under Section 4(a)(2) of the Securities Act.
+
+During the year ended December 31, 2020, we received proceeds of $683,000
+on the sale of 4,275,665 shares of common stock, at an average price of $0.16, as part of our Regulation D offerings to fund our working
+capital needs. The issuance of shares in the private placements was exempt from registration under Section 4(a)(2) of the Securities Act
+and Rule 506(b) under the Securities Act.
+
+In conjunction with the sale of a portion of the common shares issued
+as part of its Regulation D offerings discussed above, we issued eighteen-month warrants to purchase shares of common stock at an exercise
+price of $0.25. During the year ended December 31, 2020, we issued warrants to purchase 20,000 shares of common stock at an exercise price
+of $0.25. The issuance of shares in the private placements was exempt from registration under Section 4(a)(2) of the Securities Act and
+Rule 506(b) under the Securities Act.
+
+During the year ended December 31, 2020, we issued 125,000 shares of
+common stock to certain consultants that provided business development, introduction to new business opportunities, strategic analysis,
+and product sales and marketing activities and to employees to reward performance, with a fair value of $31,000 at the date of grant.
+The issuances of shares in the private placements were exempt from registration under Section 4(a)(2) of the Securities Act.
+
+During the year ended December 31, 2020, we issued 1,222,544 shares
+of our common stock on the conversion of principal and accrued interest of $275,000 on our convertible notes payable. The issuance of
+shares in the private placements was exempt from registration under Section 4(a)(2) of the Securities Act and Rule 506(b) under the Securities
+Act.
+
+II-2
+
+Item 16. Exhibits and Financial Statement Schedules.
+
+| Exhibit 
+ 2.1     
+ 2.2     |     | Description                                                                                                                                                                                                                                                                                
+ Share Exchange Agreement dated May 26, 2016 (incorporated by reference to Exhibit 2.1 of the Company’s Form 10 filed with the Securities and Exchange Commission on September 28, 2020)                                                                                                    
+ Purchase of Business Agreement for Intellitronix Corp. dated December 16, 2016 (incorporated by reference to Exhibit 2.2 of the Company’s Form 10 filed with the Securities and Exchange Commission on September 28, 2020)                                                                 |
+|:--------|:----|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 2.3     |     | Asset Purchase Agreement among Intellitronix Corp., US Lighting Group, Inc., and Ohio INTX Cooperative dated May 14, 2021 (incorporated by reference to Exhibit 2.3 of the Company’s Form 8-K filed with the Securities and Exchange Commission on May 19, 2021)                           |
+| 2.4     |     | Stock Purchase Agreement between US Lighting Group, Inc. and Paul Spivak dated August 5, 2022 (including Promissory Note dated August 5, 2022) (incorporated by reference to Exhibit 10.01 of the Company’s Form 8-K filed with the Securities and Exchange Commission on August 11, 2022) |
+| 3.1     |     | Articles of Incorporation (incorporated by reference to Exhibit 3.1 of the Company’s Form 10 filed with the Securities and Exchange Commission on September 28, 2020)                                                                                                                      |
+| 3.2     |     | Articles of Amendment to Articles of Incorporation filed with the State of Florida on August 9, 2016 (incorporated by reference to Exhibit 3.3 of the Company’s Form 10 filed with the Securities and Exchange Commission on September 28, 2020)                                           |
+| 3.3     |     | Articles of Amendment to Articles of Incorporation filed with the State of Florida on October 24, 2022 (incorporated by reference to Exhibit 3.1 to the Company’s Form 8-K filed with the Securities and Exchange Commission on October 28, 2022)                                          |
+| 3.4     |     | Bylaws (incorporated by reference to Exhibit 3.4 of the Company’s Form 10 filed with the Securities and Exchange Commission on September 28, 2020)                                                                                                                                         |
+| 5.1*    |     | Opinion of Kohrman Jackson & Krantz LLP                                                                                                                                                                                                                                                    |
+| 10.1    |     | Common Stock Purchase Agreement between the Company and Alumni Capital LP dated July 14, 2023 (incorporated by reference to Exhibit 10.1 of the Company’s Form 8-K filed with the Securities and Exchange Commission on July 14, 2023)                                                     |
+| 10.2    |     | Common Stock Purchase Warrant issued by the Company to Alumni Capital LP on July 14, 2023 for 6,666,667 Shares (incorporated by reference to Exhibit 10.2 of the Company’s Form 8-K filed with the Securities and Exchange Commission on July 14, 2023)                                    |
+| 10.3    |     | Unsecured Promissory Note issued by the Company to Anthony R. Corpora on July 17, 2023 in the original principal amount of $97,920 (incorporated by reference to Exhibit 10.3 of the Company’s Form 8-K filed with the Securities and Exchange Commission on July 14, 2023)                |
+| 10.4    |     | Unsecured Promissory Note issued by the Company to Michael A. Coates on July 17, 2023 in the original principal amount of $50,000 (incorporated by reference to Exhibit 10.4 of the Company’s Form 8-K filed with the Securities and Exchange Commission on July 14, 2023)                 |
+| 21.1*   |     | Subsidiaries of US Lighting Group, Inc.                                                                                                                                                                                                                                                    |
+| 23.1*   |     | Consent of BF Borgers                                                                                                                                                                                                                                                                      |
+| 23.2*   |     | Consent of Kohrman Jackson & Krantz LLP (included in Exhibit 5.1)                                                                                                                                                                                                                          |
+| 107*    |     | Filing Fee Table                                                                                                                                                                                                                                                                           |
+
+| * | Included with this filing. |
+
+II-3
+
+Item 17. Undertakings.
+
+US Lighting Group, Inc. hereby undertakes:
+
+(1) To file, during any period in which offers or sales are being made,
+a post-effective amendment to this registration statement:
+
+(i) To include any prospectus required by section 10(a)(3) of the Securities
+Act;
+
+(ii) To reflect in the prospectus any facts or events arising after
+the effective date of the registration statement (or the most recent post-effective amendment thereof) which, individually or in the aggregate,
+represent a fundamental change in the information set forth in the registration statement. Notwithstanding the foregoing, any increase
+or decrease in volume of securities offered (if the total dollar value of securities offered would not exceed that which was registered)
+and any deviation from the low or high end of the estimated maximum offering range may be reflected in the form of prospectus filed with
+the SEC pursuant to Rule 424(b) if, in the aggregate, the changes in volume and price represent no more than 20% change in the maximum
+aggregate offering price set forth in the “Calculation of Registration Fee” table in the effective registration statement;
+and
+
+(iii) To include any material information with respect to the plan
+of distribution not previously disclosed in the registration statement or any material change to such information in the registration
+statement;
+
+provided, however, that Paragraphs (a)(1)(i), (ii), and (iii)
+of this section do not apply if the information required to be included in a post-effective amendment by those paragraphs is contained
+in reports filed with or furnished to the SEC by the registrant pursuant to Section 13 or Section 15(d) of the Exchange Act that are incorporated
+by reference in the registration statement or is contained in a form of prospectus filed pursuant to § 230.424(b) of this chapter
+that is part of the registration statement.
+
+(2) That, for the purpose of determining any liability under the Securities
+Act, each such post-effective amendment shall be deemed to be a new registration statement relating to the securities offered therein,
+and the offering of such securities at that time shall be deemed to be the initial bona fide offering thereof.
+
+(3) To remove from registration by means of a post-effective amendment
+any of the securities being registered which remain unsold at the termination of the offering.
+
+(4) That, for the purpose of determining liability under the Securities
+Act to any purchaser:
+
+(i) Each prospectus filed by the registrant pursuant to Rule 424(b)(3)
+shall be deemed to be part of the registration statement as of the date the filed prospectus was deemed part of and included in the registration
+statement; and
+
+(ii) Each prospectus required to be filed pursuant to Rule 424(b)(2),
+(b)(5), or (b)(7) as part of a registration statement in reliance on Rule 430B relating to an offering made pursuant to Rule 415(a)(1)(i),
+(vii), or (x) (§ 230.415(a)(1)(i), (vii), or (x) for the purpose of providing the information required by section 10(a) of the Securities
+Act shall be deemed to be part of and included in the registration statement as of the earlier of the date such form of prospectus is
+first used after effectiveness or the date of the first contract of sale of securities in the offering described in the prospectus. As
+provided in Rule 430B, for liability purposes of the issuer and any person that is at that date an underwriter, such date shall be deemed
+to be a new effective date of the registration statement relating to the securities in the registration statement to which that prospectus
+relates, and the offering of such securities at that time shall be deemed to be the initial bona fide offering thereof. Provided, however,
+that no statement made in a registration statement or prospectus that is part of the registration statement or made in a document incorporated
+or deemed incorporated by reference into the registration statement or prospectus that is part of the registration statement will, as
+to a purchaser with a time of contract of sale prior to such effective date, supersede or modify any statement that was made in the registration
+statement or prospectus that was part of the registration statement or made in any such document immediately prior to such effective date.
+
+(5) That, for purposes of determining any liability under the Securities
+Act, each filing of the registrant’s annual report pursuant to Section 13(a) or Section 15(d) of the Exchange Act (and, where applicable,
+each filing of an employee benefit plan’s annual report pursuant to Section 15(d) of the Exchange Act) that is incorporated by reference
+in the registration statement shall be deemed to be a new registration statement relating to the securities offered therein, and the offering
+of such securities at that time shall be deemed to be the initial bona fide offering thereof.
+
+(6) Insofar as indemnification for liabilities arising under the Securities
+Act may be permitted to directors, officers and controlling persons of the registrant pursuant to the foregoing provisions, or otherwise,
+the registrant has been advised that in the opinion of the SEC such indemnification is against public policy as expressed in the Securities
+Act and is, therefore, unenforceable. In the event that a claim for indemnification against such liabilities (other than the payment by
+the registrant of expenses incurred or paid by a director, officer or controlling person of the registrant in the successful defense of
+any action, suit or proceeding) is asserted by such director, officer or controlling person in connection with the securities being registered,
+the registrant will, unless in the opinion of its counsel the matter has been settled by controlling precedent, submit to a court of appropriate
+jurisdiction the question whether such indemnification by it is against public policy as expressed in the Securities Act and will be governed
+by the final adjudication of such issue.
+
+II-4
+
+SIGNATURES
+
+Pursuant to the requirements of the Securities Act of 1933, US Lighting
+Group, Inc. has duly caused this registration statement to be signed on its behalf by the undersigned, thereunto duly authorized in the
+City of Cleveland, State of Ohio, on September 1, 2023.
+
+| US Lighting Group, Inc.                     |
+| /s/ Anthony Corpora                         |
+| By Anthony Corpora, Chief Executive Officer |
+
+Pursuant to the requirements of the Securities Act of 1933, this registration
+statement has been signed by the following persons in the capacities and on the dates indicated.
+
+| September 1, 2023 | /s/ Patricia A. Salaciak                         |
+|:------------------|:-------------------------------------------------|
+|                   | Patricia A. Salaciak, Director                   |
+| September 1, 2023 | /s/ Olga Smirnova                                |
+|                   | Olga Smirnova, Director                          |
+| September 1, 2023 | /s/ Anthony Corpora                              |
+|                   | Anthony Corpora, Chief Executive Officer         
+ (Principal Executive Officer)                    |
+| September 1, 2023 | /s/ Donald O. Retreage, Jr.                      |
+|                   | Donald O. Retreage, Jr., Chief Financial Officer 
+ (Principal Financial Officer)                    |
+| September 1, 2023 | /s/ Michael A. Coates                            |
+|                   | Michael A. Coates, Corporate Controller          |
+|                   | -Principal Accounting Officer                    |
+
+II-5
