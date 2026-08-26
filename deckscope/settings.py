@@ -64,7 +64,8 @@ def restrict_dir_to_owner(path: Path) -> bool:
             return (path.stat().st_mode & 0o077) == 0
         except OSError:
             return False
-    user = os.environ.get("USERNAME") or os.environ.get("USER")
+    # Same identity problem as `restrict_to_owner` — see `_windows_identity`.
+    user = _windows_identity()
     if not user:
         return False
     try:
@@ -72,9 +73,17 @@ def restrict_dir_to_owner(path: Path) -> bool:
         res = subprocess.run(
             ["icacls", str(path), "/inheritance:r", "/grant:r", f"{user}:(OI)(CI)F"],
             capture_output=True, text=True, timeout=15)
-        return res.returncode == 0
+        if res.returncode != 0:
+            return False
     except Exception:  # noqa: BLE001
         return False
+
+    # Confirm the directory is still usable by this process afterwards.
+    try:
+        list(path.iterdir())
+    except OSError:
+        return False
+    return True
 
 
 def default_output_dir() -> Path:
@@ -197,7 +206,7 @@ def restrict_to_owner(path: Path) -> bool:
         except OSError:
             return False
 
-    user = os.environ.get("USERNAME") or os.environ.get("USER")
+    user = _windows_identity()
     if not user:
         return False
     try:
@@ -208,9 +217,49 @@ def restrict_to_owner(path: Path) -> bool:
         res = subprocess.run(
             ["icacls", str(path), "/inheritance:r", "/grant:r", f"{user}:F"],
             capture_output=True, text=True, timeout=15)
-        return res.returncode == 0
+        if res.returncode != 0:
+            return False
     except Exception:  # noqa: BLE001
         return False
+
+    # Prove the ACL we just wrote did not lock this process out.
+    #
+    # An audit ran DeckScope where the process identity and USERNAME differed —
+    # a sandbox, but the same is true of service accounts, `runas`, scheduled
+    # tasks and impersonation. The old code took USERNAME on faith, granted the
+    # file to an account that was not the caller, reported success, and left the
+    # running process unable to read its own key file. Reporting a security
+    # control as applied when it has locked out its owner is worse than not
+    # applying it, because nothing downstream retries.
+    try:
+        with open(path, "rb"):
+            pass
+    except OSError:
+        return False
+    return True
+
+
+def _windows_identity() -> str:
+    """Who this process actually runs as, not who the environment claims.
+
+    `USERNAME` is an ordinary environment variable: inherited, overridable, and
+    wrong in exactly the situations where file permissions matter most. The
+    process token is authoritative. Falls back to the environment only when the
+    token cannot be read, because a best-effort ACL beats none.
+    """
+    try:
+        import ctypes
+
+        size = ctypes.c_ulong(0)
+        ctypes.windll.advapi32.GetUserNameW(None, ctypes.byref(size))
+        buf = ctypes.create_unicode_buffer(size.value)
+        if ctypes.windll.advapi32.GetUserNameW(buf, ctypes.byref(size)):
+            name = buf.value.strip()
+            if name:
+                return name
+    except Exception:  # noqa: BLE001
+        pass
+    return (os.environ.get("USERNAME") or os.environ.get("USER") or "").strip()
 
 
 def forget_key(name: str) -> None:

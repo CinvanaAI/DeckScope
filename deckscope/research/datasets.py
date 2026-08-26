@@ -86,12 +86,19 @@ class CensusBusinessPatterns(DatasetBackend):
     """Establishment counts by industry and county — US Census CBP.
 
     This is the correct answer to "how many landscaping businesses are there in
-    Phoenix". It is free, it requires no key for modest use, and it counts
-    establishments rather than counting whoever paid to be on a directory page.
+    Phoenix". It is free, and it counts establishments rather than counting
+    whoever paid to be on a directory page.
+
+    A key IS required. This module and `marketreport.sources.census` used to
+    disagree about that — one treated the key as an optional rate-limit raiser
+    and the other as mandatory — and the Census API settled the argument by
+    rejecting keyless requests outright. Two implementations of the same
+    integration will drift, and when they drift about a fact one of them starts
+    lying. Key resolution now has exactly one owner.
     """
 
     name = "census_cbp"
-    key_env = "CENSUS_API_KEY"          # optional; raises rate limits
+    key_env = "CENSUS_API_KEY"
     covers = "US establishment counts and employment by NAICS industry and county"
     homepage = "https://www.census.gov/programs-surveys/cbp.html"
     endpoint = "https://api.census.gov/data/2022/cbp"
@@ -135,10 +142,19 @@ class CensusBusinessPatterns(DatasetBackend):
     def _live(self, naics: str, state: str, county: str) -> Any:
         from ..providers._http import get_json
 
+        # One owner for key resolution: it reads the environment and the saved
+        # key store, and raises with the free signup URL when there is none.
+        from marketreport.sources.census import Unavailable as CensusUnavailable
+        from marketreport.sources.census import _key
+
+        try:
+            key = _key()
+        except CensusUnavailable as exc:
+            raise Unavailable(str(exc)) from None
+
         geo = f"county:{county}&in=state:{state}" if county else f"state:{state}"
-        url = (f"{self.endpoint}?get=ESTAB,NAME&NAICS2017={naics}&for={geo}")
-        if os.getenv(self.key_env):
-            url += f"&key={os.getenv(self.key_env)}"
+        url = (f"{self.endpoint}?get=ESTAB,NAME&NAICS2017={naics}&for={geo}"
+               f"&key={key}")
         try:
             return get_json(url, timeout=20)
         except Exception as exc:  # noqa: BLE001

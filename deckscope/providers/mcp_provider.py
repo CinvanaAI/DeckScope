@@ -18,6 +18,7 @@ speaks JSON-RPC 2.0 over its pipes. No SDK required.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import threading
 import time
@@ -51,6 +52,40 @@ def _client_version() -> str:
         return "0.0.0.dev0"
 
 
+
+#: Environment variables an MCP server legitimately needs to start. Everything
+#: else is dropped — and in particular every *_API_KEY, *_TOKEN and *_SECRET in
+#: DeckScope's own environment.
+#:
+#: This matters more here than it looks. `settings.load_env()` loads every saved
+#: credential into `os.environ` so the providers can find them, and this call
+#: site passed `{**os.environ}` straight to the child. A configured MCP server —
+#: which the user installs, but which they did not write — therefore received
+#: the Anthropic key, the OpenAI key, the Census key and every unrelated token
+#: on the machine, when all it needed was its own.
+#:
+#: The CLI provider already got this right; the same reasoning applies to any
+#: subprocess and this one was simply missed.
+ENV_ALLOWLIST = (
+    "PATH", "HOME", "USERPROFILE", "SystemRoot", "COMSPEC", "TEMP", "TMP",
+    "LANG", "LC_ALL", "TZ", "APPDATA", "LOCALAPPDATA", "XDG_CONFIG_HOME",
+    "PYTHONIOENCODING", "NODE_PATH", "NVM_DIR",
+)
+
+
+def child_env(extra: Optional[Dict[str, str]] = None) -> Dict[str, str]:
+    """The environment an MCP subprocess gets: an allowlist, plus what it was told.
+
+    `extra` comes from the server's own configuration block, so a server that
+    needs a credential is given it explicitly by the person who configured it.
+    That is a deliberate grant of one secret rather than an accidental grant of
+    all of them.
+    """
+    env = {k: v for k, v in os.environ.items() if k in ENV_ALLOWLIST}
+    env.update({str(k): str(v) for k, v in (extra or {}).items()})
+    return env
+
+
 class MCPStdioClient:
     """Minimal JSON-RPC-over-stdio MCP client.
 
@@ -67,7 +102,6 @@ class MCPStdioClient:
 
     def __init__(self, command: List[str], env: Optional[Dict[str, str]] = None,
                  timeout: int = 180) -> None:
-        import os
         import queue
 
         self.timeout = timeout
@@ -84,7 +118,7 @@ class MCPStdioClient:
         self.proc = subprocess.Popen(
             command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, text=True, bufsize=1,
-            env={**os.environ, **(env or {})},
+            env=child_env(env),
         )
         self._readers = [
             threading.Thread(target=self._pump_stdout, daemon=True),

@@ -296,3 +296,121 @@ class A4_MockAndEvalHonesty(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class A5_SubprocessAndACLIdentity(unittest.TestCase):
+    """A configured MCP server got every secret; the ACL trusted an env var."""
+
+    def test_an_mcp_child_does_not_inherit_api_keys(self):
+        import os as _os
+        from deckscope.providers.mcp_provider import child_env
+
+        saved = dict(_os.environ)
+        try:
+            _os.environ.update({
+                "ANTHROPIC_API_KEY": "sk-ant-secret",
+                "OPENAI_API_KEY": "sk-oai-secret",
+                "CENSUS_API_KEY": "c" * 40,
+                "GITHUB_TOKEN": "ghp_secret",
+                "AWS_SECRET_ACCESS_KEY": "aws-secret",
+            })
+            env = child_env()
+            leaked = [k for k in env
+                      if any(x in k for x in ("KEY", "TOKEN", "SECRET"))]
+            self.assertEqual([], leaked, f"secrets reached the child: {leaked}")
+        finally:
+            _os.environ.clear()
+            _os.environ.update(saved)
+
+    def test_an_mcp_child_still_gets_what_it_needs_to_start(self):
+        from deckscope.providers.mcp_provider import child_env
+        self.assertIn("PATH", child_env())
+
+    def test_a_server_may_be_granted_one_secret_explicitly(self):
+        """Deliberate grant of one, not accidental grant of all."""
+        from deckscope.providers.mcp_provider import child_env
+        env = child_env({"MY_SERVER_TOKEN": "granted"})
+        self.assertEqual("granted", env["MY_SERVER_TOKEN"])
+
+    def test_the_allowlist_carries_no_credential_shaped_names(self):
+        from deckscope.providers.mcp_provider import ENV_ALLOWLIST
+        for name in ENV_ALLOWLIST:
+            for marker in ("KEY", "TOKEN", "SECRET", "PASSWORD"):
+                self.assertNotIn(marker, name.upper())
+
+    def test_the_windows_identity_comes_from_the_process_not_the_environment(self):
+        """USERNAME is inherited and overridable, and is wrong in exactly the
+        cases where file permissions matter: service accounts, runas, sandboxes.
+
+        On POSIX there is no token to read, so this only asserts the fallback
+        does not crash and returns a string.
+        """
+        import os as _os
+        from deckscope.settings import _windows_identity
+
+        saved = _os.environ.get("USERNAME")
+        try:
+            _os.environ["USERNAME"] = "somebody-else"
+            self.assertIsInstance(_windows_identity(), str)
+        finally:
+            if saved is None:
+                _os.environ.pop("USERNAME", None)
+            else:
+                _os.environ["USERNAME"] = saved
+
+    def test_restricting_a_file_leaves_it_readable_by_this_process(self):
+        """Reporting a control as applied while it locked out its owner is
+        worse than not applying it — nothing downstream retries."""
+        from deckscope.settings import restrict_to_owner
+
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / ".env"
+            target.write_text("KEY=value", encoding="utf-8")
+            restrict_to_owner(target)
+            self.assertEqual("KEY=value", target.read_text(encoding="utf-8"))
+
+
+class A6_PackagingBoundary(unittest.TestCase):
+    """The repository, the docs and the artifact must describe one product."""
+
+    def _include_patterns(self):
+        import re
+        text = (Path(__file__).resolve().parent.parent /
+                "pyproject.toml").read_text(encoding="utf-8")
+        block = re.search(r"\[tool\.setuptools\.packages\.find\](.*?)(\n\[|\Z)",
+                          text, re.S).group(1)
+        return re.findall(r'"([^"]+)"', block)
+
+    def test_marketreport_is_included_in_the_distribution(self):
+        """It was omitted while the setup wizard collected a Census key for it."""
+        self.assertIn("marketreport*", self._include_patterns())
+
+    def test_the_acceptance_gate_imports_marketreport(self):
+        """The clean-wheel check passed because it only ever imported
+        deckscope. A gate is as wide as the surfaces it touches."""
+        script = (Path(__file__).resolve().parent.parent /
+                  "scripts" / "acceptance.sh").read_text(encoding="utf-8")
+        self.assertIn("import marketreport", script)
+
+    def test_the_acceptance_gate_exercises_research_save(self):
+        script = (Path(__file__).resolve().parent.parent /
+                  "scripts" / "acceptance.sh").read_text(encoding="utf-8")
+        self.assertIn("research", script)
+        self.assertIn("--save", script)
+
+    def test_the_sizing_engine_has_a_command(self):
+        """Shipped code with no entry point is shipped dead code."""
+        from deckscope.cli import build_parser
+        actions = [a for a in build_parser()._subparsers._group_actions]
+        names = set()
+        for action in actions:
+            names.update(action.choices or {})
+        self.assertIn("size", names)
+
+    def test_only_one_module_resolves_the_census_key(self):
+        """Two implementations disagreed about whether the key was optional,
+        and the API settled it by rejecting keyless requests."""
+        datasets = (Path(__file__).resolve().parent.parent / "deckscope" /
+                    "research" / "datasets.py").read_text(encoding="utf-8")
+        self.assertIn("from marketreport.sources.census import _key", datasets)
+        self.assertNotIn("optional; raises rate limits", datasets)

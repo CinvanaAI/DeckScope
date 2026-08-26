@@ -74,6 +74,35 @@ step "6. The evaluation gate shipped with the package and can fail"
 # Exit 1 means it ran and some checks failed, which is expected under the mock.
 # Exit 0 with nothing run is the defect this whole script exists to catch.
 set +e
+# ---------------------------------------------------------------- new surfaces
+#
+# The clean-wheel gate previously exercised only the classic pipeline, which is
+# why it passed while `marketreport` was absent from the wheel entirely and
+# `research --save` crashed on every invocation. A gate is only as wide as the
+# surfaces it touches, and every failure of this kind clustered in the parts it
+# did not.
+
+"$PY" -c "import marketreport, marketreport.sizing, marketreport.sources.census" \
+  && ok "marketreport imports from the installed wheel" \
+  || bad "marketreport is missing from the wheel"
+
+# Exit 6 means 'ran correctly, established nothing' — expected without a Census
+# key, and distinct from a crash. Anything else is a real failure.
+"$PY" -m deckscope size 561730 --state 04 >/dev/null 2>&1
+rc=$?
+if [ "$rc" = "0" ] || [ "$rc" = "6" ]; then
+  ok "size runs (exit $rc)"
+else
+  bad "size crashed (exit $rc)"
+fi
+
+"$PY" -m deckscope research deckscope/examples/sample_deck.md --demo \
+  --max-iterations 4 -q --save ./_accept_research.json >/dev/null 2>&1 \
+  && ok "research --demo --save" || bad "research --demo --save"
+"$PY" -c "import json,sys; json.load(open('./_accept_research.json'))" \
+  && ok "the saved evidence table is valid JSON" \
+  || bad "research --save wrote a file that will not parse"
+
 "$PY" -m deckscope eval --provider mock --save ./eval.json --out ./_accept_eval >/dev/null 2>&1
 code=$?
 set -e

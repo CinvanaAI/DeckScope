@@ -44,7 +44,12 @@ Documentation = "https://github.com/CinvanaAI/DeckScope/tree/main/docs"
 Issues = "https://github.com/CinvanaAI/DeckScope/issues"
 
 [tool.setuptools.packages.find]
-include = ["deckscope*"]
+# `marketreport` ships too. It was omitted while the setup wizard was already
+# collecting a Census key for it and the docs described its output as a
+# DeckScope capability — so the repository, the documentation and the
+# distributable artifact each described a different product. The clean-wheel
+# acceptance check now imports it, which is what would have caught this.
+include = ["deckscope*", "marketreport*"]
 
 [tool.setuptools.package-data]
 deckscope = [

@@ -247,6 +247,31 @@ def build_parser() -> argparse.ArgumentParser:
                                "is illustrative; the point is to show the "
                                "mechanics.")
     research.add_argument("--config", default=None)
+
+    size = sub.add_parser(
+        "size",
+        help="Size a market from government data, showing the arithmetic",
+        description=(
+            "Counts establishments and industry revenue from the US Census, and "
+            "reports the market nationally, by state and by county — each ring "
+            "sized separately, with the calculation written out.\n\n"
+            "The arithmetic is the deliverable. '$34 billion' is an assertion; "
+            "'N establishments in these size bands x $R average revenue, from "
+            "these two sources, as of this date' is a claim you can check and "
+            "disagree with. Every S-1 industry section that does this well "
+            "states its operands, and this one does too.\n\n"
+            "It measures the INDUSTRY's revenue, not one company's addressable "
+            "opportunity. Those are different numbers — every filing surveyed "
+            "uses its own realized revenue for the second, which no outside "
+            "party can source."))
+    size.add_argument("naics", help="4-6 digit NAICS industry code, e.g. 561730")
+    size.add_argument("--state", default="", metavar="FIPS",
+                      help="2-digit state FIPS, e.g. 04 for Arizona")
+    size.add_argument("--county", default="", metavar="FIPS",
+                      help="3-digit county FIPS, e.g. 013 for Maricopa")
+    size.add_argument("--label", default="", help="A name for this market")
+    size.add_argument("--save", default=None, metavar="FILE",
+                      help="Write the sizing as JSON")
     return p
 
 
@@ -299,11 +324,66 @@ def main(argv: Optional[List[str]] = None) -> int:
     if cmd == "research":
         return _research(args)
 
+    if cmd == "size":
+        return _size(args)
+
     build_parser().print_help()
     return 1
 
 
 # ------------------------------------------------------------------ actions
+
+def _size(args: Any) -> int:
+    """Size one market from Census data, nationally then narrowing."""
+    from marketreport.sizing import Ring, Sizing
+    from marketreport.sources.census import (CBP_YEAR, ECN_YEAR, Unavailable,
+                                             establishment_count,
+                                             revenue_per_establishment,
+                                             unavailable_term)
+
+    settings.load_env()
+
+    def count(**kw):
+        try:
+            return establishment_count(args.naics, year=CBP_YEAR, **kw)
+        except Unavailable as exc:
+            return unavailable_term("count", str(exc))
+
+    def value(**kw):
+        try:
+            return revenue_per_establishment(args.naics, year=ECN_YEAR, **kw)
+        except Unavailable as exc:
+            return unavailable_term("value", str(exc))
+
+    sizing = Sizing(
+        args.label or f"NAICS {args.naics}",
+        basis="establishment-based: counts from County Business Patterns, value "
+              "from Economic Census average revenue per establishment. This "
+              "measures the industry's revenue, not one firm's opportunity")
+
+    sizing.add(Ring(label="United States", count=count(), value=value()))
+    if args.state:
+        state_value = value(state_fips=args.state)
+        sizing.add(Ring(label=f"State {args.state}",
+                        count=count(state_fips=args.state), value=state_value))
+        if args.county:
+            sizing.add(Ring(
+                label=f"County {args.state}{args.county}",
+                count=count(state_fips=args.state, county_fips=args.county),
+                value=state_value))
+
+    _out(sizing.render())
+    if args.save:
+        try:
+            _save_json(sizing.to_dict(), args.save)
+        except TypeError as exc:
+            _out(f"\nCould not write {args.save}: {exc}")
+            return 5
+        _out(f"\nWritten to {args.save}")
+    # A sizing that established nothing is a real answer, not a crash — but it
+    # is not a success either, and a script driving this should be able to tell.
+    return 0 if sizing.headline is not None else 6
+
 
 def _research(args: Any) -> int:
     """The question-driven loop, end to end, printing its reasoning as it goes."""
