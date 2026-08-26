@@ -138,6 +138,23 @@ def run_research(*, extraction: Dict[str, Any], provider: Any, researcher: Any,
         on_event=emit)
     research = loop.run()
 
+    # The security summary is built HERE, from the loop's live reports, and
+    # handed out as data.
+    #
+    # `loop.report()` serializes its screening reports so the run can be saved
+    # to JSON. The evaluation runner was separately re-combining those same
+    # reports by calling `.extend()` on them — which worked while they were
+    # live objects and broke the moment they became dicts. Two consumers
+    # disagreeing about whether a field is an object or data is a seam, so the
+    # seam gets one owner: the engine combines, everyone downstream reads the
+    # dict.
+    from ..security.report import ScanReport
+
+    source_scan = ScanReport(target="web sources")
+    for report in loop.security_reports:
+        if report is not None:
+            source_scan.extend(report)
+
     # ---- Stage 3: comparison, per claim, over the records rather than a summary.
     comparison = build_comparison(register, findings, queue, extraction,
                                   deck_text)
@@ -178,6 +195,9 @@ def run_research(*, extraction: Dict[str, Any], provider: Any, researcher: Any,
         "judgment": judgment,
         "report": report,
         "models": plan.to_dict(),
+        "security": {"web_sources": source_scan.to_dict(),
+                     "risk": source_scan.risk,
+                     "summary": source_scan.summary_line()},
         "nda": guard.report(),
         "usage": dict(usage),
         "elapsed_seconds": round(time.time() - started, 1),

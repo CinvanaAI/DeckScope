@@ -113,6 +113,11 @@ class Finding:
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
         d["sourced"] = self.sourced
+        # `asdict` leaves the metric's `subject` as a frozenset, which json
+        # cannot encode. Caught by the atomic-write guard on the first run
+        # after metrics were added, which is what that guard is for — the old
+        # code would have truncated the file instead.
+        d["metric"] = self.metric.to_dict() if self.metric is not None else None
         return d
 
 

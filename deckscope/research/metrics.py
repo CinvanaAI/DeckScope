@@ -62,7 +62,12 @@ _MEASURE_PATTERNS = (
     (RATE, r"\b(cagr|growth rate|retention|churn|margin|market share|penetration|"
            r"survival|conversion)\b|%"),
     (SIZE, r"\b(market size|market is|addressable market|\btam\b|\bsam\b|\bsom\b|"
-           r"industry (is|was|totall?ed)|category is|segment is|market for)\b"),
+           r"industry (is|was|totall?ed)|category is|segment is|market for|"
+           # Interrogative forms. The patterns were written against statements,
+           # so "How large is the workflow automation market?" classified as
+           # UNKNOWN and the relevance guard fell through to permissive.
+           r"how (large|big) is|size of the market|market\??$|"
+           r"segment (is|was)|addressable segment|category boundary)\b"),
     (REVENUE, r"\b(revenue|arr|mrr|turnover|sales of|billings|earned)\b"),
     (COUNT, r"\b(number of|how many|establishments|businesses|firms|companies|"
             r"customers?|users?|employees?|beneficiaries|professionals?|"
@@ -243,11 +248,28 @@ def answers(question_text: str, metric: MetricID) -> bool:
 
     The loop reads sources fetched *for a question*, and a reader that returns
     the first figure on the page produces a sourced, well-formed finding about
-    something else entirely. Those findings then reach the closing rules and
-    change the outcome. This is the cheap guard: does the finding share any
-    subject vocabulary with the question at all?
+    something else entirely. Those findings reach the closing rules and change
+    the outcome.
+
+    Compares **measures**, not words. The first version required lexical
+    overlap with the question, which correctly killed a finding about a
+    competitor called "END RESEARCH MATERIAL" and also killed "a wider category
+    boundary is measured at $41B" — a perfectly good answer to a market-size
+    question that happened to paraphrase rather than echo. It dropped eighteen
+    findings in a fourteen-question demo and left nothing to contest.
+
+    A question about market size is not answered by a startup cost. That much
+    is checkable. Whether two sentences share adjectives is not the same
+    question and should not be asked here.
     """
     q = classify(question_text)
-    if not q.subject or not metric.subject:
-        return True          # cannot tell; do not block on a guess
-    return _overlap(q.subject, metric.subject) > 0.0
+    if q.measure != UNKNOWN and metric.measure != UNKNOWN:
+        return q.measure == metric.measure
+
+    # Measure unknown on one side, so there is no evidence of a mismatch.
+    # Permissive, for the same reason `comparable()` is: a guard that fires on
+    # ignorance rejects the thinnest statements hardest, and "The market is $7
+    # billion" reduces to no subject vocabulary at all once stopwords are
+    # removed. Junk like a fence marker read as a company is handled where it
+    # is created, not by making this check paranoid.
+    return True

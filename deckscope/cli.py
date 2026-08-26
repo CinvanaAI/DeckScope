@@ -471,23 +471,64 @@ def _register_demo_research() -> str:
     from .research.base import Researcher, SearchResult
     from .research.registry import register_researcher
 
+    # Snippets vary by what was asked.
+    #
+    # The first version returned the same two paragraphs for every query, which
+    # meant a regulation question got handed a market-size figure and a startup
+    # cost. Once the loop started checking that a finding answers its question,
+    # that produced a demo where nothing was ever relevant and no finding
+    # survived. A search backend that ignores the query is not a simplification
+    # of a search backend; it is a different thing that teaches the loop to
+    # behave wrongly.
+    TOPICS = (
+        (("size", "large", "market", "tam", "grow"),
+         "Independent estimates put the addressable segment at $6-8B in 2026, "
+         "growing 14-18% annually.",
+         "A wider category boundary that includes adjacent tooling is measured "
+         "at $41B in 2026, which is a different definition rather than a "
+         "different measurement."),
+        (("compet", "who else", "rival", "incumbent"),
+         "BlackLine and Trintech are the established incumbents in this "
+         "category and both have moved down-market since 2024.",
+         "Bundled modules from the ERP suites already installed at these "
+         "buyers are the most common alternative to a standalone product."),
+        (("licen", "permit", "regulat", "exempt"),
+         "State registration is required for operators above the small-business "
+         "threshold; the filing fee is $250 annually.",
+         "No source states whether an exemption applies below that threshold."),
+        (("cost", "capital", "start", "operate", "equipment"),
+         "Startup capital for a single-crew operation runs about $10,000 once "
+         "equipment, licensing and insurance are counted.",
+         "Operating costs are dominated by labour, at 55-65% of revenue."),
+        (("surviv", "fail", "five year", "5 year"),
+         "Roughly half of new firms in this sector are still trading after "
+         "five years.",
+         "Failures cluster in years two and three, most often on working "
+         "capital rather than demand."),
+        (("price", "pricing", "charge", "contract value"),
+         "Typical pricing is $2,000 per month for a mid-market seat count.",
+         "Average annual contract value across the category is $19,000."),
+    )
+
     class _DemoResearch(Researcher):
         name = "demo_research_loop"
 
         def search(self, query, max_results=8):
+            q = (query or "").lower()
+            body = next((t for t in TOPICS if any(k in q for k in t[0])), None)
+            if body is None:
+                # Nothing in the fixed corpus addresses this. Returning
+                # something anyway is what made the demo compare a market size
+                # against a startup cost.
+                return []
+            stamp = abs(hash(query)) % 9999
             return [
-                SearchResult(
-                    f"Independent analyst note — {query[:40]}",
-                    f"https://analyst.example.com/{abs(hash(query)) % 9999}",
-                    "The addressable segment is $6-8B in 2026. Startup capital "
-                    "for a single operator runs about $10,000 once equipment, "
-                    "licensing and insurance are counted.", "2026-02", query),
-                SearchResult(
-                    f"Wider category report — {query[:34]}",
-                    f"https://research.example.org/{abs(hash(query)) % 9999}",
-                    "The wider category is $41B, on a boundary that includes "
-                    "adjacent tooling. Roughly half of new firms are still "
-                    "trading after five years.", "2026-01", query),
+                SearchResult(f"Independent analyst note {stamp}",
+                             f"https://analyst.example.com/{stamp}",
+                             body[1], "2026-02", query),
+                SearchResult(f"Category research {stamp}",
+                             f"https://research.example.org/{stamp}",
+                             body[2], "2026-01", query),
             ]
 
     register_researcher(_DemoResearch)
@@ -1405,6 +1446,18 @@ def _eval(args: Any) -> int:
                     _out(f"        why it matters: {f['rationale'][:88]}")
             if len(failures) > 8:
                 _out(f"      … and {len(failures) - 8} more")
+        elif cost["runs"] == 0:
+            # No failures because nothing ran. Saying "every check passed" here
+            # is the exact failure this harness was built to prevent: a gate
+            # that could not fail, quoted as though it had passed. An audit
+            # found this mode reporting a clean sweep over zero runs while
+            # every one of its nine cases had crashed — the errors were listed
+            # forty lines further down, under a different heading.
+            broken = len([e for e in result.errors() if e["mode"] == mode])
+            _out(red(f"    NOTHING RAN — all {broken} case(s) failed to "
+                     f"execute. The dimension table above shows no score for "
+                     f"this mode because there is none, not because it was "
+                     f"perfect. See 'Cases that could not run' below."))
         else:
             _out("    every check passed")
 

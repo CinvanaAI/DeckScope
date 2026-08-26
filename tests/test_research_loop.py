@@ -26,7 +26,7 @@ from deckscope.compare import (MATERIAL_RATIO, MISMATCH_CEILING,
                                ask_versus_requirement, build, detect_omissions)
 from deckscope.config import ProviderConfig
 from deckscope.research.base import Researcher, SearchResult
-from deckscope.research.closing import decide, independent_domains
+from deckscope.research.closing import decide
 from deckscope.research.findings import FindingRegistry, parse_number
 from deckscope.research.loop import Budget, ResearchLoop
 from deckscope.research.questions import (CONFIRMED, CONTESTED, OPEN,

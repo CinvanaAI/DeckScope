@@ -11,7 +11,6 @@ not a rough edge but a wrong answer delivered confidently.
 from __future__ import annotations
 
 import json
-import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -146,7 +145,14 @@ class A2b_RelevanceGuard(unittest.TestCase):
     """A sourced finding about the wrong thing still reaches the closing rules."""
 
     def test_an_off_topic_finding_does_not_answer_the_question(self):
-        metric = classify("Startup capital for one operator is $10,000",
+        """A market-size question is not answered by a startup cost.
+
+        Compared by MEASURE rather than by shared words. An earlier version
+        required lexical overlap and dropped eighteen findings in a
+        fourteen-question demo, including a legitimate answer that paraphrased
+        instead of echoing.
+        """
+        metric = classify("Startup cost for one operator is $10,000",
                           value_text="$10,000")
         self.assertFalse(
             answers("How large is the workflow automation market?", metric))
@@ -161,6 +167,13 @@ class A2b_RelevanceGuard(unittest.TestCase):
         metric = classify("The market is $7 billion", value_text="$7B")
         self.assertTrue(answers("?????", metric),
                         "cannot tell must not mean reject")
+
+    def test_a_finding_with_no_subject_vocabulary_is_not_rejected(self):
+        """Everything in 'The market is $7 billion' is a stopword. Rejecting
+        that made the guard fire hardest on the plainest statements."""
+        metric = classify("The market is $7 billion", value_text="$7B")
+        self.assertEqual(frozenset(), metric.subject)
+        self.assertTrue(answers("What is the market size?", metric))
 
 
 class A3_QuarantineCannotGround(unittest.TestCase):
@@ -213,6 +226,72 @@ class A3_QuarantineCannotGround(unittest.TestCase):
         usable = [s.sid for s in reg.sources if s.status != "quarantined"]
         self.assertEqual(1, len(usable))
         self.assertEqual(reg.sources[0].sid, usable[0])
+
+
+
+
+class A4_MockAndEvalHonesty(unittest.TestCase):
+    """The demo teaches the product how to behave. It must not teach errors."""
+
+    def test_the_fence_marker_is_not_read_as_content(self):
+        """`<<<END RESEARCH MATERIAL>>>` was being reported as a competitor —
+        the trust boundary becoming analysed text."""
+        from deckscope.providers.mock_provider import _sources_in_prompt
+        from deckscope.security.sanitizer import fence
+
+        block = fence("[S1] A source\n    url: https://x.example/1\n"
+                      "    content: BlackLine competes here.", "RESEARCH MATERIAL")
+        rows = _sources_in_prompt(block)
+        self.assertEqual(1, len(rows))
+        for row in rows:
+            self.assertNotIn("END RESEARCH", row["snippet"])
+            self.assertNotIn("BEGIN", row["snippet"])
+
+    def test_sentence_initial_words_are_not_companies(self):
+        from deckscope.providers.mock_provider import _org_names
+        self.assertEqual(
+            [], _org_names("Roughly half of new firms survive five years."))
+
+    def test_a_real_name_at_the_start_of_a_sentence_survives(self):
+        """Dropping every sentence-initial word lost BlackLine, which is the
+        name the evaluation case checks for."""
+        from deckscope.providers.mock_provider import _org_names
+        names = _org_names("BlackLine and Trintech are the incumbents.")
+        self.assertIn("BlackLine", names)
+        self.assertIn("Trintech", names)
+
+    def test_a_multiword_product_is_one_name_not_several(self):
+        from deckscope.providers.mock_provider import _org_names
+        names = _org_names("Microsoft Power Automate ships bundled.")
+        self.assertIn("Microsoft Power Automate", names)
+        self.assertNotIn("Power", names)
+        self.assertNotIn("Automate", names)
+
+    def test_the_demo_researcher_returns_nothing_when_it_knows_nothing(self):
+        """It used to return the same two paragraphs for every query, so a
+        regulation question got handed a market size and a startup cost."""
+        from deckscope.cli import _register_demo_research
+        from deckscope.research.registry import get_researcher
+        from deckscope.config import ResearchConfig
+
+        name = _register_demo_research()
+        backend = get_researcher(ResearchConfig(name=name), None)
+        self.assertEqual([], backend.search("what colour is the founder's car"))
+        self.assertTrue(backend.search("how large is the market"))
+
+    def test_the_demo_researcher_answers_the_question_it_was_asked(self):
+        from deckscope.cli import _register_demo_research
+        from deckscope.research.registry import get_researcher
+        from deckscope.config import ResearchConfig
+
+        name = _register_demo_research()
+        backend = get_researcher(ResearchConfig(name=name), None)
+        sizing = " ".join(r.snippet for r in backend.search("how large is the market"))
+        costs = " ".join(r.snippet for r in
+                         backend.search("what does it cost to start"))
+        self.assertIn("$6-8B", sizing)
+        self.assertNotIn("$6-8B", costs)
+        self.assertIn("$10,000", costs)
 
 
 if __name__ == "__main__":

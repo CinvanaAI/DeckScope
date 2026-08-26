@@ -27,7 +27,7 @@ catch in other people's documents.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, asdict
 from typing import Any, Dict, List, Optional
 
 #: How a term was arrived at. `assumed` is legitimate and common — every filing

@@ -21,8 +21,8 @@ treatment, as anything the deck did say.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict
-from typing import Any, Dict, Iterable, List, Optional
+from dataclasses import dataclass, asdict
+from typing import Any, Dict, List, Optional
 
 #: Sections whose absence from a deck is itself informative, and the reason why.
 #: Kept as data rather than prose so the omission pass cannot drift from what

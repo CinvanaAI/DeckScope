@@ -363,26 +363,26 @@ def _run_research(cfg, corpus, lens: str):
     usage = {k: v for k, v in (out.get("usage") or {}).items()
              if k in ("input", "output")}
 
-    # Every screening report the loop produced, not just the first retrieval's.
-    source_scan = ScanReport(target="web sources")
-    for report in out["research"].get("security_reports") or []:
-        if report:
-            source_scan.extend(report)
-    combined = ScanReport(target="all inputs")
-    combined.extend(deck_scan)
-    combined.extend(source_scan)
+    # The engine combines its own screening reports and hands them over as
+    # data — see the comment there. This used to re-combine them here by
+    # calling .extend() on what it assumed were live objects, and every
+    # research evaluation case crashed the moment they became dicts.
+    web = (out.get("security") or {}).get("web_sources") or \
+        ScanReport(target="web sources").to_dict()
+    web_risk = (out.get("security") or {}).get("risk", "clean")
+    combined_risk = deck_scan.risk if _worse(deck_scan.risk, web_risk) else web_risk
 
     result = AnalysisResult(
         deck=extraction,
         market={},
         comparisons={lens: out["report"]},
         registry=registry,
-        security={"overall_risk": combined.risk,
+        security={"overall_risk": combined_risk,
                   "mode": cfg.security.mode.value if cfg.security else "off",
                   "deck": deck_scan.to_dict(),
-                  "web_sources": source_scan.to_dict(),
+                  "web_sources": web,
                   "summary": [deck_scan.summary_line(),
-                              source_scan.summary_line()]},
+                              (out.get("security") or {}).get("summary", "")]},
         stats={"elapsed_seconds": round(time.time() - started, 1),
                "token_usage": usage,
                "questions_worked": (out["research"].get("budget") or {})
@@ -502,3 +502,15 @@ def save(result: SuiteResult, path: str) -> str:
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(result.to_dict(), indent=2, default=str), encoding="utf-8")
     return str(p)
+
+
+#: Risk levels, worst first, for combining a deck scan with a source scan.
+_RISK_ORDER = ("critical", "high", "medium", "low", "info", "clean", "unknown")
+
+
+def _worse(a: str, b: str) -> bool:
+    """Whether risk `a` is more severe than `b`."""
+    try:
+        return _RISK_ORDER.index(str(a)) < _RISK_ORDER.index(str(b))
+    except ValueError:
+        return False

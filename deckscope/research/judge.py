@@ -24,7 +24,6 @@ is the specific failure the whole product exists to prevent.
 """
 from __future__ import annotations
 
-import json
 from typing import Any, Dict, List, Optional
 
 from ..security.sanitizer import fence

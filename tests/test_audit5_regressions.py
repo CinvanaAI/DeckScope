@@ -13,7 +13,6 @@ Every test below failed before its fix, and asserts the property rather than the
 current output.
 """
 import json
-import os
 import sys
 from pathlib import Path
 from types import SimpleNamespace

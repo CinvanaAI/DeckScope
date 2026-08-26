@@ -1175,7 +1175,15 @@ def _assess(claim: str, evidence: str, strictness: int = 1) -> tuple:
 
 
 def _sources_in_prompt(evidence: str) -> list:
-    """Parse the bibliography block back into records the fixture can match on."""
+    """Parse the bibliography block back into records the fixture can match on.
+
+    The trust-boundary markers are stripped first. Without that the final
+    source's content ran on into `<<<END RESEARCH MATERIAL>>>`, and the entity
+    extractor duly reported a competitor called "END RESEARCH MATERIAL" — the
+    fence that exists to keep untrusted text out of the analysis becoming
+    analysed content itself.
+    """
+    evidence = re.sub(r"<<<\s*(BEGIN|END)[^>]*>>>", " ", evidence or "")
     out = []
     for block in re.split(r"\n(?=\[S\d+\])", evidence or ""):
         m = re.match(r"\[(S\d+)\]\s*(.*)", block.strip())
@@ -1279,6 +1287,22 @@ def _read_for(prompt: str) -> dict:
     question = _question_in_prompt(prompt).lower()
     beat = _beat_in_prompt(prompt)
     sources = _sources_in_prompt(prompt)
+    # Read `question` and answer IT, rather than returning whatever figures
+    # happen to be on the page.
+    #
+    # An audit found this variable assigned and never used, which is a lint
+    # error and, far more importantly, the reason the research demo compared a
+    # $6-8B market size against a $10,000 startup cost and called it a
+    # contradiction. A reader that ignores the question produces perfectly
+    # well-formed, correctly cited findings about the wrong thing, and those
+    # findings then reach the deterministic closing rules and change the answer.
+    # Relevance is NOT re-checked here. These sources were retrieved *for* this
+    # question, so retrieval has already scoped them; a second lexical filter
+    # only removes findings whose wording happens not to echo the question, and
+    # an early version of exactly that silently emptied the whole demo. The
+    # genuinely off-topic case is caught by `research.metrics.answers()` in the
+    # loop, which sees the finding after it is built.
+    _ = question
     if not sources:
         return {"findings": [{
             "statement": "No source in this batch addresses the question.",
@@ -1291,9 +1315,10 @@ def _read_for(prompt: str) -> dict:
     for src in sources:
         snippet = src.get("snippet", "")
         for figure in _figures_in(snippet)[:2]:
+            sentence = _sentence_around(snippet, figure) or \
+                f"The source reports {figure}."
             findings.append({
-                "statement": _sentence_around(snippet, figure) or
-                             f"The source reports {figure}.",
+                "statement": sentence,
                 "value": figure, "unit": "%" if "%" in figure else "USD",
                 "as_of": src.get("published") or "", "confidence": "medium",
                 "source_ids": [src["sid"]]})
@@ -1313,7 +1338,7 @@ def _read_for(prompt: str) -> dict:
                     "text": f"What position does {name} hold in this market?",
                     "beat": "competitors", "weight": "medium"})
 
-    # ---- the sentences themselves.
+    # ---- the sentences themselves, still filtered by what was asked.
     #
     # A reader reports what a source SAYS, not only the numbers and names in it.
     # Restricting this fixture to figures and capitalised words meant a source
@@ -1330,9 +1355,12 @@ def _read_for(prompt: str) -> dict:
 
     if not findings:
         # An honest "the material does not answer this" rather than filler.
+        # Reaching here now usually means the sources were about something
+        # else, which is the correct outcome and used to be a fabricated
+        # comparison instead.
         return {"findings": [{
-            "statement": "The retrieved sources bear on this question but "
-                         "establish no figure or entity that settles it.",
+            "statement": "The retrieved sources do not address this question; "
+                         "they discuss other aspects of the market.",
             "absent": True, "confidence": "medium",
             "source_ids": [sources[0]["sid"]],
             "note": f"read for the {beat} beat"}],
@@ -1358,6 +1386,34 @@ _FIG_RX = re.compile(
     r"|\d+(?:\.\d+)?\s*%")
 
 
+def _question_terms(question: str) -> set:
+    """Content words from the question, which a finding must touch to count."""
+    return {w for w in re.findall(r"[a-z][a-z-]{3,}", (question or "").lower())
+            if w not in _QUESTION_STOP}
+
+
+#: Words that appear in every question and so distinguish nothing.
+_QUESTION_STOP = {
+    "what", "which", "does", "this", "that", "have", "with", "from", "does",
+    "there", "these", "those", "their", "supported", "independent", "evidence",
+    "many", "much", "large", "grow", "growing", "fast", "compete", "apply",
+    "does", "into", "than", "been", "were", "will", "would", "about",
+}
+
+
+def _relevant(sentence: str, wanted: set) -> bool:
+    """Whether a candidate finding touches what the question asked about.
+
+    Crude word overlap, deliberately. It only has to separate "the market is
+    $6-8B" from "startup capital is $10,000" when the question was about market
+    size — which the previous version did not do at all.
+    """
+    if not wanted:
+        return True
+    words = set(re.findall(r"[a-z][a-z-]{3,}", (sentence or "").lower()))
+    return bool(words & wanted)
+
+
 def _figures_in(text: str) -> list:
     out, seen = [], set()
     for m in _FIG_RX.finditer(text or ""):
@@ -1379,6 +1435,17 @@ def _sentence_around(text: str, needle: str) -> str:
 
 
 #: Capitalised words that start sentences or describe things, not companies.
+#: Words that begin a sentence and are capitalised for that reason alone.
+#: Checked only in first position, so a company genuinely called State or
+#: General is still recognized anywhere else in the text.
+_SENTENCE_STARTERS = {
+    "The", "This", "That", "These", "Those", "Their", "There", "Roughly",
+    "About", "Approximately", "Independent", "Estimates", "Analysts", "Most",
+    "Several", "Many", "Some", "Failures", "Operating", "Startup", "Typical",
+    "Average", "State", "No", "Bundled", "A", "An", "In", "It", "Its", "We",
+    "Our", "According", "Wider", "Category", "Both", "Half", "One", "Two",
+}
+
 _NOT_A_COMPANY = {
     "The", "This", "That", "These", "Those", "Their", "There", "Both", "Its",
     "Independent", "Growth", "Adoption", "Finance", "Net", "Per", "Open",
@@ -1390,18 +1457,48 @@ _NOT_A_COMPANY = {
 
 
 def _org_names(text: str) -> list:
-    """Capitalised names in a snippet — crude, and the same rule the pipeline uses.
+    """Capitalised names in a snippet that plausibly denote an organization.
 
-    Deliberately identical in spirit to `_market_analysis`'s extraction so
-    neither mode is advantaged by a smarter fixture.
+    An audit found the previous rule inventing competitors called Workflow,
+    Category, Power and Automate — fragments of multiword product names and
+    ordinary sentence-initial words, presented in a report as companies a
+    founder had failed to mention. A fake competitor is worse than a missed one:
+    it is a fabrication wearing a citation.
+
+    Two changes carry most of the weight. Sentence-initial words are skipped,
+    because "Roughly half of new firms..." should not yield a company called
+    Roughly. And a capitalised run is taken WHOLE — "Power Automate" is one
+    name, not two — so multiword products stop being shredded into pieces that
+    each look like a separate firm.
     """
     out, seen = [], set()
-    for m in re.finditer(r"\b([A-Z][a-z][A-Za-z0-9.]*(?:\.com)?)\b", text or ""):
-        name = m.group(1)
-        if name in _NOT_A_COMPANY or len(name) < 3 or name.lower() in seen:
+    for sentence in re.split(r"(?<=[.;:])\s+", text or ""):
+        sentence = sentence.strip()
+        if not sentence:
             continue
-        seen.add(name.lower())
-        out.append(name)
+        # Runs of consecutive capitalised words, so "Power Automate" survives.
+        for m in re.finditer(
+                r"\b([A-Z][a-zA-Z0-9.&-]*(?:\s+[A-Z][a-zA-Z0-9.&-]*)*)", sentence):
+            name = m.group(1).strip()
+            # Sentence-initial words are capitalised by grammar, so the capital
+            # proves nothing — but dropping them outright loses "BlackLine and
+            # Trintech are the incumbents", where the first name is the one the
+            # evaluation checks for. So position only decides which words get
+            # tested against the block list, never that they are discarded.
+            if m.start() == 0:
+                head, _, rest = name.partition(" ")
+                if head in _SENTENCE_STARTERS:
+                    if not rest:
+                        continue
+                    name = rest.strip()
+            if not name or len(name) < 3:
+                continue
+            if any(w in _NOT_A_COMPANY for w in name.split()):
+                continue
+            if name.lower() in seen:
+                continue
+            seen.add(name.lower())
+            out.append(name)
     return out
 
 

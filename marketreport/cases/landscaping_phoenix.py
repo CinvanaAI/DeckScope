@@ -17,8 +17,6 @@ plausible number.
 """
 from __future__ import annotations
 
-from typing import Optional
-
 from ..sizing import Ring, Sizing, Term
 from ..sources.census import (CBP_YEAR, ECN_YEAR, Unavailable,
                               establishment_count, revenue_per_establishment,

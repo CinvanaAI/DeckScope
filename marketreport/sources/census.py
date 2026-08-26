@@ -27,7 +27,7 @@ import os
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from ..sizing import MEASURED, Term
 
@@ -93,11 +93,11 @@ def _get(url: str, params: Dict[str, Any], *, timeout: float = 30.0) -> List[Lis
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
             raise Unavailable(
-                f"the Census API has no data for this combination "
-                f"(HTTP 404). Most often the industry code does not exist at "
-                f"the geography requested — many NAICS codes are published "
-                f"nationally but suppressed at county level to protect "
-                f"individual businesses.") from exc
+                "the Census API has no data for this combination "
+                "(HTTP 404). Most often the industry code does not exist at "
+                "the geography requested — many NAICS codes are published "
+                "nationally but suppressed at county level to protect "
+                "individual businesses.") from exc
         raise Unavailable(f"the Census API returned HTTP {exc.code}") from exc
     except Exception as exc:  # noqa: BLE001
         raise Unavailable(f"the Census API could not be reached: {exc}") from exc
