@@ -414,10 +414,50 @@ def _research(args: Any) -> int:
     _print_research(result)
 
     if args.save:
-        with open(args.save, "w", encoding="utf-8") as fh:
-            json.dump(result, fh, indent=2, ensure_ascii=False)
+        try:
+            _save_json(result, args.save)
+        except TypeError as exc:
+            _out(f"\nCould not write {args.save}: {exc}")
+            _out("The run itself succeeded — the evidence above is complete. "
+                 "Nothing was written, so no partial file was left behind.")
+            return 5
         _out(f"\nFull evidence table written to {args.save}")
     return 0
+
+
+def _save_json(payload: Any, destination: str) -> None:
+    """Serialize first, then write, then replace. In that order.
+
+    The obvious `json.dump(payload, open(dest, "w"))` opens and truncates the
+    destination before it knows whether the payload can be serialized. When it
+    could not, the user was left with a file that had a plausible name, a
+    plausible opening, and stopped in the middle of a key — output that looks
+    like output. Serializing to a string first turns that into a clean failure
+    with the destination untouched, and the temp-file swap means a crash or a
+    full disk mid-write cannot damage a previous good file either.
+    """
+    import json
+    import os
+    import tempfile
+
+    text = json.dumps(payload, indent=2, ensure_ascii=False)   # may raise
+
+    target = Path(destination).expanduser()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    handle, temp_path = tempfile.mkstemp(
+        dir=str(target.parent), prefix=f".{target.name}.", suffix=".partial")
+    try:
+        with os.fdopen(handle, "w", encoding="utf-8") as fh:
+            fh.write(text)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(temp_path, target)
+    except BaseException:
+        try:
+            os.unlink(temp_path)
+        except OSError:
+            pass
+        raise
 
 
 def _register_demo_research() -> str:

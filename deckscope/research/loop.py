@@ -34,7 +34,7 @@ exploited.
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field, is_dataclass
 from typing import Any, Callable, Dict, List, Optional
 
 from ..security.policy import SecurityPolicy
@@ -43,6 +43,7 @@ from . import router
 from .closing import decide
 from .datasets import Unavailable, get_backend
 from .findings import FindingRegistry
+from .metrics import answers, classify
 from .questions import (CONFIRMED, CONTESTED, UNANSWERABLE, QuestionQueue)
 
 
@@ -118,6 +119,10 @@ class ResearchLoop:
         self.log: List[Dict[str, Any]] = []
         self._last_ids: List[str] = []
         self._repeated = False
+        #: Findings dropped for not answering the question they were retrieved
+        #: for. Reported rather than discarded silently — a reader that keeps
+        #: returning off-topic figures is a fault worth seeing.
+        self.off_topic: List[Dict[str, Any]] = []
 
     # ------------------------------------------------------------------ run
     def run(self) -> Dict[str, Any]:
@@ -260,10 +265,32 @@ class ResearchLoop:
 
         remap = merge_into(self.registry, staging,
                            note=f"{backend.name} lookup for {question.id}")
-        ids = [remap.get(s.sid, s.sid) for s in staging.sources]
+        # ONLY the sources that survived screening may back the finding.
+        #
+        # This used to map every staged source, quarantined ones included, so a
+        # structured result the screen had rejected for carrying an injection
+        # still appeared as provenance on a high-confidence finding and still
+        # counted toward independent-publisher corroboration. `Finding.sourced`
+        # only checks that the list is non-empty, so nothing downstream could
+        # tell. Rejected evidence must not ground anything.
+        ids = [remap.get(s.sid, s.sid) for s in staging.sources
+               if s.status != "quarantined"]
+        dropped = len(staging.sources) - len(ids)
         self._last_ids = ids
         self.queue.record_attempt(question.id, backend.name, question.text,
                                   len(answer.results))
+
+        if not ids:
+            # Everything the backend returned was rejected. That is a real
+            # outcome and it is not "no data" — it is hostile data, and the
+            # question should say so rather than silently finding nothing.
+            self._emit(f"    all {dropped} {backend.name} result(s) were "
+                       f"quarantined by the security screen")
+            self.queue.close(
+                question.id, UNANSWERABLE,
+                f"every result {backend.name} returned was rejected by the "
+                f"security screen, so nothing here can ground a finding")
+            return []
 
         # A structured answer needs no model to interpret it, so it becomes a
         # finding directly. That is the point of routing here: the number is the
@@ -303,6 +330,27 @@ class ResearchLoop:
             # here rather than at the end, so an invented ID cannot influence a
             # closing decision on its way to being stripped.
             sources = [s for s in sources if s in citable]
+
+            # A finding has to answer the question it was retrieved for.
+            #
+            # `_clean()` in the reader checks that citations resolve, which is a
+            # structural check, not a relevance one. A reader that returns the
+            # first figure on the page produces a perfectly well-formed, properly
+            # sourced finding about something else entirely — and that finding
+            # then reaches the closing rules and changes the outcome. An audit
+            # watched a $6-8B market size get compared against a $10,000 startup
+            # cost and reported as a contradiction.
+            statement = row.get("statement", "")
+            metric = classify(statement, unit=row.get("unit", ""),
+                              value_text=str(row.get("value", "") or ""),
+                              as_of=row.get("as_of", ""))
+            if not row.get("absent") and not answers(question.text, metric):
+                self.off_topic.append({
+                    "question": question.id, "statement": statement,
+                    "why": "shares no subject vocabulary with the question it "
+                           "was retrieved for"})
+                continue
+
             self.findings.add(
                 row.get("statement", ""), question_id=question.id,
                 beat=question.beat, value_text=row.get("value", ""),
@@ -334,7 +382,14 @@ class ResearchLoop:
             # from the start and then never handed out, which meant a hostile
             # page found on iteration nine was quarantined correctly and reported
             # nowhere.
-            "security_reports": list(self.security_reports),
+            #
+            # Serialized HERE, not by the caller. `report()` is the boundary
+            # between live objects and data, and returning a live ScanReport from
+            # a method named `report` made `--save` crash mid-write and leave a
+            # truncated JSON file on disk. Anything this returns must survive
+            # json.dumps().
+            "security_reports": [_as_data(r) for r in self.security_reports],
+            "off_topic_dropped": list(self.off_topic),
             "questions": self.queue.to_dict(),
             "findings": self.findings.to_dict(),
             "budget": self.budget.to_dict(),
@@ -353,3 +408,28 @@ class ResearchLoop:
             "confirmed": len(self.queue.by_status(CONFIRMED)),
             "contested_count": len(self.queue.by_status(CONTESTED)),
         }
+
+
+def _as_data(node: Any) -> Any:
+    """Anything, as something json.dumps() will accept.
+
+    Deliberately recursive and defensive. A report that crashes while being
+    written is worse than one that never starts: the destination has already
+    been opened and truncated, so the user is left with a half-written file that
+    looks like output. Better to degrade one unexpected object to its repr than
+    to lose the whole run.
+    """
+    if node is None or isinstance(node, (str, int, float, bool)):
+        return node
+    if hasattr(node, "to_dict"):
+        try:
+            return _as_data(node.to_dict())
+        except Exception:  # noqa: BLE001
+            return repr(node)
+    if isinstance(node, dict):
+        return {str(k): _as_data(v) for k, v in node.items()}
+    if isinstance(node, (list, tuple, set)):
+        return [_as_data(v) for v in node]
+    if is_dataclass(node) and not isinstance(node, type):
+        return _as_data(asdict(node))
+    return repr(node)

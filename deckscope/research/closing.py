@@ -20,14 +20,23 @@ failures:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, Tuple
 from urllib.parse import urlparse
 
 from .findings import Finding
+from .metrics import comparable, to_annual
 from .questions import CONFIRMED, CONTESTED, UNANSWERABLE
 
 #: How far apart two magnitudes may be and still count as agreeing.
 AGREEMENT_TOLERANCE = 1.35
+
+#: How two findings stand to each other. INCOMPARABLE is the one that was
+#: missing: two numbers measuring different things are neither corroboration
+#: nor contradiction, and collapsing that into a boolean is how a market size
+#: and a funding round confirmed each other.
+AGREE = "agree"
+DISAGREE = "disagree"
+INCOMPARABLE = "incomparable"
 
 
 @dataclass
@@ -70,19 +79,60 @@ def independent_domains(findings: Sequence[Finding], lookup) -> List[str]:
     return domains
 
 
-def _agree(a: Finding, b: Finding) -> bool:
-    """Whether two findings say the same thing."""
+def relation(a: Finding, b: Finding) -> Tuple[str, str]:
+    """How two findings stand to each other: agree, disagree, or incomparable.
+
+    Three outcomes, not two. That third one is the whole point of this function.
+
+    An audit fed the previous version "The market is $7 billion" and "A
+    competitor raised $7.2 billion" from two independent domains and got back
+    CONFIRMED. Both were dollars, and they were within 35% of each other, and
+    that was the entire test. They agreed on nothing — one is an industry, the
+    other is a funding round.
+
+    Magnitudes cannot agree. Only claims can. So the metric identity is checked
+    first, and when two findings are not about the same thing they are
+    `INCOMPARABLE` — which is neither corroboration nor contradiction, and must
+    not be reported as either.
+    """
+    ma, mb = getattr(a, "metric", None), getattr(b, "metric", None)
+    if ma is not None and mb is not None:
+        ok, why = comparable(ma, mb)
+        if not ok:
+            return INCOMPARABLE, why
+
     if a.value is None or b.value is None:
         # No magnitude to compare: fall back to whether the statements are
         # plainly the same shape. Deliberately conservative — unknown is not
         # agreement.
-        return a.statement.strip().lower() == b.statement.strip().lower()
+        same = a.statement.strip().lower() == b.statement.strip().lower()
+        return (AGREE, "identical statements") if same else \
+            (INCOMPARABLE, "neither carries a figure to compare")
+
     if a.unit and b.unit and a.unit != b.unit:
-        return False
-    lo, hi = sorted((abs(a.value), abs(b.value)))
+        return INCOMPARABLE, f"different units ({a.unit} and {b.unit})"
+
+    # Put both on an annual footing before comparing. "$2,000 per month" and
+    # "$19,000 average annual contract value" are not a contradiction — the
+    # first is $24,000 a year. The shipped demo reported exactly that pair as
+    # contradicted, which the audit caught.
+    va, vb = abs(a.value), abs(b.value)
+    if ma is not None and mb is not None:
+        va = abs(to_annual(a.value, ma) or va)
+        vb = abs(to_annual(b.value, mb) or vb)
+
+    lo, hi = sorted((va, vb))
     if lo == 0:
-        return hi == 0
-    return (hi / lo) <= AGREEMENT_TOLERANCE
+        return (AGREE, "both zero") if hi == 0 else \
+            (DISAGREE, "one is zero and the other is not")
+    if (hi / lo) <= AGREEMENT_TOLERANCE:
+        return AGREE, f"within {int((AGREEMENT_TOLERANCE - 1) * 100)}%"
+    return DISAGREE, f"{hi / lo:.1f}x apart"
+
+
+def _agree(a: Finding, b: Finding) -> bool:
+    """Kept for callers that only need the boolean. Incomparable is not agreement."""
+    return relation(a, b)[0] == AGREE
 
 
 def decide(findings: Sequence[Finding], lookup, *,
@@ -113,10 +163,13 @@ def decide(findings: Sequence[Finding], lookup, *,
                        + (absent[0].statement or "nothing published"))
 
     if len(grounded) >= 2:
-        disagreeing = [(a, b) for i, a in enumerate(grounded)
-                       for b in grounded[i + 1:] if not _agree(a, b)]
-        agreeing = [(a, b) for i, a in enumerate(grounded)
-                    for b in grounded[i + 1:] if _agree(a, b)]
+        pairs = [(a, b, *relation(a, b)) for i, a in enumerate(grounded)
+                 for b in grounded[i + 1:]]
+        # `not agreeing` is NOT the same as disagreeing. Pairs that measure
+        # different things fall out of both lists and settle nothing, which is
+        # the correct treatment and was the bug.
+        agreeing = [(a, b) for a, b, rel, _ in pairs if rel == AGREE]
+        disagreeing = [(a, b) for a, b, rel, _ in pairs if rel == DISAGREE]
 
         if agreeing:
             for a, b in agreeing:

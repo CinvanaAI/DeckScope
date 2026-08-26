@@ -94,6 +94,11 @@ class Finding:
     #: Claim IDs from the deck that this finding speaks to.
     claims: List[str] = field(default_factory=list)
     note: str = ""
+    #: What this number is ABOUT — subject, measure, basis, period. Filled in at
+    #: registration. Without it, "the market is $7B" and "a competitor raised
+    #: $7.2B" agree, because both are dollars within tolerance. Agreement is a
+    #: property of claims, not of magnitudes.
+    metric: Optional[Any] = None
 
     @property
     def sourced(self) -> bool:
@@ -141,7 +146,11 @@ class FindingRegistry:
                     existing.claims.append(cid)
             return existing
 
+        from .metrics import classify
+
         f = Finding(
+            metric=classify(statement, unit=unit, value_text=str(value_text or ""),
+                            as_of=as_of),
             id=f"F{len(self.findings) + 1}",
             statement=(statement or "").strip(),
             question_id=question_id, beat=beat,
