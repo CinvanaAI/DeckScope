@@ -123,12 +123,23 @@ class MetricID:
     basis: str = NO_BASIS
     #: Content words naming the thing measured, normalized and sorted.
     subject: frozenset = frozenset()
+    #: The named thing the statement is *about*, when it opens with one — the
+    #: leading run of capitalised words, lowercased and split.
+    #:
+    #: `subject` alone cannot carry this. It is a bag of content words, so
+    #: "WS Audiology holds approximately 27% of the global hearing aid market"
+    #: and "GN Group holds approximately 17% of the global hearing aid market"
+    #: overlap on eight words and differ on two, which reads as the same
+    #: subject at any sane threshold. In a share table that is the whole
+    #: question: every row shares the boilerplate and differs only in the name.
+    entity: frozenset = frozenset()
     #: The year the figure is true of, when one is stated.
     period: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
         d["subject"] = sorted(self.subject)
+        d["entity"] = sorted(self.entity)
         return d
 
     @property
@@ -173,7 +184,40 @@ def classify(statement: str, *, unit: str = "", value_text: str = "",
         w for w in re.findall(r"[a-z][a-z0-9-]{2,}", text) if w not in _STOP)
 
     return MetricID(measure=measure, unit=_norm_unit(unit or value_text),
-                    basis=basis, subject=subject, period=period)
+                    basis=basis, subject=subject, period=period,
+                    entity=_entity(statement))
+
+
+#: Words that open a sentence in capitals without naming anything.
+_NOT_A_NAME = frozenset((
+    "the", "a", "an", "this", "that", "these", "those", "market", "markets",
+    "global", "worldwide", "total", "revenue", "sales", "share", "shares",
+    "growth", "industry", "sector", "company", "companies", "it", "its",
+    "there", "no", "not", "in", "on", "at", "by", "for", "of", "and", "or",
+    "per", "about", "approximately", "around", "over", "under", "between",
+    "one", "two", "three", "four", "five", "top", "leading", "largest",
+))
+
+#: The leading run of capitalised tokens. Anchored at the start because that is
+#: where the subject of an English declarative sentence is, and the reader is
+#: told to write one plain sentence of what a source establishes.
+_LEADING_CAPS = re.compile(r"^\W*((?:[A-Z][\w&./'-]*)(?:\s+[A-Z][\w&./'-]*)*)")
+
+
+def _entity(statement: str) -> frozenset:
+    """The named thing a statement opens with, if it opens with one.
+
+    Returns an empty set for anything generic, which keeps the check
+    permissive: an empty entity never blocks a comparison. Only two findings
+    that each name something, and name different things, are separated.
+    """
+    match = _LEADING_CAPS.match(statement or "")
+    if not match:
+        return frozenset()
+    words = frozenset(w.lower().strip(".,;:") for w in match.group(1).split())
+    words = frozenset(w for w in words if w and w not in _NOT_A_NAME)
+    # A single letter or digit run is noise, not a name.
+    return frozenset(w for w in words if len(w) > 1 and not w.isdigit())
 
 
 def _norm_unit(raw: str) -> str:
@@ -230,6 +274,14 @@ def comparable(a: MetricID, b: MetricID) -> tuple:
     # a bare "Market is $7B" — there is nothing to disagree with, and refusing
     # would make the check fire hardest on the thinnest statements, which is
     # backwards.
+    # Two findings that each name something, and name different things, are
+    # about different things — however much boilerplate they share. Disjoint
+    # rather than unequal, so "Sonova" and "Sonova Holding AG" still compare.
+    if a.entity and b.entity and not (a.entity & b.entity):
+        return False, (f"one is about {' '.join(sorted(a.entity))} and the "
+                       f"other about {' '.join(sorted(b.entity))} — two "
+                       f"different subjects, not two views of one")
+
     if a.subject and b.subject:
         if _overlap(a.subject, b.subject) < SUBJECT_OVERLAP:
             return False, ("these describe different subjects; they share "

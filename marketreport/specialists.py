@@ -44,6 +44,10 @@ class Specialist:
     seeds: Sequence[str] = ()
     #: The beat each seed belongs to, same length as `seeds`.
     beats: Sequence[str] = ()
+    #: How this job goes wrong, in one or two sentences. Given to the question
+    #: generator so the opening questions are chosen to avoid the failure, and
+    #: checked in code afterwards wherever it is checkable.
+    refuse: str = ""
     #: Runs after the loop, before the shaper. Returns extra figures and
     #: caveats — the specialist's own analysis, in Python.
     check: Optional[Callable[..., Dict[str, Any]]] = None
@@ -280,6 +284,14 @@ MARKET_SHARE = register(Specialist(
     ),
     beats=("competitors", "competitors", "sizing", "sizing", "competitors",
            "economics"),
+    refuse=("Never mix a usage share with a sales share, or a unit share with "
+            "a revenue share, in one chart — they measure different "
+            "populations and the gap between them is usually larger than the "
+            "gap between competitors. Never blend two research firms' numbers "
+            "into a single series; they define the category differently. "
+            "Where the market name could mean two markets — the makers or the "
+            "sellers, the devices or the service — settle that first, because "
+            "every share figure downstream depends on it."),
     check=_market_share_check,
     iterations=14,
     answers=("Q5", "Q6"),
@@ -329,9 +341,36 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     question_text = f"{spec.job.capitalize()} — {market}" + (
         f" in {place}" if place else "")
 
+    # Ask the model what to ask, and fall back to the templates only if that
+    # fails. The templates were the whole opening move here until now, which
+    # made this door subject-blind: it asked the same six questions of every
+    # market, and one of them wants "the average selling price" of a subject
+    # that may not be sold in units at all. The `report` path was already
+    # generating its questions; this one was left behind, and it is the door
+    # people actually use.
+    #
+    # The templates also produce malformed English whenever the market name
+    # already contains its geography — a live run asked about "the hearing aid
+    # manufacturers worldwide market in worldwide", which is a worse search
+    # query than either half alone.
+    from .section_agent import _opening_questions
+    from .reports import Section
+
+    brief = Section(key=spec.name, title=spec.job.capitalize(),
+                    brief=spec.job, refuse=spec.refuse or "")
+    try:
+        rows = _opening_questions(section=brief, subject=market, place=place,
+                                  report=None, provider=provider, context={},
+                                  on_usage=on_usage)
+        source = "generated"
+    except Exception as exc:  # noqa: BLE001 - templates still research something
+        emit(f"{spec.name}: could not generate questions ({exc}); "
+             f"falling back to the templates")
+        rows, source = spec.questions(market, place), "template"
+
     queue = QuestionQueue()
-    queue.seed(spec.questions(market, place))
-    emit(f"{spec.name}: {len(queue.questions)} opening questions")
+    queue.seed(rows)
+    emit(f"{spec.name}: {len(queue.questions)} opening questions ({source})")
 
     findings = FindingRegistry()
     loop = ResearchLoop(

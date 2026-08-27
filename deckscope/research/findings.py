@@ -249,6 +249,8 @@ class FindingRegistry:
         disagreement — and so the same two numbers always produce the same
         result.
         """
+        from .metrics import comparable
+
         found = 0
         by_question: Dict[str, List[Finding]] = {}
         for f in self.findings:
@@ -259,6 +261,23 @@ class FindingRegistry:
                 for b in group[i + 1:]:
                     if a.unit and b.unit and a.unit != b.unit:
                         continue          # different units are not a disagreement
+
+                    # Sharing a question is not sharing a subject. One question
+                    # about who holds what share returns one finding per
+                    # company, and grouping on question_id alone made every
+                    # company's share "disagree" with every other company's.
+                    # Observed live: WS Audiology at 27% and GN at 17% were
+                    # reported as a contested pair that research had failed to
+                    # settle. They are not in conflict; they are two different
+                    # companies. `metric` was added to make agreement a
+                    # property of claims rather than of magnitudes, and this
+                    # pass — the one that decides what "contested" means — was
+                    # never switched over to it.
+                    if a.metric is not None and b.metric is not None:
+                        ok, _why = comparable(a.metric, b.metric)
+                        if not ok:
+                            continue
+
                     lo, hi = sorted((abs(a.value), abs(b.value)))
                     if lo == 0:
                         differs = hi != 0
