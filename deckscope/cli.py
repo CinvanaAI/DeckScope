@@ -277,6 +277,9 @@ def build_parser() -> argparse.ArgumentParser:
     report_cmd.add_argument("--save", default=None, metavar="FILE")
     report_cmd.add_argument("--plan", action="store_true",
                             help="Show what would be researched and stop")
+    report_cmd.add_argument("--demo", action="store_true",
+                            help="Replay real pages recorded 2026-08-27 with "
+                                 "the offline model — no keys, no network")
     report_cmd.add_argument("--json", action="store_true")
 
     panels_cmd = sub.add_parser(
@@ -587,11 +590,126 @@ def _run_report(args: Any) -> int:
         _out("  Nothing was researched. Drop --plan to run it.")
         return 0
 
-    _out("\n  Cannot run yet — the section agent is not wired to a model.")
-    _out(f"  'deckscope report {args.type} \"{args.subject}\" --plan' shows "
-         f"what it would research.")
-    del _json, build_report
-    return 4
+    from marketreport.library import Library
+    from marketreport.panel_render import panel_text
+    from marketreport.section_agent import make_section_agent
+    from .security.policy import SecurityPolicy
+
+    settings.load_env()
+    provider, researcher, problem = _research_tools(args)
+    if problem:
+        return problem
+
+    result = build_report(
+        report, args.subject, place=args.place,
+        run_section=make_section_agent(provider=provider,
+                                       researcher=researcher,
+                                       policy=SecurityPolicy()),
+        on_event=_out)
+    panels = result["panels"]
+
+    # Stored as they are produced. A report that cost a research budget and
+    # evaporated because the caller forgot to save it is the expensive kind of
+    # forgetting, and it is what puts the report in the UI.
+    stored = []
+    try:
+        stored = Library().save_all(panels, market=args.subject,
+                                    place=args.place, request=args.subject)
+    except OSError as exc:
+        _out(f"  could not store the report: {exc}")
+
+    if args.json:
+        _out(_json.dumps({"type": report.key, "subject": args.subject,
+                          "coverage": result["coverage"],
+                          "panels": [p.to_dict() for p in panels]},
+                         indent=2, default=str))
+    else:
+        for panel in panels:
+            _out("")
+            _out(panel_text(panel))
+        _out("")
+        stats = result["coverage"]
+        _out(f"  {stats['answered']} of {stats['sections']} sections "
+             f"established · {stats['checkable']} of {stats['figures']} "
+             f"figures traceable to a source")
+        for offer in result["upgrades"]:
+            _out(f"  {offer['title']} came back thin ({offer['established']}) "
+                 f"— {offer['sources']} publish this")
+    for ref in stored:
+        _out(f"  stored as {ref.id}")
+
+    if args.save:
+        from marketreport.document import infer_format, panel_document
+        from marketreport.panel_render import panel_markdown
+
+        fmt = infer_format(args.save, default="html")
+        title = f"{report.title} — {args.subject}" + (
+            f" in {args.place}" if args.place else "")
+        body = (panel_document(panels, title=title) if fmt == "html"
+                else "\n\n".join(panel_markdown(p) for p in panels)
+                if fmt == "md"
+                else _json.dumps([p.to_dict() for p in panels], indent=2,
+                                 default=str) if fmt == "json"
+                else "\n\n".join(panel_text(p) for p in panels))
+        try:
+            _write_text(body, args.save)
+        except OSError as exc:
+            _out(f"\n  Could not write {args.save}: {exc}")
+            return 5
+        _out(f"\n  Written to {args.save} ({fmt})")
+
+    return 0 if any(p.answered for p in panels) else 6
+
+
+def _research_tools(args: Any):
+    """The model and the search backend, or a message saying which is missing.
+
+    Shared by `ask` and `report` so one missing key produces the same
+    explanation whichever door the user came in through.
+    """
+    from .config import load_config
+    from .providers import get_provider
+    from .research.registry import get_researcher
+
+    if getattr(args, "demo", False):
+        from marketreport.demo_sources import NOTE, RecordedResearcher, covered
+        from .providers.mock_provider import MockProvider
+
+        subject = getattr(args, "subject", "") or getattr(args, "market", "")
+        if not covered(subject):
+            _out("")
+            _out(f"  The offline demo only has recorded pages for the mobile "
+                 f"phone market, and this is about '{subject}'.")
+            _out("  Running it would produce an empty report that reads like "
+                 "a real failure rather than a demo with the wrong subject.")
+            return None, None, 2
+        _out(f"  {NOTE}")
+        return MockProvider(), RecordedResearcher(), 0
+
+    config = load_config(getattr(args, "config", None) or None)
+    missing = []
+    provider = researcher = None
+    try:
+        provider = get_provider(config.provider)
+    except Exception as exc:  # noqa: BLE001
+        missing.append(f"no AI model is connected — {exc}")
+    try:
+        researcher = get_researcher(config.research, provider)
+    except Exception as exc:  # noqa: BLE001
+        missing.append(f"no search backend is connected — {exc}")
+
+    if missing:
+        _out("")
+        _out("  Not ready to research yet:" if len(missing) == 1
+             else "  Not ready to research yet — two things are missing:")
+        for problem in missing:
+            _out(f"    - {problem}")
+        _out("")
+        _out("  Run 'deckscope setup' to connect them.")
+        _out("  '--plan' works with neither and shows what would be "
+             "researched.")
+        return None, None, 4
+    return provider, researcher, 0
 
 
 def _panels(args: Any) -> int:

@@ -96,9 +96,13 @@ Trust boundary — not negotiable:
 
 SHAPER_USER = """Question: {question}
 
+{job}
+
 {material}
 
-Decide what the answer is and what form carries it."""
+Decide what the answer is and what form carries it. Shape it for THIS
+section's job — the findings may support more than one answer, and only the
+part that answers the question above belongs here."""
 
 
 def publisher(registry: Any, source_id: str) -> str:
@@ -177,9 +181,15 @@ def make_shaper(provider: Any, *, on_usage: Optional[Callable] = None,
     from deckscope.security.sanitizer import fence
 
     def shape(*, question: str, findings: Sequence[Any],
-              registry: Any = None) -> Dict[str, Any]:
+              registry: Any = None, job: str = "") -> Dict[str, Any]:
+        # The section's job goes in, because without it the shaper produced
+        # the same panel for every section of a report — "which market is
+        # this" came back as a market-share chart, because that is what the
+        # findings supported and nothing said which part of them this section
+        # was for.
         user = SHAPER_USER.format(
             question=question,
+            job=(f"What this section must establish:\n{job}" if job else ""),
             material=fence(_finding_block(findings, registry), "FINDINGS"))
         payload = provider.complete_json(SHAPER_SYSTEM, user,
                                          temperature=temperature,

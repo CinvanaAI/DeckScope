@@ -1082,3 +1082,100 @@ class P13_TheOfflineRun(unittest.TestCase):
         for junk in ("Worldwide", "The", "Global"):
             with self.subTest(label=junk):
                 self.assertNotIn(junk, drawn)
+
+
+class P14_TheSectionAgent(unittest.TestCase):
+    """The function everything else was built around the absence of: a section
+    brief in, a panel out."""
+
+    def _run(self, report_key="market-share", subject="cell phones"):
+        from deckscope.providers.mock_provider import MockProvider
+        from marketreport.demo_sources import RecordedResearcher
+        from marketreport.reports import build_report, get
+        from marketreport.section_agent import make_section_agent
+
+        return build_report(
+            get(report_key), subject,
+            run_section=make_section_agent(provider=MockProvider(),
+                                           researcher=RecordedResearcher()),
+            on_event=lambda m: None)
+
+    def test_a_report_runs_end_to_end(self):
+        result = self._run()
+        self.assertEqual(4, len(result["panels"]))
+        self.assertTrue(all(p.answered for p in result["panels"]))
+
+    def test_every_panel_is_structurally_valid(self):
+        for panel in self._run()["panels"]:
+            with self.subTest(section=panel.agent):
+                self.assertEqual([], panel.problems())
+
+    def test_each_section_answers_its_own_question(self):
+        """The shaper was not told which section it was shaping for, so it
+        returned the same market-share chart for every section — including
+        "which market is this", which is definitional and has no chart."""
+        panels = {p.agent: p for p in self._run()["panels"]}
+        self.assertEqual(set(), {"boundary", "units", "revenue"} - set(panels))
+        units = panels["units"]
+        revenue = panels["revenue"]
+        self.assertEqual(["Units"], [s.label for s in units.series])
+        self.assertEqual(["Revenue"], [s.label for s in revenue.series])
+
+    def test_the_definitional_section_draws_no_chart(self):
+        panels = {p.agent: p for p in self._run()["panels"]}
+        self.assertEqual([], panels["boundary"].series)
+        self.assertTrue(panels["boundary"].figures)
+
+    def test_opening_questions_are_generated_from_the_brief(self):
+        """A hand-written seed list is a prompt wearing architecture's
+        clothes — it cannot be surprised and it is subject-blind."""
+        panels = self._run()["panels"]
+        opened = [q for p in panels for q in p.provenance.get("opened") or []]
+        self.assertGreater(len(opened), 6)
+        for question in opened:
+            with self.subTest(q=question[:40]):
+                self.assertIn("cell phone", question.lower())
+
+    def test_the_questions_differ_between_sections(self):
+        panels = {p.agent: p for p in self._run()["panels"]}
+        units = set(panels["units"].provenance.get("opened") or [])
+        revenue = set(panels["revenue"].provenance.get("opened") or [])
+        self.assertTrue(units)
+        self.assertEqual(set(), units & revenue)
+
+    def test_a_failed_opener_still_opens_something(self):
+        """A section that refuses to open because the opener stage failed
+        reports as an absent fact rather than as the outage it is."""
+        from marketreport.reports import get
+        from marketreport.section_agent import _opening_questions
+
+        class Broken:
+            def complete_json(self, *a, **k):
+                raise RuntimeError("no model")
+
+        spec = get("market-share").sections[1]
+        rows = _opening_questions(section=spec, subject="cell phones",
+                                  place="", report=None, provider=Broken(),
+                                  context={})
+        self.assertEqual(1, len(rows))
+        self.assertIn("cell phones", rows[0]["text"])
+
+    def test_the_run_records_what_it_opened_and_spent(self):
+        panel = self._run()["panels"][0]
+        for key in ("opened", "findings", "retrievals", "iterations"):
+            with self.subTest(key=key):
+                self.assertIn(key, panel.provenance)
+
+    def test_a_thin_section_gets_the_upgrade_offer(self):
+        result = self._run()
+        offers = {o["section"] for o in result["upgrades"]}
+        self.assertTrue(offers)
+        for offer in result["upgrades"]:
+            self.assertTrue(offer["sources"])
+
+    def test_coverage_is_counted_not_asserted(self):
+        stats = self._run()["coverage"]
+        self.assertEqual(4, stats["sections"])
+        self.assertEqual([], stats["missing_required"])
+        self.assertGreater(stats["figures"], 0)
+        self.assertLessEqual(stats["checkable"], stats["figures"])

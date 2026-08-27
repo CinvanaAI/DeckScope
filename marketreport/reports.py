@@ -475,7 +475,8 @@ def build_report(report: ReportType, subject: str, *, place: str = "",
         missing = [k for k in spec.needs if k not in context]
         try:
             panel = run_section(section=spec, subject=subject, place=place,
-                                context=context, report=report)
+                                context=context, report=report,
+                                on_event=emit)
         except Exception as exc:  # noqa: BLE001 - one bad section is not a run
             panel = unanswered(spec.title,
                                f"the {spec.key} section failed: {exc}",

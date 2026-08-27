@@ -87,6 +87,10 @@ class MockProvider(LLMProvider):
             body = json.dumps(self._clamp_citations(_read_for(joined), allowed))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
+        if "You are opening a research task" in system:
+            body = json.dumps(_open_for(joined))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "You decide what shape an answer has" in system:
             body = json.dumps(_shape_for(joined))
             return Completion(text=body, model=self.model,
@@ -1619,6 +1623,10 @@ def _publisher_in(sources: str) -> str:
     return match.group(1).strip() if match else (sources or "").split(",")[0].strip()
 
 
+_JOB = re.compile(r"What this section must establish:\s*\n(.+?)(?:\n\n|$)",
+                  re.S)
+
+
 def _shape_for(prompt: str) -> dict:
     """Stand in for a model deciding what shape an answer has.
 
@@ -1638,6 +1646,22 @@ def _shape_for(prompt: str) -> dict:
         rows.append({"id": fid, "statement": statement.strip(),
                      "value": value.strip(), "unit": unit.strip(),
                      "as_of": as_of.strip(), "sources": sources.strip()})
+
+    # Shape for THIS section, not for whatever the findings happen to support.
+    # Without this the mock returned an identical share chart for every
+    # section of a report — including "which market is this", which is a
+    # definitional question and has no chart at all.
+    job = (_JOB.search(prompt) or [None, ""])[1].lower()
+    wants_units = "ships or sells the most" in job or "units" in job[:60]
+    wants_revenue = "takes the most money" in job or "revenue" in job[:60]
+    definitional = ("include and exclude" in job or "inside this market" in job
+                    or "what market is meant" in job)
+    if definitional:
+        return {"headline": _definition_headline(rows), "form": "stat",
+                "series": [],
+                "figures": [{"label": r["statement"][:48], "finding_id": r["id"]}
+                            for r in rows[:4]],
+                "caveats": []}
     if not rows:
         return {"headline": "", "form": "table", "series": [], "figures": [],
                 "caveats": ["nothing was established to shape"]}
@@ -1714,6 +1738,11 @@ def _shape_for(prompt: str) -> dict:
             unique.append(row)
         groups[name] = unique
 
+    if wants_units:
+        groups = {k: v for k, v in groups.items() if k == "Units"} or groups
+    elif wants_revenue:
+        groups = {k: v for k, v in groups.items() if k == "Revenue"} or groups
+
     series = []
     for name, members in list(groups.items())[:2]:
         series.append({
@@ -1740,3 +1769,67 @@ def _shape_for(prompt: str) -> dict:
             "figures": [{"label": row["statement"][:48], "finding_id": row["id"]}
                         for row in leftovers[:4]],
             "caveats": []}
+
+
+def _definition_headline(rows: list) -> str:
+    """A definitional section states what the market is, not who leads it."""
+    if not rows:
+        return ""
+    return ("This market is measured by several trackers who do not agree on "
+            "its boundary; the figures below are what each one publishes")
+
+
+# ------------------------------------------------------------- the opener
+
+_SUBJECT = re.compile(r"Subject:\s*(.+?)\s*$", re.M)
+_SECTION = re.compile(r"^Section:\s*(.+?)\s*$", re.M)
+
+
+def _open_for(prompt: str) -> dict:
+    """Stand in for a model writing the opening questions for a section.
+
+    Reads the section title and the subject out of the prompt and composes
+    questions from them, rather than returning a canned list. A canned opener
+    would make every section of every report ask the same thing, which is
+    precisely the hand-written seed list this stage exists to replace — the
+    mock would then be demonstrating the bug instead of the fix.
+    """
+    subject = (_SUBJECT.search(prompt) or [None, "this market"])[1]
+    title = (_SECTION.search(prompt) or [None, ""])[1].lower()
+
+    if "which market" in title or "boundary" in title:
+        rows = [
+            (f"what does the {subject} market include and exclude",
+             "competitors"),
+            (f"is {subject} one market or several", "competitors"),
+            (f"which research firms publish {subject} market data",
+             "competitors"),
+        ]
+    elif "units" in title:
+        rows = [
+            (f"{subject} unit shipments market share by vendor latest quarter",
+             "competitors"),
+            (f"how many units of {subject} were sold in the latest quarter",
+             "sizing"),
+            (f"{subject} vendor ranking by shipments", "competitors"),
+        ]
+    elif "revenue" in title:
+        rows = [
+            (f"{subject} revenue share by vendor latest quarter", "competitors"),
+            (f"total {subject} market revenue latest quarter", "sizing"),
+            (f"{subject} average selling price by vendor", "economics"),
+        ]
+    elif "differ" in title or "why" in title:
+        rows = [
+            (f"why do {subject} unit share and revenue share differ",
+             "economics"),
+            (f"{subject} average selling price comparison between vendors",
+             "economics"),
+        ]
+    else:
+        rows = [(f"{title} for {subject}", "sizing")]
+
+    return {"questions": [
+        {"text": text, "beat": beat, "weight": "high",
+         "because": "opened from the section brief"}
+        for text, beat in rows]}
