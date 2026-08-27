@@ -123,12 +123,25 @@ def _geography(state_fips: str = "", county_fips: str = "") -> Tuple[str, str]:
     return "us:1", ""
 
 
+#: CBP publishes counts per employee-size class under this variable. The band
+#: labels are the API's own, not ours.
+SIZE_BAND_CODES = {
+    "1-4": "1", "5-9": "2", "10-19": "3", "20-49": "4", "50-99": "5",
+    "100-249": "6", "250-499": "7", "500-999": "8", "1000+": "9",
+}
+
+
 def establishment_count(naics: str, *, state_fips: str = "",
-                        county_fips: str = "", year: int = CBP_YEAR) -> Term:
+                        county_fips: str = "", year: int = CBP_YEAR,
+                        size_band: str = "") -> Term:
     """How many businesses operate in this industry, here.
 
     The count Klaviyo bought. Free, by industry, by geography, by employee-size
     band, and more authoritative than any of the vendors selling it.
+
+    `size_band` narrows to one employee-size class, which is what makes a
+    concentration estimate possible without firm-level revenue: the shape of the
+    size distribution separates a fragmented trade from a concentrated one.
     """
     if not naics or not (4 <= len(naics) <= 6) or not naics.isdigit():
         raise Unavailable(
@@ -141,6 +154,13 @@ def establishment_count(naics: str, *, state_fips: str = "",
         "get": "NAME,ESTAB,EMP,PAYANN", "NAICS2017": naics, "for": for_clause}
     if in_clause:
         params["in"] = in_clause
+    if size_band:
+        code = SIZE_BAND_CODES.get(size_band)
+        if code is None:
+            raise Unavailable(
+                f"{size_band!r} is not a County Business Patterns size class. "
+                f"Known: {', '.join(SIZE_BAND_CODES)}")
+        params["EMPSZES"] = code
 
     rows = _get(CBP_BASE.format(year=year), params)
     header, data = rows[0], rows[1:]
@@ -158,7 +178,8 @@ def establishment_count(naics: str, *, state_fips: str = "",
         as_of=str(year), source=f"Census County Business Patterns {year}",
         source_url=f"{CBP_BASE.format(year=year)}?NAICS2017={naics}",
         method=MEASURED,
-        note=f"NAICS {naics}, {label}")
+        note=f"NAICS {naics}, {label}"
+             + (f", {size_band} employees" if size_band else ""))
 
 
 def revenue_per_establishment(naics: str, *, state_fips: str = "",

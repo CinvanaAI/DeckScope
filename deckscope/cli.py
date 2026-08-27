@@ -248,9 +248,33 @@ def build_parser() -> argparse.ArgumentParser:
                                "mechanics.")
     research.add_argument("--config", default=None)
 
+    market = sub.add_parser(
+        "market",
+        help="The full market report: eleven questions, answered or explained",
+        description=(
+            "Produces the document an investment bank produces once, at "
+            "enormous cost, when a company goes public — the industry section "
+            "of an S-1 — for a market you name.\n\n"
+            "It answers eleven standing questions drawn from the intersection "
+            "of two professional formats: filed S-1 industry sections and the "
+            "IBISWorld report structure. A reader who finishes it with "
+            "questions has been failed by it, so the report states its own "
+            "completeness at the top and lists every question it could not "
+            "answer, with the reason, at the bottom."))
+    market.add_argument("naics", help="4-6 digit NAICS industry code")
+    market.add_argument("--label", default="", help="A name for this market")
+    market.add_argument("--state", default="", metavar="FIPS")
+    market.add_argument("--county", default="", metavar="FIPS")
+    market.add_argument("--customer", default="",
+                        help="Who buys — narrows the boundary")
+    market.add_argument("--save", default=None, metavar="FILE",
+                        help="Write the answer set as JSON")
+    market.add_argument("--json", action="store_true",
+                        help="Print the machine-readable summary instead")
+
     size = sub.add_parser(
         "size",
-        help="Size a market from government data, showing the arithmetic",
+        help="Just the sizing arithmetic, without the rest of the report",
         description=(
             "Counts establishments and industry revenue from the US Census, and "
             "reports the market nationally, by state and by county — each ring "
@@ -327,11 +351,48 @@ def main(argv: Optional[List[str]] = None) -> int:
     if cmd == "size":
         return _size(args)
 
+    if cmd == "market":
+        return _market(args)
+
     build_parser().print_help()
     return 1
 
 
 # ------------------------------------------------------------------ actions
+
+def _market(args: Any) -> int:
+    """The full report. Eleven questions, each answered or explained."""
+    import json as _json
+
+    import marketreport.agents  # noqa: F401 - registers the agents
+    from marketreport.render import summary, text
+    from marketreport.report import MarketDefinition, build
+
+    settings.load_env()
+    definition = MarketDefinition(
+        label=args.label or f"NAICS {args.naics}", naics=args.naics,
+        state_fips=args.state, county_fips=args.county, customer=args.customer)
+
+    answers = build(definition,
+                    on_event=(lambda m: None) if args.json else _out)
+    if args.json:
+        _out(_json.dumps(summary(answers), indent=2, default=str))
+    else:
+        _out("")
+        _out(text(answers))
+
+    if args.save:
+        try:
+            _save_json(answers.to_dict(), args.save)
+        except TypeError as exc:
+            _out(f"\nCould not write {args.save}: {exc}")
+            return 5
+        _out(f"\nAnswer set written to {args.save}")
+
+    # An incomplete report is a real output and not a success. A script driving
+    # this should be able to tell the difference without parsing prose.
+    return 0 if answers.closure()["complete"] else 6
+
 
 def _size(args: Any) -> int:
     """Size one market from Census data, nationally then narrowing."""
