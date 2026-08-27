@@ -251,6 +251,30 @@ def build_parser() -> argparse.ArgumentParser:
                                "mechanics.")
     research.add_argument("--config", default=None)
 
+    panels_cmd = sub.add_parser(
+        "panels",
+        help="List, show and re-open panels you have already produced",
+        description=(
+            "Every panel is written to disk when it is made, so a question "
+            "answered once does not have to be paid for twice.\n\n"
+            "  deckscope panels                       list what you have\n"
+            "  deckscope panels --show <id>           print one\n"
+            "  deckscope panels --show <id> --save p.html\n"
+            "  deckscope panels --market \"cell phones\"\n\n"
+            "Re-asking a question stores a NEW panel rather than replacing the "
+            "old one: two runs of the same question are different panels "
+            "because the market moved, and keeping both is what makes the "
+            "change readable."))
+    panels_cmd.add_argument("--show", default=None, metavar="ID",
+                            help="Print one panel by id")
+    panels_cmd.add_argument("--market", default="",
+                            help="Only panels matching this market")
+    panels_cmd.add_argument("--save", default=None, metavar="FILE",
+                            help="With --show: write it to a file")
+    panels_cmd.add_argument("--delete", default=None, metavar="ID",
+                            help="Remove one panel from the library")
+    panels_cmd.add_argument("--limit", type=int, default=40)
+
     ask = sub.add_parser(
         "ask",
         help="Ask about a market in plain words and get panels back",
@@ -419,6 +443,9 @@ def main(argv: Optional[List[str]] = None) -> int:
              "      This name still works and will keep working.\n")
         return _size(args)
 
+    if cmd == "panels":
+        return _panels(args)
+
     if cmd == "ask":
         return _ask_market(args)
 
@@ -446,6 +473,73 @@ def _ask(question: str, options: Any = ()) -> int:
     _out("")
     _out("  Re-run with one of these, or give the NAICS code directly.")
     return 7
+
+
+def _panels(args: Any) -> int:
+    """The library: what has already been produced."""
+    from marketreport.document import infer_format, panel_document
+    from marketreport.library import Library
+    from marketreport.panel_render import (panel_markdown, panel_text)
+
+    shelf = Library()
+
+    if args.delete:
+        if shelf.delete(args.delete):
+            _out(f"  Removed {args.delete}")
+            return 0
+        _out(f"  No panel with id {args.delete}")
+        return 1
+
+    if args.show:
+        panel = shelf.load(args.show)
+        if panel is None:
+            _out(f"  No panel with id {args.show}")
+            _out("  Run 'deckscope panels' to see what is stored.")
+            return 1
+        if args.save:
+            fmt = infer_format(args.save, default="html")
+            body = (panel_document([panel], title=panel.headline or "Panel")
+                    if fmt == "html" else
+                    panel_markdown(panel) if fmt == "md" else
+                    panel_text(panel))
+            try:
+                _write_text(body, args.save)
+            except OSError as exc:
+                _out(f"  Could not write {args.save}: {exc}")
+                return 5
+            _out(f"  Written to {args.save} ({fmt})")
+            return 0
+        _out("")
+        _out(panel_text(panel))
+        related = shelf.related(args.show)
+        if related:
+            _out(f"  {len(related)} earlier answer(s) to this same question:")
+            for ref in related[:5]:
+                _out(f"    {ref.id}  {ref.generated[:10]}  "
+                     f"{ref.headline[:52]}")
+            _out("  Compare them to see what moved.")
+        return 0
+
+    refs = shelf.list(limit=args.limit, market=args.market)
+    if not refs:
+        _out("")
+        _out("  No panels stored yet.")
+        _out("  'deckscope ask \"market share of cell phones in Ireland\"' "
+             "makes one.")
+        return 0
+
+    _out("")
+    _out(f"  {len(refs)} panel(s), newest first:")
+    _out("")
+    for ref in refs:
+        state = "" if ref.answered else "  (not established)"
+        _out(f"  {ref.generated[:10]}  {ref.id}")
+        _out(f"    {(ref.headline or ref.question)[:66]}{state}")
+        _out(f"    {ref.form} · {ref.checkable}/{ref.figures} figures "
+             f"checkable · {', '.join(ref.sources[:2]) or 'no sources named'}")
+        _out("")
+    _out("  'deckscope panels --show <id>' prints one.")
+    return 0
 
 
 def _ask_market(args: Any) -> int:
@@ -518,6 +612,8 @@ def _ask_market(args: Any) -> int:
     result = answer(args.question, provider=provider, researcher=researcher,
                     policy=SecurityPolicy(), on_event=_out)
     panels = result["panels"]
+    for ref in result.get("stored") or []:
+        _out(f"  stored as {ref.id}")
 
     if args.json:
         _out(_json.dumps({"request": result["request"].__dict__,

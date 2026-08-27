@@ -153,7 +153,18 @@ class Handler(BaseHTTPRequestHandler):
         # The page itself is served unauthenticated — it contains no data, only
         # the shell. Everything it then calls requires the token it was given.
         if path in ("/", "/index.html"):
+            # The panel stylesheet is appended rather than duplicated, so a
+            # panel drawn in the app window and the same panel saved to a file
+            # cannot drift apart. The variable block maps the app's palette
+            # onto the names the panel CSS uses.
+            from marketreport.panel_render import PANEL_CSS
+
             body = PAGE.replace("__DECKSCOPE_TOKEN__", SESSION_TOKEN)
+            body = body.replace(
+                "/*__PANEL_CSS__*/",
+                ":root{--paper:var(--panel);--surface:var(--bg);"
+                "--ok:var(--good);--ok-bg:transparent;--warn-bg:transparent}"
+                + PANEL_CSS)
             return self._send(200, body.encode("utf-8"))
 
         if not self._token_ok(query):
@@ -259,6 +270,12 @@ class Handler(BaseHTTPRequestHandler):
             return self._open(payload)
         if route.path == "/api/market":
             return self._market(payload)
+
+        if route.path == "/api/panels":
+            return self._panels(payload)
+
+        if route.path == "/api/panel":
+            return self._panel(payload)
 
         if route.path == "/api/run":
             return self._run(payload)
@@ -487,6 +504,40 @@ class Handler(BaseHTTPRequestHandler):
                                 "md": markdown(answers)}
         return self._json(payload)
 
+    def _panels(self, payload: Dict[str, Any]) -> None:
+        """The library listing.
+
+        Reads short headers rather than whole records, so a gallery of two
+        hundred panels does not load two hundred full documents to draw a list.
+        """
+        from marketreport.library import Library
+
+        try:
+            refs = Library().list(limit=int(payload.get("limit") or 60),
+                                  market=str(payload.get("market") or ""))
+        except Exception as exc:  # noqa: BLE001
+            return self._json({"error": f"Could not read the library: {exc}"},
+                              500)
+        return self._json({"panels": [r.to_dict() for r in refs]})
+
+    def _panel(self, payload: Dict[str, Any]) -> None:
+        """One stored panel, rendered. Re-runs nothing."""
+        from marketreport.library import Library
+        from marketreport.panel_render import panel_html
+
+        panel_id = str(payload.get("id") or "")
+        shelf = Library()
+        panel = shelf.load(panel_id)
+        if panel is None:
+            return self._json({"error": "No panel with that id. It may have "
+                                        "been deleted."}, 404)
+        return self._json({
+            "id": panel_id,
+            "html": panel_html(panel),
+            "panel": panel.to_dict(),
+            "related": [r.to_dict() for r in shelf.related(panel_id)],
+        })
+
     def _run(self, payload: Dict[str, Any]) -> None:
         deck = (payload.get("deck") or "").strip().strip('"')
         if not deck and not payload.get("demo"):
@@ -693,6 +744,7 @@ PAGE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);
 font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
 .wrap{max-width:820px;margin:0 auto;padding:36px 22px 80px}
+/*__PANEL_CSS__*/
 h1{font-size:27px;margin:0 0 4px;letter-spacing:-.02em}
 .sub{color:var(--muted);margin-bottom:26px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
@@ -802,6 +854,19 @@ a pitch deck against that market and show where the two disagree.</div>
   <div id="m-out"></div>
 </div>
 
+<div class="card">
+  <h2 style="margin-top:0">Panels you have made</h2>
+  <p class="hint">Every panel is kept when it is produced, so a question
+  answered once does not have to be paid for twice. Re-asking stores a new one
+  beside the old rather than replacing it &mdash; two runs of the same question
+  are different answers because the market moved, and keeping both is what
+  makes the change readable.</p>
+  <button class="ghost" onclick="loadPanels()">Show my panels</button>
+  <p id="p-note" class="hint"></p>
+  <div id="p-list"></div>
+  <div id="p-view"></div>
+</div>
+
 <div id="unconfigured" class="card hidden">
   <b>Not set up yet.</b>
   <p class="hint">Open a terminal and run <code>deckscope setup</code>, or press the
@@ -907,6 +972,64 @@ async function runMarket(demo){
   } finally {
     $('#m-go').disabled = false;
   }
+}
+
+// The library. A stored panel is re-rendered, never re-researched — which is
+// the difference between a record and a rendering, and the thing that lets two
+// people looking at the same panel see the same panel.
+async function loadPanels(){
+  const note = $('#p-note'), list = $('#p-list'), view = $('#p-view');
+  note.textContent = 'Reading…'; list.textContent = ''; view.textContent = '';
+  try {
+    const res = await api('/api/panels', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({limit: 60})});
+    const data = await res.json();
+    if(!res.ok){ note.textContent = data.error || 'Failed.'; return; }
+    if(!data.panels.length){
+      note.textContent = 'Nothing stored yet. Ask for a market above.';
+      return;
+    }
+    note.textContent = data.panels.length + ' stored';
+    data.panels.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'card';
+      row.style.cssText = 'margin:8px 0;cursor:pointer';
+      row.onclick = () => openPanel(p.id);
+      const head = document.createElement('b');
+      head.textContent = p.headline || p.question;
+      row.appendChild(head);
+      const meta = document.createElement('p');
+      meta.className = 'hint';
+      meta.style.margin = '4px 0 0';
+      meta.textContent = (p.generated || '').slice(0,10) + ' · ' + p.form
+        + ' · ' + p.checkable + '/' + p.figures + ' figures checkable'
+        + (p.answered ? '' : ' · not established');
+      row.appendChild(meta);
+      list.appendChild(row);
+    });
+  } catch (err) { note.textContent = 'Failed: ' + err; }
+}
+
+async function openPanel(id){
+  const view = $('#p-view');
+  view.textContent = 'Opening…';
+  try {
+    const res = await api('/api/panel', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({id: id})});
+    const data = await res.json();
+    if(!res.ok){ view.textContent = data.error || 'Failed.'; return; }
+    view.innerHTML = data.html;
+    if(data.related && data.related.length){
+      const p = document.createElement('p');
+      p.className = 'hint';
+      p.textContent = data.related.length
+        + ' earlier answer(s) to this same question are stored. '
+        + 'Compare them to see what moved.';
+      view.appendChild(p);
+    }
+  } catch (err) { view.textContent = 'Failed: ' + err; }
 }
 
 // The document is handed over from what the run already produced, held in

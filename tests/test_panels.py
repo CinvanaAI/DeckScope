@@ -810,3 +810,142 @@ class P11_TheConvergence(unittest.TestCase):
         self.assertEqual(("Q5", "Q6"), MARKET_SHARE.answers)
         self.assertIs(MARKET_SHARE, specialist_for("Q5"))
         self.assertIsNone(specialist_for("Q3"))
+
+
+class P12_TheLibrary(unittest.TestCase):
+    """A panel is a record, not a rendering. This is the part that makes the
+    claim true — panels are written when produced and read back without
+    re-running anything."""
+
+    def _panel(self, headline="Samsung leads on units",
+               when="2026-03-14T10:00:00"):
+        panel = Panel(question="Who holds the cell phone market?",
+                      headline=headline, form="share_pair",
+                      agent="market-share")
+        panel.generated = when
+        panel.series = [Series("Units", "shipment share", "%", basis="SAG",
+                               slices=[Slice("Samsung", 22, source_ids=["S1"]),
+                                       Slice("Apple", 20, source_ids=["S1"])])]
+        panel.source_labels = ["Smart Analytics Global"]
+        return panel
+
+    def _library(self, tmp):
+        from marketreport.library import Library
+
+        return Library(tmp)
+
+    def test_a_saved_panel_comes_back_identical(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            shelf = self._library(tmp)
+            ref = shelf.save(self._panel(), market="cell phones",
+                             place="Ireland")
+            self.assertEqual(self._panel().to_dict(),
+                             shelf.load(ref.id).to_dict())
+
+    def test_re_asking_stores_a_new_panel_beside_the_old(self):
+        """Two runs of one question are different panels — the market moved,
+        or the sources did — and overwriting the first would destroy the
+        comparison that makes a re-run worth doing."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            shelf = self._library(tmp)
+            first = shelf.save(self._panel("Samsung leads",
+                                           "2026-03-14T10:00:00"))
+            second = shelf.save(self._panel("Apple has pulled level",
+                                            "2026-08-27T10:00:00"))
+            self.assertNotEqual(first.id, second.id)
+            self.assertEqual(2, len(shelf.list()))
+
+    def test_the_listing_is_newest_first(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            shelf = self._library(tmp)
+            shelf.save(self._panel("older", "2026-03-14T10:00:00"))
+            shelf.save(self._panel("newer", "2026-08-27T10:00:00"))
+            self.assertEqual(["newer", "older"],
+                             [r.headline for r in shelf.list()])
+
+    def test_earlier_answers_to_the_same_question_are_findable(self):
+        """The comparison a stored panel exists to make possible."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            shelf = self._library(tmp)
+            shelf.save(self._panel("older", "2026-03-14T10:00:00"))
+            newest = shelf.save(self._panel("newer", "2026-08-27T10:00:00"))
+            self.assertEqual(["older"],
+                             [r.headline for r in shelf.related(newest.id)])
+
+    def test_one_corrupt_file_does_not_close_the_gallery(self):
+        """The failure mode that turns "something went wrong once" into
+        "nothing works"."""
+        import os
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            shelf = self._library(tmp)
+            shelf.save(self._panel())
+            with open(os.path.join(tmp, "broken.json"), "w",
+                      encoding="utf-8") as handle:
+                handle.write("{not json")
+            self.assertEqual(1, len(shelf.list()))
+
+    def test_a_missing_panel_returns_none_rather_than_raising(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertIsNone(self._library(tmp).load("does-not-exist"))
+
+    def test_ids_are_readable_and_cannot_escape_the_directory(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            shelf = self._library(tmp)
+            ref = shelf.save(self._panel(), market="cell phones",
+                             place="Ireland")
+            self.assertIn("cell-phones-ireland", ref.id)
+            self.assertIsNone(shelf.load("../../etc/passwd"))
+
+    def test_the_manager_stores_what_it_produced(self):
+        """A panel that cost a research budget and evaporated because the
+        caller forgot to save it is the expensive kind of forgetting — so the
+        manager stores as it goes, not on the caller's say-so."""
+        import tempfile
+
+        from marketreport import manager, specialists
+
+        with tempfile.TemporaryDirectory() as tmp:
+            shelf = self._library(tmp)
+            panel = self._panel()
+            original = specialists.run_specialist
+            manager.run_specialist = lambda spec, **kw: panel
+            try:
+                result = manager.answer(
+                    "market share of cell phones in Ireland",
+                    provider=None, researcher=None, library=shelf,
+                    on_event=lambda m: None)
+            finally:
+                manager.run_specialist = original
+
+            self.assertEqual(1, len(result["panels"]))
+            self.assertEqual(1, len(result["stored"]))
+            stored = shelf.load(result["stored"][0].id)
+            self.assertEqual(panel.headline, stored.headline)
+
+    def test_an_unanswerable_request_stores_nothing(self):
+        import tempfile
+
+        from marketreport import manager
+
+        with tempfile.TemporaryDirectory() as tmp:
+            result = manager.answer("tell me a joke", provider=None,
+                                    researcher=None,
+                                    library=self._library(tmp),
+                                    on_event=lambda m: None)
+            self.assertEqual([], result["panels"])
+            self.assertEqual([], result["stored"])
+            self.assertTrue(result["question"])

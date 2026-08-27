@@ -273,7 +273,8 @@ def answer(text: str, *, provider: Any, researcher: Any,
            on_event: Optional[Callable[[str], None]] = None,
            on_usage: Optional[Callable] = None,
            shaper: Optional[Callable[..., Dict[str, Any]]] = None,
-           offline: bool = False) -> Dict[str, Any]:
+           offline: bool = False, store: bool = True,
+           library: Any = None) -> Dict[str, Any]:
     """The whole path: a sentence to a set of panels.
 
     Returns the request and the panels rather than a rendering, so the caller
@@ -290,7 +291,7 @@ def answer(text: str, *, provider: Any, researcher: Any,
     emit = on_event or (lambda *_: None)
     request = read_request(text, offline=offline)
     if not request.ready:
-        return {"request": request, "panels": [],
+        return {"request": request, "panels": [], "stored": [],
                 "question": request.question, "options": request.options}
 
     for note in request.notes:
@@ -307,5 +308,20 @@ def answer(text: str, *, provider: Any, researcher: Any,
             policy=policy, framing=request.framing(), shaper=shaper,
             on_event=emit, on_usage=on_usage))
 
-    return {"request": request, "panels": panels,
+    # Stored as they are produced, not on the caller's say-so. A panel that
+    # cost a research budget and then evaporated because the caller forgot to
+    # save it is the expensive kind of forgetting, and the whole claim that a
+    # panel is a record rather than a rendering depends on this happening.
+    refs = []
+    if store:
+        from .library import Library
+
+        shelf = library if library is not None else Library()
+        try:
+            refs = shelf.save_all(panels, market=request.market,
+                                  place=request.place, request=request.text)
+        except OSError as exc:
+            emit(f"  could not store the panels: {exc}")
+
+    return {"request": request, "panels": panels, "stored": refs,
             "question": "", "options": []}
