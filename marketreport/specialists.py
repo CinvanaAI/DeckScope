@@ -157,6 +157,9 @@ def _disagreements(findings: Sequence[Any], panel: Panel) -> List[str]:
     entities = _entities(panel)
     notes: List[str] = []
     seen: set = set()
+    #: (what is measured) -> {finding id: finding}. One entry per disagreement,
+    #: however many pairs it decomposes into.
+    groups: Dict[Any, Dict[str, Any]] = {}
     items = [f for f in findings if getattr(f, "value", None) is not None]
 
     for i, left in enumerate(items):
@@ -184,15 +187,31 @@ def _disagreements(findings: Sequence[Any], panel: Panel) -> List[str]:
             if verdict != "disagree":
                 continue
 
+            # Grouped by what is being measured, not emitted per pair. Five
+            # sources sizing one market produce ten pairs, and the live run
+            # printed three caveats that opened with the same sentence about
+            # the same IMARC figure. One disagreement described three times
+            # reads as three disagreements, which is itself a distortion of
+            # the evidence — and it buries the others.
             about = f"{who_left.title()}'s " if who_left else "the market's "
-            notes.append(
-                f"Two sources disagree about {about}"
-                f"{(series_left or 'figures').lower()}: "
-                f"\"{left.statement}\" against \"{right.statement}\". "
-                f"Nobody counts this market directly — every tracker models it "
-                f"— so a spread between reputable firms is the normal noise "
-                f"floor, and a figure quoted to one decimal from a single "
-                f"tracker is hiding that.")
+            key = (about, (series_left or "figures").lower())
+            groups.setdefault(key, {})
+            for side in (left, right):
+                groups[key][str(getattr(side, "id", ""))] = side
+
+    for (about, series), members in groups.items():
+        values = sorted(members.values(), key=lambda f: abs(f.value))
+        low, high = values[0], values[-1]
+        others = len(values) - 2
+        notes.append(
+            f"{len(values)} sources disagree about {about}{series}, from "
+            f"{low.value_text or low.value} to {high.value_text or high.value}"
+            + (f" with {others} more in between" if others > 0 else "")
+            + f". At the ends: \"{low.statement}\" against "
+              f"\"{high.statement}\". Nobody counts this market directly — "
+              f"every tracker models it — so a spread between reputable firms "
+              f"is the normal noise floor, and a figure quoted to one decimal "
+              f"from a single tracker is hiding that.")
     return notes[:4]
 
 

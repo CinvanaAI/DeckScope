@@ -31,7 +31,7 @@ from __future__ import annotations
 import re
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
-from .panel import (DERIVED, ESTIMATED, SOURCED, Figure, Panel, Series, Slice,
+from .panel import (ABSENT, DERIVED, ESTIMATED, SOURCED, Figure, Panel, Series, Slice,
                     UnknownForm, FORMS, form_spec)
 
 SHAPER_SYSTEM = """You decide what shape an answer has, and how to draw it.
@@ -295,6 +295,26 @@ def build_panel(question: str, findings: Sequence[Any],
                            f"that does not exist and was removed")
             continue
         source_ids = list(getattr(finding, "source_ids", []) or [])
+
+        # An established absence is not a sourced figure. It arrives here
+        # carrying source_ids — the sources it *checked* — so keying state off
+        # source_ids alone rendered "no source states the basis of these
+        # shares" as a SOURCED figure whose value is "n/a". Seen in the first
+        # live run: three of the ten headline figures were absences displayed
+        # as facts, including the one saying nobody publishes the basis. That
+        # is the whole provenance guarantee inverted — the reader is told the
+        # gap was measured.
+        if str(getattr(finding, "method", "")) == "absent":
+            panel.figures.append(Figure(
+                label=label or getattr(finding, "statement", "")[:48],
+                state=ABSENT,
+                as_of=str(getattr(finding, "as_of", "") or ""),
+                because=(str(getattr(finding, "note", "") or "").strip()
+                         or str(getattr(finding, "statement", "") or "")[:160]
+                         or "no source could establish this"),
+                finding_id=str(getattr(finding, "id", ""))))
+            continue
+
         panel.figures.append(Figure(
             label=label or getattr(finding, "statement", "")[:48],
             value=getattr(finding, "value", None),

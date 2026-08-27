@@ -249,8 +249,17 @@ class EdgarFilings(DatasetBackend):
         cik = str(params.get("cik") or "").strip()
         if not cik:
             raise Unavailable(
-                "an EDGAR lookup needs a CIK; the company was not resolved to a "
-                "filer, which usually means it is not publicly traded")
+                # Not "it is not publicly traded". EDGAR holds SEC filers, and
+                # a company can be large, listed and audited without being one.
+                # The live run said this of Sonova, Demant and GN — listed in
+                # Zurich and Copenhagen respectively — and telling a reader
+                # that three of the five largest firms in an industry are
+                # private is worse than telling them nothing.
+                "an EDGAR lookup needs a CIK and this company was not matched "
+                "to an SEC filer. That means no SEC filing, not necessarily no "
+                "listing: a company listed outside the United States files "
+                "with its own regulator and will never appear here. Its annual "
+                "report is likely to be on its investor relations site")
         payload = self.fixtures.get(f"{self.name}:{cik}")
         if payload is None:
             raise Unavailable(
