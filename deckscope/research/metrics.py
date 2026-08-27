@@ -203,16 +203,33 @@ _NOT_A_NAME = frozenset((
 #: told to write one plain sentence of what a source establishes.
 _LEADING_CAPS = re.compile(r"^\W*((?:[A-Z][\w&./'-]*)(?:\s+[A-Z][\w&./'-]*)*)")
 
+#: Verbs that make the name before them the *reporter* rather than the subject.
+#: "Sonova holds 25% of the market" is about Sonova. "Grand View Research
+#: estimates the market at $9.1B" is about the market — Grand View is the
+#: source. Without this distinction the entity check reads two firms sizing the
+#: same market as two different subjects and declines to compare them, which
+#: silently deletes the disagreement instead of raising it. Found live: five
+#: firms sized the same market from $7.5B to $15.11B and only one pair was
+#: flagged, because those two firms happened to share the word "Research".
+_REPORTS = re.compile(
+    r"^\s*(?:estimates?|puts?|values?|sizes?|reports?|projects?|forecasts?"
+    r"|finds?|gives?|says?|states?|claims?|assesses|calculates?|expects?"
+    r"|predicts?|has\s+the|places?)\b", re.I)
+
 
 def _entity(statement: str) -> frozenset:
-    """The named thing a statement opens with, if it opens with one.
+    """The named thing a statement is *about*, if it opens with one.
 
-    Returns an empty set for anything generic, which keeps the check
-    permissive: an empty entity never blocks a comparison. Only two findings
-    that each name something, and name different things, are separated.
+    Returns an empty set for anything generic or for a reporting construction,
+    which keeps the check permissive: an empty entity never blocks a
+    comparison. Only two findings that each name a subject, and name different
+    subjects, are separated.
     """
     match = _LEADING_CAPS.match(statement or "")
     if not match:
+        return frozenset()
+    # The name is the source, not the subject — leave the comparison open.
+    if _REPORTS.match((statement or "")[match.end():]):
         return frozenset()
     words = frozenset(w.lower().strip(".,;:") for w in match.group(1).split())
     words = frozenset(w for w in words if w and w not in _NOT_A_NAME)
