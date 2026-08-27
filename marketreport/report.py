@@ -24,7 +24,8 @@ from typing import Any, Callable, Dict, List, Optional
 
 from .questions import (COMPUTED, DERIVED, STANDING, Answer, AnswerSet,
                         StandingQuestion, order)
-from .structure import Barriers, Concentration, barriers, lifecycle
+from .structure import (Barriers, Concentration, barriers, lifecycle,
+                        saturation)
 
 #: An agent takes the market definition plus whatever prior answers it is
 #: allowed to see, and returns an Answer. Registered rather than hard-wired so
@@ -59,7 +60,12 @@ class MarketDefinition:
 
     def __init__(self, *, label: str, naics: str = "", state_fips: str = "",
                  county_fips: str = "", customer: str = "",
-                 geography_label: str = "") -> None:
+                 geography_label: str = "", demo: bool = False) -> None:
+        #: Answer from recorded fixtures instead of the live APIs. Carried on
+        #: the definition rather than passed separately so it reaches the
+        #: renderer — a demo figure must be labelled everywhere it appears,
+        #: not only where the caller remembered.
+        self.demo = bool(demo)
         self.label = label.strip()
         self.naics = "".join(c for c in str(naics) if c.isdigit())
         self.state_fips = str(state_fips or "").strip()
@@ -82,7 +88,7 @@ class MarketDefinition:
         return 4 <= len(self.naics) <= 6
 
     def to_dict(self) -> Dict[str, Any]:
-        return {"label": self.label, "naics": self.naics,
+        return {"label": self.label, "naics": self.naics, "demo": self.demo,
                 "state_fips": self.state_fips, "county_fips": self.county_fips,
                 "customer": self.customer,
                 "geography_label": self.geography_label,
@@ -225,11 +231,22 @@ def _lifecycle_agent(*, market: MarketDefinition, question: StandingQuestion,
     stage, because = lifecycle(growth, conc)
     if not stage:
         return unanswered(question, because)
+
+    # Penetration and growth read together, which is how the profession reads
+    # saturation. We have no penetration figure — that needs the RATE term, and
+    # nobody publishes it — so `saturation()` reports on growth alone AND says
+    # what remains unknown, rather than implying a fuller reading than we have.
+    full = saturation(None, growth)
+
+    statement = f"This market is in its {stage} stage — {because}."
+    if full.reading:
+        statement += f" On saturation it reads as {full.reading}: {full.because}."
+
     return Answer(
         question_id=question.id, kind=DERIVED,
-        statement=f"This market is in its {stage} stage — {because}.",
-        confidence="medium",
-        detail={"stage": stage, "because": because})
+        statement=statement, confidence="medium",
+        detail={"stage": stage, "because": because,
+                "saturation": full.to_dict()})
 
 
 def _concentration_from(answer: Optional[Answer]) -> Optional[Concentration]:

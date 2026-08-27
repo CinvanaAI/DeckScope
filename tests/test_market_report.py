@@ -319,3 +319,87 @@ class M7_Assembly(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class M8_DemoReport(unittest.TestCase):
+    """The offline path exists so the assembled report can be tested at all.
+
+    Unit tests can check HHI. Only an end-to-end run can check that the
+    barriers agent reads the concentration the structure agent wrote, that the
+    life-cycle stage follows from the growth figure, and that closure goes
+    green when everything is answered. That path was untestable while every
+    agent refused for want of a key.
+    """
+
+    def _demo(self, **over):
+        args = dict(LANDSCAPING, demo=True)
+        args.update(over)
+        return build(MarketDefinition(**args))
+
+    def test_the_demo_answers_almost_everything(self):
+        answers = self._demo()
+        self.assertGreaterEqual(answers.coverage()["answered"], 10)
+
+    def test_the_derived_agents_actually_receive_what_they_need(self):
+        """The whole point of the dependency graph, exercised end to end."""
+        answers = self._demo()
+        self.assertTrue(answers.get("Q9").answered, "barriers needs Q5/Q7/Q8")
+        self.assertTrue(answers.get("Q10").answered, "lifecycle needs Q4/Q5")
+
+    def test_barriers_read_the_concentration_that_structure_computed(self):
+        answers = self._demo()
+        reasons = " ".join(answers.get("Q9").detail.get("reasons") or [])
+        self.assertIn("HHI", reasons)
+
+    def test_the_lifecycle_stage_follows_from_the_growth_figure(self):
+        answers = self._demo()
+        stage = answers.get("Q10").detail["stage"]
+        self.assertIn(stage, ("emerging", "growth", "mature", "declining"))
+        self.assertIn("%", answers.get("Q10").detail["because"])
+
+    def test_every_demo_figure_is_labelled_in_the_report_itself(self):
+        """A demo number must never be quotable as a measurement. The label
+        travels with the figure to the page, not just in the caller's head."""
+        body = text(self._demo())
+        self.assertIn("ILLUSTRATIVE DEMO", body)
+        self.assertIn("not a measurement", body)
+
+    def test_the_headline_is_the_geography_the_user_asked_about(self):
+        """A county report that leads with the national figure has answered a
+        question nobody asked, and the leading number is the quoted one."""
+        answers = self._demo()
+        statement = answers.get("Q3").statement
+        self.assertIn("county 04013", statement)
+        self.assertIn("$571.6M", statement)
+        self.assertIn("national total", statement,
+                      "the wider figure should still be there for context")
+
+    def test_growth_says_which_geography_it_measured(self):
+        self.assertIn("county 04013", self._demo().get("Q4").statement)
+
+    def test_growth_says_it_counts_firms_rather_than_revenue(self):
+        """These move in opposite directions when a market consolidates."""
+        self.assertIn("NUMBER OF FIRMS", self._demo().get("Q4").statement)
+
+    def test_the_sizing_rings_nest(self):
+        answers = self._demo()
+        sizes = [r["size"] for r in
+                 answers.get("Q3").detail["sizing"]["rings"] if r["size"]]
+        self.assertEqual(sizes, sorted(sizes, reverse=True))
+
+    def test_an_industry_the_demo_does_not_cover_says_so(self):
+        answers = self._demo(naics="722511", label="Restaurants")
+        definition = answers.get("Q1")
+        self.assertFalse(definition.answered)
+        self.assertIn("561730", definition.unanswered_because)
+
+    def test_licensing_without_a_state_is_refused_rather_than_generalized(self):
+        """Licensing is per-state, so a national answer does not exist."""
+        answers = self._demo(state_fips="", county_fips="")
+        self.assertFalse(answers.get("Q8").answered)
+
+    def test_the_report_still_reports_its_own_incompleteness(self):
+        """Ten of eleven is not eleven, and the top of the report says so."""
+        answers = self._demo()
+        self.assertFalse(answers.closure()["complete"])
+        self.assertIn("INCOMPLETE", text(answers))

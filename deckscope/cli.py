@@ -271,6 +271,10 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Write the answer set as JSON")
     market.add_argument("--json", action="store_true",
                         help="Print the machine-readable summary instead")
+    market.add_argument("--demo", action="store_true",
+                        help="Run against recorded sample data — no Census key, "
+                             "no network. Every figure is illustrative and is "
+                             "labelled as such in the report itself.")
 
     size = sub.add_parser(
         "size",
@@ -371,7 +375,8 @@ def _market(args: Any) -> int:
     settings.load_env()
     definition = MarketDefinition(
         label=args.label or f"NAICS {args.naics}", naics=args.naics,
-        state_fips=args.state, county_fips=args.county, customer=args.customer)
+        state_fips=args.state, county_fips=args.county, customer=args.customer,
+        demo=args.demo)
 
     answers = build(definition,
                     on_event=(lambda m: None) if args.json else _out)

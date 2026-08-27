@@ -19,6 +19,7 @@ from .report import MarketDefinition, register, unanswered
 from .sizing import Ring, Sizing, Term
 from .sources.census import (CBP_YEAR, ECN_YEAR, Unavailable,
                              establishment_count, revenue_per_establishment)
+from . import fixtures
 from .structure import from_size_bands
 
 #: CBP employee-size bands, in the order the API returns them.
@@ -47,10 +48,20 @@ def framing(*, market: MarketDefinition, question: StandingQuestion,
             f"whole economic sector — every count taken against it would be "
             f"about a different market while looking authoritative.")
 
+    if market.demo and not fixtures.covered(market.naics):
+        return unanswered(
+            question,
+            f"the offline demo has no recorded data for NAICS {market.naics}. "
+            f"It covers 561730 (landscaping services). Run without --demo and "
+            f"with a Census key for any other industry.")
+
     parts = [f"{market.label} (NAICS {market.naics})",
              f"in {market.geography_label}"]
     if market.customer:
         parts.append(f"serving {market.customer}")
+    if market.demo:
+        parts.append("ILLUSTRATIVE DEMO — figures are recorded samples, not "
+                     "measurements")
     return Answer(
         question_id=question.id, kind=SUPPLIED,
         statement=", ".join(parts) + ".",
@@ -81,6 +92,8 @@ def sizing_bottom_up(*, market: MarketDefinition, question: StandingQuestion,
     problems: List[str] = []
 
     def count(**geo) -> Optional[Term]:
+        if market.demo:
+            return _demo_count(market.naics, **geo)
         try:
             return establishment_count(market.naics, year=CBP_YEAR, **geo)
         except Unavailable as exc:
@@ -88,6 +101,8 @@ def sizing_bottom_up(*, market: MarketDefinition, question: StandingQuestion,
             return None
 
     def value(**geo) -> Optional[Term]:
+        if market.demo:
+            return _demo_value(market.naics, **geo)
         try:
             return revenue_per_establishment(market.naics, year=ECN_YEAR, **geo)
         except Unavailable as exc:
@@ -133,11 +148,26 @@ def sizing_bottom_up(*, market: MarketDefinition, question: StandingQuestion,
             problems[0] if problems else
             "no establishment count or industry revenue could be retrieved")
 
+    # The headline is the geography the USER asked about, not the widest one
+    # we happen to have. A report requested for Maricopa County that leads with
+    # the national figure has answered a question nobody asked, and the number
+    # it leads with is the one that gets quoted.
+    focus = sizing.rings[-1]
+    wider = sizing.rings[0] if len(sizing.rings) > 1 else None
+    headline = focus.size
+
+    statement = (f"Counted from the ground up, {market.label} in "
+                 f"{market.geography_label} is {_money(headline)}.")
+    if wider is not None and wider.size:
+        statement += (f" That is {headline / wider.size * 100:.1f}% of the "
+                      f"{_money(wider.size)} national total.")
+    if market.demo:
+        statement += f" ({fixtures.DEMO_NOTE})"
+
     return Answer(
         question_id=question.id, kind=RETRIEVED,
-        statement=(f"Counted from the ground up, {market.label} is "
-                   f"{_money(sizing.headline)} nationally."),
-        value=sizing.headline, value_text=_money(sizing.headline), unit="USD",
+        statement=statement,
+        value=headline, value_text=_money(headline), unit="USD",
         as_of=str(ECN_YEAR),
         confidence="medium" if not problems else "low",
         source_ids=[t.source for r in sizing.rings for t in r.terms if t.sourced],
@@ -191,6 +221,12 @@ def structure(*, market: MarketDefinition, question: StandingQuestion,
     bands: Dict[str, int] = {}
     problems: List[str] = []
     for band in SIZE_BANDS:
+        if market.demo:
+            got = fixtures.count(market.naics, geo.get("state_fips", ""),
+                                 geo.get("county_fips", ""), band)
+            if got:
+                bands[band] = got
+            continue
         try:
             term = establishment_count(market.naics, year=CBP_YEAR,
                                        size_band=band, **geo)
@@ -214,7 +250,8 @@ def structure(*, market: MarketDefinition, question: StandingQuestion,
 
     return Answer(
         question_id=question.id, kind=COMPUTED,
-        statement=(f"{market.label} is {conc.reading} — {conc.because}. "
+        statement=(f"In {market.geography_label}, {market.label} is "
+                   f"{conc.reading} — {conc.because}. "
                    f"The largest four hold about "
                    f"{(conc.cr4 or 0) * 100:.0f}% between them, across "
                    f"{conc.firms:,} establishments. "
@@ -239,12 +276,40 @@ def growth(*, market: MarketDefinition, question: StandingQuestion,
     CMS's own published growth rates and footnoted them; a filer's forecast is
     not a market forecast, and neither is a vendor's.
     """
-    return unanswered(
-        question,
-        "growth needs the same official series read at two vintages, which is "
-        "not wired up yet. An analyst CAGR would be available and is refused: "
-        "a projection published by somebody selling into this market is not a "
-        "measurement of it.")
+    if not market.demo:
+        return unanswered(
+            question,
+            "growth needs the same official series read at two vintages, and "
+            "only the current one is wired up. An analyst CAGR would be "
+            "available and is refused: a projection published by somebody "
+            "selling into this market is not a measurement of it.")
+
+    now = fixtures.count(market.naics, market.state_fips, market.county_fips)
+    then = fixtures.prior_count(market.naics, market.state_fips,
+                                market.county_fips)
+    if not now or not then:
+        return unanswered(question, "no earlier vintage is recorded for this "
+                                    "industry and geography")
+
+    years = CBP_YEAR - fixtures.PRIOR_YEAR
+    cagr = (now / then) ** (1.0 / years) - 1.0
+    return Answer(
+        question_id=question.id, kind=RETRIEVED,
+        statement=(f"In {market.geography_label}, establishments grew from "
+                   f"{then:,} in "
+                   f"{fixtures.PRIOR_YEAR} to {now:,} in {CBP_YEAR}, a "
+                   f"compound rate of {cagr * 100:.1f}% a year. This is growth "
+                   f"in the NUMBER OF FIRMS, not in revenue — the two can move "
+                   f"in opposite directions when a market consolidates. "
+                   f"({fixtures.DEMO_NOTE})"),
+        value=cagr, value_text=f"{cagr * 100:.1f}%/yr", unit="%",
+        as_of=str(CBP_YEAR), confidence="medium",
+        source_ids=[f"County Business Patterns {fixtures.PRIOR_YEAR} and "
+                    f"{CBP_YEAR}"],
+        detail={"prior_year": fixtures.PRIOR_YEAR, "prior_count": then,
+                "current_year": CBP_YEAR, "current_count": now,
+                "basis": "establishment count, not revenue",
+                "demo": True})
 
 
 # ---------------------------------------------------------- Q6 competitors
@@ -258,11 +323,27 @@ def competitors(*, market: MarketDefinition, question: StandingQuestion,
     evidence about who is in a market, and letting the two mix is how a deck's
     framing survives a research pass.
     """
-    return unanswered(
-        question,
-        "no competitor source is wired up yet. EDGAR full-text search over SIC "
-        "codes and state licensing registries are the two free routes; neither "
-        "is built.")
+    if not market.demo:
+        return unanswered(
+            question,
+            "no competitor source is wired up yet. EDGAR full-text search over "
+            "SIC codes and state licensing registries are the two free routes; "
+            "neither is built.")
+
+    named = fixtures.PARTICIPANTS.get(market.naics) or []
+    if not named:
+        return unanswered(question, "the demo records no participants for this "
+                                    "industry")
+    lines = "; ".join(f"{p['name']} ({p['note']})" for p in named)
+    return Answer(
+        question_id=question.id, kind=RETRIEVED,
+        statement=(f"Named participants: {lines}. These are the firms large "
+                   f"enough to be publicly visible; the establishment count "
+                   f"shows the market is mostly firms too small to name "
+                   f"individually. ({fixtures.DEMO_NOTE})"),
+        confidence="medium", as_of=str(CBP_YEAR),
+        source_ids=["SEC EDGAR", "public filings"],
+        detail={"participants": named, "demo": True})
 
 
 # ------------------------------------------------------------ Q7 economics
@@ -282,11 +363,17 @@ def economics(*, market: MarketDefinition, question: StandingQuestion,
     if market.state_fips:
         geo["state_fips"] = market.state_fips
 
-    try:
-        per_establishment = revenue_per_establishment(
-            market.naics, year=ECN_YEAR, **geo)
-    except Unavailable as exc:
-        return unanswered(question, str(exc))
+    if market.demo:
+        per_establishment = _demo_value(market.naics, **geo)
+        if per_establishment is None:
+            return unanswered(question, "the demo has no revenue figure for "
+                                        "this industry")
+    else:
+        try:
+            per_establishment = revenue_per_establishment(
+                market.naics, year=ECN_YEAR, **geo)
+        except Unavailable as exc:
+            return unanswered(question, str(exc))
 
     detail: Dict[str, Any] = {
         "revenue_per_establishment": per_establishment.value,
@@ -302,12 +389,14 @@ def economics(*, market: MarketDefinition, question: StandingQuestion,
             "quantities.",
     }
 
-    try:
-        counts = establishment_count(market.naics, year=CBP_YEAR, **geo)
-        if counts.value:
-            detail["establishments"] = int(counts.value)
-    except Unavailable:
-        pass
+    counts = (_demo_count(market.naics, **geo) if market.demo else None)
+    if counts is None and not market.demo:
+        try:
+            counts = establishment_count(market.naics, year=CBP_YEAR, **geo)
+        except Unavailable:
+            counts = None
+    if counts is not None and counts.value:
+        detail["establishments"] = int(counts.value)
 
     return Answer(
         question_id=question.id, kind=RETRIEVED,
@@ -334,11 +423,32 @@ def regulation(*, market: MarketDefinition, question: StandingQuestion,
     whether a business is legal to start, so a half-answer is worse here than
     anywhere else in the report.
     """
-    return unanswered(
-        question,
-        "no licensing source is wired up yet. State licensing registries are "
-        "the right route and are per-state, which makes this real work rather "
-        "than a lookup.")
+    if not market.demo:
+        return unanswered(
+            question,
+            "no licensing source is wired up yet. State licensing registries "
+            "are the right route and are per-state, which makes this real work "
+            "rather than a lookup.")
+
+    rules = fixtures.LICENSING.get(market.state_fips)
+    if not rules:
+        return unanswered(
+            question,
+            f"the demo records no licensing rules for state "
+            f"{market.state_fips or '(none given)'}. Licensing is per-state, "
+            f"so a national answer to this question does not exist.")
+
+    return Answer(
+        question_id=question.id, kind=RETRIEVED,
+        statement=(f"{rules['note']}. The threshold is {rules['threshold']}, "
+                   f"administered by the {rules['body']}. The threshold is the "
+                   f"part that decides whether a small operator needs the "
+                   f"licence at all. ({fixtures.DEMO_NOTE})"),
+        confidence="medium", as_of=str(CBP_YEAR),
+        source_ids=[rules["body"]],
+        detail={"licence_count": rules["count"],
+                "licence_note": rules["note"],
+                "threshold": rules["threshold"], "demo": True})
 
 
 def _money(value: Optional[float]) -> str:
@@ -348,3 +458,34 @@ def _money(value: Optional[float]) -> str:
         if abs(value) >= cut:
             return f"${value / cut:,.1f}{suffix}"
     return f"${value:,.0f}"
+
+
+# ------------------------------------------------------------ demo helpers
+#
+# These return the same `Term` shape the live backends do, so the demo path
+# exercises the real assembly rather than a parallel one. Every Term carries the
+# demo marker in its note, which is how the label survives all the way to the
+# rendered page instead of living only in the caller's head.
+
+def _demo_count(naics: str, *, state_fips: str = "",
+                county_fips: str = "") -> Optional[Term]:
+    total = fixtures.count(naics, state_fips, county_fips)
+    if not total:
+        return None
+    return Term(kind="count", value=float(total), unit="establishments",
+                as_of=str(CBP_YEAR),
+                source=f"County Business Patterns {CBP_YEAR} (demo)",
+                method="measured", note=fixtures.DEMO_NOTE)
+
+
+def _demo_value(naics: str, *, state_fips: str = "",
+                county_fips: str = "") -> Optional[Term]:
+    per = fixtures.revenue(naics, state_fips)
+    if not per:
+        return None
+    return Term(kind="value", value=per,
+                unit="$ per establishment per year", as_of=str(ECN_YEAR),
+                source=f"Economic Census {ECN_YEAR} (demo)", method="measured",
+                note="industry average revenue per establishment — this makes "
+                     "the total the INDUSTRY's revenue, not one firm's "
+                     f"addressable opportunity. {fixtures.DEMO_NOTE}")
