@@ -82,12 +82,30 @@ DISPATCH: List[tuple] = [
      "a question about who holds what is the market-share specialist's job"),
 ]
 
-#: Words that mean the request is asking for a market at all. Without one of
-#: these a request like "what is the weather" would be dispatched to a market
-#: specialist and come back with a confidently sourced answer about nothing.
+#: Words that say plainly that this is about a market. Positive evidence, and
+#: no longer a requirement — see `NOT_A_MARKET`.
 MARKET_WORDS = re.compile(
     r"\b(market|industry|sector|share|competitors?|vendors?|companies|"
     r"brands?|players?|sales|revenue|shipments?|business)\b", re.I)
+
+#: Requests that are plainly not about a market.
+#:
+#: This is a DENYLIST, and the inversion is deliberate. The first version was an
+#: allowlist of market words, and it turned away both "landscaping in Phoenix"
+#: and "cell phones in Ireland" — two perfectly ordinary requests, one of them
+#: the question this product was built for. People naming a market usually just
+#: name it; they do not add the word "market" any more than someone asking for
+#: the time says "the time market".
+#:
+#: For a tool whose entire job is markets, the right default is that a request
+#: IS one. The cost of being wrong in this direction is a research budget spent
+#: on a bad question, which the panel then reports honestly. The cost of being
+#: wrong in the other direction is refusing the product's own purpose.
+NOT_A_MARKET = re.compile(
+    r"\b(weather|forecast|temperature|what time|what day|"
+    r"tell me a joke|joke|poem|recipe|directions to|how do i get to|"
+    r"translate|spell|meaning of life|who are you|what can you do|"
+    r"hello|hi there|thanks?|thank you)\b", re.I)
 
 #: Phrases that carry the request but not the market. Stripped so "show me the
 #: market share of cell phone companies in Ireland" resolves the market as
@@ -164,12 +182,13 @@ def read_request(text: str, *, offline: bool = False) -> Request:
     found = resolve_naics(request.market, offline=True)
     names_an_industry = bool(found.certain and found.code)
 
-    if not names_an_industry and not MARKET_WORDS.search(asked):
+    plainly_a_market = names_an_industry or bool(MARKET_WORDS.search(asked))
+    if not plainly_a_market and NOT_A_MARKET.search(asked):
         return Request(
             text=asked,
             question=(f"'{asked}' does not look like a question about a "
-                      f"market. Say which market you want and I will look at "
-                      f"who holds it, how big it is and how it is changing."))
+                      f"market. Name a market and I will look at who holds "
+                      f"it, how big it is and how it is changing."))
 
     # When the market happens to be a US industry the code unlocks the Census
     # route for counts and receipts — genuinely better than searching for
@@ -203,7 +222,7 @@ def read_request(text: str, *, offline: bool = False) -> Request:
                     f"specialists will research it by name rather than by "
                     f"statistical code")
 
-    request.specialists = _choose(asked, names_an_industry)
+    request.specialists = _choose(asked, is_a_market=True)
     if not request.specialists:
         return Request(
             text=asked, market=request.market, place=request.place,
@@ -213,7 +232,7 @@ def read_request(text: str, *, offline: bool = False) -> Request:
     return request
 
 
-def _choose(text: str, names_an_industry: bool = False) -> List[str]:
+def _choose(text: str, is_a_market: bool = False) -> List[str]:
     """Which specialists this request wants.
 
     Rules first, and for now rules only. A model classifier would add a call to
@@ -233,13 +252,14 @@ def _choose(text: str, names_an_industry: bool = False) -> List[str]:
     # how big is it" — and answering the likely question beats asking which of
     # one option the user meant.
     #
-    # `names_an_industry` is the second door, and it is the one that lets a
-    # bare "landscaping in Phoenix" through. That request carries none of the
-    # market words, because a person naming an industry does not also say the
-    # word "market" — which is exactly why the first version turned away the
+    # `is_a_market` is set by `read_request` once its denylist has passed the
+    # request through, and it is the door that lets a bare "landscaping in
+    # Phoenix" or "cell phones in Ireland" reach a specialist. Those requests
+    # carry none of the market words, because a person naming a market usually
+    # just names it — which is exactly why an allowlist here turned away the
     # question this product was built for.
     if not chosen and get("market-share") and (
-            names_an_industry or MARKET_WORDS.search(text)):
+            is_a_market or MARKET_WORDS.search(text)):
         chosen.append("market-share")
     return chosen
 

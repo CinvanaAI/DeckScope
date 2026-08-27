@@ -626,12 +626,38 @@ class P10_TheManagerDecidesScope(unittest.TestCase):
         self.assertEqual("Seattle", request.place)
         self.assertEqual("033", request.county_fips)
 
+    def test_a_bare_market_name_is_accepted(self):
+        """"cell phones in Ireland" carries none of the market words. The
+        allowlist version turned it away, along with "landscaping in Phoenix" —
+        people naming a market usually just name it, the way someone asking for
+        the time does not say "the time market"."""
+        for text in ("cell phones in Ireland", "electric vehicles in Norway",
+                     "coffee shops in Seattle"):
+            with self.subTest(text=text):
+                self.assertTrue(self._read(text).ready)
+
     def test_a_request_that_is_not_about_a_market_is_refused(self):
-        for text in ("what is the weather tomorrow", "tell me a joke"):
+        for text in ("what is the weather tomorrow", "tell me a joke",
+                     "hello"):
             with self.subTest(text=text):
                 request = self._read(text)
                 self.assertFalse(request.ready)
                 self.assertIn("does not look like", request.question)
+
+    def test_the_guard_is_a_denylist_not_an_allowlist(self):
+        """For a tool whose entire job is markets, the right default is that a
+        request IS one. Being wrong that way costs a research budget the panel
+        then reports honestly; being wrong the other way refuses the product's
+        own purpose."""
+        from marketreport.manager import NOT_A_MARKET
+
+        self.assertTrue(self._read("widgets in Belgium").ready)
+        self.assertTrue(NOT_A_MARKET.search("what is the weather tomorrow"))
+
+    def test_market_words_override_the_denylist(self):
+        """"the weather forecasting market" is a real market that happens to
+        contain a denied word."""
+        self.assertTrue(self._read("the weather forecasting market").ready)
 
     def test_it_will_not_invent_a_specialist_it_does_not_have(self):
         """Sending the closest specialist and letting the panel come back about
@@ -639,6 +665,8 @@ class P10_TheManagerDecidesScope(unittest.TestCase):
         from marketreport.manager import _choose
 
         self.assertEqual([], _choose("what is the weather tomorrow"))
+        self.assertEqual(["market-share"],
+                         _choose("cell phones in Ireland", is_a_market=True))
 
     def test_it_names_what_it_can_do_when_it_cannot_help(self):
         """A request nothing can answer gets the roster, not a shrug — and not
@@ -648,7 +676,7 @@ class P10_TheManagerDecidesScope(unittest.TestCase):
         saved = list(manager.DISPATCH)
         manager.DISPATCH.clear()
         original = manager._choose
-        manager._choose = lambda text, names=False: []
+        manager._choose = lambda text, is_a_market=False: []
         try:
             request = manager.read_request("market share of widgets")
             self.assertFalse(request.ready)
