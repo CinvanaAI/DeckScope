@@ -355,7 +355,8 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     emit(f"{spec.name}: shaping {len(established)} findings")
     shape = shaper or make_shaper(provider, on_usage=on_usage)
     try:
-        shaped = shape(question=question_text, findings=established)
+        shaped = shape(question=question_text, findings=established,
+                       registry=registry)
     except Exception as exc:  # noqa: BLE001 - a shaping failure is reportable
         panel = unanswered(
             question_text,

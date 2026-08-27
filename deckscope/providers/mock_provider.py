@@ -87,6 +87,10 @@ class MockProvider(LLMProvider):
             body = json.dumps(self._clamp_citations(_read_for(joined), allowed))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
+        if "You decide what shape an answer has" in system:
+            body = json.dumps(_shape_for(joined))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "concluding an investment analysis that somebody else researched" in system:
             allowed = self._available_sids(joined)
             body = json.dumps(self._clamp_citations(_judgment_for(joined), allowed))
@@ -1314,7 +1318,13 @@ def _read_for(prompt: str) -> dict:
     # ---- figures, attributed to the source that actually carried them.
     for src in sources:
         snippet = src.get("snippet", "")
-        for figure in _figures_in(snippet)[:2]:
+        # Six, not two. A page that lists five vendors with their shares is
+        # exactly the page a market-share question wants, and a reader that
+        # stops after two turns it into a two-wedge pie — which then fails the
+        # panel's own validation for not being a comparison. The cap exists to
+        # stop a dense page flooding the run, and two was tuned for deck
+        # analysis where a source carries one or two numbers that matter.
+        for figure in _figures_in(snippet)[:6]:
             sentence = _sentence_around(snippet, figure) or \
                 f"The source reports {figure}."
             findings.append({
@@ -1593,3 +1603,140 @@ def _judgment_for(prompt: str) -> dict:
                        else ["Independent corroboration of the contradicted "
                              "figures before committing."]),
     }
+
+
+# --------------------------------------------------------------- the shaper
+
+_FINDING_LINE = re.compile(
+    r"^\[(F\d+)\]\s*(.+?)\n\s*value:\s*(.*?)\s{2,}unit:\s*(.*?)\s{2,}"
+    r"as of:\s*(.*?)\s{2,}sources:\s*(.*?)$",
+    re.M)
+
+
+def _publisher_in(sources: str) -> str:
+    """"S2 (Counterpoint Research)" -> "Counterpoint Research"."""
+    match = re.search(r"\(([^)]+)\)", sources or "")
+    return match.group(1).strip() if match else (sources or "").split(",")[0].strip()
+
+
+def _shape_for(prompt: str) -> dict:
+    """Stand in for a model deciding what shape an answer has.
+
+    Like `_read_for`, this MUST read its input. A shaper mock that returned a
+    canned two-pie panel would make every offline run look like the cell-phone
+    answer regardless of what the loop found — the fixture-maturity trap with a
+    chart on it, and the one failure this repository has already been fooled by
+    once.
+
+    So it groups the findings it is actually given by what they measure, and
+    picks the form from what that grouping turns out to be: two groups of
+    shares is a `share_pair`, one is a `share`, none is a `table`. Which is,
+    reduced to a rule, the decision the real shaper is asked to make.
+    """
+    rows = []
+    for fid, statement, value, unit, as_of, sources in _FINDING_LINE.findall(prompt):
+        rows.append({"id": fid, "statement": statement.strip(),
+                     "value": value.strip(), "unit": unit.strip(),
+                     "as_of": as_of.strip(), "sources": sources.strip()})
+    if not rows:
+        return {"headline": "", "form": "table", "series": [], "figures": [],
+                "caveats": ["nothing was established to shape"]}
+
+    # A slice needs a named company AND a share attributed to it. Without
+    # this the mock took the first word of every statement as an entity, and
+    # drew "Worldwide" and "The" as vendors — with a 6.7% year-over-year
+    # DECLINE rendered as a 6.7% market share.
+    #
+    # That is the fixture-maturity trap in miniature: a demo whose output is
+    # garbage teaches a reader that the system produces garbage, and a mock
+    # held to a lower standard than the thing it stands in for is not standing
+    # in for it. So this does the same job the real shaper is asked to do —
+    # attribute a share to somebody — and skips anything it cannot.
+    vendors = ("apple", "samsung", "xiaomi", "oppo", "vivo", "huawei",
+               "honor", "google", "motorola", "nothing", "transsion",
+               "oneplus", "realme", "tecno", "infinix", "itel")
+    holding = re.compile(
+        r"\b(share|held|holds|captured|capturing|ranked|accounted for|"
+        r"led with|leads with)\b", re.I)
+
+    def entity(text: str) -> str:
+        low = text.lower()
+        for name in vendors:
+            if re.search(rf"\b{name}\b", low):
+                return name.title()
+        return ""
+
+    def bucket(row):
+        text = row["statement"].lower()
+        if "revenue share" in text or ("revenue" in text and "%" in row["value"]):
+            return "Revenue"
+        if any(w in text for w in ("shipment", "unit", "sold", "shipped")):
+            return "Units"
+        return ""
+
+    # Grouped by measure AND publisher, because a series drawn from two
+    # trackers is not one measurement. SAG had Samsung at 22% and IDC at 22.6%;
+    # grouping on measure alone put both in one pie, which silently averaged
+    # two independent estimates into a chart that claimed to be one of them.
+    # Two trackers disagreeing is a finding to report, not a series to blend.
+    groups: dict = {}
+    leftovers = []
+    for row in rows:
+        name = bucket(row)
+        who = entity(row["statement"])
+        attributed = bool(who) and bool(holding.search(row["statement"]))
+        if name and row["unit"] == "%" and attributed:
+            row["who"] = who
+            groups.setdefault((name, _publisher_in(row["sources"])),
+                              []).append(row)
+        else:
+            leftovers.append(row)
+
+    # Keep the fullest series per measure — the tracker that broke out the most
+    # vendors is the one worth drawing.
+    best: dict = {}
+    for (name, source), members in groups.items():
+        if len(members) > len(best.get(name, ((), ""))[0] if name in best else ()):
+            best[name] = (members, source)
+    groups = {name: members for name, (members, _src) in best.items()}
+    _bases = {name: src for name, (_m, src) in best.items()}
+
+    # One wedge per company. Two sources reporting different numbers for the
+    # same vendor is a finding to report, not two slices — and the panel
+    # rejects a series that draws one twice, so the mock must not build one.
+    for name, members in groups.items():
+        seen = set()
+        unique = []
+        for row in members:
+            if row["who"] in seen:
+                continue
+            seen.add(row["who"])
+            unique.append(row)
+        groups[name] = unique
+
+    series = []
+    for name, members in list(groups.items())[:2]:
+        series.append({
+            "label": name,
+            "measure": f"{name.lower()} share",
+            "unit": "%",
+            "as_of": members[0]["as_of"],
+            "basis": _bases.get(name, ""),
+            "slices": [{"label": row["who"],
+                        "value": row["value"].rstrip("%"),
+                        "finding_id": row["id"]} for row in members]})
+
+    form = ("share_pair" if len(series) == 2
+            else "share" if len(series) == 1 else "table")
+    lead = series[0]["slices"][0]["label"] if series and series[0]["slices"] else ""
+    other = (series[1]["slices"][0]["label"]
+             if len(series) > 1 and series[1]["slices"] else "")
+    headline = (f"{lead} leads on units; {other} leads on revenue"
+                if form == "share_pair" and lead != other
+                else f"{lead} leads this market" if lead
+                else "The sources did not settle who leads")
+
+    return {"headline": headline, "form": form, "series": series,
+            "figures": [{"label": row["statement"][:48], "finding_id": row["id"]}
+                        for row in leftovers[:4]],
+            "caveats": []}

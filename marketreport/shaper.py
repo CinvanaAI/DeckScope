@@ -101,11 +101,52 @@ SHAPER_USER = """Question: {question}
 Decide what the answer is and what form carries it."""
 
 
-def _finding_block(findings: Sequence[Any]) -> str:
+def publisher(registry: Any, source_id: str) -> str:
+    """Who published a source, in words a reader would recognise.
+
+    The shaper is asked to fill each series' `basis` with the tracker it came
+    from — and it was only ever shown source IDs, so the best it could do was
+    write "S2". The panel then told a reader that its two series "come from
+    different publishers (S2 and S3)", which is technically true and useless,
+    and the caveat that exists to warn about mixing trackers named neither.
+
+    Title first because "Counterpoint Research" is what somebody would say out
+    loud; domain as the fallback because it is always there.
+    """
+    if registry is None or not source_id:
+        return ""
+    try:
+        source = registry.find(source_id)
+    except Exception:  # noqa: BLE001
+        return ""
+    if source is None:
+        return ""
+    title = (getattr(source, "title", "") or "").strip()
+    if title:
+        # Trackers publish under long headlines. The organisation is usually
+        # the part before the first colon or dash — "SAG: Global Smartphone
+        # Shipments Fall 8%" — or named in parentheses at the end, which is how
+        # an aggregator credits the firm that did the work.
+        credited = re.search(r"\(([^)]{3,48})\)\s*$", title)
+        if credited:
+            return credited.group(1).strip()
+        head = re.split(r"[:\u2014\u2013]| - ", title)[0].strip()
+        if 3 <= len(head) <= 48:
+            return head
+    # Domain as the last resort, tidied. "www.idc.com" is a worse label than
+    # "idc.com" and both are worse than a name, but all three beat "S2".
+    domain = (getattr(source, "domain", "") or "").strip()
+    return re.sub(r"^www\.", "", domain)
+
+
+def _finding_block(findings: Sequence[Any], registry: Any = None) -> str:
     """The findings, as the shaper sees them.
 
     Deliberately flat and boring. The shaper's job is a judgment about shape,
     and a persuasive presentation of the evidence is the last thing it needs.
+
+    The one thing it does add is the publisher behind each source ID, because
+    the shaper cannot name a basis it has never been shown.
     """
     lines: List[str] = []
     for finding in findings:
@@ -114,11 +155,14 @@ def _finding_block(findings: Sequence[Any]) -> str:
         value = (getattr(finding, "value_text", "") or "").strip()
         unit = (getattr(finding, "unit", "") or "").strip()
         as_of = (getattr(finding, "as_of", "") or "").strip()
-        sources = ", ".join(getattr(finding, "source_ids", []) or []) or "none"
+        ids = list(getattr(finding, "source_ids", []) or [])
+        named = [f"{sid} ({publisher(registry, sid)})" if publisher(registry, sid)
+                 else sid for sid in ids]
         lines.append(
             f"[{fid}] {statement}\n"
             f"     value: {value or 'n/a'}   unit: {unit or 'n/a'}   "
-            f"as of: {as_of or 'unknown'}   sources: {sources}")
+            f"as of: {as_of or 'unknown'}   "
+            f"sources: {', '.join(named) or 'none'}")
     return "\n".join(lines) if lines else "(no findings were established)"
 
 
@@ -132,10 +176,11 @@ def make_shaper(provider: Any, *, on_usage: Optional[Callable] = None,
     """
     from deckscope.security.sanitizer import fence
 
-    def shape(*, question: str, findings: Sequence[Any]) -> Dict[str, Any]:
+    def shape(*, question: str, findings: Sequence[Any],
+              registry: Any = None) -> Dict[str, Any]:
         user = SHAPER_USER.format(
             question=question,
-            material=fence(_finding_block(findings), "FINDINGS"))
+            material=fence(_finding_block(findings, registry), "FINDINGS"))
         payload = provider.complete_json(SHAPER_SYSTEM, user,
                                          temperature=temperature,
                                          on_usage=on_usage)
@@ -251,6 +296,40 @@ def build_panel(question: str, findings: Sequence[Any],
             because="" if source_ids else "no source was recorded for this "
                                           "finding",
             finding_id=str(getattr(finding, "id", ""))))
+
+    # A form the panel cannot actually support falls back, and says so.
+    #
+    # This happens for real and often: a thin research run returns one vendor
+    # per series, and `share_pair` needs two points in each to be a comparison
+    # rather than two labels. Leaving the form as asked produced a panel that
+    # failed its own validation and rendered anyway — a chart claiming to be a
+    # comparison while drawing a single wedge.
+    #
+    # Falling back silently is the thing `render_as` refuses to do for output
+    # formats, and for the same reason. So it falls back loudly: the reader is
+    # told the shape was downgraded and why, which is itself a finding about
+    # how much the run established.
+    try:
+        spec = form_spec(panel.form)
+        unmet = spec.check(panel)
+    except UnknownForm:
+        unmet = []
+    if unmet:
+        wanted = panel.form
+        # Pick the first form that actually validates, rather than guessing.
+        # The first version guessed, guessed wrong, and produced a panel that
+        # failed validation under a DIFFERENT form — a fallback that needs its
+        # own fallback is not a fallback.
+        panel.form = "table"
+        for candidate in ("share", "ranking", "trend", "table", "stat"):
+            panel.form = candidate
+            if not form_spec(candidate).check(panel):
+                break
+        dropped.append(
+            f"The evidence would not support a '{wanted}' chart ("
+            + "; ".join(unmet) + f"), so it is drawn as a '{panel.form}'. "
+            f"That is a fact about how much this run established, not a "
+            f"formatting choice.")
 
     for caveat in shaped.get("caveats") or []:
         text = str(caveat or "").strip()

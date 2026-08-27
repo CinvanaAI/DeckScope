@@ -238,3 +238,51 @@ Worth stating, because "adapt" is not "replace":
   exempted path is the one that gets exploited.
 - The twelve standing questions stay as the report's spine. What changes is that
   a section can now be answered by an agent rather than only by a lookup.
+
+
+---
+
+# 8. What is verified, and what is not
+
+Written at the end of the build, because the distinction matters more than the
+count of passing tests.
+
+## Verified
+
+- **The whole path runs offline**, over pages that are real:
+  `deckscope ask "market share of cell phones" --demo`. Router → loop → reader
+  → shaper → binding → cross-checks → chart, with no key and no network.
+- **The recorded pages are genuine.** Every excerpt in `demo_sources.py` was
+  retrieved on 2026-08-27 from the URL beside it. This is the fix `CRITIQUE.md`
+  #1 asked for, applied to the panel path: a demo built on invented figures
+  teaches a stranger that the product works when what works is the fixture.
+- **810 tests, lint clean over 155 files**, including every bug this build
+  found.
+- **The refusals fire.** A fabricated `finding_id` is dropped and reported; a
+  form the evidence cannot support degrades and says so; a series drawn from
+  two trackers is caught; one entity gets one wedge.
+
+## Not verified
+
+**No run has happened with a real model.** There is no API key on this machine.
+Every model-facing stage — the reader and the shaper — has been exercised only
+by `MockProvider`, whose shaper I wrote this afternoon. It reads its input and
+refuses what it cannot attribute, which is more than a canned fixture does, and
+it is still me marking my own homework one level down.
+
+What that leaves open, specifically:
+
+- whether a real shaper picks `share_pair` when it should, and something else
+  when it should not — the single judgment the stage exists to make;
+- whether a real reader pulls five vendors off a page that lists five;
+- whether the loop's disagreement-driven follow-ups actually fire on live
+  search results, or whether the budget is spent before they can.
+
+**The offline demo is thin.** Its revenue series carries one vendor, so the
+panel degrades from `share_pair` to `table` and explains why. That is the
+system behaving correctly on weak evidence — and it means the demo does not yet
+show the two-pie answer that motivated the whole design.
+
+**One search key and one model key would close all of it**, and the first thing
+worth doing with them is `deckscope ask "market share of cell phone companies
+in Ireland"` — the question the old spine could not take at all.

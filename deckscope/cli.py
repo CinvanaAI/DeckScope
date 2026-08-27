@@ -295,6 +295,11 @@ def build_parser() -> argparse.ArgumentParser:
                      help="Write the panels to a file — .html .md .txt .json")
     ask.add_argument("--json", action="store_true",
                      help="Print the panels as JSON instead")
+    ask.add_argument("--demo", action="store_true",
+                     help="Replay real pages recorded on 2026-08-27 with the "
+                          "offline mock model — no keys, no network. The "
+                          "sources are genuine published research; the replay "
+                          "is fixed to that day.")
     ask.add_argument("--plan", action="store_true",
                      help="Show what would be researched and stop, spending "
                           "nothing")
@@ -578,6 +583,25 @@ def _ask_market(args: Any) -> int:
     from .research.registry import get_researcher
     from .security.policy import SecurityPolicy
 
+    if getattr(args, "demo", False):
+        from marketreport.demo_sources import NOTE, RecordedResearcher, covered
+        from .providers.mock_provider import MockProvider
+
+        if not covered(request.market):
+            _out("")
+            _out(f"  The offline demo only has recorded pages for the mobile "
+                 f"phone market, and this request is about "
+                 f"'{request.market}'.")
+            _out("  Running it would produce an empty panel that reads like a "
+                 "real failure rather than a demo with the wrong subject.")
+            _out("  Try: deckscope ask \"market share of cell phones\" --demo")
+            return 2
+        _out(f"  {NOTE}")
+        result = answer(args.question, provider=MockProvider(),
+                        researcher=RecordedResearcher(),
+                        policy=SecurityPolicy(), on_event=_out)
+        return _finish_ask(args, result)
+
     # Both take a config object. Passing None produced "'NoneType' object has
     # no attribute 'name'" — a message that named neither the missing setup
     # step nor the real mistake, which was mine.
@@ -611,7 +635,21 @@ def _ask_market(args: Any) -> int:
 
     result = answer(args.question, provider=provider, researcher=researcher,
                     policy=SecurityPolicy(), on_event=_out)
+    return _finish_ask(args, result)
+
+
+def _finish_ask(args: Any, result: Dict[str, Any]) -> int:
+    """Print, save and report — shared by the live and demo paths.
+
+    One implementation so the demo cannot show something the real run would
+    not, which is the whole failure mode a demo exists to avoid.
+    """
+    import json as _json
+
+    from marketreport.panel_render import panel_text
+
     panels = result["panels"]
+    request = result["request"]
     for ref in result.get("stored") or []:
         _out(f"  stored as {ref.id}")
 

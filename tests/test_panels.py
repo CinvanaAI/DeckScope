@@ -10,6 +10,7 @@ been passing its own tests for weeks. Each is marked.
 """
 from __future__ import annotations
 
+import re
 import unittest
 
 from marketreport.panel import (ABSENT, DERIVED, ESTIMATED, FORMS, SOURCED,
@@ -949,3 +950,135 @@ class P12_TheLibrary(unittest.TestCase):
             self.assertEqual([], result["panels"])
             self.assertEqual([], result["stored"])
             self.assertTrue(result["question"])
+
+
+class P13_TheOfflineRun(unittest.TestCase):
+    """The whole path — router, loop, reader, shaper, binding, cross-checks,
+    rendering — with no keys and no network, over pages that are real.
+
+    `marketreport/demo_sources.py` holds excerpts recorded on 2026-08-27 from
+    the URLs beside them. That is the difference from `fixtures.py`, whose
+    numbers I invented: CRITIQUE.md #1 is that a demo built on invented figures
+    teaches a stranger that the product works when what works is the fixture.
+    """
+
+    def _run(self, question="market share of cell phones"):
+        from deckscope.providers.mock_provider import MockProvider
+        from marketreport.demo_sources import RecordedResearcher
+        from marketreport.manager import answer
+
+        return answer(question, provider=MockProvider(),
+                      researcher=RecordedResearcher(), store=False,
+                      on_event=lambda m: None)
+
+    def test_it_produces_a_panel_end_to_end(self):
+        result = self._run()
+        self.assertEqual(1, len(result["panels"]))
+        self.assertTrue(result["panels"][0].answered)
+
+    def test_the_two_yardsticks_both_appear(self):
+        """The whole point: units and revenue over one market, kept apart."""
+        panel = self._run()["panels"][0]
+        self.assertEqual(2, len(panel.series))
+        self.assertEqual({"Units", "Revenue"},
+                         {s.label for s in panel.series})
+        self.assertIn("units", panel.headline.lower())
+        self.assertIn("revenue", panel.headline.lower())
+
+    def test_a_series_is_drawn_from_one_tracker(self):
+        """SAG had Samsung at 22% and IDC at 22.6%. Grouping on measure alone
+        put both in one pie, silently blending two independent estimates into a
+        chart claiming to be one of them. Two trackers disagreeing is a finding
+        to report, not a series to blend."""
+        panel = self._run()["panels"][0]
+        for series in panel.series:
+            with self.subTest(series=series.label):
+                labels = [w.label for w in series.slices]
+                self.assertEqual(len(labels), len(set(labels)))
+
+    def test_a_form_the_evidence_cannot_support_degrades_loudly(self):
+        """The demo's revenue series has one vendor, which is not a
+        comparison. Falling back silently is what render_as refuses to do for
+        output formats, and for the same reason — so the downgrade is stated,
+        because it is a fact about how much the run established."""
+        panel = self._run()["panels"][0]
+        if panel.form != "share_pair":
+            self.assertTrue(
+                any("would not support" in c for c in panel.caveats),
+                f"form was downgraded to {panel.form} with no explanation")
+
+    def test_the_fallback_form_is_itself_valid(self):
+        """The first version guessed at a fallback, guessed wrong, and produced
+        a panel that failed validation under a DIFFERENT form. A fallback that
+        needs its own fallback is not a fallback."""
+        panel = self._run()["panels"][0]
+        self.assertEqual([], panel.problems())
+
+    def test_the_panel_is_structurally_valid(self):
+        panel = self._run()["panels"][0]
+        self.assertEqual([], panel.problems())
+
+    def test_every_slice_traces_to_a_recorded_source(self):
+        panel = self._run()["panels"][0]
+        for series in panel.series:
+            for wedge in series.slices:
+                with self.subTest(slice=wedge.label):
+                    self.assertTrue(wedge.source_ids)
+                    self.assertTrue(wedge.finding_id)
+
+    def test_the_series_name_their_publisher_not_a_source_id(self):
+        """The shaper was only ever shown source IDs, so the best it could do
+        was write "S2" — and the panel then told a reader its two series "come
+        from different publishers (S2 and S3)", which is true and useless."""
+        panel = self._run()["panels"][0]
+        for series in panel.series:
+            with self.subTest(series=series.label):
+                self.assertTrue(series.basis)
+                self.assertFalse(re.fullmatch(r"S\d+", series.basis))
+
+    def test_the_missing_remainder_is_disclosed(self):
+        panel = self._run()["panels"][0]
+        self.assertTrue(any("not broken out" in c for c in panel.caveats))
+
+    def test_it_renders_in_every_format(self):
+        from marketreport.panel_render import (panel_html, panel_markdown,
+                                               panel_text)
+
+        panel = self._run()["panels"][0]
+        for name, body in (("html", panel_html(panel)),
+                           ("md", panel_markdown(panel)),
+                           ("txt", panel_text(panel))):
+            with self.subTest(fmt=name):
+                self.assertIn("Samsung", body)
+
+    def test_the_recorded_pages_carry_their_url_and_date(self):
+        """A recorded excerpt with no provenance is an invented one that has
+        not been caught yet."""
+        from marketreport.demo_sources import PAGES, RETRIEVED
+
+        self.assertTrue(RETRIEVED)
+        for page in PAGES:
+            with self.subTest(page=page["title"][:32]):
+                self.assertTrue(page["url"].startswith("https://"))
+                self.assertTrue(page["published"])
+                self.assertGreater(len(page["snippet"]), 80)
+
+    def test_the_demo_refuses_a_market_it_has_no_pages_for(self):
+        """Running it anyway produces an empty panel that reads like a real
+        failure rather than a demo with the wrong subject."""
+        from marketreport.demo_sources import covered
+
+        self.assertTrue(covered("cell phones"))
+        self.assertTrue(covered("smartphone market"))
+        self.assertFalse(covered("landscaping"))
+
+    def test_the_mock_shaper_will_not_draw_what_it_cannot_attribute(self):
+        """It took the first word of every statement as an entity, and drew
+        "Worldwide" and "The" as vendors — with a 6.7% year-over-year DECLINE
+        rendered as a 6.7% market share. A mock held to a lower standard than
+        the thing it stands in for is not standing in for it."""
+        panel = self._run()["panels"][0]
+        drawn = {w.label for s in panel.series for w in s.slices}
+        for junk in ("Worldwide", "The", "Global"):
+            with self.subTest(label=junk):
+                self.assertNotIn(junk, drawn)
