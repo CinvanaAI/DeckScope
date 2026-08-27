@@ -68,26 +68,38 @@ caller choosing the method.
 
 ---
 
-## Stage 2 — The rest of the section (TODO)
+## Stage 2 — The rest of the report (PART)
 
-The schema derived from filings has ten parts. Sizing is one. These are the
-others, and all are retrieval rather than construction:
+Eleven standing questions, from the intersection of the S-1 and IBISWorld
+formats. `marketreport/questions.py` is the definition; `report.py` walks them
+in dependency order; `render.py` is the view.
 
-| Section | Source | Status |
-|---|---|---|
-| Market definition and boundary | user input + framing stage | PART |
-| Size, with arithmetic | Stage 1 | DONE |
-| Growth | official series' own projections, not analyst CAGRs | TODO |
-| Structure and concentration | CBP by size band | TODO |
-| Who competes | EDGAR full-text, state registries | TODO |
-| Unit economics | Economic Census, OEWS | TODO |
-| Regulatory environment | state licensing, CFR | TODO |
-| Drivers and headwinds | the series behind each | TODO |
-| Barriers to entry | derived | TODO |
-| **What could not be established** | the loop's own record | DONE |
+| # | Section | Live source | Demo | Status |
+|---|---|---|---|---|
+| Q1 | Market definition | user input | yes | DONE |
+| Q2 | Size, top-down | — | no | **TODO** — the only unanswered question |
+| Q3 | Size, bottom-up | CBP × Economic Census | yes | DONE |
+| Q4 | Growth | two CBP vintages | yes | PART — needs vintage-addressable CBP |
+| Q5 | Concentration | CBP size bands | yes | DONE |
+| Q6 | Who competes | EDGAR, registries | yes | PART — fixtures only |
+| Q7 | Operating economics | Economic Census | yes | DONE |
+| Q8 | Regulation | state licensing | yes | PART — fixtures only |
+| Q9 | Barriers, graded and trended | derived | yes | DONE |
+| Q10 | Life cycle and saturation | derived | yes | DONE |
+| Q11 | What could not be established | the run's own record | yes | DONE |
 
-**Done when:** a generated section covers every row a filed S-1 covers, or names
-the row and says why it is empty.
+**Done when:** every question answers from a live source, not a fixture. Today
+`--demo` answers ten of eleven; live answers three, because the Census key is
+not set and three sources are unwired.
+
+### Completeness is checked, not claimed
+
+Each section declares the follow-ups a reader will immediately have, and
+`closure()` verifies something in the report answers them. A reader who
+finishes with questions has been failed by the report, so an open follow-up is
+a defect rather than further reading. Currently one standing question and one
+follow-up remain open on the demo run, and the report says so at the top and
+lists them at the bottom.
 
 ---
 
@@ -112,6 +124,14 @@ Prospectus Summary and the Risk Factors Summary. Out of range: rivals named
 individually. Recorded in SCHEMA.md §4 with what it costs.
 
 ---
+
+## Stage 3.5 — The request flow (DONE)
+
+    deckscope market 561730 --state 04 --county 013
+    deckscope market 561730 --state 04 --demo        # no key, no network
+
+Plus `/api/market` and a panel in the app window. Exit 6 means "ran correctly,
+report incomplete", which is distinct from a crash and scriptable.
 
 ## Stage 4 — DeckScope as a consumer (TODO)
 

@@ -257,6 +257,9 @@ class Handler(BaseHTTPRequestHandler):
 
         if route.path == "/api/open":
             return self._open(payload)
+        if route.path == "/api/market":
+            return self._market(payload)
+
         if route.path == "/api/run":
             return self._run(payload)
         if route.path == "/api/models/select":
@@ -403,6 +406,39 @@ class Handler(BaseHTTPRequestHandler):
         return self._json({"path": temp_path,
                            "name": Path(raw_name).name or Path(temp_path).name,
                            "bytes": written})
+
+    def _market(self, payload: Dict[str, Any]) -> None:
+        """Produce a market report for a market the user named.
+
+        Synchronous rather than a background job: with no model calls this is
+        arithmetic over a handful of HTTP requests, and a progress bar for
+        something that finishes in a second is theatre.
+        """
+        import marketreport.agents  # noqa: F401 - registers the agents
+        from marketreport.render import summary
+        from marketreport.report import MarketDefinition, build
+
+        naics = "".join(c for c in str(payload.get("naics") or "")
+                        if c.isdigit())
+        if not 4 <= len(naics) <= 6:
+            return self._json(
+                {"error": "A 4-6 digit NAICS industry code is required. A "
+                          "shorter code is a whole economic sector, and every "
+                          "number taken against it would be about a different "
+                          "market while looking authoritative."}, 400)
+
+        definition = MarketDefinition(
+            label=(payload.get("label") or f"NAICS {naics}").strip(),
+            naics=naics,
+            state_fips=str(payload.get("state") or "").strip(),
+            county_fips=str(payload.get("county") or "").strip(),
+            customer=str(payload.get("customer") or "").strip(),
+            demo=bool(payload.get("demo")))
+        try:
+            answers = build(definition)
+        except Exception as exc:  # noqa: BLE001
+            return self._json({"error": f"The report failed: {exc}"}, 500)
+        return self._json(summary(answers))
 
     def _run(self, payload: Dict[str, Any]) -> None:
         deck = (payload.get("deck") or "").strip().strip('"')
@@ -682,8 +718,33 @@ border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer}
 button.small{padding:5px 10px;font-size:12px}
 </style></head><body><div class="wrap">
 <h1>DeckScope</h1>
-<div class="sub">Drop a pitch deck below. DeckScope reads it, researches the market it
-competes in, and tells you where the two agree — and where they don't.</div>
+<div class="sub">Two things. <b>Report a market</b> — the industry section an
+investment bank writes once, for any market you name. <b>Check a deck</b> — read
+a pitch deck against that market and show where the two disagree.</div>
+
+<div class="card">
+  <h2 style="margin-top:0">Report a market</h2>
+  <p class="hint">Eleven questions, each answered or explained. Every figure
+  shows its arithmetic and its source, and the report says at the top how much
+  of itself it could establish.</p>
+
+  <label>Industry code (NAICS, 4–6 digits)</label>
+  <input id="m-naics" type="text" placeholder="561730" maxlength="6">
+
+  <label>What to call it <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+  <input id="m-label" type="text" placeholder="Landscaping services">
+
+  <label>State FIPS <span style="text-transform:none;letter-spacing:0">(optional — 04 is Arizona)</span></label>
+  <input id="m-state" type="text" placeholder="04" maxlength="2">
+
+  <label>County FIPS <span style="text-transform:none;letter-spacing:0">(optional — 013 is Maricopa)</span></label>
+  <input id="m-county" type="text" placeholder="013" maxlength="3">
+
+  <button id="m-go" onclick="runMarket(false)">Produce the report</button>
+  <button class="ghost" onclick="runMarket(true)">Run the free demo</button>
+  <p id="m-note" class="hint"></p>
+  <div id="m-out"></div>
+</div>
 
 <div id="unconfigured" class="card hidden">
   <b>Not set up yet.</b>
@@ -765,6 +826,72 @@ let STATE = {}, PICK = {lenses:[], formats:[], security:'balanced'}, DECK = '', 
 // Per-launch key, injected by the server. Every API call carries it; without it
 // the server refuses, so no other page or program can drive this session.
 const TOKEN = "__DECKSCOPE_TOKEN__";
+// ---- market report ------------------------------------------------------
+// Renders the answer set, not prose. Every row is a standing question, and an
+// unanswered one shows its reason in place — a section that simply vanished
+// would read as an oversight rather than as a limit of the evidence.
+async function runMarket(demo){
+  const naics = ($('#m-naics').value || '').trim();
+  const out = $('#m-out'), note = $('#m-note');
+  out.textContent = ''; note.textContent = 'Working…';
+  $('#m-go').disabled = true;
+  try {
+    const res = await api('/api/market', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        naics: naics || (demo ? '561730' : ''),
+        label: $('#m-label').value, state: $('#m-state').value,
+        county: $('#m-county').value, demo: !!demo})});
+    const data = await res.json();
+    if(!res.ok){ note.textContent = data.error || 'Failed.'; return; }
+    renderMarket(data, out, note);
+  } catch (err) {
+    note.textContent = 'Failed: ' + err;
+  } finally {
+    $('#m-go').disabled = false;
+  }
+}
+
+function renderMarket(data, out, note){
+  const c = data.coverage, k = data.closure;
+  note.textContent = k.complete
+    ? `All ${c.questions} questions answered.`
+    : `INCOMPLETE — ${c.answered} of ${c.questions} answered. ${k.note}`;
+  note.style.color = k.complete ? '' : '#b45309';
+
+  out.textContent = '';
+  data.sections.forEach(sec => {
+    const box = document.createElement('div');
+    box.className = 'card';
+    box.style.margin = '10px 0';
+
+    const head = document.createElement('b');
+    head.textContent = sec.heading;
+    box.appendChild(head);
+
+    const q = document.createElement('p');
+    q.className = 'hint';
+    q.textContent = sec.question;
+    box.appendChild(q);
+
+    const body = document.createElement('p');
+    if(sec.answered){
+      body.textContent = sec.statement;
+      if(!sec.checkable){
+        const flag = document.createElement('span');
+        flag.className = 'hint';
+        flag.textContent = '  (not independently checkable)';
+        body.appendChild(flag);
+      }
+    } else {
+      body.style.color = '#b45309';
+      body.textContent = 'NOT ESTABLISHED — ' + sec.because;
+    }
+    box.appendChild(body);
+    out.appendChild(box);
+  });
+}
+
 const api = (path, opts = {}) => fetch(path, Object.assign({}, opts, {
   headers: Object.assign({'X-DeckScope-Token': TOKEN}, opts.headers || {})
 }));

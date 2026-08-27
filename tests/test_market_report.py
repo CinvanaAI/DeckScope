@@ -403,3 +403,98 @@ class M8_DemoReport(unittest.TestCase):
         answers = self._demo()
         self.assertFalse(answers.closure()["complete"])
         self.assertIn("INCOMPLETE", text(answers))
+
+
+class M9_RequestFlow(unittest.TestCase):
+    """A user names a market and gets the report — CLI and app window."""
+
+    def _serve(self):
+        import os as _os
+        import tempfile as _tf
+        import threading
+        from http.server import ThreadingHTTPServer
+
+        _os.environ["DECKSCOPE_HOME"] = _tf.mkdtemp()
+        from deckscope import webapp
+
+        srv = ThreadingHTTPServer(("127.0.0.1", 0), webapp.Handler)
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        return srv, f"http://127.0.0.1:{srv.server_address[1]}", webapp
+
+    def _post(self, base, path, obj, token=None):
+        import json as _json
+        import urllib.error
+        import urllib.request
+
+        headers = {"Content-Type": "application/json"}
+        if token:
+            headers["X-DeckScope-Token"] = token
+        req = urllib.request.Request(base + path,
+                                     data=_json.dumps(obj).encode(),
+                                     method="POST", headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=20) as res:
+                return res.status, _json.loads(res.read())
+        except urllib.error.HTTPError as exc:
+            return exc.code, _json.loads(exc.read())
+
+    def test_the_app_produces_a_report_from_a_named_market(self):
+        srv, base, webapp = self._serve()
+        try:
+            code, data = self._post(
+                base, "/api/market",
+                {"naics": "561730", "label": "Landscaping services",
+                 "state": "04", "county": "013", "demo": True},
+                webapp.SESSION_TOKEN)
+            self.assertEqual(200, code)
+            self.assertEqual(len(STANDING), len(data["sections"]))
+            self.assertGreaterEqual(data["coverage"]["answered"], 10)
+        finally:
+            srv.shutdown()
+
+    def test_a_sector_level_code_is_refused_with_the_reason(self):
+        srv, base, webapp = self._serve()
+        try:
+            code, data = self._post(base, "/api/market", {"naics": "56"},
+                                    webapp.SESSION_TOKEN)
+            self.assertEqual(400, code)
+            self.assertIn("sector", data["error"])
+        finally:
+            srv.shutdown()
+
+    def test_the_report_endpoint_requires_the_session_token(self):
+        srv, base, _ = self._serve()
+        try:
+            code, _ = self._post(base, "/api/market", {"naics": "561730"})
+            self.assertEqual(401, code)
+        finally:
+            srv.shutdown()
+
+    def test_every_section_reaches_the_client_answered_or_not(self):
+        """A vanished section reads as an oversight; a section that says why it
+        is empty reads as a limit of the evidence."""
+        srv, base, webapp = self._serve()
+        try:
+            _, data = self._post(
+                base, "/api/market",
+                {"naics": "561730", "state": "04", "demo": True},
+                webapp.SESSION_TOKEN)
+            for section in data["sections"]:
+                with self.subTest(s=section["id"]):
+                    self.assertTrue(section["answered"] or section["because"])
+        finally:
+            srv.shutdown()
+
+    def test_the_cli_exit_code_distinguishes_complete_from_incomplete(self):
+        import subprocess
+        import sys as _sys
+        from pathlib import Path as _Path
+
+        root = _Path(__file__).resolve().parent.parent
+        res = subprocess.run(
+            [_sys.executable, "-m", "deckscope", "market", "561730",
+             "--state", "04", "--demo", "--json"],
+            capture_output=True, text=True, cwd=str(root))
+        self.assertEqual(6, res.returncode,
+                         "an incomplete report is a real output and not a "
+                         "success; a script must be able to tell")
