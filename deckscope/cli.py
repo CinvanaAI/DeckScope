@@ -322,6 +322,15 @@ def build_parser() -> argparse.ArgumentParser:
             "on a US industry; the two share their machinery and increasingly "
             "their answers."))
     ask.add_argument("question", help="What you want to know, in plain words")
+    ask.add_argument("--measures", default=None, metavar="LIST",
+                     help="Comma-separated measures to report, one report "
+                          "each: revenue, units, usage, installed_base, "
+                          "subscribers, outlets, capacity. A share of revenue "
+                          "and a share of units are different answers that "
+                          "often name different leaders, so each gets its own "
+                          "report rather than sharing a chart. Omit this and "
+                          "you get one undifferentiated report, which is the "
+                          "degraded path.")
     ask.add_argument("--save", default=None, metavar="FILE",
                      help="Write the panels to a file — .html .md .txt .json")
     ask.add_argument("--json", action="store_true",
@@ -865,9 +874,78 @@ def _ask_market(args: Any) -> int:
              "exactly what would be researched.")
         return 4
 
+    named = _measures_arg(args)
+    if named is not None:
+        return _finish_ask(args, _by_measure(request, named, provider=provider,
+                                             researcher=researcher))
+
     result = answer(args.question, provider=provider, researcher=researcher,
                     policy=SecurityPolicy(), on_event=_out)
     return _finish_ask(args, result)
+
+
+def _measures_arg(args: Any) -> Optional[List[str]]:
+    """The --measures list, or None when the caller named none."""
+    raw = (getattr(args, "measures", None) or "").strip()
+    if not raw:
+        return None
+    return [part.strip() for part in raw.split(",") if part.strip()]
+
+
+def _by_measure(request: Any, names: List[str], *, provider: Any,
+                researcher: Any) -> Dict[str, Any]:
+    """One report per named measure, through the handoff.
+
+    This is the shape the report agent is meant to be driven in: a market and
+    a list of yardsticks arrive together, and one report comes back for each —
+    including the yardsticks nobody publishes, which are reports too. Typing
+    `--measures` by hand stands in for the upstream stage that will eventually
+    read a deck and decide both.
+    """
+    from marketreport.handoff import Brief, coverage, run_brief
+    from marketreport.measures import registered
+    from .security.policy import SecurityPolicy
+
+    try:
+        brief = Brief(market=request.market, place=request.place,
+                      measures=names, framing=request.framing())
+    except ValueError as exc:
+        _out("")
+        _out(f"  {exc}")
+        return {"panels": [], "error": str(exc)}
+
+    result = run_brief(brief, provider=provider, researcher=researcher,
+                       policy=SecurityPolicy(), on_event=_out)
+    stats = coverage(result)
+
+    # `_finish_ask` prints, saves and stores whatever it is handed, and it
+    # expects the request alongside the panels. Reusing it rather than growing
+    # a second printer keeps the two doors rendering identically — but it does
+    # mean this dict has to satisfy the same shape, which the first version
+    # did not and which no test caught because nothing ran the two together.
+    result["request"] = request
+    try:
+        from marketreport.library import Library
+        result["stored"] = Library().save_all(
+            result["panels"], market=request.market, place=request.place,
+            request=request.text)
+    except OSError as exc:
+        _out(f"  could not store the reports: {exc}")
+        result["stored"] = []
+
+    _out("")
+    for row in stats["measures"]:
+        mark = "·" if row["answered"] else "—"
+        _out(f"  {mark} {row['label'] or row['measure']}: {row['headline'][:78]}")
+    for name in stats["unknown"]:
+        _out(f"  ? {name}: not a registered measure. Available: "
+             f"{', '.join(m.key for m in registered())}")
+    for row in result.get("failed") or []:
+        _out(f"  ! {row['label']}: {row['error'][:70]}")
+    _out(f"  {stats['answered']} of {stats['requested']} measures returned a "
+         f"chart; {stats['unsourceable']} came back empty because nobody "
+         f"publishes that basis for this market.")
+    return result
 
 
 def _finish_ask(args: Any, result: Dict[str, Any]) -> int:

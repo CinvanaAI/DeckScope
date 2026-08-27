@@ -62,6 +62,12 @@ class PanelRef:
     generated: str = ""
     market: str = ""
     place: str = ""
+    #: Which yardstick this report is on. Part of a panel's identity, not a
+    #: detail of it: "hearing aids by revenue" and "hearing aids by units" are
+    #: two reports with two different answers, and a gallery that shows only
+    #: the market makes them look like duplicates of each other.
+    measure: str = ""
+    measure_label: str = ""
     answered: bool = True
     figures: int = 0
     checkable: int = 0
@@ -73,6 +79,8 @@ class PanelRef:
                 "headline": self.headline, "agent": self.agent,
                 "form": self.form, "generated": self.generated,
                 "market": self.market, "place": self.place,
+                "measure": self.measure,
+                "measure_label": self.measure_label,
                 "answered": self.answered, "figures": self.figures,
                 "checkable": self.checkable, "sources": list(self.sources)}
 
@@ -94,9 +102,14 @@ class Library:
         first would destroy the comparison that makes a re-run worth doing.
         """
         stamp = (panel.generated or "")[:19]
-        seed = f"{panel.question}|{panel.agent}|{stamp}"
+        seed = f"{panel.question}|{panel.agent}|{panel.measure}|{stamp}"
         digest = hashlib.sha256(seed.encode("utf-8")).hexdigest()[:8]
-        name = _slug(f"{market} {place}".strip() or panel.question)
+        # The measure goes in the readable part, not only in the hash. Someone
+        # listing this directory should be able to see at a glance that they
+        # have a revenue report and a units report on one market, rather than
+        # two files whose names differ by eight hex characters.
+        name = _slug(f"{market} {place} {panel.measure}".strip()
+                     or panel.question)
         day = (stamp[:10] or _dt.date.today().isoformat()).replace("-", "")
         return f"{day}-{name}-{digest}"
 
@@ -146,6 +159,8 @@ class Library:
             generated=str(raw.get("generated") or ""),
             market=str(record.get("market") or ""),
             place=str(record.get("place") or ""),
+            measure=str(raw.get("measure") or ""),
+            measure_label=str(raw.get("measure_label") or ""),
             answered=bool(raw.get("answered")),
             figures=int(coverage.get("figures") or 0),
             checkable=int(coverage.get("checkable") or 0),
@@ -153,7 +168,7 @@ class Library:
             path=path)
 
     def list(self, *, limit: int = 200,
-             market: str = "") -> List[PanelRef]:
+             market: str = "", measure: str = "") -> List[PanelRef]:
         """Every stored panel, newest first.
 
         A file that will not parse is skipped rather than raising. One corrupt
@@ -179,6 +194,13 @@ class Library:
             ref = self._ref(record, path)
             if market and market.lower() not in (
                     f"{ref.market} {ref.question}".lower()):
+                continue
+            # Exact, not substring. "units" must not also match a panel whose
+            # measure is "installed_base" via some shared vocabulary — asking
+            # for one yardstick and being shown another is the failure this
+            # whole dimension was added to prevent, and it would be absurd to
+            # reintroduce it in the filter.
+            if measure and ref.measure != measure.strip().lower():
                 continue
             refs.append(ref)
             if len(refs) >= limit:
@@ -226,5 +248,11 @@ class Library:
                 break
         if me is None:
             return []
+        # Same question AND same measure. A revenue report and a units report
+        # on one market answer differently by design, so offering them as "the
+        # same question, earlier" would present a difference in yardstick as a
+        # change over time — inviting precisely the comparison that splitting
+        # the reports was meant to make impossible.
         return [r for r in self.list(limit=1000)
-                if r.id != panel_id and r.question == me.question]
+                if r.id != panel_id and r.question == me.question
+                and r.measure == me.measure]

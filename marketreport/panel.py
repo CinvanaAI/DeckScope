@@ -298,6 +298,15 @@ class Panel:
     source_labels: List[str] = field(default_factory=list)
     #: Which specialist produced this.
     agent: str = ""
+    #: The measure key this panel is scoped to — "revenue", "units", "usage".
+    #: Load-bearing for identity, not decoration: two panels on the same market
+    #: on different bases are different reports with different answers, and a
+    #: library that indexes only by market cannot tell them apart or let anyone
+    #: choose between them. Empty means the panel was produced without a
+    #: measure named, which is the degraded path.
+    measure: str = ""
+    #: How that measure reads to a person: "share of units sold".
+    measure_label: str = ""
     #: Set when the question could not be answered at all. A panel that failed
     #: is still a panel — it says what was tried and what stopped it.
     problem: str = ""
@@ -405,6 +414,12 @@ class Panel:
             "headline": self.headline,
             "form": self.form,
             "agent": self.agent,
+            # Serialized because it is identity. A stored panel that loses its
+            # measure is a share chart with no axis, and the library rebuilds
+            # its index from this dict — so leaving it out made every report
+            # come back unlabelled and the measure filter match nothing.
+            "measure": self.measure,
+            "measure_label": self.measure_label,
             "answered": self.answered,
             "problem": self.problem,
             "generated": self.generated,
@@ -431,6 +446,8 @@ class Panel:
             headline=data.get("headline", ""),
             form=data.get("form", "table"),
             agent=data.get("agent", ""),
+            measure=data.get("measure", ""),
+            measure_label=data.get("measure_label", ""),
             problem=data.get("problem", ""),
             caveats=list(data.get("caveats") or []),
             source_ids=list(data.get("source_ids") or []),

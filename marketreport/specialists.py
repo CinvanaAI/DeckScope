@@ -317,6 +317,73 @@ MARKET_SHARE = register(Specialist(
 ))
 
 
+def _stamp(panel: Panel, measure: Any) -> None:
+    """Record which yardstick this panel is on, including when it is on none.
+
+    A panel with no measure is not neutral, it is unlabelled, and an unlabelled
+    share chart is the thing every source in the hearing-aid run turned out to
+    be publishing. Saying so on the panel is the minimum.
+    """
+    if measure is None:
+        panel.caveats.append(
+            "No measure was named for this report, so the figures in it may "
+            "be on different bases — a share of revenue and a share of units "
+            "are different answers and can name different leaders. Ask for a "
+            "specific measure to get a report that holds one basis "
+            "throughout.")
+        return
+    panel.measure = measure.key
+    panel.measure_label = measure.label
+    if panel.headline and measure.label.lower() not in panel.headline.lower():
+        panel.headline = f"{panel.headline.rstrip('.')} ({measure.label})."
+
+
+def _off_basis(panel: Panel, measure: Any) -> None:
+    """Flag figures that read as a measure this report is not on.
+
+    Cue matching, and openly so — it catches a source that announced its own
+    basis in words, which is the common case and the only one detectable from
+    text. It cannot catch a bare number silently on the wrong footing; nothing
+    can, which is why the report is scoped before the search rather than
+    filtered after it.
+    """
+    from .measures import get as get_measure
+
+    suspects = [m for m in (get_measure(k) for k in measure.confusable_with)
+                if m is not None]
+    if not suspects:
+        return
+
+    mine = set(measure.cues)
+    for series in panel.series:
+        for slice_ in series.slices:
+            text = f"{series.label} {series.measure} {slice_.label}".lower()
+            if any(cue in text for cue in mine):
+                continue
+            for other in suspects:
+                if any(cue in text for cue in other.cues):
+                    panel.caveats.append(
+                        f"'{slice_.label}' in the {series.label.lower()} "
+                        f"series reads as {other.label}, but this report is "
+                        f"{measure.label}. Those measure different "
+                        f"populations. Check it against its source before "
+                        f"relying on it, or read the {other.label} report "
+                        f"instead.")
+                    break
+
+
+def _or_list(keys: Sequence[str]) -> str:
+    """"units or an installed base" — for naming what a source may substitute."""
+    from .measures import get as get_measure
+
+    labels = [m.label for m in (get_measure(k) for k in keys or ()) if m]
+    if not labels:
+        return "a figure on another basis"
+    if len(labels) == 1:
+        return labels[0]
+    return ", ".join(labels[:-1]) + " or " + labels[-1]
+
+
 def specialist_for(question_id: str) -> Optional[Specialist]:
     """The specialist that claims a standing question, if one does."""
     for spec in registered():
@@ -328,6 +395,7 @@ def specialist_for(question_id: str) -> Optional[Specialist]:
 # ---------------------------------------------------------------- running
 
 def run_specialist(spec: Specialist, *, market: str, place: str = "",
+                   measure: Any = None,
                    provider: Any, researcher: Any,
                    registry: Any = None, policy: Any = None,
                    budget: Any = None, framing: Optional[Dict[str, Any]] = None,
@@ -357,8 +425,28 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     budget = budget or Budget(max_iterations=spec.iterations,
                               max_retrievals=spec.iterations * 3)
 
-    question_text = f"{spec.job.capitalize()} — {market}" + (
-        f" in {place}" if place else "")
+    # The measure is the yardstick this run is scoped to, named by whoever
+    # dispatched it. One run answers one measure. It is not a hint and it is
+    # not resolved here: the stage that decided what market this is also
+    # decided which yardsticks it is meaningfully sold in, and handed them
+    # over. Running without one is still allowed — a caller with no opinion
+    # gets the old undifferentiated behaviour — but it is the degraded case,
+    # and the panel says so rather than quietly producing a chart whose axis
+    # nobody named.
+    from .measures import Measure, get as get_measure
+
+    if isinstance(measure, str):
+        measure = get_measure(measure)
+    if measure is not None and not isinstance(measure, Measure):
+        raise TypeError(
+            f"measure must be a Measure or a registered key, not "
+            f"{type(measure).__name__}. Guessing here would put a number on a "
+            f"basis nobody chose, which is the error this parameter exists to "
+            f"prevent.")
+
+    scope = f" — {measure.label}" if measure is not None else ""
+    question_text = (f"{spec.job.capitalize()} — {market}"
+                     + (f" in {place}" if place else "") + scope)
 
     # Ask the model what to ask, and fall back to the templates only if that
     # fails. The templates were the whole opening move here until now, which
@@ -375,8 +463,32 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     from .section_agent import _opening_questions
     from .reports import Section
 
-    brief = Section(key=spec.name, title=spec.job.capitalize(),
-                    brief=spec.job, refuse=spec.refuse or "")
+    # The measure rewrites the brief rather than being appended to it. A
+    # yardstick mentioned in passing gets ignored by the opener about as often
+    # as it is honoured; a yardstick that IS the job produces questions that
+    # search for it.
+    if measure is not None:
+        job = (f"{spec.job}, measured strictly as {measure.label} — "
+               f"{measure.counts}")
+        refuse = (f"{measure.refuse}\n\nEverything in this report is on one "
+                  f"basis: {measure.label}. A figure on any other basis does "
+                  f"not belong here, however good it is, because a separate "
+                  f"report covers each of the others and mixing them is the "
+                  f"failure this split exists to prevent. The likeliest "
+                  f"substitution to catch a source making is "
+                  f"{_or_list(measure.confusable_with)}.\n\n{spec.refuse}")
+        sources_hint = measure.homes
+    else:
+        job, refuse, sources_hint = spec.job, (spec.refuse or ""), ""
+
+    # The title is scoped too. Leaving it as the specialist's generic job
+    # meant the heading read "...by units and by revenue" directly above a
+    # brief saying to report revenue only — the two most prominent lines in
+    # the prompt contradicting each other, with the wrong one first.
+    title = (f"Who holds what {measure.label} of a market"
+             if measure is not None else spec.job.capitalize())
+    brief = Section(key=spec.name, title=title,
+                    brief=job, refuse=refuse, sources=sources_hint)
     try:
         rows = _opening_questions(section=brief, subject=market, place=place,
                                   report=None, provider=provider, context={},
@@ -400,13 +512,27 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
 
     established = list(findings.findings)
     if not established:
-        panel = unanswered(
-            question_text,
-            "nothing could be established. " + (
+        # A measure nobody publishes still gets a report, and the report says
+        # which measure it is. This is the case that matters most: "unit share
+        # of hearing aids" is unsourceable — neither Sonova nor Demant
+        # discloses volumes and the trackers sell that number rather than
+        # publishing it — and a reader needs to see that as a named, empty
+        # report sitting beside the revenue one. An unlabelled failure looks
+        # like the run broke; a labelled one tells them what a paid source
+        # would buy.
+        if measure is not None:
+            why = (f"nothing could be established on this basis. No source "
+                   f"reached publishes {measure.label} for this market. "
+                   f"Where it is published it is usually found in "
+                   f"{measure.homes}. "
+                   + (((run.get("budget") or {}).get("stopped_because")) or ""))
+        else:
+            why = "nothing could be established. " + (
                 ((run.get("budget") or {}).get("stopped_because"))
                 or "the loop found no sources it could read for these "
-                   "questions"),
-            agent=spec.name)
+                   "questions")
+        panel = unanswered(question_text, why, agent=spec.name)
+        _stamp(panel, measure)
         panel.provenance = _provenance(run, queue, established)
         return panel
 
@@ -414,16 +540,26 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     shape = shaper or make_shaper(provider, on_usage=on_usage)
     try:
         shaped = shape(question=question_text, findings=established,
-                       registry=registry)
+                       registry=registry, job=(job if measure is not None
+                                               else None))
     except Exception as exc:  # noqa: BLE001 - a shaping failure is reportable
         panel = unanswered(
             question_text,
             f"the research found {len(established)} findings but the shaping "
             f"stage failed: {exc}", agent=spec.name)
+        _stamp(panel, measure)
         panel.provenance = _provenance(run, queue, established)
         return panel
 
     panel = build_panel(question_text, established, shaped, agent=spec.name)
+    _stamp(panel, measure)
+
+    # An off-basis figure is the specific corruption this split exists to
+    # stop, and it is invisible once drawn: a chart labelled "share of units"
+    # carrying a revenue number looks exactly like a correct chart. Checked
+    # rather than instructed, because instruction is advisory.
+    if measure is not None:
+        _off_basis(panel, measure)
 
     if spec.check is not None:
         try:
