@@ -162,7 +162,42 @@ class CLIProvider(LLMProvider):
                 except Exception:  # noqa: BLE001
                     pass
         if proc.returncode != 0:
+            raise ProviderError(self._failure(proc))
+        # An empty reply is not an answer. It has to raise here, because the
+        # only other thing that inspects it is the reader, which will fail to
+        # parse it, return no findings, and let the section report "nothing
+        # could be established" — an outage about the CLI rendered as an
+        # absent fact about the market.
+        if not proc.stdout.strip():
             raise ProviderError(
-                f"`{self.argv[0]}` exited {proc.returncode}: {proc.stderr[:500]}"
-            )
+                f"`{self.argv[0]}` exited 0 and printed nothing. An empty "
+                f"reply cannot be told apart from a market with no data "
+                f"downstream, so it stops here instead."
+                + (f"\n\nIt did write to stderr: {proc.stderr.strip()[:300]}"
+                   if proc.stderr.strip() else ""))
         return Completion(text=proc.stdout, model=f"cli:{self.argv[0]}")
+
+    def _failure(self, proc: "subprocess.CompletedProcess") -> str:
+        """Say what the CLI actually said.
+
+        Agent CLIs report their own failures on **stdout**, not stderr, because
+        stdout is where they put everything. `claude -p` with no login exits 1,
+        writes "Not logged in - Please run /login" to stdout, and leaves stderr
+        completely empty — so reporting stderr alone produced "`claude` exited
+        1:" with the diagnosis discarded. Verified against Claude Code 2.1.246.
+        """
+        said = (proc.stderr.strip() or proc.stdout.strip())[:500]
+        message = f"`{self.argv[0]}` exited {proc.returncode}"
+        message += f": {said}" if said else " and said nothing about why."
+
+        low = said.lower()
+        if "not logged in" in low or "/login" in low or "please run" in low:
+            message += (
+                f"\n\nThis CLI signs in on its own — DeckScope never sees the "
+                f"credential. Run `{self.argv[0]}` once in a terminal, sign in "
+                f"there, and this will work afterwards.")
+        elif "usage limit" in low or "rate limit" in low or "quota" in low:
+            message += ("\n\nThat is a subscription limit, not a problem with "
+                        "the question. The same run should work once it "
+                        "resets.")
+        return message
