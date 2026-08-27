@@ -347,7 +347,7 @@ class ResearchLoop:
             if not row.get("absent") and not answers(question.text, metric):
                 self.off_topic.append({
                     "question": question.id, "statement": statement,
-                    "why": "shares no subject vocabulary with the question it "
+                    "why": "measures something other than what the question "
                            "was retrieved for"})
                 continue
 

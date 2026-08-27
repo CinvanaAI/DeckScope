@@ -59,8 +59,22 @@ _MEASURE_PATTERNS = (
            r"launch)|upfront|equipment cost|operating cost)\b"),
     (PRICE, r"\b(price|pricing|per seat|per user|per month|subscription|"
             r"list price|charges?|fees?|contract value|\bacv\b|\bcac\b)\b"),
+    # "share of revenue" is a RATE, not a REVENUE. It has to be caught here,
+    # above the REVENUE rule, because the first match wins.
+    #
+    # This cost the entire revenue half of a market-share panel. The question
+    # "what share of smartphone revenue does each company hold" classified as
+    # REVENUE (one company's turnover) while the finding "Apple held 49% of
+    # smartphone revenue" classified as RATE — so the relevance guard saw a
+    # measure mismatch and dropped every finding it had just retrieved. The
+    # panel then reported the question as unanswerable, which reads as an
+    # absence in the world rather than a regex precedence bug.
+    #
+    # `share price` stays a PRICE because the PRICE rule is above this one.
     (RATE, r"\b(cagr|growth rate|retention|churn|margin|market share|penetration|"
-           r"survival|conversion)\b|%"),
+           r"survival|conversion)\b|%|"
+           r"\bshare of\b|\b(revenue|unit|shipment|volume|value|installed base)"
+           r" share\b|\bpercentage of\b|\bshares? (of the )?market\b"),
     (SIZE, r"\b(market size|market is|addressable market|\btam\b|\bsam\b|\bsom\b|"
            r"industry (is|was|totall?ed)|category is|segment is|market for|"
            # Interrogative forms. The patterns were written against statements,

@@ -63,6 +63,22 @@ RULES: List[Tuple[str, str, Optional[str], str]] = [
      DATASET, "bls_oes",
      "occupational wages by metro are published as structured data"),
 
+    # Market-wide questions are excluded before the filing rule sees them.
+    # "What share of smartphone revenue does each company hold in Ireland?"
+    # matched on `revenue` and went to EDGAR full-text search, which indexes
+    # what individual filers say about themselves and cannot answer a question
+    # about a market. The whole revenue half of a market-share panel vanished
+    # into a backend that was never going to have it — and it vanished as
+    # "no backend could answer this", which reads as an absent fact rather than
+    # as the misrouting it was. A wrong route is the most expensive kind of
+    # wrong answer here, because it looks like evidence of a gap.
+    (r"\b(market share|share of (the )?(market|revenue|units|shipments)|"
+     r"market size|industry (revenue|size)|each (company|vendor|brand)|"
+     r"by (vendor|brand|manufacturer))\b",
+     SEARCH, None,
+     "a question about a whole market's revenue is answered by the firms who "
+     "track markets, not by any one company's own filings"),
+
     (r"\b(revenue|earnings|market cap|10-?k|10-?q|annual report|filing|"
      r"public company financials?)\b",
      FILING, "edgar",
