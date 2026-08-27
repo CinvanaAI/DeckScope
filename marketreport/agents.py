@@ -20,7 +20,7 @@ from .sizing import Ring, Sizing, Term
 from .sources.census import (CBP_YEAR, ECN_YEAR, Unavailable,
                              establishment_count, revenue_per_establishment)
 from . import fixtures
-from .structure import from_size_bands
+from .structure import cagr as compound_rate, from_size_bands, shape
 
 #: CBP employee-size bands, in the order the API returns them.
 SIZE_BANDS = ("1-4", "5-9", "10-19", "20-49", "50-99",
@@ -65,7 +65,7 @@ def framing(*, market: MarketDefinition, question: StandingQuestion,
     return Answer(
         question_id=question.id, kind=SUPPLIED,
         statement=", ".join(parts) + ".",
-        confidence="high", detail=market.to_dict())
+        confidence="high", detail=market.to_dict(), demo=market.demo)
 
 
 # ------------------------------------------------------- Q2 / Q3 the sizes
@@ -169,7 +169,7 @@ def sizing_bottom_up(*, market: MarketDefinition, question: StandingQuestion,
         statement=statement,
         value=headline, value_text=_money(headline), unit="USD",
         as_of=str(ECN_YEAR),
-        confidence="medium" if not problems else "low",
+        confidence="medium" if not problems else "low", demo=market.demo,
         source_ids=[t.source for r in sizing.rings for t in r.terms if t.sourced],
         detail={"sizing": sizing.to_dict(), "rings": len(sizing.rings),
                 "arithmetic": [r.arithmetic() for r in sizing.rings],
@@ -179,25 +179,82 @@ def sizing_bottom_up(*, market: MarketDefinition, question: StandingQuestion,
 @register("sizing-td")
 def sizing_top_down(*, market: MarketDefinition, question: StandingQuestion,
                     seen: Dict[str, Optional[Answer]]) -> Answer:
-    """Start from a published aggregate and narrow.
+    """Start from a published national aggregate and narrow to the geography.
 
-    Not built. It is recorded as unanswered with the reason rather than
-    quietly omitted, because Q2 and Q3 exist to be compared and a report that
-    silently drops one half of that comparison has removed the reliability
-    signal without telling anybody.
+    The Economic Census publishes total receipts for a NAICS code nationally.
+    Narrowing that by the geography's share of establishments is a genuine
+    top-down path: it begins with an aggregate somebody else published and
+    apportions it, which is what top-down means.
 
-    Doing this honestly needs a source of published market aggregates that is
-    not a vendor's own marketing PDF — which is precisely the class of source
-    that produces most inflated TAMs. Until there is one worth trusting, no
-    answer beats a bad one.
+    It is NOT the bottom-up figure by another route, and the difference is the
+    point. Bottom-up multiplies a local count by a local average. This one
+    assumes the local average matches the national one — so the two diverge
+    exactly where local establishments are bigger or smaller than typical, and
+    that divergence is information rather than an error to reconcile.
+
+    This agent never sees the bottom-up answer. `report.build` hands each agent
+    only the answers its question declares it needs, and Q2 declares none but
+    Q1, so the independence is structural rather than requested.
     """
-    return unanswered(
-        question,
-        "no top-down aggregate source is wired up yet. This half of the sizing "
-        "is reported as missing rather than omitted, because the top-down and "
-        "bottom-up figures exist to be compared — their agreement is the "
-        "reliability signal, and a single number without it is weaker than it "
-        "looks.")
+    if market.demo:
+        national_receipts = (fixtures.revenue(market.naics, "")
+                             * fixtures.count(market.naics))
+        national_estabs = fixtures.count(market.naics)
+        local_estabs = fixtures.count(market.naics, market.state_fips,
+                                      market.county_fips)
+        source = f"Economic Census {ECN_YEAR} (demo)"
+    else:
+        try:
+            per = revenue_per_establishment(market.naics, year=ECN_YEAR)
+            national = establishment_count(market.naics, year=CBP_YEAR)
+        except Unavailable as exc:
+            return unanswered(question, str(exc))
+        national_receipts = (per.value or 0) * (national.value or 0)
+        national_estabs = int(national.value or 0)
+        source = per.source
+        geo: Dict[str, str] = {}
+        if market.state_fips:
+            geo["state_fips"] = market.state_fips
+        if market.county_fips:
+            geo["county_fips"] = market.county_fips
+        if geo:
+            try:
+                local_estabs = int(
+                    (establishment_count(market.naics, year=CBP_YEAR,
+                                         **geo).value or 0))
+            except Unavailable as exc:
+                return unanswered(question, str(exc))
+        else:
+            local_estabs = national_estabs
+
+    if not national_receipts or not national_estabs:
+        return unanswered(question, "no national receipts total could be "
+                                    "retrieved to narrow")
+
+    share = (local_estabs / national_estabs) if national_estabs else 0.0
+    size = national_receipts * share
+
+    statement = (f"Starting from the {_money(national_receipts)} national total "
+                 f"for {market.label} and apportioning it by "
+                 f"{market.geography_label}'s {share * 100:.2f}% share of "
+                 f"establishments gives {_money(size)}. This assumes the "
+                 f"average establishment here is the same size as the national "
+                 f"average — where it is not, this figure and the bottom-up one "
+                 f"will differ, and that difference is the useful part.")
+    if market.demo:
+        statement += f" ({fixtures.DEMO_NOTE})"
+
+    return Answer(
+        question_id=question.id, kind=RETRIEVED, statement=statement,
+        value=size, value_text=_money(size), unit="USD", as_of=str(ECN_YEAR),
+        confidence="low" if market.demo else "medium", demo=market.demo,
+        source_ids=[] if market.demo else [source],
+        detail={"national_receipts": national_receipts,
+                "national_establishments": national_estabs,
+                "local_establishments": local_estabs,
+                "establishment_share": share,
+                "assumption": "local establishments are of national average size",
+                "demo": market.demo})
 
 
 # ------------------------------------------------------------ Q5 structure
@@ -248,17 +305,44 @@ def structure(*, market: MarketDefinition, question: StandingQuestion,
     if conc.hhi is None:
         return unanswered(question, conc.because or conc.caveat)
 
+    # HHI alone is close to useless here and the critique was right about it:
+    # every real trade lands far below the threshold and reads
+    # "unconcentrated", and it cannot tell 1,422 sole traders from 1,422 large
+    # firms because it measures share EQUALITY, not scale. So the shape
+    # measures run alongside it and carry the reading when HHI cannot.
+    national_bands: Dict[str, int] = {}
+    if market.demo:
+        for band in SIZE_BANDS:
+            got = fixtures.count(market.naics, "", "", band)
+            if got:
+                national_bands[band] = got
+        local_pop = fixtures.population(market.state_fips, market.county_fips)
+        national_pop = fixtures.population()
+    else:
+        # Population needs the American Community Survey, which is not wired
+        # up. The density measure is simply absent rather than estimated.
+        local_pop = national_pop = 0
+
+    form = shape(bands, population=local_pop or None,
+                 national_bands=national_bands or None,
+                 national_population=national_pop or None)
+
+    statement = (f"In {market.geography_label}, {market.label} is "
+                 f"{conc.reading} — {conc.because}. "
+                 f"The largest four hold about "
+                 f"{(conc.cr4 or 0) * 100:.0f}% between them, across "
+                 f"{conc.firms:,} establishments.")
+    if form.reading:
+        statement += (f" More usefully for a market this fragmented, it is "
+                      f"{form.reading}: {form.because}.")
+    statement += f" Concentration is estimated, not measured: {conc.caveat}"
+
     return Answer(
-        question_id=question.id, kind=COMPUTED,
-        statement=(f"In {market.geography_label}, {market.label} is "
-                   f"{conc.reading} — {conc.because}. "
-                   f"The largest four hold about "
-                   f"{(conc.cr4 or 0) * 100:.0f}% between them, across "
-                   f"{conc.firms:,} establishments. "
-                   f"This is estimated, not measured: {conc.caveat}"),
+        question_id=question.id, kind=COMPUTED, statement=statement,
         value=conc.hhi, value_text=f"HHI {conc.hhi:,.0f}", unit="HHI",
-        as_of=str(CBP_YEAR), confidence="medium",
-        detail={"concentration": conc.to_dict(), "size_bands": bands})
+        as_of=str(CBP_YEAR), confidence="medium", demo=market.demo,
+        detail={"concentration": conc.to_dict(), "size_bands": bands,
+                "shape": form.to_dict()})
 
 
 # ------------------------------------------------------------- Q4 growth
@@ -292,7 +376,11 @@ def growth(*, market: MarketDefinition, question: StandingQuestion,
                                     "industry and geography")
 
     years = CBP_YEAR - fixtures.PRIOR_YEAR
-    cagr = (now / then) ** (1.0 / years) - 1.0
+    rate = compound_rate(then, now, years)
+    if rate is None:
+        return unanswered(question, "the two vintages do not span a usable "
+                                    "period")
+    cagr = rate
     return Answer(
         question_id=question.id, kind=RETRIEVED,
         statement=(f"In {market.geography_label}, establishments grew from "
@@ -303,7 +391,7 @@ def growth(*, market: MarketDefinition, question: StandingQuestion,
                    f"in opposite directions when a market consolidates. "
                    f"({fixtures.DEMO_NOTE})"),
         value=cagr, value_text=f"{cagr * 100:.1f}%/yr", unit="%",
-        as_of=str(CBP_YEAR), confidence="medium",
+        as_of=str(CBP_YEAR), confidence="medium", demo=True,
         source_ids=[f"County Business Patterns {fixtures.PRIOR_YEAR} and "
                     f"{CBP_YEAR}"],
         detail={"prior_year": fixtures.PRIOR_YEAR, "prior_count": then,
@@ -341,7 +429,7 @@ def competitors(*, market: MarketDefinition, question: StandingQuestion,
                    f"enough to be publicly visible; the establishment count "
                    f"shows the market is mostly firms too small to name "
                    f"individually. ({fixtures.DEMO_NOTE})"),
-        confidence="medium", as_of=str(CBP_YEAR),
+        confidence="medium", as_of=str(CBP_YEAR), demo=True,
         source_ids=["SEC EDGAR", "public filings"],
         detail={"participants": named, "demo": True})
 
@@ -409,7 +497,7 @@ def economics(*, market: MarketDefinition, question: StandingQuestion,
         value_text=_money(per_establishment.value),
         unit="$ per establishment per year", as_of=per_establishment.as_of,
         confidence="medium", source_ids=[per_establishment.source],
-        detail=detail)
+        demo=market.demo, detail=detail)
 
 
 # ----------------------------------------------------------- Q8 regulation
@@ -444,7 +532,7 @@ def regulation(*, market: MarketDefinition, question: StandingQuestion,
                    f"administered by the {rules['body']}. The threshold is the "
                    f"part that decides whether a small operator needs the "
                    f"licence at all. ({fixtures.DEMO_NOTE})"),
-        confidence="medium", as_of=str(CBP_YEAR),
+        confidence="medium", as_of=str(CBP_YEAR), demo=True,
         source_ids=[rules["body"]],
         detail={"licence_count": rules["count"],
                 "licence_note": rules["note"],

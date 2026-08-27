@@ -202,7 +202,13 @@ class MCPStdioClient:
             if not notify:
                 self._id += 1
                 msg["id"] = self._id
-            assert self.proc.stdin is not None
+            if self.proc.stdin is None:
+                # Was an `assert`, which `python -O` strips — so the guard
+                # vanished in exactly the configuration you would deploy, and
+                # the next line raised AttributeError on None instead.
+                raise RuntimeError(
+                    "the MCP subprocess has no stdin to write to; it exited "
+                    "or was started without a pipe")
             self.proc.stdin.write(json.dumps(msg) + "\n")
             self.proc.stdin.flush()
             if notify:

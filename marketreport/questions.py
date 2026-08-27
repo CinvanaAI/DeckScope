@@ -16,7 +16,7 @@ Which is what `raises` is for. A section that raises a question must have that
 question answered before the report is finished, and `closure()` is the check.
 An unanswered follow-up is reported as a hole, not as further reading.
 
-These eleven come from the intersection of two independent professional formats:
+These twelve come from the intersection of two independent professional formats:
 the industry sections of filed S-1s (see `market-corpus/SCHEMA.md`) and the
 IBISWorld report structure (see `RESEARCH_NOTES.md`). Where two formats built by
 different professions for different buyers agree on a question, that question is
@@ -63,9 +63,16 @@ class StandingQuestion:
     #: What this agent must NOT see. Specialization is only real if the context
     #: differs, and the denials do more work than the grants.
     denied: str = ""
-    #: Questions a reader will have the moment they read this answer. They are
-    #: part of the deliverable, not further reading — see the module docstring.
-    raises: Tuple[str, ...] = ()
+    #: Questions a reader will have the moment they read this answer, each
+    #: paired with the answer field that must be populated for it to count as
+    #: closed: ("the question", "Q5.detail.concentration.basis").
+    #:
+    #: Structural rather than lexical on purpose. The first version decided
+    #: closure by counting content-word overlap against our own prose, which
+    #: meant a section using the right vocabulary passed without answering
+    #: anything — a completeness check we graded ourselves, over text we wrote,
+    #: with a rule we chose.
+    raises: Tuple[Tuple[str, str], ...] = ()
     #: Which professional format has this section. Both means load-bearing.
     seen_in: Tuple[str, ...] = ("s-1", "ibisworld")
     why: str = ""
@@ -85,17 +92,20 @@ STANDING: Tuple[StandingQuestion, ...] = (
         "Q2", "How large is this market, measured from published aggregates "
         "downward?", section="size_top_down", agent="sizing-td",
         needs=("Q1",), denied="the bottom-up estimate",
-        raises=("Whose figure is it, and were they paid by somebody in the "
-                "market?",
-                "What does that aggregate include that this market does not?"),
+        raises=(("Whose figure is it, and does it come from somebody selling into "
+                 "this market?", "Q2.source_ids"),
+                ("What does that national aggregate assume about this "
+                 "geography?", "Q2.detail.assumption")),
         why="Cheap and fast, and the source of most inflated numbers, because "
             "most people stop at the first analyst figure they find."),
     StandingQuestion(
         "Q3", "How large is this market, counted from units upward?",
         section="size_bottom_up", agent="sizing-bu",
         needs=("Q1",), denied="the top-down estimate",
-        raises=("Does this agree with the top-down figure, and if not, why?",
-                "What is the revenue per unit, and whose revenue is it?"),
+        raises=(("Does this agree with the top-down figure, and if not, why?",
+                 "Q12.detail.verdict"),
+                ("What is the revenue per unit, and whose revenue is it?",
+                 "Q3.detail.arithmetic")),
         why="Slower and operationally grounded. Every filing in the corpus used "
             "this method. Independence from Q2 is the entire point — their "
             "agreement is evidence and their divergence is a finding."),
@@ -103,23 +113,24 @@ STANDING: Tuple[StandingQuestion, ...] = (
         "Q4", "How fast is it growing, and on whose forecast?", section="growth",
         agent="growth", needs=("Q1",),
         denied="any single company's own projection",
-        raises=("Is that growth in units or in price?",
-                "How far out does the forecast run before it is extrapolation?"),
+        raises=(("Is that growth in firms or in revenue?", "Q4.detail.basis"),
+                ("Over what period was it measured?", "Q4.detail.prior_year")),
         why="agilon applied CMS's own published growth rates rather than an "
             "analyst CAGR. A filer's forecast is not a market forecast."),
     StandingQuestion(
         "Q5", "How concentrated is it?", section="structure", kind=COMPUTED,
         agent="structure", needs=("Q1",), denied="prose about competition",
-        raises=("Is that concentration measured or estimated?",
-                "How much of the market do the largest four hold?"),
+        raises=(("Is that concentration measured or estimated?",
+                 "Q5.detail.concentration.basis"),
+                ("How much of the market do the largest four hold?",
+                 "Q5.detail.concentration.cr4")),
         why="HHI and CR4 are arithmetic with published thresholds. A model asked "
             "to 'consider the concentration' returns a plausible adjective."),
     StandingQuestion(
         "Q6", "Who competes in it?", section="competitors", agent="competitors",
         needs=("Q1",), denied="market-size findings",
-        raises=("Which of them are actually in this segment rather than "
-                "adjacent to it?",
-                "Is anyone large enough to absorb this as a feature?"),
+        raises=(("Which of them are in this segment rather than adjacent to it?",
+                 "Q6.detail.participants"),),
         why="So a large number never becomes evidence about who is in the "
             "market. These are separate questions and conflating them is how a "
             "deck's framing survives."),
@@ -127,23 +138,24 @@ STANDING: Tuple[StandingQuestion, ...] = (
         "Q7", "What does it cost to operate in it?", section="economics",
         agent="economics", needs=("Q1",),
         denied="any single firm's own economics",
-        raises=("What does it cost to start, as distinct from to run?",
-                "Where does the money go — labour, materials, rent?"),
+        raises=(("What does it cost to start, as distinct from to run?",
+                 "Q7.detail.startup_cost_note"),),
         why="The corpus constraint: every filing takes its value-per-unit from "
             "its own books, and a standalone report has no books."),
     StandingQuestion(
         "Q8", "What rules govern it — licences, permits, thresholds?",
         section="regulation", agent="regulation", needs=("Q1",),
         denied="everything except statute and licensing bodies",
-        raises=("Is there a threshold below which the rules do not apply?",
-                "Is any of this changing?"),
+        raises=(("Is there a threshold below which the rules do not apply?",
+                 "Q8.detail.threshold"),),
         why="Narrow context, cheap model, and the one section where a missing "
             "exemption changes whether the business is legal to start."),
     StandingQuestion(
         "Q9", "How hard is it to enter, and is that getting harder or easier?",
         section="barriers", kind=DERIVED, agent="barriers",
         needs=("Q5", "Q7", "Q8"), denied="raw sources",
-        raises=("What is the single hardest thing about entering?",),
+        raises=(("What is the single hardest thing about entering?",
+                 "Q9.detail.reasons"),),
         why="IBISWorld grades barriers high/medium/low AND trends them "
             "increasing/decreasing/steady. A level plus a direction beats a "
             "paragraph. Reasoned over findings, never over evidence."),
@@ -153,6 +165,16 @@ STANDING: Tuple[StandingQuestion, ...] = (
         denied="raw sources", seen_in=("ibisworld",),
         why="IBISWorld has this in every report and no S-1 does, because a "
             "filer would rather not say its market is mature."),
+    StandingQuestion(
+        "Q12", "Do the two independent size estimates agree?",
+        section="convergence", kind=COMPUTED, agent="convergence",
+        needs=("Q2", "Q3"), denied="",
+        seen_in=("s-1", "ibisworld"),
+        why="The profession's own advice is to run top-down and bottom-up "
+            "independently and read convergence as a reliability signal. "
+            "Building the two agents without ever comparing them left the "
+            "design's central claim unexercised — two numbers on a page and no "
+            "statement about what their relationship means."),
     StandingQuestion(
         "Q11", "What could not be established, and why?", section="gaps",
         kind=COMPUTED, agent="", needs=(), seen_in=(),
@@ -204,7 +226,18 @@ def order() -> List[StandingQuestion]:
 
 @dataclass
 class Answer:
-    """What a question got answered with, or why it did not."""
+    """What a question got answered with, or why it did not.
+
+    Deliberately the same shape as `deckscope.research.findings.Finding`, and it
+    carries the same `metric` identity, because it IS the same idea: something
+    established, with a value, a unit, a date and its sources.
+
+    Building it separately was a real mistake and this is the repair. The
+    semantic-comparison rule that stops "the market is $7B" corroborating "a
+    competitor raised $7.2B" lived in one half of a repository that had two, so
+    the newer half could make exactly the error the older half had been fixed
+    against. One answer type, one comparison rule.
+    """
 
     question_id: str
     #: Free-text conclusion a reader sees.
@@ -220,10 +253,46 @@ class Answer:
     #: Set when the question could not be answered. An answered question and an
     #: unanswerable one are different states, and "" is neither.
     unanswered_because: str = ""
+    #: True when this came from recorded sample data rather than a live source.
+    #: A demo figure is never checkable: there is no source to go and read,
+    #: because I made the number up. Carrying this on the answer rather than
+    #: relying on the caller to remember is the difference between a labelled
+    #: illustration and a figure that becomes quotable two hops downstream.
+    demo: bool = False
     #: Anything section-specific: HHI, CR4, ring breakdowns, a grade plus a
     #: trend. Kept open so a section can carry its own shape without every
     #: section needing a field here.
     detail: Dict[str, Any] = field(default_factory=dict)
+    #: What this number is ABOUT — subject, measure, basis, period. Filled in on
+    #: construction from the shared classifier, so two answers can only be
+    #: compared when they measure the same thing.
+    metric: Optional[Any] = None
+
+    def __post_init__(self) -> None:
+        # Parse the magnitude out of the text, exactly as FindingRegistry.add
+        # does for a Finding. Without this an Answer carrying "$7B" had
+        # `value is None`, and the shared comparison rule reported "neither
+        # carries a figure to compare" for two answers that plainly did —
+        # the first thing the merge exposed.
+        if self.value is None and self.value_text:
+            from deckscope.research.findings import parse_number
+            self.value = parse_number(self.value_text)
+        if self.metric is None and (self.statement or self.value_text):
+            from deckscope.research.metrics import classify
+            self.metric = classify(self.statement, unit=self.unit,
+                                   value_text=str(self.value_text or ""),
+                                   as_of=self.as_of)
+
+    def compare(self, other: "Answer"):
+        """How this answer stands to another: agree, disagree, or incomparable.
+
+        The same three-way rule the research loop uses. `INCOMPARABLE` is the
+        one that matters — two numbers measuring different things are neither
+        corroboration nor contradiction, and collapsing that into a boolean is
+        how a market size and a funding round confirmed each other.
+        """
+        from deckscope.research.closing import relation
+        return relation(self, other)
 
     @property
     def answered(self) -> bool:
@@ -231,8 +300,32 @@ class Answer:
             self.statement or self.value is not None or self.detail)
 
     @property
+    def sourced(self) -> bool:
+        """Whether anything backs this. Named to match `Finding.sourced`, which
+        is what the shared comparison rule reads."""
+        return self.checkable
+
+    @property
+    def method(self) -> str:
+        """The research half calls this `method`; here it is `kind`. Aliased so
+        one comparison rule can read both without knowing which it holds."""
+        return self.kind
+
+    @property
+    def id(self) -> str:
+        return self.question_id
+
+    @property
     def checkable(self) -> bool:
-        """Whether a reader could go and verify this themselves."""
+        """Whether a reader could go and verify this themselves.
+
+        A demo answer never can. Its `source_ids` name a dataset that was not
+        actually queried, so counting it as checkable would have the demo
+        report a perfect provenance record over invented numbers — which is the
+        fixture-maturity trap wearing a provenance badge.
+        """
+        if self.demo:
+            return False
         return self.answered and (bool(self.source_ids)
                                   or self.kind in (COMPUTED, DERIVED, SUPPLIED))
 
@@ -240,6 +333,11 @@ class Answer:
         d = asdict(self)
         d["answered"] = self.answered
         d["checkable"] = self.checkable
+        # `asdict` leaves the metric's `subject` as a frozenset, which json
+        # cannot encode — the same bug the atomic-write guard caught on the
+        # research half, so it gets the same fix here rather than waiting to be
+        # discovered separately.
+        d["metric"] = self.metric.to_dict() if self.metric is not None else None
         return d
 
 
@@ -290,26 +388,24 @@ class AnswerSet:
         """
         open_items: List[Dict[str, str]] = []
         closed = 0
-        haystack = " ".join(
-            f"{a.statement} {a.value_text} {' '.join(str(v) for v in a.detail.values())}"
-            for a in self.answers.values() if a.answered).lower()
 
         for question in STANDING:
             answer = self.answers.get(question.id)
             if answer is None or not answer.answered:
                 continue          # an unanswered section raises nothing yet
-            for follow_up in question.raises:
-                if self._addressed(follow_up, haystack):
+            for follow_up, path in question.raises:
+                if self._populated(path):
                     closed += 1
                 else:
                     open_items.append({
                         "raised_by": question.id,
                         "section": question.section,
-                        "question": follow_up})
+                        "question": follow_up,
+                        "needs": path})
 
         # An unanswered standing question is also a question the reader leaves
         # with. Counting only follow-ups of ANSWERED sections meant a report
-        # that answered two of eleven questions reported `complete: True`,
+        # that answered two of twelve questions reported `complete: True`,
         # because the nine it skipped raised nothing — a gate that cannot fail,
         # quoted as though it had passed. Completeness has to mean both.
         missing = [
@@ -342,42 +438,53 @@ class AnswerSet:
             "note": note,
         }
 
-    @staticmethod
-    def _addressed(follow_up: str, haystack: str) -> bool:
-        """Whether anything in the report speaks to a raised question.
+    def _populated(self, path: str) -> bool:
+        """Whether the field a follow-up needs actually holds something.
 
-        Content-word overlap, and a demanding threshold. This is a check on our
-        own completeness, so a generous reading of it would be self-serving.
+        `"Q5.detail.concentration.basis"` is closed when that value exists and
+        is not empty. No prose is read, so the check cannot be satisfied by
+        wording — which was the whole problem with the version this replaces.
         """
-        import re
-
-        stop = {"what", "does", "that", "this", "the", "and", "for", "are",
-                "is", "it", "of", "in", "to", "a", "an", "or", "how", "much",
-                "many", "than", "with", "from", "them", "they", "which",
-                "actually", "rather", "single", "before", "there", "into",
-                "whose", "were", "somebody", "anyone", "large", "enough",
-                "where", "does", "have", "been", "will", "far", "out", "not",
-                "any", "why", "if"}
-        words = {w for w in re.findall(r"[a-z]{3,}", follow_up.lower())
-                 if w not in stop}
-        if not words:
+        head, _, rest = path.partition(".")
+        answer = self.answers.get(head)
+        if answer is None or not answer.answered:
             return False
-        hit = sum(1 for w in words if w in haystack)
-        return hit >= max(2, len(words) // 2)
+        if not rest:
+            return True
+
+        node: Any = answer
+        for part in rest.split("."):
+            if isinstance(node, dict):
+                node = node.get(part)
+            else:
+                node = getattr(node, part, None)
+            if node is None:
+                return False
+        # An empty list, dict or string is a field that exists and says nothing.
+        if isinstance(node, (list, dict, str)) and not node:
+            return False
+        return True
 
     def coverage(self) -> Dict[str, Any]:
         """How much of the standing report this run actually produced.
 
-        Reported rather than implied. A report answering four of eleven
+        Reported rather than implied. A report answering four of twelve
         questions is a real output, and a reader is entitled to know that
         before they act on it.
         """
         total = len(STANDING)
         answered = len(self.answered())
         checkable = len([a for a in self.answers.values() if a.checkable])
+        # Live and demo counted separately, because "10 of 12 answered" over
+        # invented data and over real data are very different claims and the
+        # first was being reported as though it were the second.
+        from_demo = len([a for a in self.answers.values()
+                         if a.answered and a.demo])
         return {
             "questions": total,
             "answered": answered,
+            "answered_live": answered - from_demo,
+            "answered_from_demo": from_demo,
             "checkable": checkable,
             "unanswered": total - answered,
             "fraction": round(answered / total, 3) if total else 0.0,

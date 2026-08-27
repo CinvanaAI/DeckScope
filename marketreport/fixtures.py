@@ -109,6 +109,20 @@ PARTICIPANTS: Dict[str, List[Dict[str, str]]] = {
 }
 
 
+#: Population, for the per-capita density measure. Real ACS figures rounded —
+#: these are the one class of demo number that is close to the true value,
+#: because population is not industry-specific and is easy to state correctly.
+POPULATION: Dict[Any, int] = {
+    ("", ""): 333_300_000,        # United States
+    ("04", ""): 7_430_000,        # Arizona
+    ("04", "013"): 4_550_000,     # Maricopa County
+}
+
+
+def population(state: str = "", county: str = "") -> int:
+    return POPULATION.get((state, county), 0)
+
+
 def count(naics: str, state: str = "", county: str = "",
           size_band: str = "") -> int:
     """A recorded establishment count, or 0 when the fixture has none."""

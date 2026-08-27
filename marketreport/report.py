@@ -145,6 +145,16 @@ def build(market: MarketDefinition, *,
             answer = agent(market=market, question=question, seen=visible)
         except Exception as exc:  # noqa: BLE001 - one bad agent must not end the run
             answer = unanswered(question, f"the {question.agent} agent failed: {exc}")
+
+        # Demo taints everything downstream of it. A barriers grade derived from
+        # demo concentration is a demo answer, and reporting it as live would
+        # let invented numbers acquire a provenance badge by passing through one
+        # more function. The rule is structural: inherit from what you read.
+        if not answer.demo and any(
+                (answers.get(n) is not None and answers.get(n).demo)
+                for n in question.needs):
+            answer.demo = True
+
         answers.record(answer)
         emit(f"  {question.id} {question.section}: "
              + ("answered" if answer.answered
@@ -189,6 +199,62 @@ def _gaps(answers: AnswerSet) -> Answer:
         detail={"unanswered": holes,
                 "open_follow_ups": closure["open"],
                 "coverage": answers.coverage()})
+
+
+@register("convergence")
+def _convergence_agent(*, market: MarketDefinition, question: StandingQuestion,
+                       seen: Dict[str, Optional[Answer]]) -> Answer:
+    """Compare the two independent size estimates.
+
+    The reason both were built. Two methods that never see each other's work
+    and then agree is evidence; two that diverge is a finding about where the
+    local market departs from the national average. Averaging them would throw
+    away the only thing their independence bought.
+
+    Uses the shared three-way comparison, so a pair that measures different
+    things comes back INCOMPARABLE and settles nothing rather than being read
+    as disagreement.
+    """
+    top_down, bottom_up = seen.get("Q2"), seen.get("Q3")
+    if not (top_down and bottom_up and top_down.answered and bottom_up.answered):
+        return unanswered(question, "both size estimates are needed to compare "
+                                    "them, and at least one is missing")
+
+    verdict, because = top_down.compare(bottom_up)
+    lines = [f"top-down:   {top_down.value_text}",
+             f"bottom-up:  {bottom_up.value_text}"]
+
+    if verdict == "agree":
+        statement = (
+            f"The two methods agree ({because}). They were run independently "
+            f"and neither saw the other, so agreement here is genuine "
+            f"corroboration rather than one figure anchoring the other.")
+        confidence = "high"
+    elif verdict == "disagree":
+        ratio = (max(top_down.value or 0, bottom_up.value or 0)
+                 / max(min(top_down.value or 0, bottom_up.value or 0), 1))
+        bigger = "top-down" if (top_down.value or 0) > (bottom_up.value or 0) \
+            else "bottom-up"
+        statement = (
+            f"The two methods disagree — {because}, with the {bigger} figure "
+            f"the larger. That is not an error to reconcile. Top-down assumes "
+            f"establishments here are of national average size; bottom-up uses "
+            f"the local average directly. A gap of {ratio:.1f}x says "
+            f"establishments in this geography are "
+            f"{'smaller' if bigger == 'top-down' else 'larger'} than typical, "
+            f"which is a real finding about the market.")
+        confidence = "medium"
+    else:
+        statement = (f"The two estimates could not be compared: {because}. "
+                     f"Neither corroborates nor contradicts the other.")
+        confidence = "low"
+
+    return Answer(
+        question_id=question.id, kind=COMPUTED, statement=statement,
+        confidence=confidence,
+        detail={"verdict": verdict, "because": because,
+                "top_down": top_down.value, "bottom_up": bottom_up.value,
+                "detail_lines": lines})
 
 
 # ------------------------------------------------------------ derived agents

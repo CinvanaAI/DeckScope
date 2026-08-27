@@ -24,6 +24,7 @@ HEADINGS: Dict[str, str] = {
     "definition": "WHAT THIS MARKET IS",
     "size_top_down": "HOW BIG IT IS — FROM PUBLISHED AGGREGATES",
     "size_bottom_up": "HOW BIG IT IS — COUNTED FROM THE GROUND UP",
+    "convergence": "DO THE TWO SIZE ESTIMATES AGREE?",
     "growth": "HOW FAST IT IS GROWING",
     "structure": "HOW CONCENTRATED IT IS",
     "competitors": "WHO COMPETES",
@@ -53,12 +54,28 @@ def text(answers: AnswerSet) -> str:
     # A reader deciding whether to rely on this needs it before they read it,
     # not after.
     if closure["complete"]:
-        out.append(f"  All {coverage['questions']} standing questions answered.")
-    else:
+        out.append(f"  COMPLETE — all {coverage['questions']} questions "
+                   f"answered, and every question they raise is answered too.")
+    elif closure["unanswered_standing"]:
         out.append(f"  INCOMPLETE — {coverage['answered']} of "
                    f"{coverage['questions']} questions answered.")
         out.append(f"  {closure['note']}")
-    out.append("")
+    else:
+        # All twelve answered but something they raised is still open. Saying
+        # "INCOMPLETE — 12 of 12 answered" was a contradiction on its face.
+        out.append(f"  All {coverage['questions']} questions answered, but "
+                   f"{len(closure['open'])} question(s) this report raises are "
+                   f"not answered in it.")
+        out.append(f"  {closure['note']}")
+    # If any of this came from recorded samples, say so before the reader
+    # reaches a number. A demo figure that reaches the eye unlabelled has
+    # already done its damage.
+    if coverage.get("answered_from_demo"):
+        out.append(f"  {coverage['answered_from_demo']} of "
+                   f"{coverage['answered']} answers come from RECORDED SAMPLE "
+                   f"DATA, not live sources. They are illustrative and none of "
+                   f"them is independently checkable.")
+        out.append("")
 
     for question in STANDING:
         answer = answers.get(question.id)
@@ -111,11 +128,23 @@ def _detail(section: str, answer: Answer) -> List[str]:
                        f"CR4 {(conc.get('cr4') or 0) * 100:.0f}%  ·  "
                        f"{conc.get('firms', 0):,} establishments  ·  "
                        f"{conc.get('basis', '')}")
+        form = detail.get("shape") or {}
+        if form.get("average_size") is not None:
+            out.append(f"    {form['average_size']:.1f} employees per "
+                       f"establishment  ·  largest tenth hold "
+                       f"{(form.get('top_decile_share') or 0) * 100:.0f}% of "
+                       f"employment"
+                       + (f"  ·  {form['per_capita']:.1f} per 100k people"
+                          if form.get("per_capita") else ""))
         bands = detail.get("size_bands") or {}
         if bands:
             out.append("    By employee-size band:")
             for label, count in bands.items():
                 out.append(f"      {label:>8}  {count:>8,}")
+
+    elif section == "convergence":
+        for line in detail.get("detail_lines") or []:
+            out.append(f"    {line}")
 
     elif section == "barriers":
         for reason in detail.get("reasons") or []:

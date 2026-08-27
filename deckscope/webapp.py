@@ -724,7 +724,7 @@ a pitch deck against that market and show where the two disagree.</div>
 
 <div class="card">
   <h2 style="margin-top:0">Report a market</h2>
-  <p class="hint">Eleven questions, each answered or explained. Every figure
+  <p class="hint">Twelve questions, each answered or explained. Every figure
   shows its arithmetic and its source, and the report says at the top how much
   of itself it could establish.</p>
 

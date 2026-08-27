@@ -190,6 +190,35 @@ PENETRATION_LOW = 0.20
 GROWTH_HEALTHY = 0.05
 
 
+def cagr(start: float, end: float, years: float) -> Optional[float]:
+    """Compound annual rate taking `start` to `end` over `years`.
+
+    Extracted from the growth agent so it can be checked against filings that
+    publish both their endpoints and their answer. Inline arithmetic inside an
+    agent is arithmetic nothing outside the repository ever grades, which is how
+    an inverted CAGR survives a green test suite.
+
+    Returns None rather than raising on the degenerate inputs, because a growth
+    section that cannot be computed must say so, not blow up the report.
+    """
+    if years <= 0 or start <= 0 or end <= 0:
+        return None
+    return (end / start) ** (1.0 / years) - 1.0
+
+
+def penetration(served: float, base: float) -> Optional[float]:
+    """Share of the addressable base that is served.
+
+    The direction matters and is easy to get backwards: Cricut's filing reports
+    3.7M users against an 85M SAM as "more than 4%". Inverted it reads 2,297%,
+    which is absurd enough to catch by eye and exactly the kind of thing that
+    passes silently when nothing checks it against a published answer.
+    """
+    if base <= 0:
+        return None
+    return served / base
+
+
 def saturation(penetration: Optional[float],
                growth: Optional[float]) -> Saturation:
     """Read penetration and growth together."""
@@ -354,3 +383,135 @@ def barriers(*, conc: Optional[Concentration] = None,
         because=f"graded {level} from {len(reasons)} signal(s); the trend is "
                 f"reported as steady because establishing a direction needs two "
                 f"vintages of the same series and only one was read")
+
+
+# --------------------------------------------------------------------------
+# Measures for markets HHI cannot describe.
+#
+# HHI is built for firm-level revenue shares in markets with few players. Most
+# markets somebody asks this tool about are fragmented local trades, where it
+# lands far below the 1,500 threshold and reports "unconcentrated" — true, and
+# carrying almost no information beyond the establishment count the reader
+# already has.
+#
+# Worse, it measures share EQUALITY and says nothing about scale: 1,422 sole
+# traders and 1,422 large firms produce an identical HHI and an identical
+# reading, while being completely different markets to enter.
+#
+# These are the measures that discriminate where HHI does not.
+# --------------------------------------------------------------------------
+
+@dataclass
+class Shape:
+    """What a fragmented market actually looks like."""
+
+    establishments: Optional[int] = None
+    #: Establishments per 100,000 people — is this geography over-served?
+    per_capita: Optional[float] = None
+    #: The national rate, for comparison. The number alone means nothing.
+    national_per_capita: Optional[float] = None
+    #: Employment share held by the largest decile of establishments.
+    top_decile_share: Optional[float] = None
+    #: Mean employees per establishment. Separates a trade of sole operators
+    #: from one of substantial firms — the distinction HHI is blind to.
+    average_size: Optional[float] = None
+    reading: str = ""
+    because: str = ""
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+#: How far above the national rate a geography must be before it is described
+#: as crowded. Conventional, and stated so it can be argued with.
+CROWDED_RATIO = 1.25
+SPARSE_RATIO = 0.80
+
+
+def shape(bands: Dict[str, int], *, population: Optional[int] = None,
+          national_bands: Optional[Dict[str, int]] = None,
+          national_population: Optional[int] = None) -> Shape:
+    """Describe a market HHI would call 'unconcentrated' and leave at that."""
+    total = sum(int(v) for v in (bands or {}).values() if v)
+    if not total:
+        return Shape(because="no establishment counts were available")
+
+    employment = sum(SIZE_BAND_MIDPOINTS.get(str(k).strip(), 0.0) * int(v)
+                     for k, v in bands.items() if v)
+    average = employment / total if total else None
+
+    # Largest decile by employment. Walk the bands from the top until a tenth
+    # of establishments is accounted for.
+    ordered = sorted(
+        ((SIZE_BAND_MIDPOINTS.get(str(k).strip(), 0.0), int(v))
+         for k, v in bands.items() if v and str(k).strip() in SIZE_BAND_MIDPOINTS),
+        reverse=True)
+    want = max(1, int(round(total * 0.10)))
+    taken = 0
+    taken_employment = 0.0
+    for size, count in ordered:
+        use = min(count, want - taken)
+        if use <= 0:
+            break
+        taken += use
+        taken_employment += size * use
+    top_decile = (taken_employment / employment) if employment else None
+
+    per_capita = (total / population * 100_000) if population else None
+    national_rate = None
+    if national_bands and national_population:
+        national_total = sum(int(v) for v in national_bands.values() if v)
+        if national_total:
+            national_rate = national_total / national_population * 100_000
+
+    reading, because = _read_shape(per_capita, national_rate, average,
+                                   top_decile, total)
+    return Shape(establishments=total, per_capita=per_capita,
+                 national_per_capita=national_rate,
+                 top_decile_share=top_decile, average_size=average,
+                 reading=reading, because=because)
+
+
+def _read_shape(per_capita: Optional[float], national: Optional[float],
+                average: Optional[float], top_decile: Optional[float],
+                total: int) -> Tuple[str, str]:
+    parts: List[str] = []
+    # Two independent readings, both reported. Density says whether the
+    # geography is over-served; scale says what kind of firm operates here.
+    # Reporting only the first made a market of sole traders and a market of
+    # large firms read identically, which is the same blindness HHI has.
+    density = ""
+    scale = ""
+
+    if per_capita is not None and national:
+        ratio = per_capita / national
+        if ratio >= CROWDED_RATIO:
+            density = "more crowded than the country as a whole"
+        elif ratio <= SPARSE_RATIO:
+            density = "less served than the country as a whole"
+        else:
+            density = "served at about the national rate"
+        parts.append(f"{per_capita:.1f} establishments per 100,000 people "
+                     f"against a national {national:.1f} ({ratio:.2f}x)")
+    elif per_capita is not None:
+        parts.append(f"{per_capita:.1f} establishments per 100,000 people, "
+                     f"with no national rate to compare against")
+
+    if average is not None:
+        parts.append(f"averaging {average:.1f} employees each")
+        scale = ("almost entirely sole operators and micro-businesses"
+                 if average < 5 else
+                 "a trade of very small operators" if average < 10 else
+                 "a mix of small and mid-sized firms" if average < 50 else
+                 "a market of substantial firms")
+
+    if top_decile is not None:
+        parts.append(f"the largest tenth hold {top_decile * 100:.0f}% of "
+                     f"employment")
+        if top_decile >= 0.50:
+            parts.append("so employment is concentrated in a few larger "
+                         "operators even though the firm count is not")
+
+    reading = " — ".join(x for x in (scale, density) if x)
+    return reading, (f"{total:,} establishments, " + "; ".join(parts)
+                     if parts else f"{total:,} establishments")

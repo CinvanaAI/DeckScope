@@ -43,7 +43,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--version", action="version",
                    version=f"DeckScope {__version__} (unreleased — "
                            f"see the README for what is and is not proven)")
-    sub = p.add_subparsers(dest="command")
+    # The metavar is spelled out so retired aliases do not appear in the
+    # choice list. Thirteen commands is still a lot; it is one fewer than it
+    # was, and the one removed was a strict subset of another.
+    sub = p.add_subparsers(dest="command", metavar="COMMAND")
 
     md = sub.add_parser(
         "models",
@@ -250,12 +253,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     market = sub.add_parser(
         "market",
-        help="The full market report: eleven questions, answered or explained",
+        help="The full market report: twelve questions, answered or explained",
         description=(
             "Produces the document an investment bank produces once, at "
             "enormous cost, when a company goes public — the industry section "
             "of an S-1 — for a market you name.\n\n"
-            "It answers eleven standing questions drawn from the intersection "
+            "It answers twelve standing questions drawn from the intersection "
             "of two professional formats: filed S-1 industry sections and the "
             "IBISWorld report structure. A reader who finishes it with "
             "questions has been failed by it, so the report states its own "
@@ -271,15 +274,23 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Write the answer set as JSON")
     market.add_argument("--json", action="store_true",
                         help="Print the machine-readable summary instead")
+    market.add_argument("--sizing-only", action="store_true",
+                        help="Print just the sizing arithmetic — the rings and "
+                             "their operands — and none of the other sections")
     market.add_argument("--demo", action="store_true",
                         help="Run against recorded sample data — no Census key, "
                              "no network. Every figure is illustrative and is "
                              "labelled as such in the report itself.")
 
+    # RETIRED. `size` was a strict subset of `market` and its own entry in a
+    # fourteen-command help screen, which is how one product came to look like
+    # five. It is hidden rather than deleted so existing scripts keep working,
+    # and it says on every run where it went.
     size = sub.add_parser(
         "size",
-        help="Just the sizing arithmetic, without the rest of the report",
         description=(
+            "RETIRED — use 'deckscope market <naics> --sizing-only'. This name "
+            "still works and forwards to it.\n\n"
             "Counts establishments and industry revenue from the US Census, and "
             "reports the market nationally, by state and by county — each ring "
             "sized separately, with the calculation written out.\n\n"
@@ -353,6 +364,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         return _research(args)
 
     if cmd == "size":
+        _out("Note: 'deckscope size' has been retired — it was a subset of "
+             "'deckscope market'.\n"
+             "      The same output is now 'deckscope market "
+             f"{getattr(args, 'naics', '<naics>')} --sizing-only'.\n"
+             "      This name still works and will keep working.\n")
         return _size(args)
 
     if cmd == "market":
@@ -365,8 +381,15 @@ def main(argv: Optional[List[str]] = None) -> int:
 # ------------------------------------------------------------------ actions
 
 def _market(args: Any) -> int:
-    """The full report. Eleven questions, each answered or explained."""
+    """The full report. Twelve questions, each answered or explained."""
     import json as _json
+
+    # One implementation, two doors. The sizing view is the same arithmetic the
+    # report's own sizing sections use; forking it would let the two drift and
+    # the difference would show up as a number that changed depending on which
+    # command you asked.
+    if getattr(args, "sizing_only", False):
+        return _size(args)
 
     import marketreport.agents  # noqa: F401 - registers the agents
     from marketreport.render import summary, text

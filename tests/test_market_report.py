@@ -20,7 +20,7 @@ import marketreport.agents as _agents   # importing registers them
 assert _agents  # noqa: S101 - the import is the point
 from marketreport.questions import (COMPUTED, STANDING, Answer, AnswerSet,
                                     BY_ID, order)
-from marketreport.report import MarketDefinition, agent_for, build, registered
+from marketreport.report import MarketDefinition, agent_for, build
 from marketreport.render import summary, text
 from marketreport.structure import (HHI_MODERATE, HHI_UNCONCENTRATED,
                                     Concentration, barriers, cr, from_shares,
@@ -117,7 +117,7 @@ class M3_Closure(unittest.TestCase):
 
     def test_a_mostly_empty_report_is_not_complete(self):
         """The gate-that-cannot-fail pattern: closure once reported True over a
-        report that answered two of eleven questions, because the nine it
+        report that answered two of twelve questions, because the ten it
         skipped raised nothing."""
         answers = build(MarketDefinition(**LANDSCAPING))
         closure = answers.closure()
@@ -128,21 +128,47 @@ class M3_Closure(unittest.TestCase):
         answers = build(MarketDefinition(**LANDSCAPING))
         self.assertIn("unanswered", answers.closure()["note"])
 
-    def test_a_thorough_answer_closes_the_questions_it_raises(self):
+    def test_a_follow_up_closes_when_its_field_is_populated(self):
+        """Structural, not lexical. The version this replaces counted word
+        overlap against our own prose, so a section using the right vocabulary
+        passed without answering anything."""
         answers = AnswerSet("test")
         answers.record(Answer(
-            "Q5", kind=COMPUTED,
-            statement=("Concentration is estimated from establishment size "
-                       "bands rather than measured: HHI 420, and the largest "
-                       "four hold 12 percent of employment.")))
+            "Q5", kind=COMPUTED, statement="Concentration measured.",
+            detail={"concentration": {"basis": "estimated", "cr4": 0.12}}))
         closure = answers.closure()
         self.assertEqual(2, closure["closed"])
         self.assertEqual([], closure["open"])
+
+    def test_the_right_words_no_longer_close_a_follow_up(self):
+        """The exact defect: prose that mentions the concepts without carrying
+        the values used to pass."""
+        answers = AnswerSet("test")
+        answers.record(Answer(
+            "Q5", kind=COMPUTED,
+            statement=("Concentration is estimated rather than measured, and "
+                       "the largest four hold a modest share.")))
+        self.assertEqual(2, len(answers.closure()["open"]))
+
+    def test_a_field_that_exists_but_is_empty_does_not_close(self):
+        answers = AnswerSet("test")
+        answers.record(Answer("Q5", kind=COMPUTED, statement="x",
+                              detail={"concentration": {"basis": "", "cr4": 0.1}}))
+        open_paths = [o["needs"] for o in answers.closure()["open"]]
+        self.assertIn("Q5.detail.concentration.basis", open_paths)
 
     def test_a_thin_answer_leaves_its_follow_ups_open(self):
         answers = AnswerSet("test")
         answers.record(Answer("Q5", kind=COMPUTED, statement="It is busy."))
         self.assertTrue(answers.closure()["open"])
+
+    def test_every_follow_up_names_the_field_that_closes_it(self):
+        """A follow-up with no path is unclosable and would sit open forever."""
+        for question in STANDING:
+            for follow_up, path in question.raises:
+                with self.subTest(q=question.id):
+                    self.assertTrue(path, f"{follow_up!r} names no field")
+                    self.assertIn(".", path)
 
     def test_an_unanswered_section_raises_nothing(self):
         """It has not made a claim, so it cannot leave a claim dangling."""
@@ -399,10 +425,32 @@ class M8_DemoReport(unittest.TestCase):
         self.assertFalse(answers.get("Q8").answered)
 
     def test_the_report_still_reports_its_own_incompleteness(self):
-        """Ten of eleven is not eleven, and the top of the report says so."""
+        """The demo answers every question but leaves a follow-up open, because
+        demo figures carry no sources. Saying 'INCOMPLETE — 12 of 12 answered'
+        was a contradiction on its face, so the header distinguishes the two."""
         answers = self._demo()
-        self.assertFalse(answers.closure()["complete"])
-        self.assertIn("INCOMPLETE", text(answers))
+        closure = answers.closure()
+        self.assertFalse(closure["complete"])
+        body = text(answers)
+        self.assertNotIn("INCOMPLETE", body)
+        self.assertIn("not answered in it", body)
+
+    def test_the_two_sizings_are_compared(self):
+        """The reason both were built, and it had never once run."""
+        answers = self._demo()
+        verdict = answers.get("Q12")
+        self.assertTrue(verdict.answered)
+        self.assertIn(verdict.detail["verdict"],
+                      ("agree", "disagree", "incomparable"))
+
+    def test_the_convergence_check_uses_the_shared_comparison_rule(self):
+        """Merged, so a market size and a funding round cannot corroborate each
+        other in the market report either."""
+        size = Answer("Q3", statement="The market is $7 billion",
+                      value_text="$7B", unit="USD")
+        raise_ = Answer("Q2", statement="A competitor raised $7.2 billion",
+                        value_text="$7.2B", unit="USD")
+        self.assertEqual("incomparable", size.compare(raise_)[0])
 
 
 class M9_RequestFlow(unittest.TestCase):
@@ -498,3 +546,110 @@ class M9_RequestFlow(unittest.TestCase):
         self.assertEqual(6, res.returncode,
                          "an incomplete report is a real output and not a "
                          "success; a script must be able to tell")
+
+
+class M10_CritiqueFixes(unittest.TestCase):
+    """The six problems the critique found, each with the check that holds."""
+
+    def _demo(self, **over):
+        args = dict(LANDSCAPING, demo=True)
+        args.update(over)
+        return build(MarketDefinition(**args))
+
+    # --- 1. demo honesty
+    def test_a_demo_answer_is_never_checkable(self):
+        """Its source_ids name a dataset that was not queried. Counting it as
+        checkable would give invented numbers a provenance badge."""
+        answer = Answer("Q3", statement="x", value_text="$1B",
+                        source_ids=["County Business Patterns (demo)"],
+                        demo=True)
+        self.assertFalse(answer.checkable)
+
+    def test_demo_taints_everything_derived_from_it(self):
+        """A barriers grade derived from demo concentration is a demo answer.
+        Without this it passed through one function and came out 'live'."""
+        answers = self._demo()
+        for qid in ("Q9", "Q10", "Q12"):
+            with self.subTest(q=qid):
+                self.assertTrue(answers.get(qid).demo)
+                self.assertFalse(answers.get(qid).checkable)
+
+    def test_coverage_separates_live_from_demo(self):
+        coverage = self._demo().coverage()
+        self.assertGreater(coverage["answered_from_demo"], 0)
+        self.assertLess(coverage["answered_live"], coverage["answered"])
+
+    def test_the_report_warns_before_the_first_number(self):
+        body = text(self._demo())
+        self.assertIn("RECORDED SAMPLE DATA", body)
+        self.assertLess(body.index("RECORDED SAMPLE DATA"),
+                        body.index("WHAT THIS MARKET IS"))
+
+    # --- 2. one spine
+    def test_an_answer_carries_a_metric_identity(self):
+        answer = Answer("Q3", statement="The market is $7 billion",
+                        value_text="$7B", unit="USD")
+        self.assertIsNotNone(answer.metric)
+        self.assertEqual("market-size", answer.metric.measure)
+
+    def test_an_answer_parses_its_own_magnitude(self):
+        """Without this the shared rule said 'neither carries a figure to
+        compare' for two answers that plainly did."""
+        self.assertEqual(7e9, Answer("Q3", value_text="$7B").value)
+
+    def test_the_market_report_cannot_confirm_a_size_with_a_funding_round(self):
+        """The audit's finding, now covering both halves of the repository."""
+        size = Answer("Q3", statement="The market is $7 billion",
+                      value_text="$7B", unit="USD")
+        raised = Answer("Q2", statement="A competitor raised $7.2 billion",
+                        value_text="$7.2B", unit="USD")
+        verdict, why = size.compare(raised)
+        self.assertEqual("incomparable", verdict)
+        self.assertIn("funding", why)
+
+    # --- 3. convergence
+    def test_the_two_sizings_are_actually_compared(self):
+        answers = self._demo()
+        self.assertTrue(answers.get("Q12").answered)
+        self.assertIn(answers.get("Q12").detail["verdict"],
+                      ("agree", "disagree", "incomparable"))
+
+    def test_top_down_never_sees_bottom_up(self):
+        self.assertEqual(("Q1",), BY_ID["Q2"].needs)
+        self.assertEqual(("Q1",), BY_ID["Q3"].needs)
+
+    def test_disagreement_is_reported_as_a_finding_not_an_error(self):
+        from marketreport.report import _AGENTS
+
+        top = Answer("Q2", statement="The market is $10 billion",
+                     value_text="$10B", unit="USD")
+        bottom = Answer("Q3", statement="The market is $2 billion",
+                        value_text="$2B", unit="USD")
+        result = _AGENTS["convergence"](
+            market=MarketDefinition(**LANDSCAPING), question=BY_ID["Q12"],
+            seen={"Q2": top, "Q3": bottom})
+        self.assertEqual("disagree", result.detail["verdict"])
+        self.assertIn("not an error to reconcile", result.statement)
+
+    # --- 5. fragmented-market measures
+    def test_shape_tells_sole_traders_from_large_firms(self):
+        """HHI gives both an identical number and an identical reading."""
+        from marketreport.structure import from_size_bands, shape
+
+        sole = {"1-4": 1422}
+        large = {"1000+": 1422}
+        self.assertEqual(from_size_bands(sole).hhi, from_size_bands(large).hhi)
+        self.assertNotEqual(shape(sole).reading, shape(large).reading)
+
+    def test_shape_reports_average_size_and_top_decile(self):
+        from marketreport.structure import shape
+
+        form = shape({"1-4": 760, "5-9": 285, "10-19": 195, "20-49": 124,
+                      "50-99": 38, "100-249": 16, "250-499": 3, "500-999": 1})
+        self.assertAlmostEqual(13.0, form.average_size, delta=1.0)
+        self.assertGreater(form.top_decile_share, 0.4)
+
+    def test_the_structure_section_carries_the_shape(self):
+        detail = self._demo().get("Q5").detail
+        self.assertIn("shape", detail)
+        self.assertIsNotNone(detail["shape"]["average_size"])

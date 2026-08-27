@@ -70,14 +70,14 @@ caller choosing the method.
 
 ## Stage 2 — The rest of the report (PART)
 
-Eleven standing questions, from the intersection of the S-1 and IBISWorld
+Twelve standing questions, from the intersection of the S-1 and IBISWorld
 formats. `marketreport/questions.py` is the definition; `report.py` walks them
 in dependency order; `render.py` is the view.
 
 | # | Section | Live source | Demo | Status |
 |---|---|---|---|---|
 | Q1 | Market definition | user input | yes | DONE |
-| Q2 | Size, top-down | — | no | **TODO** — the only unanswered question |
+| Q2 | Size, top-down | Economic Census receipts, narrowed by establishment share | yes | DONE |
 | Q3 | Size, bottom-up | CBP × Economic Census | yes | DONE |
 | Q4 | Growth | two CBP vintages | yes | PART — needs vintage-addressable CBP |
 | Q5 | Concentration | CBP size bands | yes | DONE |
@@ -87,15 +87,30 @@ in dependency order; `render.py` is the view.
 | Q9 | Barriers, graded and trended | derived | yes | DONE |
 | Q10 | Life cycle and saturation | derived | yes | DONE |
 | Q11 | What could not be established | the run's own record | yes | DONE |
+| Q12 | Do the two sizings converge | derived from Q2 and Q3 | yes | DONE |
 
 **Done when:** every question answers from a live source, not a fixture. Today
-`--demo` answers ten of eleven; live answers three, because the Census key is
-not set and three sources are unwired.
+`--demo` answers twelve of twelve and reports that **eleven of them are demo**;
+live answers two, because the Census key is not set and three sources are
+unwired. The split is printed in `coverage()` as `answered_live` /
+`answered_from_demo` and stated in the report header above the first number,
+so the gap is visible in the artifact rather than only in a planning file.
+
+**Demo taints downstream.** An answer derived from a demo answer is a demo
+answer. Without that rule the barriers, life-cycle and convergence sections
+read a made-up concentration figure and came out labelled live — invented
+numbers acquiring a provenance badge by passing through one more function. The
+inheritance is enforced in `report.build()` against each question's declared
+`needs`, so it cannot be forgotten by a new agent.
 
 ### Completeness is checked, not claimed
 
 Each section declares the follow-ups a reader will immediately have, and
-`closure()` verifies something in the report answers them. A reader who
+`closure()` verifies something in the report answers them. **Structurally**:
+a follow-up names the field that must be populated to close it
+(`"Q5.detail.concentration.basis"`), and closure reads that field. The earlier
+version counted content-word overlap against our own prose, which meant a
+section using the right vocabulary passed without answering anything. A reader who
 finishes with questions has been failed by the report, so an open follow-up is
 a defect rather than further reading. Currently one standing question and one
 follow-up remain open on the demo run, and the report says so at the top and
@@ -160,3 +175,7 @@ These are not features. Breaking one is a defect regardless of what it buys.
    pattern, not a coincidence — extend the gate with the surface.
 8. **No score from our own fixtures counts as evidence.** It measures fixture
    maturity. It has already fooled me once.
+9. **Correctness needs an answer from outside.** `tests/test_published_totals.py`
+   checks our arithmetic against filings that publish both their operands and
+   their result — FIGS' 146% revenue CAGR, Cricut's 4% penetration, agilon's
+   three rings. A test whose expected value I chose grades my own homework.
