@@ -263,11 +263,28 @@ def build_parser() -> argparse.ArgumentParser:
             "IBISWorld report structure. A reader who finishes it with "
             "questions has been failed by it, so the report states its own "
             "completeness at the top and lists every question it could not "
-            "answer, with the reason, at the bottom."))
-    market.add_argument("naics", help="4-6 digit NAICS industry code")
+            "answer, with the reason, at the bottom.\n\n"
+            "Ask for a market the way you would say it out loud:\n"
+            "  deckscope market \"landscaping in Phoenix\"\n"
+            "  deckscope market \"gyms\" --in Seattle\n"
+            "  deckscope market 561730 --state 04 --county 013\n\n"
+            "When a phrase matches several industries it lists them and stops, "
+            "rather than picking one. A report about the wrong market is "
+            "internally consistent and undetectably wrong, so that guess is "
+            "the one guess never worth making."))
+    market.add_argument(
+        "market",
+        help="The market, in plain words — \"landscaping in Phoenix\" — or a "
+             "NAICS code if you know it")
+    market.add_argument("--in", dest="place", default="", metavar="PLACE",
+                        help="The geography, if you would rather give it "
+                             "separately: a city, a state, or "
+                             "\"Maricopa County, Arizona\"")
     market.add_argument("--label", default="", help="A name for this market")
-    market.add_argument("--state", default="", metavar="FIPS")
-    market.add_argument("--county", default="", metavar="FIPS")
+    market.add_argument("--state", default="", metavar="FIPS",
+                        help="2-digit state FIPS, if you would rather be exact")
+    market.add_argument("--county", default="", metavar="FIPS",
+                        help="3-digit county FIPS, with --state")
     market.add_argument("--customer", default="",
                         help="Who buys — narrows the boundary")
     market.add_argument("--save", default=None, metavar="FILE",
@@ -367,7 +384,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         _out("Note: 'deckscope size' has been retired — it was a subset of "
              "'deckscope market'.\n"
              "      The same output is now 'deckscope market "
-             f"{getattr(args, 'naics', '<naics>')} --sizing-only'.\n"
+             f"{getattr(args, 'naics', None) or '<market>'} --sizing-only'.""\n"
              "      This name still works and will keep working.\n")
         return _size(args)
 
@@ -379,6 +396,23 @@ def main(argv: Optional[List[str]] = None) -> int:
 
 
 # ------------------------------------------------------------------ actions
+
+def _ask(question: str, options: Any = ()) -> int:
+    """Put the question back to the user and stop.
+
+    Exit code 7: "understood the command, could not understand the request".
+    Distinct from 6 ("ran correctly, report incomplete") and from a crash,
+    because a script driving this needs to tell "ask the user" apart from
+    "the data was not there".
+    """
+    _out("")
+    _out(f"  {question}")
+    for option in options or ():
+        _out(f"    - {option}")
+    _out("")
+    _out("  Re-run with one of these, or give the NAICS code directly.")
+    return 7
+
 
 def _market(args: Any) -> int:
     """The full report. Twelve questions, each answered or explained."""
@@ -394,12 +428,38 @@ def _market(args: Any) -> int:
     import marketreport.agents  # noqa: F401 - registers the agents
     from marketreport.render import summary, text
     from marketreport.report import MarketDefinition, build
+    from marketreport.request import interpret
 
     settings.load_env()
-    definition = MarketDefinition(
-        label=args.label or f"NAICS {args.naics}", naics=args.naics,
-        state_fips=args.state, county_fips=args.county, customer=args.customer,
-        demo=args.demo)
+
+    if args.state or args.county:
+        # Explicit FIPS wins outright. Someone who typed --state 04 has said
+        # what they mean and should not have it re-derived from a phrase.
+        from marketreport.naics import resolve as resolve_naics
+        from marketreport.naics import too_broad
+
+        found = resolve_naics(args.market, offline=args.demo)
+        if not found.certain:
+            return _ask(found.problem or
+                        f"'{args.market}' matches several industries",
+                        [str(c) for c in found.candidates])
+        broad = too_broad(found.code or "")
+        if broad:
+            return _ask(broad)
+        definition = MarketDefinition(
+            label=args.label or found.title or f"NAICS {found.code}",
+            naics=found.code or "", state_fips=args.state,
+            county_fips=args.county, customer=args.customer, demo=args.demo)
+    else:
+        read = interpret(args.market, place=args.place, offline=args.demo)
+        if not read.ready:
+            return _ask(read.question, read.options)
+        definition = read.definition(demo=args.demo, customer=args.customer)
+        if args.label:
+            definition.label = args.label
+        if not args.json:
+            for note in read.notes:
+                _out(f"  {note}")
 
     answers = build(definition,
                     on_event=(lambda m: None) if args.json else _out)
@@ -432,20 +492,32 @@ def _size(args: Any) -> int:
 
     settings.load_env()
 
+    # Both doors reach here: the retired `size` command, which takes a NAICS
+    # code, and `market --sizing-only`, which takes a phrase. Normalise once
+    # rather than making the arithmetic below care which one called it.
+    from marketreport.naics import resolve as resolve_naics
+
+    given = getattr(args, "naics", "") or getattr(args, "market", "")
+    found = resolve_naics(given, offline=getattr(args, "demo", False))
+    if not found.certain:
+        return _ask(found.problem or f"'{given}' matches several industries",
+                    [str(c) for c in found.candidates])
+    naics = found.code or ""
+
     def count(**kw):
         try:
-            return establishment_count(args.naics, year=CBP_YEAR, **kw)
+            return establishment_count(naics, year=CBP_YEAR, **kw)
         except Unavailable as exc:
             return unavailable_term("count", str(exc))
 
     def value(**kw):
         try:
-            return revenue_per_establishment(args.naics, year=ECN_YEAR, **kw)
+            return revenue_per_establishment(naics, year=ECN_YEAR, **kw)
         except Unavailable as exc:
             return unavailable_term("value", str(exc))
 
     sizing = Sizing(
-        args.label or f"NAICS {args.naics}",
+        getattr(args, "label", "") or found.title or f"NAICS {naics}",
         basis="establishment-based: counts from County Business Patterns, value "
               "from Economic Census average revenue per establishment. This "
               "measures the industry's revenue, not one firm's opportunity")

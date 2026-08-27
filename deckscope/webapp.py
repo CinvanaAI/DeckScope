@@ -417,23 +417,61 @@ class Handler(BaseHTTPRequestHandler):
         import marketreport.agents  # noqa: F401 - registers the agents
         from marketreport.render import summary
         from marketreport.report import MarketDefinition, build
+        from marketreport.request import interpret
 
-        naics = "".join(c for c in str(payload.get("naics") or "")
-                        if c.isdigit())
-        if not 4 <= len(naics) <= 6:
-            return self._json(
-                {"error": "A 4-6 digit NAICS industry code is required. A "
-                          "shorter code is a whole economic sector, and every "
-                          "number taken against it would be about a different "
-                          "market while looking authoritative."}, 400)
+        demo = bool(payload.get("demo"))
+        asked = str(payload.get("market") or payload.get("naics") or "").strip()
+        state = str(payload.get("state") or "").strip()
+        county = str(payload.get("county") or "").strip()
+
+        if not asked:
+            return self._json({"error": "Name a market."}, 400)
+
+        # A sector code is checked before either branch, and answered as an
+        # error rather than a question. The difference is whether an option
+        # list would help: an ambiguous phrase has candidates to choose from, a
+        # sector code has none — nothing the server can offer resolves it, so
+        # it is a malformed request and not a decision the user has to make.
+        from marketreport.naics import too_broad
+
+        if asked.isdigit():
+            broad = too_broad(asked)
+            if broad:
+                return self._json({"error": broad}, 400)
+
+        if state or county:
+            from marketreport.naics import resolve as resolve_naics
+            from marketreport.naics import too_broad
+
+            found = resolve_naics(asked, offline=demo)
+            if not found.certain:
+                # 200, not 400. An ambiguous request is not a malformed one —
+                # the user did nothing wrong and the server understood them
+                # fine. It has a question, and an error banner is the wrong
+                # shape for a question.
+                return self._json(
+                    {"question": found.problem or
+                     f"'{asked}' matches several industries. Which one?",
+                     "options": [str(c) for c in found.candidates]})
+            broad = too_broad(found.code or "")
+            if broad:
+                return self._json({"error": broad}, 400)
+            naics = found.code or ""
+            title = found.title
+        else:
+            read = interpret(asked, place=str(payload.get("place") or ""),
+                             offline=demo)
+            if not read.ready:
+                return self._json({"question": read.question,
+                                   "options": read.options})
+            naics, title = read.naics, read.naics_title
+            state, county = read.state_fips, read.county_fips
+            title = f"{title} in {read.geography_label}"
 
         definition = MarketDefinition(
-            label=(payload.get("label") or f"NAICS {naics}").strip(),
-            naics=naics,
-            state_fips=str(payload.get("state") or "").strip(),
-            county_fips=str(payload.get("county") or "").strip(),
-            customer=str(payload.get("customer") or "").strip(),
-            demo=bool(payload.get("demo")))
+            label=(payload.get("label") or title or f"NAICS {naics}").strip(),
+            naics=naics, state_fips=state, county_fips=county,
+            customer=str(payload.get("customer") or "").strip(), demo=demo)
         try:
             answers = build(definition)
         except Exception as exc:  # noqa: BLE001
@@ -728,17 +766,24 @@ a pitch deck against that market and show where the two disagree.</div>
   shows its arithmetic and its source, and the report says at the top how much
   of itself it could establish.</p>
 
-  <label>Industry code (NAICS, 4–6 digits)</label>
-  <input id="m-naics" type="text" placeholder="561730" maxlength="6">
+  <label>What market?</label>
+  <input id="m-naics" type="text" placeholder="landscaping in Phoenix">
+  <p class="hint" style="margin-top:4px">Say it the way you would out loud. A
+  NAICS code works too. If the words match more than one industry it will ask
+  rather than pick one &mdash; a report about the wrong market looks exactly
+  like a report about the right one.</p>
 
-  <label>What to call it <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
-  <input id="m-label" type="text" placeholder="Landscaping services">
+  <details style="margin:10px 0">
+    <summary class="hint" style="cursor:pointer">Be exact instead</summary>
+    <label>What to call it <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+    <input id="m-label" type="text" placeholder="Landscaping services">
 
-  <label>State FIPS <span style="text-transform:none;letter-spacing:0">(optional — 04 is Arizona)</span></label>
-  <input id="m-state" type="text" placeholder="04" maxlength="2">
+    <label>State FIPS <span style="text-transform:none;letter-spacing:0">(optional &mdash; 04 is Arizona)</span></label>
+    <input id="m-state" type="text" placeholder="04" maxlength="2">
 
-  <label>County FIPS <span style="text-transform:none;letter-spacing:0">(optional — 013 is Maricopa)</span></label>
-  <input id="m-county" type="text" placeholder="013" maxlength="3">
+    <label>County FIPS <span style="text-transform:none;letter-spacing:0">(optional &mdash; 013 is Maricopa)</span></label>
+    <input id="m-county" type="text" placeholder="013" maxlength="3">
+  </details>
 
   <button id="m-go" onclick="runMarket(false)">Produce the report</button>
   <button class="ghost" onclick="runMarket(true)">Run the free demo</button>
@@ -839,17 +884,41 @@ async function runMarket(demo){
     const res = await api('/api/market', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        naics: naics || (demo ? '561730' : ''),
+        market: naics || (demo ? 'landscaping in Phoenix' : ''),
         label: $('#m-label').value, state: $('#m-state').value,
         county: $('#m-county').value, demo: !!demo})});
     const data = await res.json();
     if(!res.ok){ note.textContent = data.error || 'Failed.'; return; }
+    if(data.question){ askMarket(data, out, note); return; }
     renderMarket(data, out, note);
   } catch (err) {
     note.textContent = 'Failed: ' + err;
   } finally {
     $('#m-go').disabled = false;
   }
+}
+
+// An ambiguous request gets a question, not an error banner. The user did
+// nothing wrong; there are simply two industries and only they know which one.
+// Each option is a button that answers by filling in the code, so the answer
+// costs one click rather than a trip to a NAICS lookup.
+function askMarket(data, out, note){
+  note.textContent = data.question;
+  note.style.color = '#b45309';
+  out.textContent = '';
+  (data.options || []).forEach(option => {
+    const b = document.createElement('button');
+    b.className = 'ghost';
+    b.style.display = 'block';
+    b.style.width = '100%';
+    b.style.textAlign = 'left';
+    b.textContent = option;
+    b.onclick = () => {
+      $('#m-naics').value = (option.split(/\s+/)[0] || '').trim();
+      runMarket($('#m-demo-was') ? $('#m-demo-was').value === '1' : false);
+    };
+    out.appendChild(b);
+  });
 }
 
 function renderMarket(data, out, note){

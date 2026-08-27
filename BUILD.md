@@ -142,8 +142,35 @@ individually. Recorded in SCHEMA.md §4 with what it costs.
 
 ## Stage 3.5 — The request flow (DONE)
 
-    deckscope market 561730 --state 04 --county 013
-    deckscope market 561730 --state 04 --demo        # no key, no network
+    deckscope market "landscaping in Phoenix"
+    deckscope market "gyms" --in Seattle
+    deckscope market 561730 --state 04 --county 013   # still exact, if you like
+    deckscope market "landscaping" --demo             # no key, no network
+
+The plain-language door is the point. Asking for `--state 04 --county 013` is a
+question only somebody who already does this work can answer, which made the
+product useless to the person it was built for — Von's first question was
+"landscaping in Phoenix" and nothing in it could take that.
+
+**The resolver asks rather than guesses**, and this is the one place where that
+rule matters most. Everything else here fails loudly: a missing term is `None`,
+an unavailable source raises. A market resolved to the wrong NAICS code fails
+*silently* — the report is internally consistent, every figure traces to a real
+Census response, the arithmetic is right, and it is about a different industry.
+Nothing downstream can detect it. So:
+
+- an ambiguous phrase returns a ranked list and exit code 7, never a pick
+- a city spanning counties (New York, Houston, Kansas City) is named and refused
+- a sector code (`56`) is refused with the reason, because a sector figure is
+  real, sourced, and about landscaping *and* landfills at once
+- no place given means a national report, not a silently narrowed one
+
+**The NAICS index is fetched, never typed.** 1,012 codes whose titles carry
+legal precision; a table written from memory would be wrong where nobody would
+look. A 32-entry starter set ships for offline use and says so on every use.
+**County FIPS are fetched too** — 3,143 of them. State codes are typed, because
+there are 52, they are ANSI, and the set has a checkable shape that a test
+asserts.
 
 Plus `/api/market` and a panel in the app window. Exit 6 means "ran correctly,
 report incomplete", which is distinct from a crash and scriptable.

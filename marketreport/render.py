@@ -63,10 +63,10 @@ def text(answers: AnswerSet) -> str:
     else:
         # All twelve answered but something they raised is still open. Saying
         # "INCOMPLETE — 12 of 12 answered" was a contradiction on its face.
-        out.append(f"  All {coverage['questions']} questions answered, but "
-                   f"{len(closure['open'])} question(s) this report raises are "
-                   f"not answered in it.")
-        out.append(f"  {closure['note']}")
+        # The note already carries the count, so stating it here too printed
+        # the same fact twice in consecutive lines. Say it once.
+        out.append(f"  All {coverage['questions']} questions answered. "
+                   f"{closure['note']}")
     # If any of this came from recorded samples, say so before the reader
     # reaches a number. A demo figure that reaches the eye unlabelled has
     # already done its damage.
