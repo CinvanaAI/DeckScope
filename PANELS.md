@@ -195,6 +195,35 @@ quieter way.
 **The arithmetic is ours.** Every derived figure is computed in code from
 findings. The model chooses what to show; it never chooses what a number is.
 
+## 6a. How a panel becomes a section
+
+`build(market, ask=...)` is the door. A specialist declares which standing
+questions it answers — `MARKET_SHARE.answers = ("Q5", "Q6")` — and `build()`
+gives it first refusal on those.
+
+Four properties, each one load-bearing:
+
+**It falls back.** A specialist that fails, or that establishes nothing, costs
+nothing: the Census agent runs as it always did. A failed search must never lose
+an answer the arithmetic could have given.
+
+**It runs once.** Q5 and Q6 are both claimed by market-share. Without a cache
+the loop researched the same market twice and spent two budgets on two identical
+panels.
+
+**It satisfies the same follow-ups.** `_from_panel` populates
+`detail.concentration.basis` and `detail.cr4` from the panel's own series, so
+`closure()` closes structurally exactly as it does for a Census answer. A
+section answered by a specialist must clear the same bar, or the completeness
+check quietly stops applying to half the report.
+
+**The declaration lives on the specialist.** A new specialist claims a section
+without anyone editing the report's spine.
+
+Without `ask`, nothing changes at all. For a US establishment count, County
+Business Patterns still beats searching — `router.py` has encoded that judgment
+since long before any of this, and it is not being thrown away.
+
 ## 7. What this does not change
 
 Worth stating, because "adapt" is not "replace":

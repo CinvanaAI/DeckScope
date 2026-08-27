@@ -49,6 +49,17 @@ class Specialist:
     check: Optional[Callable[..., Dict[str, Any]]] = None
     #: How many loop iterations this job is worth.
     iterations: int = 10
+    #: Standing questions in the market report this specialist can answer.
+    #:
+    #: This is the convergence Von named: "how you gonna make a market report
+    #: if you can't make the market share report you just made?" Q5 (how
+    #: concentrated is it) and Q6 (who competes) ARE the market-share question.
+    #: The Census HHI answer is a proxy that only works for fragmented US
+    #: trades and returns "unconcentrated" for nearly all of them.
+    #:
+    #: Declared on the specialist rather than on the question so a new
+    #: specialist can claim a section without editing the report's spine.
+    answers: Sequence[str] = ()
 
     def questions(self, market: str, place: str = "") -> List[Dict[str, Any]]:
         where = place or "worldwide"
@@ -271,7 +282,16 @@ MARKET_SHARE = register(Specialist(
            "economics"),
     check=_market_share_check,
     iterations=14,
+    answers=("Q5", "Q6"),
 ))
+
+
+def specialist_for(question_id: str) -> Optional[Specialist]:
+    """The specialist that claims a standing question, if one does."""
+    for spec in registered():
+        if question_id in (spec.answers or ()):
+            return spec
+    return None
 
 
 # ---------------------------------------------------------------- running

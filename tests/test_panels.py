@@ -694,3 +694,119 @@ class P10_TheManagerDecidesScope(unittest.TestCase):
             with self.subTest(specialist=name):
                 self.assertIsNotNone(get(name))
                 self.assertGreater(len(why), 20)
+
+
+class P11_TheConvergence(unittest.TestCase):
+    """Von's question, which settles the architecture: how do you make a
+    market report if you cannot make the market-share report you just made?
+
+    Q5 ("how concentrated is it") and Q6 ("who competes") ARE the market-share
+    question. The Census HHI answer is a proxy that only works for fragmented
+    US trades and returns "unconcentrated" for nearly all of them.
+    """
+
+    def setUp(self):
+        import marketreport.agents  # noqa: F401 - registers the agents
+
+        self.calls = []
+
+    def _ask(self, spec, market):
+        self.calls.append(spec.name)
+        panel = Panel(question=f"{spec.job} — {market.label}",
+                      headline="Samsung ships the most phones; Apple takes "
+                               "the money",
+                      form="share_pair", agent=spec.name)
+        panel.series = [
+            Series("Units", "shipment share", "%", as_of="Q2 2026",
+                   basis="Smart Analytics Global",
+                   slices=[Slice("Samsung", 22, source_ids=["S1"]),
+                           Slice("Apple", 20, source_ids=["S1"]),
+                           Slice("Xiaomi", 11, source_ids=["S1"]),
+                           Slice("OPPO", 11, source_ids=["S1"])]),
+            Series("Revenue", "revenue share", "%", as_of="Q2 2026",
+                   basis="Counterpoint Research",
+                   slices=[Slice("Apple", 49, source_ids=["S2"]),
+                           Slice("Samsung", 16, source_ids=["S2"])])]
+        panel.source_labels = ["Smart Analytics Global",
+                               "Counterpoint Research"]
+        return panel
+
+    def _report(self, **kw):
+        from marketreport.report import MarketDefinition, build
+
+        return build(MarketDefinition(label="Landscaping", naics="561730",
+                                      state_fips="04", demo=True),
+                     on_event=lambda m: None, **kw)
+
+    def test_the_specialist_answers_q5_and_q6(self):
+        answers = self._report(ask=self._ask)
+        for qid in ("Q5", "Q6"):
+            with self.subTest(question=qid):
+                self.assertIn("takes the money", answers.get(qid).statement)
+
+    def test_the_panel_is_attached_to_the_report(self):
+        answers = self._report(ask=self._ask)
+        self.assertEqual(1, len(answers.panels))
+
+    def test_one_specialist_runs_once_per_report(self):
+        """Q5 and Q6 are both claimed by market-share. Without a cache the loop
+        researched the same market twice and spent two budgets to produce two
+        identical panels."""
+        self._report(ask=self._ask)
+        self.assertEqual(["market-share"], self.calls)
+
+    def test_the_follow_up_fields_are_populated_from_the_panel(self):
+        """A section answered by a specialist must satisfy the same structural
+        follow-ups as one answered by arithmetic, or the completeness check
+        quietly stops applying to half the report."""
+        answers = self._report(ask=self._ask)
+        concentration = answers.get("Q5").detail["concentration"]
+        self.assertEqual(64, concentration["cr4"])
+        self.assertIn("Smart Analytics Global", concentration["basis"])
+
+    def test_the_census_answer_is_unchanged_without_a_specialist(self):
+        """The Census path stays, and stays preferred where it is right. For a
+        US establishment count it beats searching — that judgment lives in
+        router.py and is not being thrown away."""
+        answers = self._report()
+        self.assertEqual([], answers.panels)
+        self.assertIn("HHI", answers.get("Q5").statement)
+
+    def test_a_failing_specialist_falls_back_rather_than_costing_the_answer(self):
+        def broken(spec, market):
+            raise RuntimeError("the search backend went away")
+
+        answers = self._report(ask=broken)
+        self.assertIn("HHI", answers.get("Q5").statement)
+
+    def test_a_specialist_that_establishes_nothing_also_falls_back(self):
+        answers = self._report(
+            ask=lambda spec, market: unanswered("q", "no tracker covers this"))
+        self.assertIn("HHI", answers.get("Q5").statement)
+
+    def test_the_report_draws_the_panel_it_produced(self):
+        """A report whose Q5 was answered by a specialist must not render with
+        no chart in it."""
+        from marketreport.document import render_as
+
+        answers = self._report(ask=self._ask)
+        body = render_as("html", answers)
+        self.assertEqual(2, body.count("<svg"))
+        self.assertIn("takes the money", body)
+
+    def test_every_format_carries_the_panel(self):
+        from marketreport.document import FORMATS, render_as
+
+        answers = self._report(ask=self._ask)
+        for name in FORMATS:
+            with self.subTest(fmt=name):
+                self.assertIn("takes the money", render_as(name, answers))
+
+    def test_a_specialist_declares_which_questions_it_answers(self):
+        """Declared on the specialist rather than on the question, so a new
+        specialist can claim a section without editing the report's spine."""
+        from marketreport.specialists import specialist_for
+
+        self.assertEqual(("Q5", "Q6"), MARKET_SHARE.answers)
+        self.assertIs(MARKET_SHARE, specialist_for("Q5"))
+        self.assertIsNone(specialist_for("Q3"))

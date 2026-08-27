@@ -103,8 +103,21 @@ def unanswered(question: StandingQuestion, because: str) -> Answer:
 
 def build(market: MarketDefinition, *,
           on_event: Optional[Callable[[str], None]] = None,
-          only: Optional[List[str]] = None) -> AnswerSet:
-    """Answer every standing question for one market."""
+          only: Optional[List[str]] = None,
+          ask: Optional[Callable[[Any, MarketDefinition], Any]] = None
+          ) -> AnswerSet:
+    """Answer every standing question for one market.
+
+    `ask` is the door to the specialists. Given one and a question a specialist
+    claims, the specialist runs and its panel becomes the answer — which is the
+    convergence the whole redesign was for: Q5 and Q6 stop being Census
+    arithmetic that only works for fragmented US trades and become the
+    market-share question actually answered.
+
+    Without `ask` nothing changes. The Census agents still run, and for a US
+    industry they are still the better answer for an establishment count — that
+    judgment lives in `router.py` and is not being thrown away.
+    """
     emit = on_event or (lambda *_: None)
 
     # No agents registered at all means `marketreport.agents` was never
@@ -128,6 +141,10 @@ def build(market: MarketDefinition, *,
 
     answers = AnswerSet(market.label)
     started = time.time()
+    #: One run per specialist per report. Q5 and Q6 are both claimed by
+    #: market-share, and without this the loop researched the same market twice
+    #: and spent two budgets to produce two identical panels.
+    asked: Dict[str, Any] = {}
 
     for question in order():
         if only and question.id not in only:
@@ -146,6 +163,38 @@ def build(market: MarketDefinition, *,
             emit(f"  {question.id} {question.section}: skipped, needs "
                  f"{', '.join(missing)}")
             continue
+
+        # A specialist that claims this question gets first refusal, when the
+        # caller supplied a way to run one. It falls through to the Census
+        # agent if the specialist establishes nothing, so a failed search never
+        # costs an answer the arithmetic could have given.
+        if ask is not None:
+            from .specialists import specialist_for
+
+            spec = specialist_for(question.id)
+            if spec is not None:
+                if spec.name in asked:
+                    panel = asked[spec.name]
+                    emit(f"  {question.id} {question.section}: reusing the "
+                         f"{spec.name} panel")
+                else:
+                    emit(f"  {question.id} {question.section}: asking the "
+                         f"{spec.name} specialist")
+                    try:
+                        panel = ask(spec, market)
+                    except Exception as exc:  # noqa: BLE001
+                        panel = None
+                        emit(f"  {question.id}: the {spec.name} specialist "
+                             f"failed: {exc}")
+                    asked[spec.name] = panel
+                    if panel is not None and getattr(panel, "answered", False):
+                        answers.panels.append(panel)
+                if panel is not None and getattr(panel, "answered", False):
+                    answers.record(_from_panel(question, panel))
+                    continue
+                if panel is not None:
+                    emit(f"  {question.id}: the specialist established "
+                         f"nothing; falling back to the dataset agent")
 
         agent = _AGENTS.get(question.agent) if question.agent else None
         if agent is None:
@@ -186,6 +235,49 @@ def build(market: MarketDefinition, *,
 
     answers.extra.append(("elapsed", f"{time.time() - started:.1f}s"))
     return answers
+
+
+def _from_panel(question: Any, panel: Any) -> Answer:
+    """A panel, as an answer to a standing question.
+
+    The panel stays whole on the answer set — this is a view of it, not a
+    replacement. `detail` carries the panel's own record so the closure check
+    can read `Q5.detail.concentration.basis` and friends against real fields
+    rather than against prose.
+    """
+    from .questions import RETRIEVED, Answer
+
+    coverage = panel.coverage()
+    detail: Dict[str, Any] = {
+        "panel": panel.to_dict(),
+        "form": panel.form,
+        "participants": [w.label for s in panel.series for w in s.slices],
+        "caveats": list(panel.caveats),
+    }
+    # The fields the standing questions declare they raise. Populated from the
+    # panel so `closure()` closes structurally, the way it does for the Census
+    # agents — a section answered by a specialist must satisfy the same
+    # follow-ups as one answered by arithmetic, or the completeness check
+    # quietly stops applying to half the report.
+    lead = panel.series[0] if panel.series else None
+    if lead is not None:
+        top4 = sorted((w.value for w in lead.slices), reverse=True)[:4]
+        detail["concentration"] = {
+            "basis": (f"{lead.measure} from {lead.basis}"
+                      if lead.basis else lead.measure),
+            "cr4": round(sum(top4), 1) if top4 else None,
+            "firms": len(lead.slices),
+            "source": "published market research, not a business census",
+        }
+
+    return Answer(
+        question_id=question.id, kind=RETRIEVED,
+        statement=panel.headline,
+        value_text="", unit="",
+        as_of=(lead.as_of if lead is not None else ""),
+        confidence="medium" if coverage["checkable"] else "low",
+        source_ids=list(panel.source_labels or panel.source_ids),
+        detail=detail)
 
 
 def _gaps(answers: AnswerSet) -> Answer:

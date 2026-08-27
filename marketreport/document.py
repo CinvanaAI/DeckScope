@@ -45,6 +45,18 @@ from .render import HEADINGS
 __all__ = ["markdown", "as_html", "FORMATS", "render_as", "panel_document"]
 
 
+def _panels(answers: AnswerSet, given: Optional[List[Panel]]) -> List[Panel]:
+    """The panels to draw: what the caller passed, else what the run produced.
+
+    An explicit list wins so a caller can render a subset. Falling back to the
+    answer set's own is what stops a report whose Q5 was answered by a
+    specialist being rendered with no chart in it.
+    """
+    if given is not None:
+        return list(given)
+    return list(getattr(answers, "panels", []) or [])
+
+
 def _e(value: Any) -> str:
     return html.escape(str(value if value is not None else ""), quote=True)
 
@@ -140,7 +152,7 @@ def markdown(answers: AnswerSet, *, generated: Optional[str] = None,
                        "and read.*")
         out.append("")
 
-    for panel in panels or []:
+    for panel in _panels(answers, panels):
         out.append(panel_markdown(panel))
 
     return "\n".join(out).rstrip() + "\n"
@@ -363,7 +375,12 @@ def as_html(answers: AnswerSet, *, generated: Optional[str] = None,
     # Panels go after the standing sections. A section answered by a
     # specialist is a richer answer to a question the report already asks, so
     # it belongs in the same document rather than in a separate artifact.
-    for panel in panels or []:
+    #
+    # Defaulting to the answer set's own panels means a caller who ran with
+    # `ask=` gets the charts without having to hand them over a second time —
+    # and cannot accidentally render a report whose Q5 says "see the panel"
+    # with no panel in the file.
+    for panel in _panels(answers, panels):
         out.append(panel_html(panel))
 
     out.append("</div></body></html>")
@@ -377,7 +394,7 @@ def _text(answers: AnswerSet, *, generated: Optional[str] = None,
     from .render import text
 
     body = text(answers)
-    for panel in panels or []:
+    for panel in _panels(answers, panels):
         body += "\n\n" + panel_text(panel)
     return body
 
@@ -389,7 +406,7 @@ def _json(answers: AnswerSet, *, generated: Optional[str] = None,
     from .render import summary
 
     payload = summary(answers)
-    payload["panels"] = [p.to_dict() for p in panels or []]
+    payload["panels"] = [p.to_dict() for p in _panels(answers, panels)]
     return _j.dumps(payload, indent=2, default=str)
 
 

@@ -353,6 +353,11 @@ class AnswerSet:
         #: Follow-ups raised during the run that were answered inline. Kept so
         #: the report can show its own working; NOT a queue for the reader.
         self.extra: List[Tuple[str, str]] = []
+        #: Panels produced by specialists for sections they answered. Carried
+        #: on the answer set so a renderer draws the chart in place, rather
+        #: than the report and the panels being two artifacts a reader has to
+        #: hold side by side.
+        self.panels: List[Any] = []
 
     def record(self, answer: Answer) -> Answer:
         self.answers[answer.question_id] = answer
