@@ -288,7 +288,13 @@ def build_parser() -> argparse.ArgumentParser:
     market.add_argument("--customer", default="",
                         help="Who buys — narrows the boundary")
     market.add_argument("--save", default=None, metavar="FILE",
-                        help="Write the answer set as JSON")
+                        help="Write the report to a file. The format follows "
+                             "the extension: .html .md .txt .json")
+    market.add_argument("--format", default=None, metavar="FMT",
+                        choices=("html", "md", "txt", "json"),
+                        help="Override the format --save would infer. HTML is "
+                             "the document one: it prints to PDF from any "
+                             "browser.")
     market.add_argument("--json", action="store_true",
                         help="Print the machine-readable summary instead")
     market.add_argument("--sizing-only", action="store_true",
@@ -470,12 +476,25 @@ def _market(args: Any) -> int:
         _out(text(answers))
 
     if args.save:
+        from marketreport.document import infer_format, render_as
+
+        # The extension decides, because that is what the user already said.
+        # `--format` overrides it for the case where they want HTML in a file
+        # called something else.
+        fmt = args.format or infer_format(args.save, default="json")
         try:
-            _save_json(answers.to_dict(), args.save)
-        except TypeError as exc:
+            body = render_as(fmt, answers)
+        except ValueError as exc:
+            _out(f"\n{exc}")
+            return 2
+        try:
+            _write_text(body, args.save)
+        except OSError as exc:
             _out(f"\nCould not write {args.save}: {exc}")
             return 5
-        _out(f"\nAnswer set written to {args.save}")
+        _out(f"\nReport written to {args.save} ({fmt})")
+        if fmt == "html":
+            _out("  Open it in a browser and print to PDF for a filed copy.")
 
     # An incomplete report is a real output and not a success. A script driving
     # this should be able to tell the difference without parsing prose.
@@ -666,22 +685,15 @@ def _research(args: Any) -> int:
     return 0
 
 
-def _save_json(payload: Any, destination: str) -> None:
-    """Serialize first, then write, then replace. In that order.
+def _write_text(text: str, destination: str) -> None:
+    """Write via a temp file, then replace. Never truncate the target first.
 
-    The obvious `json.dump(payload, open(dest, "w"))` opens and truncates the
-    destination before it knows whether the payload can be serialized. When it
-    could not, the user was left with a file that had a plausible name, a
-    plausible opening, and stopped in the middle of a key — output that looks
-    like output. Serializing to a string first turns that into a clean failure
-    with the destination untouched, and the temp-file swap means a crash or a
-    full disk mid-write cannot damage a previous good file either.
+    A crash or a full disk mid-write must not damage a file that was already
+    good, and must not leave a new one that has a plausible name, a plausible
+    opening, and stops in the middle of a line — output that looks like output.
     """
-    import json
     import os
     import tempfile
-
-    text = json.dumps(payload, indent=2, ensure_ascii=False)   # may raise
 
     target = Path(destination).expanduser()
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -699,6 +711,23 @@ def _save_json(payload: Any, destination: str) -> None:
         except OSError:
             pass
         raise
+
+
+def _save_json(payload: Any, destination: str) -> None:
+    """Serialize first, then write. In that order.
+
+    The obvious `json.dump(payload, open(dest, "w"))` opens and truncates the
+    destination before it knows whether the payload can be serialized. When it
+    could not, the user was left with a truncated file. Serializing to a string
+    first turns that into a clean failure with the destination untouched.
+
+    The write itself is `_write_text`, shared rather than copied: a second
+    implementation of "write safely" is a second place for the guarantee to
+    quietly stop holding.
+    """
+    import json
+
+    _write_text(json.dumps(payload, indent=2, ensure_ascii=False), destination)
 
 
 def _register_demo_research() -> str:

@@ -106,6 +106,26 @@ def build(market: MarketDefinition, *,
           only: Optional[List[str]] = None) -> AnswerSet:
     """Answer every standing question for one market."""
     emit = on_event or (lambda *_: None)
+
+    # No agents registered at all means `marketreport.agents` was never
+    # imported. That is a wiring mistake in the caller, and it must not be
+    # allowed to look like a report.
+    #
+    # Left alone it produced one: Q1 came back "no agent is registered", and
+    # every question downstream then reported "needs Q1, which was not
+    # established" — a programming error cascading into eleven sections that
+    # each read as an honest limit of the evidence. A reader would conclude the
+    # data was not available. It was an import.
+    #
+    # This is the same failure the acceptance gate keeps catching in other
+    # clothes: a defect that renders as a finding. Raise instead.
+    if not _AGENTS:
+        raise RuntimeError(
+            "no section agents are registered — `import marketreport.agents` "
+            "before calling build(). Without it every question reports as "
+            "unestablished, which reads as missing evidence rather than as "
+            "the wiring mistake it is.")
+
     answers = AnswerSet(market.label)
     started = time.time()
 

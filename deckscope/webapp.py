@@ -476,7 +476,16 @@ class Handler(BaseHTTPRequestHandler):
             answers = build(definition)
         except Exception as exc:  # noqa: BLE001
             return self._json({"error": f"The report failed: {exc}"}, 500)
-        return self._json(summary(answers))
+
+        # The document goes back with the summary rather than behind a second
+        # endpoint. It is the same run — fetching it again would re-query the
+        # Census and could return a different report under the same heading.
+        from marketreport.document import as_html, markdown
+
+        payload = summary(answers)
+        payload["documents"] = {"html": as_html(answers),
+                                "md": markdown(answers)}
+        return self._json(payload)
 
     def _run(self, payload: Dict[str, Any]) -> None:
         deck = (payload.get("deck") or "").strip().strip('"')
@@ -787,6 +796,8 @@ a pitch deck against that market and show where the two disagree.</div>
 
   <button id="m-go" onclick="runMarket(false)">Produce the report</button>
   <button class="ghost" onclick="runMarket(true)">Run the free demo</button>
+  <button class="ghost hidden" id="m-open">Open as a document</button>
+  <button class="ghost hidden" id="m-md">Save as Markdown</button>
   <p id="m-note" class="hint"></p>
   <div id="m-out"></div>
 </div>
@@ -898,11 +909,37 @@ async function runMarket(demo){
   }
 }
 
+// The document is handed over from what the run already produced, held in
+// memory as a blob. Re-fetching it would re-query the Census and could return
+// a different report under the same heading — two artifacts, one label, and no
+// way to tell which one somebody is holding.
+let DOCS = null;
+function wireDocuments(docs){
+  DOCS = docs || null;
+  const open = $('#m-open'), md = $('#m-md');
+  if(!DOCS){ open.classList.add('hidden'); md.classList.add('hidden'); return; }
+  open.classList.remove('hidden'); md.classList.remove('hidden');
+  open.onclick = () => {
+    const url = URL.createObjectURL(
+      new Blob([DOCS.html], {type:'text/html'}));
+    window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  };
+  md.onclick = () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([DOCS.md], {type:'text/markdown'}));
+    a.download = 'market-report.md';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+  };
+}
+
 // An ambiguous request gets a question, not an error banner. The user did
 // nothing wrong; there are simply two industries and only they know which one.
 // Each option is a button that answers by filling in the code, so the answer
 // costs one click rather than a trip to a NAICS lookup.
 function askMarket(data, out, note){
+  wireDocuments(null);
   note.textContent = data.question;
   note.style.color = '#b45309';
   out.textContent = '';
@@ -923,6 +960,7 @@ function askMarket(data, out, note){
 
 function renderMarket(data, out, note){
   const c = data.coverage, k = data.closure;
+  wireDocuments(data.documents);
   note.textContent = k.complete
     ? `All ${c.questions} questions answered.`
     : `INCOMPLETE — ${c.answered} of ${c.questions} answered. ${k.note}`;

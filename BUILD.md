@@ -175,6 +175,40 @@ asserts.
 Plus `/api/market` and a panel in the app window. Exit 6 means "ran correctly,
 report incomplete", which is distinct from a crash and scriptable.
 
+## Stage 3.6 — The report as a document (DONE)
+
+Text in a terminal is the developer's view. The goal is *"output an S-1
+report"*, and a filed industry section is a document people read, print,
+forward and argue with.
+
+    deckscope market "landscaping in Phoenix" --save report.html
+    deckscope market "gyms" --in Seattle --save notes.md
+
+Four formats behind one table (`marketreport/document.FORMATS`), so the CLI,
+the web app and the tests cannot disagree about what exists. The extension
+decides; `--format` overrides it; an unknown format **raises** rather than
+falling back to text, because a caller who asked for `--format pdf` and
+silently received plain text has been handed something that looks like it
+worked.
+
+**Provenance is visible, not available.** Three states are distinct at a
+glance: a sourced figure with its dataset named beneath it, an unchecked one
+with no source to go and read, and a demo figure in a warning block that
+*replaces* the source line rather than sitting beside it — listing a dataset
+that was never queried is the provenance badge over invented numbers, one
+layer further out.
+
+**No PDF writer, on purpose.** The HTML has a `@media print` block with page
+margins and `page-break-inside: avoid`, so any browser prints it correctly. A
+second layout would be a second thing to keep in step with the first, and the
+first would win.
+
+The web panel hands over the document the run already produced, held in memory.
+Re-fetching would re-query the Census and could return a different report under
+the same heading — two artifacts, one label, no way to tell them apart.
+
+---
+
 ## Stage 4 — DeckScope as a consumer (TODO)
 
 Deck analysis becomes: generate the market report, diff the deck against it.
@@ -202,7 +236,13 @@ These are not features. Breaking one is a defect regardless of what it buys.
    pattern, not a coincidence — extend the gate with the surface.
 8. **No score from our own fixtures counts as evidence.** It measures fixture
    maturity. It has already fooled me once.
-9. **Correctness needs an answer from outside.** `tests/test_published_totals.py`
+9. **A defect must never render as a finding.** `build()` with no agents
+   registered used to produce a full twelve-section report: Q1 read "no agent
+   is registered" and eleven more read "needs Q1, which was not established".
+   Eleven honest-looking limits of the evidence, all caused by a missing
+   import. It raises now. This is the recurring shape here — the fix is always
+   to make the impossible state loud rather than plausible.
+10. **Correctness needs an answer from outside.** `tests/test_published_totals.py`
    checks our arithmetic against filings that publish both their operands and
    their result — FIGS' 146% revenue CAGR, Cricut's 4% penetration, agilon's
    three rings. A test whose expected value I chose grades my own homework.
