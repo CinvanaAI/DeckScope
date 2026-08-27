@@ -45,6 +45,12 @@ class EvidenceCorpus:
     retrieved: int = 0
     #: Set when this corpus was replayed from disk rather than freshly gathered.
     replayed_from: Optional[str] = None
+    #: Queries that did not execute, as {query, error}. Deliberately NOT
+    #: sources: an outage says nothing about the subject, and a corpus that
+    #: reports "0 sources" after a backend failure is describing the network,
+    #: not the market. Whatever consumes this corpus must be able to tell those
+    #: two apart, so the failures are carried beside the evidence, not inside it.
+    failures: List[Dict[str, str]] = field(default_factory=list)
 
     @property
     def kept(self) -> int:
@@ -137,6 +143,17 @@ def gather(researcher: Any, queries: List[str], policy: SecurityPolicy, *,
         log(f"research failed: {exc}")
         corpus.security = ScanReport(target="web sources")
         return corpus
+
+    # A failed query is separated before anything can register or cite it. The
+    # gate is here as well as at the origin because `gather` accepts results
+    # from any Researcher, including third-party ones, and this is the last
+    # point where a non-source can still be stopped from becoming a source.
+    failures = [r for r in results if getattr(r, "failed", False)]
+    results = [r for r in results if not getattr(r, "failed", False)]
+    for bad in failures:
+        corpus.failures.append({"query": bad.source_query or "",
+                                "error": bad.error or "the search did not run"})
+        log(f"search failed for {bad.source_query!r}: {bad.error}")
 
     corpus.retrieved = len(results)
     corpus.registry.add_results(results, backend=corpus.backend)

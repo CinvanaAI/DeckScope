@@ -15,6 +15,19 @@ class SearchResult:
     snippet: str
     published: Optional[str] = None
     source_query: Optional[str] = None
+    #: Set when the query did not execute. Such a row is a report of an outage,
+    #: never a source: it must never be registered, cited, or shown to a reader.
+    #: See `Researcher.search_many` and `deckscope.corpus.gather`.
+    error: Optional[str] = None
+
+    @property
+    def failed(self) -> bool:
+        return self.error is not None
+
+    @classmethod
+    def failure(cls, query: str, exc: BaseException) -> "SearchResult":
+        return cls(title=f"[search failed] {query}", url="", snippet="",
+                   source_query=query, error=str(exc)[:300])
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -54,9 +67,17 @@ class Researcher(ABC):
             try:
                 results = self.search(q, max_results=max_results)
             except Exception as exc:  # noqa: BLE001 - one bad query must not kill the run
-                out.append(SearchResult(
-                    title=f"[search failed] {q}", url="", snippet=str(exc)[:300],
-                    source_query=q))
+                # Marked as a failure rather than described as one. This used to
+                # put the exception text in `snippet`, which made the row an
+                # ordinary result: it was registered, given a citation ID, and
+                # handed to the reader as research material. Observed live — a
+                # search timeout reached the reader as
+                # "[S1] [search failed] ... content: No answer appeared within
+                # 45s", inviting it to extract findings about a market from a
+                # Python traceback. A query that found nothing and a query that
+                # did not run are different facts and only one of them is about
+                # the market.
+                out.append(SearchResult.failure(q, exc))
                 continue
             for r in results:
                 key = (r.url or r.title).strip().lower()

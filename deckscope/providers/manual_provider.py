@@ -57,6 +57,9 @@ class ManualProvider(LLMProvider):
     name = "manual"
     default_model = "human-in-the-loop"
     catalog = [("human-in-the-loop", "Paste prompts into any chat AI yourself")]
+    #: The driver at the other end of the spool can search as well as answer,
+    #: so this provider can be its own research backend. See `native_search`.
+    supports_native_search = True
 
     def __init__(self, config: Optional[ProviderConfig] = None) -> None:
         super().__init__(config)
@@ -198,6 +201,102 @@ class ManualProvider(LLMProvider):
                 pass
 
         return self._completion(prompt, self._wait_for(rfile, pfile), cached=False)
+
+    # ------------------------------------------------------------ retrieval
+
+    #: Written at the top of every spooled search request. The driver on the
+    #: other end sees completion prompts and search requests in the same
+    #: directory, so each has to say which it is in its first line.
+    SEARCH_BANNER = "### DECKSCOPE SEARCH REQUEST"
+
+    def native_search(self, query: str, max_results: int = 8):
+        """Spool a search the same way a prompt is spooled.
+
+        `ProviderNativeResearcher` exists so a provider with its own web search
+        can be the search backend too — no second key. That was written for
+        Anthropic's server-side search, but the requirement is only a
+        `native_search` method, and an agent watching this directory can serve
+        one as easily as it serves a completion.
+
+        This is what makes the whole pipeline runnable with no API key and no
+        search key: one driver answers both kinds of request, and every
+        DeckScope stage between them runs for real.
+
+        The answer file is a JSON array of `{title, url, snippet}`. It is
+        strict on purpose — a malformed answer raises rather than returning an
+        empty list, because an empty result set is indistinguishable
+        downstream from a query that genuinely found nothing, and that is the
+        difference between "no source covers this" and "the driver sent
+        garbage".
+        """
+        self.step += 1
+        request = (f"{self.SEARCH_BANNER}\n"
+                   f"Return a JSON array of up to {max_results} results, each "
+                   f'{{"title": ..., "url": ..., "snippet": ...}}. '
+                   f"Real URLs from a real search only — an invented URL is "
+                   f"worse than no result, because everything downstream "
+                   f"treats it as a citable source.\n\n"
+                   f"QUERY: {query}")
+        key = self._key(request)
+        rfile = self.answers / f"{key}.json"
+        pfile = self.asked / f"{key}.search.txt"
+
+        if rfile.exists():
+            self.replayed += 1
+            return self._results(rfile.read_text(encoding="utf-8"), query)
+
+        pfile.write_text(request, encoding="utf-8")
+        (self.asked / f"{key}.meta.json").write_text(json.dumps({
+            "run_tag": self.run_tag, "step": self.step, "kind": "search",
+            "query": query, "max_results": max_results,
+            "answer_path": str(rfile),
+        }, indent=2), encoding="utf-8")
+
+        if self.interactive:
+            _out("\n" + "=" * 70)
+            _out(f"  STEP {self.step} — search needed")
+            _out("=" * 70)
+            _out(f"  Query: {query}")
+            _out(f"  Save a JSON array of results into:\n     {rfile}")
+            _out("=" * 70)
+            try:
+                input("  Waiting... press Enter once the results are saved: ")
+            except EOFError:
+                pass
+
+        return self._results(self._wait_for(rfile, pfile), query)
+
+    def _results(self, text: str, query: str):
+        """Parse the driver's answer, or say exactly how it was malformed."""
+        try:
+            data = json.loads(text)
+        except ValueError as exc:
+            raise ProviderError(
+                f"The search results for {query!r} are not valid JSON: {exc}. "
+                f"An unparseable answer cannot be told apart from a query that "
+                f"found nothing once it reaches the research loop, so it stops "
+                f"here.") from None
+        if isinstance(data, dict):
+            data = data.get("results") or data.get("items") or []
+        if not isinstance(data, list):
+            raise ProviderError(
+                f"The search results for {query!r} parsed to "
+                f"{type(data).__name__}, not a list of results.")
+
+        rows = []
+        for item in data:
+            if not isinstance(item, dict):
+                continue
+            url = str(item.get("url") or "").strip()
+            if not url:
+                # No URL means nothing citable. Dropping it silently would let
+                # a finding be grounded in a source that cannot be checked.
+                continue
+            rows.append({"title": str(item.get("title") or "").strip(),
+                         "url": url,
+                         "snippet": str(item.get("snippet")
+                                        or item.get("content") or "").strip()})
+        return rows
 
     def _completion(self, prompt: str, text: str, *, cached: bool) -> Completion:
         # Character-based, and labelled as such. No tokenizer is available here,

@@ -123,6 +123,10 @@ class ResearchLoop:
         #: for. Reported rather than discarded silently — a reader that keeps
         #: returning off-topic figures is a fault worth seeing.
         self.off_topic: List[Dict[str, Any]] = []
+        #: Queries whose backend failed. Kept apart from questions that were
+        #: asked and genuinely had no answer, because only one of those is a
+        #: statement about the subject.
+        self.retrieval_failures: List[Dict[str, Any]] = []
 
     # ------------------------------------------------------------------ run
     def run(self) -> Dict[str, Any]:
@@ -231,6 +235,21 @@ class ResearchLoop:
             self._last_ids = question_ids
         else:
             self._last_ids = []
+
+        # A retrieval that failed is reported as a failure. Without this the
+        # attempt records "0 sources", the question closes as unanswerable, and
+        # the section says the fact could not be established — describing the
+        # search backend as though it were the market.
+        if corpus.failures and not added:
+            why = corpus.failures[0].get("error") or "the search did not run"
+            self.retrieval_failures.append(
+                {"question_id": question.id, "query": question.text,
+                 "error": why})
+            self.queue.record_attempt(
+                question.id, route.kind, question.text, 0,
+                f"the search backend failed, so nothing was retrieved: {why}")
+            return added
+
         self.queue.record_attempt(question.id, route.kind, question.text,
                                   len(added))
         return added
@@ -390,6 +409,7 @@ class ResearchLoop:
             # json.dumps().
             "security_reports": [_as_data(r) for r in self.security_reports],
             "off_topic_dropped": list(self.off_topic),
+            "retrieval_failures": list(self.retrieval_failures),
             "questions": self.queue.to_dict(),
             "findings": self.findings.to_dict(),
             "budget": self.budget.to_dict(),

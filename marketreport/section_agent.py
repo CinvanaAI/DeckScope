@@ -199,13 +199,24 @@ def research_section(section: Section, *, subject: str, place: str = "",
     run = loop.run()
     established = list(findings.findings)
 
+    # A search backend that fell over is not a market with no data. Said first
+    # and said plainly, because these two produce an identical-looking empty
+    # section and only one of them is about the subject.
+    broken = list(run.get("retrieval_failures") or [])
+
     if not established:
-        panel = unanswered(
-            question_text,
-            "nothing could be established for this section. "
-            + ((run.get("budget") or {}).get("stopped_because")
-               or "no source the loop could read answered these questions"),
-            agent=section.key)
+        if broken:
+            why = (f"the search backend failed on "
+                   f"{len(broken)} of the {len(rows)} question(s) here — "
+                   f"{broken[0].get('error', 'no reason given')}. "
+                   f"Nothing is known about this market either way; the "
+                   f"retrieval never ran.")
+        else:
+            why = ("nothing could be established for this section. "
+                   + ((run.get("budget") or {}).get("stopped_because")
+                      or "no source the loop could read answered these "
+                         "questions"))
+        panel = unanswered(question_text, why, agent=section.key)
         panel.provenance = _provenance(run, queue, established, rows)
         return panel
 
@@ -238,6 +249,15 @@ def research_section(section: Section, *, subject: str, place: str = "",
         panel.figures.append(Figure(
             label=question.text[:70], state=ABSENT,
             because=question.closed_because or "no source could answer it"))
+
+    # A section that established *something* while other queries failed is the
+    # subtler case: it looks complete, and the gap it has is invisible.
+    if broken:
+        panel.caveats.append(
+            f"{len(broken)} search(es) for this section did not run "
+            f"({broken[0].get('error', 'no reason given')}). What is missing "
+            f"here is missing because the retrieval failed, not because no "
+            f"source covers it.")
 
     _enforce(section, panel)
     panel.provenance = _provenance(run, queue, established, rows)
