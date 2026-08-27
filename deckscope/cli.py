@@ -251,6 +251,31 @@ def build_parser() -> argparse.ArgumentParser:
                                "mechanics.")
     research.add_argument("--config", default=None)
 
+    ask = sub.add_parser(
+        "ask",
+        help="Ask about a market in plain words and get panels back",
+        description=(
+            "Say what you want to know and it works out which specialists to "
+            "run, researches each one, and hands back a panel per question — "
+            "the finding, the chart it chose, the numbers with their sources, "
+            "and what it could not establish.\n\n"
+            "  deckscope ask \"market share of cell phone companies in Ireland\"\n"
+            "  deckscope ask \"who leads the smartphone market in Japan\" "
+            "--save report.html\n\n"
+            "This is the door for questions no statistical code covers. "
+            "'deckscope market' is the door for a full twelve-section report "
+            "on a US industry; the two share their machinery and increasingly "
+            "their answers."))
+    ask.add_argument("question", help="What you want to know, in plain words")
+    ask.add_argument("--save", default=None, metavar="FILE",
+                     help="Write the panels to a file — .html .md .txt .json")
+    ask.add_argument("--json", action="store_true",
+                     help="Print the panels as JSON instead")
+    ask.add_argument("--plan", action="store_true",
+                     help="Show what would be researched and stop, spending "
+                          "nothing")
+    ask.add_argument("--config", default=None)
+
     market = sub.add_parser(
         "market",
         help="The full market report: twelve questions, answered or explained",
@@ -394,6 +419,9 @@ def main(argv: Optional[List[str]] = None) -> int:
              "      This name still works and will keep working.\n")
         return _size(args)
 
+    if cmd == "ask":
+        return _ask_market(args)
+
     if cmd == "market":
         return _market(args)
 
@@ -418,6 +446,114 @@ def _ask(question: str, options: Any = ()) -> int:
     _out("")
     _out("  Re-run with one of these, or give the NAICS code directly.")
     return 7
+
+
+def _ask_market(args: Any) -> int:
+    """A plain question, answered as panels."""
+    import json as _json
+
+    from marketreport.manager import answer, plan, read_request
+    from marketreport.panel_render import panel_text
+
+    settings.load_env()
+
+    request = read_request(args.question)
+    if not request.ready:
+        return _ask(request.question, request.options)
+
+    if args.plan:
+        _out("")
+        _out(f"  Market:      {request.market}")
+        _out(f"  Place:       {request.place or 'not specified — worldwide'}")
+        if request.naics:
+            _out(f"  NAICS:       {request.naics}")
+        for note in request.notes:
+            _out(f"  · {note}")
+        _out("")
+        for spec in plan(request):
+            _out(f"  {spec.name} — {spec.job}")
+            for row in spec.questions(request.market, request.place):
+                _out(f"      [{row['beat']}] {row['text']}")
+        _out("")
+        _out("  Nothing was researched and nothing was spent. Drop --plan to "
+             "run it.")
+        return 0
+
+    from .config import load_config
+    from .providers import get_provider
+    from .research.registry import get_researcher
+    from .security.policy import SecurityPolicy
+
+    # Both take a config object. Passing None produced "'NoneType' object has
+    # no attribute 'name'" — a message that named neither the missing setup
+    # step nor the real mistake, which was mine.
+    #
+    # Resolved one at a time so the message says WHICH of the two a user still
+    # owes; catching them together makes one missing key look like two.
+    config = load_config(getattr(args, "config", None) or None)
+    missing = []
+    provider = researcher = None
+    try:
+        provider = get_provider(config.provider)
+    except Exception as exc:  # noqa: BLE001
+        missing.append(f"no AI model is connected — {exc}")
+    try:
+        researcher = get_researcher(config.research, provider)
+    except Exception as exc:  # noqa: BLE001
+        missing.append(f"no search backend is connected — {exc}")
+
+    if missing:
+        _out("")
+        _out("  Not ready to research yet:" if len(missing) == 1
+             else "  Not ready to research yet — two things are missing:")
+        for problem in missing:
+            _out(f"    - {problem}")
+        _out("")
+        _out("  Run 'deckscope setup' to connect them, or 'deckscope models' "
+             "to see what is already reachable.")
+        _out("  'deckscope ask \"...\" --plan' works with neither, and shows "
+             "exactly what would be researched.")
+        return 4
+
+    result = answer(args.question, provider=provider, researcher=researcher,
+                    policy=SecurityPolicy(), on_event=_out)
+    panels = result["panels"]
+
+    if args.json:
+        _out(_json.dumps({"request": result["request"].__dict__,
+                          "panels": [p.to_dict() for p in panels]},
+                         indent=2, default=str))
+    else:
+        for panel in panels:
+            _out("")
+            _out(panel_text(panel))
+
+    if args.save:
+        from marketreport.document import infer_format, panel_document
+        from marketreport.panel_render import panel_markdown
+
+        fmt = infer_format(args.save, default="html")
+        title = f"{request.market.title()}" + (
+            f" in {request.place}" if request.place else "")
+        if fmt == "html":
+            body = panel_document(panels, title=title)
+        elif fmt == "md":
+            body = "\n\n".join(panel_markdown(p) for p in panels)
+        elif fmt == "json":
+            body = _json.dumps([p.to_dict() for p in panels], indent=2,
+                               default=str)
+        else:
+            body = "\n\n".join(panel_text(p) for p in panels)
+        try:
+            _write_text(body, args.save)
+        except OSError as exc:
+            _out(f"\nCould not write {args.save}: {exc}")
+            return 5
+        _out(f"\nWritten to {args.save} ({fmt})")
+
+    # Exit 6 means "ran correctly, could not establish it" — distinct from a
+    # crash and from a request we could not understand, which is 7.
+    return 0 if any(p.answered for p in panels) else 6
 
 
 def _market(args: Any) -> int:

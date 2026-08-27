@@ -561,3 +561,108 @@ class P9_TheChartIsDrawn(unittest.TestCase):
         body = panel_document([self._panel(),
                                unanswered("Q2", "no source")])
         self.assertIn("could not be answered", body)
+
+
+class P10_TheManagerDecidesScope(unittest.TestCase):
+    """A plain sentence in, the right specialists dispatched. The manager
+    decides scope and never produces a figure — keeping that split sharp is
+    what stops it becoming a second place where numbers can be born."""
+
+    def _read(self, text):
+        from marketreport.manager import read_request
+
+        return read_request(text)
+
+    def test_the_question_that_started_this(self):
+        """"Show me the market share of cell phone companies in Ireland" — no
+        NAICS code, no FIPS, and the old spine could not take it at all."""
+        request = self._read(
+            "Show me the market share of cell phone companies in Ireland")
+        self.assertTrue(request.ready, request.question)
+        self.assertEqual("cell phone", request.market)
+        self.assertEqual("Ireland", request.place)
+        self.assertIn("market-share", request.specialists)
+
+    def test_a_foreign_geography_is_not_a_failure(self):
+        """Ireland is a perfectly good geography that no US FIPS table will
+        ever contain. Refusing it would rebuild the wall this exercise was
+        about tearing down."""
+        request = self._read("market share of cell phones in Ireland")
+        self.assertTrue(request.ready)
+        self.assertEqual("", request.state_fips)
+        self.assertTrue(any("research it by name" in n
+                            for n in request.notes))
+
+    def test_vons_original_question_still_works(self):
+        """A bare industry name carries none of the market words, because a
+        person naming an industry does not also say "market". The first
+        version of the guard turned away the question this product exists to
+        answer."""
+        request = self._read("landscaping in Phoenix")
+        self.assertTrue(request.ready, request.question)
+        self.assertEqual("561730", request.naics)
+        self.assertEqual(("04", "013"),
+                         (request.state_fips, request.county_fips))
+
+    def test_a_resolved_code_unlocks_the_census_route(self):
+        request = self._read("landscaping in Phoenix")
+        self.assertEqual("561730", request.framing()["naics"])
+        self.assertTrue(any("NAICS" in n for n in request.notes))
+
+    def test_the_request_words_are_stripped_from_the_market_name(self):
+        for text, market in (
+                ("Show me the market share of cell phone companies", "cell phone"),
+                ("who leads the smartphone market in Japan", "smartphone"),
+                ("give me a pie chart of the electric vehicle market in Norway",
+                 "electric vehicle")):
+            with self.subTest(text=text[:32]):
+                self.assertEqual(market, self._read(text).market)
+
+    def test_trailing_punctuation_comes_off_before_the_split(self):
+        """Stripping it afterwards left the place as "Seattle?", which failed
+        to resolve — reporting a real US city as a foreign geography rather
+        than as a stray question mark."""
+        request = self._read("How big is the coffee shop market in Seattle?")
+        self.assertEqual("Seattle", request.place)
+        self.assertEqual("033", request.county_fips)
+
+    def test_a_request_that_is_not_about_a_market_is_refused(self):
+        for text in ("what is the weather tomorrow", "tell me a joke"):
+            with self.subTest(text=text):
+                request = self._read(text)
+                self.assertFalse(request.ready)
+                self.assertIn("does not look like", request.question)
+
+    def test_it_will_not_invent_a_specialist_it_does_not_have(self):
+        """Sending the closest specialist and letting the panel come back about
+        a different question is worse than saying so."""
+        from marketreport.manager import _choose
+
+        self.assertEqual([], _choose("what is the weather tomorrow"))
+
+    def test_it_names_what_it_can_do_when_it_cannot_help(self):
+        """A request nothing can answer gets the roster, not a shrug — and not
+        the nearest specialist either."""
+        from marketreport import manager
+
+        saved = list(manager.DISPATCH)
+        manager.DISPATCH.clear()
+        original = manager._choose
+        manager._choose = lambda text, names=False: []
+        try:
+            request = manager.read_request("market share of widgets")
+            self.assertFalse(request.ready)
+            self.assertIn("Nothing here answers that yet", request.question)
+            self.assertTrue(request.options)
+            self.assertTrue(any("market-share" in o for o in request.options))
+        finally:
+            manager._choose = original
+            manager.DISPATCH.extend(saved)
+
+    def test_the_dispatch_rules_each_say_why(self):
+        from marketreport.manager import DISPATCH
+
+        for pattern, name, why in DISPATCH:
+            with self.subTest(specialist=name):
+                self.assertIsNotNone(get(name))
+                self.assertGreater(len(why), 20)
