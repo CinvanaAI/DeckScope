@@ -37,10 +37,12 @@ import datetime as _dt
 import html
 from typing import Any, List, Optional
 
+from .panel import Panel
+from .panel_render import PANEL_CSS, panel_html, panel_markdown, panel_text
 from .questions import STANDING, Answer, AnswerSet
 from .render import HEADINGS
 
-__all__ = ["markdown", "as_html", "FORMATS", "render_as"]
+__all__ = ["markdown", "as_html", "FORMATS", "render_as", "panel_document"]
 
 
 def _e(value: Any) -> str:
@@ -53,7 +55,8 @@ def _today() -> str:
 
 # ------------------------------------------------------------- markdown
 
-def markdown(answers: AnswerSet, *, generated: Optional[str] = None) -> str:
+def markdown(answers: AnswerSet, *, generated: Optional[str] = None,
+             panels: Optional[List[Panel]] = None) -> str:
     """The report as Markdown.
 
     Chosen over the terminal format for anything that will be pasted somewhere
@@ -136,6 +139,9 @@ def markdown(answers: AnswerSet, *, generated: Optional[str] = None) -> str:
             out.append("*Not independently checkable: there is no source to go "
                        "and read.*")
         out.append("")
+
+    for panel in panels or []:
+        out.append(panel_markdown(panel))
 
     return "\n".join(out).rstrip() + "\n"
 
@@ -231,7 +237,47 @@ table.cover td:last-child{text-align:right;font-variant-numeric:tabular-nums;
 """
 
 
-def as_html(answers: AnswerSet, *, generated: Optional[str] = None) -> str:
+def panel_document(panels: List[Panel], *, title: str = "Market report",
+                   generated: Optional[str] = None) -> str:
+    """A set of panels as one document.
+
+    This is what a request produces: the manager dispatches specialists, each
+    returns a panel, and the panels are arranged. The market report's twelve
+    sections are one arrangement of panels rather than a different kind of
+    thing — which is the whole point of Von's question, that a market report
+    which cannot produce the market-share report is not a market report.
+    """
+    answered = [p for p in panels if p.answered]
+    out: List[str] = []
+    out.append("<!doctype html><html lang=\"en\"><head>")
+    out.append("<meta charset=\"utf-8\">")
+    out.append("<meta name=\"viewport\" content=\"width=device-width,"
+               "initial-scale=1\">")
+    out.append(f"<title>{_e(title)}</title>")
+    out.append(f"<style>{_CSS}{PANEL_CSS}</style></head><body>"
+               f"<div class=\"sheet\">")
+    out.append(f"<h1>{_e(title)}</h1>")
+    out.append(f"<p class=\"stamp\">Produced {_e(generated or _today())} · "
+               f"{len(answered)} of {len(panels)} questions answered · every "
+               f"figure states its own source, or says it has none</p>")
+
+    unanswered = [p for p in panels if not p.answered]
+    if unanswered:
+        out.append(f"<div class=\"banner warn\"><b>{len(unanswered)} of "
+                   f"{len(panels)} questions could not be answered.</b> They "
+                   f"are shown below with what stopped them, rather than "
+                   f"omitted — a question that vanishes reads as one nobody "
+                   f"asked.</div>")
+
+    for panel in panels:
+        out.append(panel_html(panel))
+
+    out.append("</div></body></html>")
+    return "\n".join(out)
+
+
+def as_html(answers: AnswerSet, *, generated: Optional[str] = None,
+            panels: Optional[List[Panel]] = None) -> str:
     """A self-contained HTML document. No network, no scripts, prints to PDF."""
     coverage = answers.coverage()
     closure = answers.closure()
@@ -242,7 +288,8 @@ def as_html(answers: AnswerSet, *, generated: Optional[str] = None) -> str:
     out.append("<meta name=\"viewport\" content=\"width=device-width,"
                "initial-scale=1\">")
     out.append(f"<title>Market report — {_e(answers.market)}</title>")
-    out.append(f"<style>{_CSS}</style></head><body><div class=\"sheet\">")
+    out.append(f"<style>{_CSS}{PANEL_CSS}</style></head><body>"
+               f"<div class=\"sheet\">")
 
     out.append(f"<h1>{_e(answers.market)}</h1>")
     out.append(f"<p class=\"stamp\">Market report · produced "
@@ -313,24 +360,37 @@ def as_html(answers: AnswerSet, *, generated: Optional[str] = None) -> str:
                        "there is no source to go and read.</p>")
         out.append("</section>")
 
+    # Panels go after the standing sections. A section answered by a
+    # specialist is a richer answer to a question the report already asks, so
+    # it belongs in the same document rather than in a separate artifact.
+    for panel in panels or []:
+        out.append(panel_html(panel))
+
     out.append("</div></body></html>")
     return "\n".join(out)
 
 
 # --------------------------------------------------------------- dispatch
 
-def _text(answers: AnswerSet, *, generated: Optional[str] = None) -> str:
+def _text(answers: AnswerSet, *, generated: Optional[str] = None,
+          panels: Optional[List[Panel]] = None) -> str:
     from .render import text
 
-    return text(answers)
+    body = text(answers)
+    for panel in panels or []:
+        body += "\n\n" + panel_text(panel)
+    return body
 
 
-def _json(answers: AnswerSet, *, generated: Optional[str] = None) -> str:
+def _json(answers: AnswerSet, *, generated: Optional[str] = None,
+          panels: Optional[List[Panel]] = None) -> str:
     import json as _j
 
     from .render import summary
 
-    return _j.dumps(summary(answers), indent=2, default=str)
+    payload = summary(answers)
+    payload["panels"] = [p.to_dict() for p in panels or []]
+    return _j.dumps(payload, indent=2, default=str)
 
 
 #: Every format the report can be written as, by file extension. One table so
@@ -344,7 +404,8 @@ FORMATS = {
 
 
 def render_as(fmt: str, answers: AnswerSet, *,
-              generated: Optional[str] = None) -> str:
+              generated: Optional[str] = None,
+              panels: Optional[List[Panel]] = None) -> str:
     """One report, in the named format. Raises `ValueError` on an unknown one.
 
     Raises rather than falling back to text: a caller who asked for `--format
@@ -356,7 +417,7 @@ def render_as(fmt: str, answers: AnswerSet, *,
     if writer is None:
         raise ValueError(f"there is no '{fmt}' format; available: "
                          + ", ".join(sorted(FORMATS)))
-    return writer(answers, generated=generated)
+    return writer(answers, generated=generated, panels=panels)
 
 
 def infer_format(path: str, default: str = "txt") -> str:

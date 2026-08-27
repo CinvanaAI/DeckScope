@@ -417,3 +417,147 @@ class P8_BugsFoundWhileBuildingThis(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class P9_TheChartIsDrawn(unittest.TestCase):
+    """A panel that cannot be seen is a data structure, not an answer."""
+
+    def _panel(self):
+        panel = build_panel("Who has the market?", _phone_findings(),
+                            _phone_shape(), agent="market-share")
+        panel.figures.append(
+            Figure("Phones shipped", 277.5, "277 million", "count", SOURCED,
+                   "Q2 2026", ["S3"]))
+        panel.figures.append(derive(
+            "Apple premium", "49% ÷ 20%",
+            [Figure("a", 20, "20%", "%", SOURCED, "", ["S1"]),
+             Figure("b", 49, "49%", "%", SOURCED, "", ["S2"])], 2.45, "ratio"))
+        panel.figures.append(
+            Figure("Xiaomi revenue share", state=ABSENT,
+                   because="this tracker publishes the top two only"))
+        return panel
+
+    def test_every_series_becomes_a_chart(self):
+        from marketreport.panel_render import panel_html
+
+        body = panel_html(self._panel())
+        self.assertEqual(2, body.count("<svg"))
+
+    def test_the_svg_is_well_formed(self):
+        import xml.etree.ElementTree as ET
+        import re
+
+        from marketreport.panel_render import panel_html
+
+        for svg in re.findall(r"<svg.*?</svg>", panel_html(self._panel()),
+                              re.S):
+            ET.fromstring(svg)
+
+    def test_no_arc_carries_a_broken_coordinate(self):
+        import re
+
+        from marketreport.panel_render import panel_html
+
+        for path in re.findall(r'<path d="([^"]+)"',
+                               panel_html(self._panel())):
+            with self.subTest(path=path[:40]):
+                self.assertNotIn("nan", path.lower())
+                self.assertNotIn("inf", path.lower())
+
+    def test_an_entity_keeps_its_colour_across_both_charts(self):
+        """In a share pair the reader is comparing Apple's wedge in one chart
+        against Apple's wedge in the other. Recolouring by rank would make the
+        comparison impossible to see — and rank is exactly what differs."""
+        from marketreport.panel_render import _colours
+
+        colours = _colours(self._panel())
+        self.assertEqual(colours["apple"], colours["apple"])
+        self.assertNotEqual(colours["apple"], colours["samsung"])
+
+    def test_an_incomplete_series_draws_its_gap_rather_than_scaling_up(self):
+        """Scaling to fill the circle would turn "the publisher covers the top
+        two" into "these two are the whole market" — a lie the chart tells on
+        its own."""
+        from marketreport.panel_render import panel_html
+
+        body = panel_html(self._panel())
+        self.assertIn("url(#gap)", body)
+        self.assertIn("Not broken out", body)
+
+    def test_a_derived_figure_shows_its_arithmetic_beside_the_number(self):
+        """The line whose absence let my own multiplications read as published
+        figures."""
+        from marketreport.panel_render import panel_html
+
+        body = panel_html(self._panel())
+        self.assertIn("49% ÷ 20%", body)
+        self.assertIn("tag-derived", body)
+
+    def test_the_states_are_visually_distinct(self):
+        """A reader must be able to tell a published figure from one I worked
+        out, at a glance and without reading the caption."""
+        from marketreport.panel_render import PANEL_CSS, panel_html
+
+        body = panel_html(self._panel())
+        self.assertIn("tag-sourced", body)
+        self.assertIn("tag-derived", body)
+        for state in ("sourced", "derived", "estimated", "absent"):
+            with self.subTest(state=state):
+                self.assertIn(f".tag-{state}", PANEL_CSS)
+
+    def test_an_absent_figure_is_listed_rather_than_dropped(self):
+        from marketreport.panel_render import panel_html, panel_text
+
+        for body in (panel_html(self._panel()), panel_text(self._panel())):
+            self.assertIn("Xiaomi revenue share", body)
+            self.assertIn("top two only", body)
+
+    def test_it_loads_nothing_from_the_network(self):
+        from marketreport.panel_render import panel_html
+
+        body = panel_html(self._panel())
+        for pattern in ("<script", "http://", "https://", "@import"):
+            with self.subTest(pattern=pattern):
+                self.assertNotIn(pattern, body)
+
+    def test_content_is_escaped(self):
+        from marketreport.panel_render import panel_html
+
+        panel = Panel(question="<img src=x onerror=alert(1)>",
+                      headline="h", form="stat")
+        self.assertNotIn("<img src=x", panel_html(panel))
+
+    def test_a_failed_panel_still_renders_and_says_why(self):
+        from marketreport.panel_render import panel_html, panel_text
+
+        panel = unanswered("Who leads?", "no tracker covers this market")
+        for body in (panel_html(panel), panel_text(panel)):
+            self.assertIn("no tracker covers this market", body)
+
+    def test_every_format_carries_the_caveats(self):
+        """A caveat dropped in one format is a reader misled in that format."""
+        from marketreport.panel_render import (panel_html, panel_markdown,
+                                               panel_text)
+
+        panel = self._panel()
+        panel.caveats.append("The two series come from different publishers.")
+        for name, body in (("html", panel_html(panel)),
+                           ("md", panel_markdown(panel)),
+                           ("txt", panel_text(panel))):
+            with self.subTest(fmt=name):
+                self.assertIn("different publishers", body)
+
+    def test_panels_compose_into_a_document(self):
+        from marketreport.document import panel_document
+
+        body = panel_document([self._panel()], title="Cell phones")
+        self.assertTrue(body.startswith("<!doctype html>"))
+        self.assertIn("<svg", body)
+        self.assertIn("Cell phones", body)
+
+    def test_a_document_says_how_many_questions_went_unanswered(self):
+        from marketreport.document import panel_document
+
+        body = panel_document([self._panel(),
+                               unanswered("Q2", "no source")])
+        self.assertIn("could not be answered", body)
