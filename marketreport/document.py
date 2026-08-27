@@ -42,7 +42,8 @@ from .panel_render import PANEL_CSS, panel_html, panel_markdown, panel_text
 from .questions import STANDING, Answer, AnswerSet
 from .render import HEADINGS
 
-__all__ = ["markdown", "as_html", "FORMATS", "render_as", "panel_document"]
+__all__ = ["markdown", "as_html", "FORMATS", "render_as", "panel_document",
+           "s1_document"]
 
 
 def _panels(answers: AnswerSet, given: Optional[List[Panel]]) -> List[Panel]:
@@ -283,6 +284,96 @@ def panel_document(panels: List[Panel], *, title: str = "Market report",
 
     for panel in panels:
         out.append(panel_html(panel))
+
+    out.append("</div></body></html>")
+    return "\n".join(out)
+
+
+def s1_document(report: Dict[str, Any], *,
+                generated: Optional[str] = None) -> str:
+    """The industry section as a document.
+
+    Three things go on the page that a filing does not put there, and each is
+    the reason to read this instead of one:
+
+    **The coverage, at the top.** A filing does not tell you how much of itself
+    it could establish. This one leads with it.
+
+    **The stretches, named.** The constructions that expand a market without
+    measuring the expansion. Filings write them and disclose them; this
+    computes them and puts them where they cannot be skimmed past.
+
+    **The upgrade slots**, only on sections that are actually thin — an offer
+    where the public sources ran out, not an advert on a section that came back
+    complete.
+    """
+    stats = report.get("coverage") or {}
+    panels = report.get("panels") or []
+    title = f"{report.get('market', 'Market')}"
+    if report.get("place") and report["place"] != "not specified":
+        title += f" in {report['place']}"
+
+    out: List[str] = []
+    out.append("<!doctype html><html lang=\"en\"><head>")
+    out.append("<meta charset=\"utf-8\">")
+    out.append("<meta name=\"viewport\" content=\"width=device-width,"
+               "initial-scale=1\">")
+    out.append(f"<title>{_e(title)} — industry report</title>")
+    out.append(f"<style>{_CSS}{PANEL_CSS}</style></head><body>"
+               f"<div class=\"sheet\">")
+    out.append(f"<h1>{_e(title)}</h1>")
+    out.append(f"<p class=\"stamp\">Industry section · produced "
+               f"{_e(generated or _today())} · structured after the industry "
+               f"sections of five filed S-1s</p>")
+
+    out.append("<table class=\"cover\">")
+    for label, value in (
+            ("Sections established",
+             f"{stats.get('answered', 0)} of {stats.get('sections', 0)}"),
+            ("Figures that trace to a source",
+             f"{stats.get('checkable', 0)} of {stats.get('figures', 0)}"),
+            ("Definitional stretches found",
+             len(report.get("stretches") or []))):
+        out.append(f"<tr><td>{_e(label)}</td><td>{_e(value)}</td></tr>")
+    out.append("</table>")
+
+    if report.get("disclaimer"):
+        out.append(f"<div class=\"banner\"><b>Industry and market data.</b> "
+                   f"{_e(report['disclaimer'])}</div>")
+
+    stretch = report.get("stretches") or []
+    if stretch:
+        out.append("<div class=\"banner warn\">")
+        out.append(f"<b>{len(stretch)} definitional stretch(es).</b> These are "
+                   f"the constructions that make a market bigger without "
+                   f"measuring the expansion. A filing discloses them and "
+                   f"lets the headline stand; they are listed here instead.")
+        out.append("<ul>")
+        for item in stretch:
+            out.append(f"<li><b>{_e(item['section'])}</b> — "
+                       f"&ldquo;{_e(item['phrase'])}&rdquo;: "
+                       f"{_e(item['why'])}</li>")
+        out.append("</ul></div>")
+
+    for panel in panels:
+        out.append(panel_html(panel))
+
+    offers = [o for o in (report.get("upgrades") or [])
+              if o.get("would_help") == "yes"]
+    if offers:
+        out.append("<div class=\"banner\">")
+        out.append("<b>Where a paid source would sharpen this.</b> Everything "
+                   "above is built from public sources and stands on its own. "
+                   "These sections ran thin, and the firms named collect data "
+                   "themselves — channel panels, retail point-of-sale, "
+                   "commissioned surveys — rather than assembling public "
+                   "figures the way this report does. If you have a "
+                   "subscription, connecting it improves these specifically:")
+        out.append("<ul>")
+        for offer in offers:
+            out.append(f"<li><b>{_e(offer['title'])}</b> — {_e(offer['what'])} "
+                       f"<i>({_e(offer['sources'])})</i></li>")
+        out.append("</ul></div>")
 
     out.append("</div></body></html>")
     return "\n".join(out)

@@ -251,6 +251,34 @@ def build_parser() -> argparse.ArgumentParser:
                                "mechanics.")
     research.add_argument("--config", default=None)
 
+    reports_cmd = sub.add_parser(
+        "reports",
+        help="List the report types this can produce",
+        description=(
+            "Each type is a set of sections, each one researched and returned "
+            "as a panel you can check.\n\n"
+            "Every type states what it is honestly bad at as well as what it "
+            "answers, because a menu that only lists strengths teaches "
+            "nothing about which item to pick."))
+    reports_cmd.add_argument("--type", default="",
+                             help="Show one type's sections in detail")
+
+    report_cmd = sub.add_parser(
+        "report",
+        help="Produce one report about one subject",
+        description=(
+            "  deckscope report market-share \"cell phones\"\n"
+            "  deckscope report market-size \"landscaping\" --in Phoenix\n"
+            "  deckscope report demographics \"PS5 streaming users\"\n\n"
+            "'deckscope reports' lists the types."))
+    report_cmd.add_argument("type", help="Report type — see 'deckscope reports'")
+    report_cmd.add_argument("subject", help="What the report is about")
+    report_cmd.add_argument("--in", dest="place", default="", metavar="PLACE")
+    report_cmd.add_argument("--save", default=None, metavar="FILE")
+    report_cmd.add_argument("--plan", action="store_true",
+                            help="Show what would be researched and stop")
+    report_cmd.add_argument("--json", action="store_true")
+
     panels_cmd = sub.add_parser(
         "panels",
         help="List, show and re-open panels you have already produced",
@@ -448,6 +476,12 @@ def main(argv: Optional[List[str]] = None) -> int:
              "      This name still works and will keep working.\n")
         return _size(args)
 
+    if cmd == "reports":
+        return _report_types(args)
+
+    if cmd == "report":
+        return _run_report(args)
+
     if cmd == "panels":
         return _panels(args)
 
@@ -478,6 +512,86 @@ def _ask(question: str, options: Any = ()) -> int:
     _out("")
     _out("  Re-run with one of these, or give the NAICS code directly.")
     return 7
+
+
+def _report_types(args: Any) -> int:
+    """The menu."""
+    import marketreport.s1  # noqa: F401 - registers the industry report
+    from marketreport.reports import get, registered
+
+    if args.type:
+        report = get(args.type)
+        if report is None:
+            _out(f"  No report type called '{args.type}'.")
+            _out("  " + ", ".join(r.key for r in registered()))
+            return 1
+        _out("")
+        _out(f"  {report.title}  ({report.key})")
+        _out(f"  {report.answers}")
+        _out("")
+        if report.basis:
+            _out(f"  Based on: {report.basis}")
+        if report.limits:
+            _out(f"  Bad at:   {report.limits}")
+        _out("")
+        for spec in report.order():
+            need = (f"  (after {', '.join(spec.needs)})" if spec.needs else "")
+            mark = "" if spec.required else "  [optional]"
+            _out(f"    {spec.key}{mark}{need}")
+            _out(f"      {spec.brief[:150]}")
+            if spec.sources:
+                _out(f"      sources: {spec.sources[:100]}")
+            if spec.paid:
+                _out(f"      paid:    {spec.paid_source}")
+            _out("")
+        return 0
+
+    _out("")
+    _out("  Report types:")
+    _out("")
+    for report in registered():
+        _out(f"  {report.key}")
+        _out(f"    {report.answers}")
+        _out(f"    {len(report.sections)} sections · "
+             + " → ".join(s.key for s in report.order()))
+        _out("")
+    _out("  'deckscope reports --type market-share' shows one in detail.")
+    _out("  'deckscope report market-share \"cell phones\"' runs one.")
+    return 0
+
+
+def _run_report(args: Any) -> int:
+    """Produce one report."""
+    import json as _json
+
+    import marketreport.s1  # noqa: F401 - registers the industry report
+    from marketreport.reports import build_report, get, registered
+
+    report = get(args.type)
+    if report is None:
+        _out(f"\n  No report type called '{args.type}'.")
+        _out("  Available: " + ", ".join(r.key for r in registered()))
+        return 7
+
+    if args.plan:
+        _out("")
+        _out(f"  {report.title} — {args.subject}"
+             + (f" in {args.place}" if args.place else ""))
+        _out(f"  {report.answers}")
+        _out("")
+        for spec in report.order():
+            _out(f"    {spec.key}: {spec.brief[:120]}")
+        _out("")
+        _out(f"  Bad at: {report.limits}")
+        _out("")
+        _out("  Nothing was researched. Drop --plan to run it.")
+        return 0
+
+    _out("\n  Cannot run yet — the section agent is not wired to a model.")
+    _out(f"  'deckscope report {args.type} \"{args.subject}\" --plan' shows "
+         f"what it would research.")
+    del _json, build_report
+    return 4
 
 
 def _panels(args: Any) -> int:
