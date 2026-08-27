@@ -43,6 +43,12 @@ Homepage = "https://github.com/CinvanaAI/DeckScope"
 Documentation = "https://github.com/CinvanaAI/DeckScope/tree/main/docs"
 Issues = "https://github.com/CinvanaAI/DeckScope/issues"
 
+# The S-1 corpus is research material, not runtime data. It is third-party
+# content (see THIRD_PARTY_NOTICES.md), nothing imports it, and no test reads
+# it at runtime — so it stays out of the wheel deliberately.
+[tool.setuptools.exclude-package-data]
+"*" = ["market-corpus/*"]
+
 [tool.setuptools.packages.find]
 # `marketreport` ships too. It was omitted while the setup wizard was already
 # collecting a Census key for it and the docs described its output as a

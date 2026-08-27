@@ -14,6 +14,8 @@ from typing import Any, List
 
 from .common import findings_for, ASSESSMENT_WORD, as_list, header_block, theme as get_theme
 
+from ..console import out as _out
+
 
 def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) -> List[str]:
     paths = []
@@ -47,14 +49,29 @@ def _via_html(result, lens: str, target: Path, theme: str) -> bool:
     with tempfile.TemporaryDirectory() as td:
         src = Path(td) / "report.html"
         src.write_text(html, encoding="utf-8")
-        try:
-            subprocess.run(
-                [chrome, "--headless", "--disable-gpu", "--no-sandbox",
-                 "--no-pdf-header-footer", f"--print-to-pdf={target}", src.as_uri()],
-                capture_output=True, timeout=120, check=True)
-            return target.exists()
-        except Exception:  # noqa: BLE001
-            return False
+        # Sandboxed first. The browser sandbox is a real mitigation and
+        # disabling it by default traded it away for convenience — the HTML we
+        # render is our own and escaped, so this is not a demonstrated exploit,
+        # but "our input is probably fine" is exactly the reasoning that ages
+        # badly. `--no-sandbox` is now a fallback, used only when the sandboxed
+        # attempt actually fails, which is the case inside containers and some
+        # CI images where the kernel namespaces are unavailable.
+        base = [chrome, "--headless", "--disable-gpu", "--no-pdf-header-footer"]
+        attempts = [base, base + ["--no-sandbox"]]
+        for index, argv in enumerate(attempts):
+            try:
+                subprocess.run(
+                    argv + [f"--print-to-pdf={target}", src.as_uri()],
+                    capture_output=True, timeout=120, check=True)
+                if target.exists():
+                    if index:
+                        _out("  PDF rendered with the browser sandbox disabled — "
+                             "the sandboxed attempt failed, which is normal "
+                             "inside a container.")
+                    return True
+            except Exception:  # noqa: BLE001
+                continue
+        return False
 
 
 def _find_chrome() -> str | None:

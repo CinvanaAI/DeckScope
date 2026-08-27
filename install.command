@@ -21,7 +21,8 @@ echo "     2. Install DeckScope into its own private folder"
 echo "     3. Add a launcher you can double-click"
 echo "     4. Walk you through setup, step by step"
 echo
-echo "   Nothing outside this folder and your Desktop is changed."
+echo "   Changes: this folder, a launcher on your Desktop, and a"
+echo "   'deckscope' command in ~/.local/bin (or /usr/local/bin)."
 echo
 read -r -p "   Press Enter to continue (or Ctrl+C to stop) "
 

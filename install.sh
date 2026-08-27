@@ -25,6 +25,10 @@ echo "   Outside this folder it adds: a Desktop launcher, a settings folder at"
 echo "   ~/.config/deckscope for your config, keys and cache, and — if one of"
 echo "   them already exists and is writable — a 'deckscope' command in"
 echo "   ~/.local/bin or /usr/local/bin. Nothing else is touched."
+# NOTE: install.command carried a stronger and untrue version of this
+# line ("nothing outside this folder and your Desktop"), while doing
+# the same symlink. Two near-duplicate installers drift; when they
+# drift about what they change to the system, one of them is lying.
 echo
 read -r -p "   Press Enter to continue (or Ctrl+C to stop) "
 

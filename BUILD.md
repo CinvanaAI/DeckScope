@@ -1,0 +1,142 @@
+# Build requirements
+
+What has to exist, in what order, and how each piece is known to be done.
+[GOALS.md](GOALS.md) says why. This says what.
+
+Status marks: **DONE** shipped and tested · **PART** partly built · **TODO** not
+started. A piece is only DONE when something outside my own judgment says so.
+
+---
+
+## Stage 0 — Foundations (DONE)
+
+| | |
+|---|---|
+| Provenance-carrying arithmetic | `marketreport/sizing.py` — Term / Ring / Sizing |
+| Concentric narrowing | national → state → county, each sized |
+| Refusal over degradation | every backend raises `Unavailable` with a remedy |
+| Packaging | `marketreport` ships; acceptance gate imports it |
+| Entry point | `deckscope size <naics> --state --county` |
+
+Done because agilon's three published rings reproduce exactly from its own
+stated operands, and the value term is reported as uncheckable on all three.
+
+---
+
+## Stage 1 — Sourcing the terms (PART)
+
+The count is solved. The value is the product's central problem.
+
+### 1a. COUNT backends — PART
+
+| Source | Answers | Status |
+|---|---|---|
+| County Business Patterns | establishments by NAICS × geography × size band | DONE |
+| Economic Census | receipts by NAICS → revenue per establishment | DONE |
+| BLS OEWS | wages by occupation × metro | TODO |
+| BLS BED | firm survival rates | PART (`research/datasets.py`) |
+| CMS | Medicare enrollment and spend per beneficiary | TODO |
+| ACS | population, households, income by geography | TODO |
+| Consumer Expenditure Survey | household spend by category | TODO |
+
+**Done when:** each returns a `Term` with source, vintage and geography, refuses
+without its key, and is exercised by a test with a recorded fixture.
+
+### 1b. The VALUE problem — PART
+
+Three routes, in descending order of defensibility. Option 1 is built; the
+others are not.
+
+1. **Industry average revenue per establishment** (Economic Census) — DONE.
+2. **Per-capita or per-beneficiary spend** (CMS, CEX, OEWS) — TODO.
+3. **A stated assumption with a range**, flagged as an assumption — DONE
+   (`Term(method=ASSUMED)` requires `low`/`high` or it self-annotates).
+
+**Done when:** a market can be sized by whichever of the three archetypes fits,
+and the report says which one it used and what that makes the number mean.
+
+### 1c. Archetype routing — TODO
+
+Pick the sizing method from the market definition:
+
+- **B2B** → establishments × ARPU by size band
+- **B2C / professional** → population or workforce × incidence × annual spend
+- **Programme-funded** → national spending account, narrowed
+
+**Done when:** three markets of different archetypes size correctly without the
+caller choosing the method.
+
+---
+
+## Stage 2 — The rest of the section (TODO)
+
+The schema derived from filings has ten parts. Sizing is one. These are the
+others, and all are retrieval rather than construction:
+
+| Section | Source | Status |
+|---|---|---|
+| Market definition and boundary | user input + framing stage | PART |
+| Size, with arithmetic | Stage 1 | DONE |
+| Growth | official series' own projections, not analyst CAGRs | TODO |
+| Structure and concentration | CBP by size band | TODO |
+| Who competes | EDGAR full-text, state registries | TODO |
+| Unit economics | Economic Census, OEWS | TODO |
+| Regulatory environment | state licensing, CFR | TODO |
+| Drivers and headwinds | the series behind each | TODO |
+| Barriers to entry | derived | TODO |
+| **What could not be established** | the loop's own record | DONE |
+
+**Done when:** a generated section covers every row a filed S-1 covers, or names
+the row and says why it is empty.
+
+---
+
+## Stage 3 — Evaluation against filings (TODO)
+
+The only loss signal that counts.
+
+- **3a. Corpus.** ~20 real underwritten IPO S-1 industry sections, filtered from
+  the ~90% that are shell filings. PART — 5 collected, filter not built.
+- **3b. Structural parity scorer.** Does our section contain what theirs does?
+  Scored per schema row, not by text similarity. TODO.
+- **3c. Backtest.** Freeze the clock at the filing date; reproduce from
+  contemporaneous data. Requires every source to be vintage-addressable. TODO.
+
+**Done when:** a score exists that moves for reasons in the code rather than
+reasons in a fixture.
+
+### Known obstacle
+
+`web_fetch` truncates at ~142KB; Klaviyo's S-1 is 3.3MB. Reliably in range: the
+Prospectus Summary and the Risk Factors Summary. Out of range: rivals named
+individually. Recorded in SCHEMA.md §4 with what it costs.
+
+---
+
+## Stage 4 — DeckScope as a consumer (TODO)
+
+Deck analysis becomes: generate the market report, diff the deck against it.
+
+**Done when:** the claim audit, blind spots and the ask-versus-requirement gap
+are all derived from that diff rather than computed separately.
+
+---
+
+## Standing constraints
+
+These are not features. Breaking one is a defect regardless of what it buys.
+
+1. **Never a bare number.** Operands, sources, dates — or "not established".
+2. **A missing term is `None`, never zero**, and never a partial answer dressed
+   as a whole one.
+3. **Rules that decide anything are code**, not prompt text. Anything a model is
+   asked to "consider carefully" will drift.
+4. **Refuse rather than degrade.** A census question answered from a web search
+   is how you report 193 competitors when there are 71.
+5. **Quarantined evidence grounds nothing.**
+6. **NDA mode raises**, it does not warn.
+7. **Every gate is as wide as the surfaces it touches.** Every failure the
+   seventh audit found in new code was outside the acceptance gate. That is the
+   pattern, not a coincidence — extend the gate with the surface.
+8. **No score from our own fixtures counts as evidence.** It measures fixture
+   maturity. It has already fooled me once.

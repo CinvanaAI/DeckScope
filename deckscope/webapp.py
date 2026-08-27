@@ -55,8 +55,23 @@ SESSION_TOKEN = secrets.token_urlsafe(32)
 PRODUCED_FILES: set = set()
 PRODUCED_LOCK = threading.Lock()
 
+#: Decks uploaded through the browser this session. Tracked separately from
+#: PRODUCED_FILES on purpose: an upload is input the user supplied, not output
+#: DeckScope created, and the "open this file" route must stay restricted to the
+#: latter. Removed when the server stops.
+UPLOADED_FILES: set = set()
+UPLOADS_LOCK = threading.Lock()
+
 MAX_BODY_BYTES = 256 * 1024      # a job request is a few hundred bytes
 MAX_ACTIVE_JOBS = 2              # each job costs real money at a real provider
+
+#: An uploaded deck. Larger than a job request by three orders of magnitude, so
+#: it gets its own cap rather than widening the one that protects every other
+#: route. Real decks with images run to a few megabytes; 32 is generous and
+#: still bounded.
+MAX_UPLOAD_BYTES = 32 * 1024 * 1024
+#: Read in chunks so a lying Content-Length cannot make one allocation huge.
+UPLOAD_CHUNK = 64 * 1024
 MAX_JOBS_RETAINED = 20
 JOB_TTL_SECONDS = 3600
 
@@ -201,6 +216,14 @@ class Handler(BaseHTTPRequestHandler):
         if not self._origin_ok():
             return self._json({"error": "cross-site request refused"}, 403)
 
+        # Uploads are raw bytes and much larger than a job request, so they are
+        # handled before the JSON body cap below. Deliberately NOT multipart:
+        # the browser sends the File object as the body and the name arrives in
+        # the query string, which removes a whole parser from the attack
+        # surface for no loss of function.
+        if route.path == "/api/upload":
+            return self._upload(query)
+
         # A header is attacker-controlled text, not an integer. `int()` happily
         # returns a negative number, and a negative length slipped past the size
         # check above and then made `rfile.read(-1)` read until EOF — the exact
@@ -295,6 +318,91 @@ class Handler(BaseHTTPRequestHandler):
                 {"error": "DeckScope will only open reports it created."}, 403)
         _reveal(resolved)
         return self._json({"ok": True})
+
+    def _upload(self, query: Dict[str, Any]) -> None:
+        """Accept a deck the user picked in their browser.
+
+        Replaces reading `File.path`, which does not exist. Browsers
+        deliberately do not expose the local filesystem path of a selected
+        file — the standard gives a filename and, for legacy reasons, a fake
+        path of `C:\fakepath\name`. The old code sent the bare filename to the
+        server and called `Path(...).exists()` on it, which only worked when the
+        deck happened to sit in the server's working directory. The UI knew, and
+        told the user their browser had "hidden" the path — defeating the
+        non-technical flow the window exists to provide.
+
+        So the bytes come across instead. Bounded, extension-checked, written to
+        an owner-only directory under a name this server chose.
+        """
+        import tempfile
+
+        from .ingest.loader import SUPPORTED_EXTENSIONS
+
+        raw_name = (query.get("name", [""])[0] or "").strip()
+        # The client's filename is untrusted text. Only its suffix is used, and
+        # the stored name is generated here — so "../../.ssh/authorized_keys"
+        # and "deck.pdf\x00.exe" are both simply a suffix that fails the check.
+        suffix = Path(raw_name).suffix.lower()
+        if suffix not in SUPPORTED_EXTENSIONS:
+            return self._json(
+                {"error": f"DeckScope cannot read {suffix or 'that file type'}. "
+                          f"Supported: "
+                          f"{', '.join(sorted(SUPPORTED_EXTENSIONS))}"}, 415)
+
+        header = self.headers.get("Content-Length")
+        try:
+            declared = int(header) if header not in (None, "") else -1
+        except (TypeError, ValueError):
+            return self._json({"error": "bad request"}, 400)
+        if declared < 0:
+            return self._json({"error": "Content-Length is required"}, 411)
+        if declared > MAX_UPLOAD_BYTES:
+            self._drain(min(declared, UPLOAD_CHUNK * 16))
+            return self._json(
+                {"error": f"That file is "
+                          f"{declared / 1_048_576:.1f}MB. The limit is "
+                          f"{MAX_UPLOAD_BYTES // 1_048_576}MB."}, 413)
+
+        upload_dir = settings.app_dir() / "uploads"
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        settings.restrict_dir_to_owner(upload_dir)
+
+        handle, temp_path = tempfile.mkstemp(dir=str(upload_dir), suffix=suffix)
+        written = 0
+        try:
+            with os.fdopen(handle, "wb") as fh:
+                while written < declared:
+                    chunk = self.rfile.read(
+                        min(UPLOAD_CHUNK, declared - written))
+                    if not chunk:
+                        break
+                    written += len(chunk)
+                    # Trust the bytes, not the header. A Content-Length that
+                    # understates the body would otherwise walk straight past
+                    # the cap checked above.
+                    if written > MAX_UPLOAD_BYTES:
+                        raise ValueError("upload exceeded the size limit")
+                    fh.write(chunk)
+        except Exception:  # noqa: BLE001
+            try:
+                os.unlink(temp_path)
+            except OSError:
+                pass
+            return self._json({"error": "That upload could not be saved."}, 400)
+
+        if written == 0:
+            try:
+                os.unlink(temp_path)
+            except OSError:
+                pass
+            return self._json({"error": "That file is empty."}, 400)
+
+        settings.restrict_to_owner(Path(temp_path))
+        with UPLOADS_LOCK:
+            UPLOADED_FILES.add(str(Path(temp_path).resolve()))
+        return self._json({"path": temp_path,
+                           "name": Path(raw_name).name or Path(temp_path).name,
+                           "bytes": written})
 
     def _run(self, payload: Dict[str, Any]) -> None:
         deck = (payload.get("deck") or "").strip().strip('"')
@@ -853,23 +961,41 @@ api('/api/state').then(r=>r.json()).then(s => {
 
 const drop = $('#drop'), fileInput = $('#file');
 drop.onclick = () => fileInput.click();
-fileInput.onchange = e => { if(e.target.files[0]) setDeck(e.target.files[0].path || e.target.files[0].name); };
+fileInput.onchange = e => { if(e.target.files[0]) upload(e.target.files[0]); };
 ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => {
   e.preventDefault(); drop.classList.add('over'); }));
 ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => {
   e.preventDefault(); drop.classList.remove('over'); }));
 drop.addEventListener('drop', e => {
   const f = e.dataTransfer.files[0];
-  if(f) setDeck(f.path || f.name);
+  if(f) upload(f);
 });
+
+// Browsers do not expose a selected file's path on disk — the standard gives a
+// name and a fake path. The old code read `.path`, got undefined, fell back to
+// the bare filename, and the server could only find it if the deck happened to
+// sit in its working directory. So send the bytes.
+async function upload(file){
+  $('#chosen').textContent = 'Uploading ' + file.name + '…';
+  try {
+    const res = await api('/api/upload?name=' + encodeURIComponent(file.name), {
+      method: 'POST', body: file,
+      headers: {'Content-Type': 'application/octet-stream'}});
+    const data = await res.json();
+    if(!res.ok){ $('#chosen').textContent = data.error || 'Upload failed.'; return; }
+    DECK = data.path;
+    $('#path').value = '';
+    $('#chosen').textContent = 'Ready: ' + data.name +
+      ' (' + (data.bytes/1048576).toFixed(1) + 'MB)';
+  } catch (err) {
+    $('#chosen').textContent = 'Upload failed: ' + err;
+  }
+}
 $('#path').oninput = e => { DECK = e.target.value.trim(); $('#chosen').textContent = ''; };
 
 function setDeck(p){
   DECK = p; $('#path').value = p;
   $('#chosen').textContent = 'Selected: ' + p.split(/[\\/]/).pop();
-  if(!p.includes('/') && !p.includes('\\')){
-    $('#chosen').textContent += '  — your browser hid the full path; paste it below if this fails';
-  }
 }
 
 $('#go').onclick = () => start({});

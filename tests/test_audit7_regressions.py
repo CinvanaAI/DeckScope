@@ -11,6 +11,7 @@ not a rough edge but a wrong answer delivered confidently.
 from __future__ import annotations
 
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -414,3 +415,143 @@ class A6_PackagingBoundary(unittest.TestCase):
                     "research" / "datasets.py").read_text(encoding="utf-8")
         self.assertIn("from marketreport.sources.census import _key", datasets)
         self.assertNotIn("optional; raises rate limits", datasets)
+
+
+class A7_UploadBoundaries(unittest.TestCase):
+    """Browsers do not expose a file's path. The old code read `.path`, got
+    undefined, sent the bare filename, and the server could only find it if the
+    deck happened to sit in its working directory."""
+
+    def _serve(self):
+        import os as _os
+        import tempfile as _tf
+        import threading
+        from http.server import ThreadingHTTPServer
+
+        _os.environ["DECKSCOPE_HOME"] = _tf.mkdtemp()
+        from deckscope import webapp
+
+        srv = ThreadingHTTPServer(("127.0.0.1", 0), webapp.Handler)
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        return srv, f"http://127.0.0.1:{srv.server_address[1]}", webapp
+
+    def _post(self, base, path, body, token=None):
+        import urllib.error
+        import urllib.request
+
+        headers = {"Content-Type": "application/octet-stream"}
+        if token:
+            headers["X-DeckScope-Token"] = token
+        req = urllib.request.Request(base + path, data=body, method="POST",
+                                     headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=10) as res:
+                return res.status, json.loads(res.read())
+        except urllib.error.HTTPError as exc:
+            return exc.code, json.loads(exc.read())
+
+    def test_the_client_no_longer_reads_a_path_that_does_not_exist(self):
+        source = (Path(__file__).resolve().parent.parent / "deckscope" /
+                  "webapp.py").read_text(encoding="utf-8")
+        self.assertNotIn(".path ||", source,
+                         "File.path is not a thing browsers provide")
+
+    def test_a_supported_deck_uploads_and_lands_on_disk_intact(self):
+        import os as _os
+
+        srv, base, webapp = self._serve()
+        try:
+            body = b"# Acme\n\nWe sell things.\n" * 20
+            code, data = self._post(base, "/api/upload?name=deck.md", body,
+                                    webapp.SESSION_TOKEN)
+            self.assertEqual(200, code)
+            self.assertEqual(len(body), data["bytes"])
+            self.assertEqual(body, open(data["path"], "rb").read())
+            # The stored name is generated here, not taken from the client.
+            self.assertNotIn("deck.md", _os.path.basename(data["path"]))
+        finally:
+            srv.shutdown()
+
+    def test_an_unsupported_type_is_refused(self):
+        srv, base, webapp = self._serve()
+        try:
+            code, _ = self._post(base, "/api/upload?name=evil.exe", b"MZ",
+                                 webapp.SESSION_TOKEN)
+            self.assertEqual(415, code)
+        finally:
+            srv.shutdown()
+
+    def test_a_traversal_filename_is_refused(self):
+        import urllib.parse
+
+        srv, base, webapp = self._serve()
+        try:
+            name = urllib.parse.quote("../../../.ssh/authorized_keys")
+            code, _ = self._post(base, f"/api/upload?name={name}", b"x",
+                                 webapp.SESSION_TOKEN)
+            self.assertEqual(415, code, "only the suffix is trusted")
+        finally:
+            srv.shutdown()
+
+    def test_an_empty_file_is_refused(self):
+        srv, base, webapp = self._serve()
+        try:
+            code, _ = self._post(base, "/api/upload?name=e.md", b"",
+                                 webapp.SESSION_TOKEN)
+            self.assertEqual(400, code)
+        finally:
+            srv.shutdown()
+
+    def test_an_upload_without_the_session_token_is_refused(self):
+        srv, base, _ = self._serve()
+        try:
+            code, _ = self._post(base, "/api/upload?name=a.md", b"x")
+            self.assertEqual(401, code)
+        finally:
+            srv.shutdown()
+
+    def test_an_uploaded_deck_is_not_openable_through_the_api(self):
+        """Uploads are input the user supplied, not output DeckScope created.
+        The 'open this file' route must stay restricted to the latter."""
+        srv, base, webapp = self._serve()
+        try:
+            _, data = self._post(base, "/api/upload?name=d.md", b"content here",
+                                 webapp.SESSION_TOKEN)
+            self.assertNotIn(data["path"], webapp.PRODUCED_FILES)
+        finally:
+            srv.shutdown()
+
+
+class A8_ProvenanceAndHygiene(unittest.TestCase):
+
+    def test_every_corpus_file_matches_its_recorded_checksum(self):
+        import subprocess
+
+        root = Path(__file__).resolve().parent.parent
+        res = subprocess.run(
+            [sys.executable, str(root / "scripts" / "verify_corpus.py")],
+            capture_output=True, text=True, cwd=str(root))
+        self.assertEqual(0, res.returncode, res.stdout + res.stderr)
+
+    def test_the_corpus_has_a_third_party_notice(self):
+        root = Path(__file__).resolve().parent.parent
+        notices = (root / "THIRD_PARTY_NOTICES.md").read_text(encoding="utf-8")
+        self.assertIn("market-corpus", notices)
+        self.assertIn("not covered by this project's MIT licence", notices)
+
+    def test_the_pdf_renderer_tries_the_sandbox_first(self):
+        source = (Path(__file__).resolve().parent.parent / "deckscope" /
+                  "render" / "pdf_renderer.py").read_text(encoding="utf-8")
+        sandboxed = source.index('base = [chrome, "--headless"')
+        fallback = source.index('"--no-sandbox"')
+        self.assertLess(sandboxed, fallback,
+                        "the sandboxed attempt must come first")
+
+    def test_the_installers_agree_about_what_they_change(self):
+        """Two near-duplicate installers drifted, and one of them was claiming
+        it changed nothing outside the folder while symlinking into PATH."""
+        root = Path(__file__).resolve().parent.parent
+        command = (root / "install.command").read_text(encoding="utf-8")
+        self.assertNotIn("Nothing outside this folder and your Desktop is changed",
+                         command)
+        self.assertIn("local/bin", command)
