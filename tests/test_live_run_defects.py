@@ -236,13 +236,39 @@ def test_every_specialist_declares_a_dimension():
 def test_the_report_catalogue_matches_the_specialists():
     """Growth had a specialist and no report type, so `deckscope reports` did
     not list it while `--report growth` ran it.
+
+    `industry-report` is the deliberate exception: it is a twelve-section brief
+    with no specialist of its own, and `deckscope reports` says so on its line
+    rather than leaving a blank where the scoping would be.
     """
     from marketreport.reports import registered as report_types
     from marketreport.specialists import registered as specialists
 
     types = {r.key for r in report_types()}
     agents = {s.name for s in specialists()}
-    assert types == agents
+    assert agents - types == set(), "a specialist nobody can find in the catalogue"
+    assert types - agents == {"industry-report"}
+
+
+def test_the_registry_answers_the_same_in_any_import_order():
+    """It did not. A fresh process asking `reports.registered()` first saw five
+    types; going through the CLI saw seven, because `growth` is registered by
+    `catalog` and `industry-report` by `s1` and neither had a reason to load.
+    Same function, same process, two different answers about what this software
+    can produce — and every caller looked correct.
+    """
+    import subprocess as _sp
+
+    root = Path(__file__).resolve().parent.parent
+    script = ("import sys; sys.path.insert(0, %r)\n"
+              "from marketreport.reports import registered\n"
+              "print(len(registered()))\n" % str(root))
+    first = _sp.run([sys.executable, "-c", script], capture_output=True,
+                    text=True, cwd=str(root))
+    assert first.returncode == 0, first.stderr
+    assert int(first.stdout.strip()) == 7, (
+        "reports.registered() must load every registrar itself, not rely on "
+        "the caller having imported the right modules first")
 
 
 # ------------------------------------------------------------------- lint

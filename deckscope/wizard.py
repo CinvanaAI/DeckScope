@@ -214,16 +214,25 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
             return existing
         _out()
 
-    say("DeckScope reads a pitch deck, researches the market it competes in, and "
-        "tells you where the two agree and where they don't.\n\n"
-        "To do that it needs two things: an AI to do the thinking, and a way to "
-        "search the web. Let's set both up.")
+    say("DeckScope does two things. It writes market reports — who holds what "
+        "share, how large a market is, what rules govern it — with every "
+        "figure traceable to the source it came from. And it reads a pitch "
+        "deck against that evidence, to show where the two disagree.\n\n"
+        "Either way it needs an AI to do the thinking and a way to search the "
+        "web. Let's set both up.")
 
     # ---------------------------------------------------------- 1. provider
     banner("1 of 7 · Which AI should do the analysis?")
-    say("If you're not sure, pick Claude — it produces the strongest analysis. "
-        "If you'd rather not create an account yet, pick the demo at the bottom "
-        "and everything will still run.")
+    # This used to read "pick Claude — it produces the strongest analysis",
+    # which was an efficacy claim nothing here has ever tested. No comparison
+    # of providers on analysis quality has been run, and a setup wizard is a
+    # bad place to assert one: it is the moment a new user has least ability
+    # to tell whether they are being told a fact or sold something.
+    say("Any of these work. If you have no account yet, pick the demo at the "
+        "bottom — it runs the whole pipeline on recorded pages with no key "
+        "and no network, so you can see the output before choosing.\n\n"
+        "DeckScope has not compared these providers on analysis quality, so "
+        "it has no recommendation to make. Pick the one you already pay for.")
     provider = choose("Choose your AI", PROVIDER_MENU, default=1)
 
     cfg: Dict[str, Any] = {"provider": {"name": provider}}

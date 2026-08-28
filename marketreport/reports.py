@@ -110,11 +110,37 @@ def register(report: ReportType) -> ReportType:
     return report
 
 
+_LOADED = False
+
+
+def _load_all() -> None:
+    """Import the modules that register the rest of the report types.
+
+    Without this the registry answered differently depending on what else the
+    caller had already imported: a fresh process saw five types, and the CLI
+    saw seven, because `growth` is registered by `catalog` and `industry-report`
+    by `s1`, and neither had a reason to be loaded. Same function, same
+    process, two different answers about what this software can produce.
+
+    That is worse than a missing type. Anything that lists capabilities — the
+    CLI, the web UI, a test asserting the catalogue matches the agents — was
+    reporting whichever subset its own import graph happened to pull in, and
+    every one of them looked correct.
+    """
+    global _LOADED
+    if _LOADED:
+        return
+    _LOADED = True
+    from . import catalog, s1  # noqa: F401 - imported for their registrations
+
+
 def get(key: str) -> Optional[ReportType]:
+    _load_all()
     return _TYPES.get((key or "").strip().lower())
 
 
 def registered() -> List[ReportType]:
+    _load_all()
     return [_TYPES[k] for k in sorted(_TYPES)]
 
 

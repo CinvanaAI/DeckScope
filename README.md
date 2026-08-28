@@ -1,11 +1,28 @@
 # DeckScope
 
-**The adversarial second opinion for a pitch deck. It separates persuasion from
-evidence, finds what the deck leaves out, and gives you the questions worth asking
-next.**
+**Market reports where every figure is traceable to the source it came from — and
+pitch decks read against that evidence.**
 
-Not an AI that tells you whether to invest. Every report answers four questions, in
-this order:
+Two halves, and they share one engine.
+
+**Market reports.** Ask what share of a market a company holds, how large it is, or
+what rules govern it, and get a report back with the chart, the numbers, the sources
+under each one, and a plain statement of what could not be established. Reports are
+scoped before they are researched: a share is *of units* or *of revenue*, a size is
+at *wholesale* or *retail* prices, and each gets its own report rather than sharing a
+chart, because they routinely disagree.
+
+```bash
+deckscope ask "market share of cell phones" --demo
+deckscope reports                      # what it can produce, and how each is scoped
+```
+
+**Pitch decks.** The adversarial second opinion: it separates persuasion from
+evidence, finds what the deck leaves out, and gives you the questions worth asking
+next.
+
+Not an AI that tells you whether to invest. Every deck report answers four questions,
+in this order:
 
 1. **What did the deck claim that the evidence does not support?**
 2. **What did the deck leave out?**
@@ -36,6 +53,20 @@ its first line rather than listing confident findings. See
 > and covered by tests. What has **not** been done is the evaluation that would show
 > the three-agent design beats a single good prompt. Until that exists, treat the
 > architecture as a well-tested hypothesis. See [Limitations](#limitations).
+>
+> **The market-report half is newer and less proven than the deck half.** Seven report
+> types are registered and runnable. Two have been driven end to end with a frontier
+> model and the output read line by line — market share and market size. The other
+> four (growth, regulation, competitive landscape, demographics) have agents,
+> scoping and cross-checks, but nobody has yet graded what they produce. Treat their
+> output as unverified.
+>
+> That distinction is worth stating plainly because those two graded runs found
+> **eight** defects between them, every one invisible to a test suite that was green
+> at the time, and every one a case of the system rendering something it could not
+> establish as something it had measured. There is no reason to assume the ungraded
+> four are cleaner. See [tests/test_live_run_defects.py](tests/test_live_run_defects.py),
+> which pins all eight.
 
 Most deck-analysis tools ask one model to read a deck and give an opinion. That opinion
 inherits the deck's own framing: if the deck says the market is $47B, the model reasons
@@ -91,6 +122,7 @@ two routes overlap on 29% of the competitors they name.
 - [What makes it different](#what-makes-it-different)
 - [Install](#install)
 - [Quick start](#quick-start)
+- [Market reports](#market-reports)
 - [The three lenses](#the-three-lenses)
 - [Output formats](#output-formats)
 - [AI connections](#ai-connections)
@@ -179,15 +211,26 @@ Full details, including offline and locked-down environments, in
 the model's answers are built in:
 
 ```bash
-deckscope demo                    # a full single-model report
+deckscope                         # what this is, and one line to try next
+deckscope demo                    # a full single-model deck report
 deckscope demo --panel            # three simulated analysts who disagree
 deckscope demo --injected         # a deck with a hidden injection, caught and reported
+deckscope ask "market share of cell phones" --demo    # a market report
 ```
 
-**Set it up** — six plain-language questions, each answer tested as you go:
+**Set it up** — seven plain-language questions, each answer tested as you go:
 
 ```bash
 deckscope setup
+```
+
+**Write a market report:**
+
+```bash
+deckscope ask "who leads the hearing aid market"
+deckscope ask "how large is the hearing aid market" --report market-size \
+              --measures wholesale,retail      # one report per price level
+deckscope panels                  # everything produced so far
 ```
 
 **Analyze a real deck:**
@@ -208,6 +251,56 @@ deckscope app
 Opens a window in your browser. Drag a deck in, pick what you want, press the button.
 It runs entirely on your own machine — nothing is uploaded anywhere except to the AI
 service you configured.
+
+---
+
+## Market reports
+
+A market report answers one question about one market, on one stated basis. Seven
+types are registered — six with a dedicated agent, plus `industry-report`, a
+twelve-section brief in the shape of an S-1. `deckscope reports` prints them with the
+parameter each is scoped by.
+
+| Report | Scoped by | Values |
+|---|---|---|
+| `market-share` | basis | revenue, units, usage, installed_base, subscribers, outlets, capacity |
+| `market-size` | price level | wholesale, retail, manufacturer_revenue |
+| `demographics` | population | buyers, users, eligible |
+| `competitive-landscape` | basis | as market-share |
+| `regulation` | jurisdiction | any country, state or bloc |
+| `growth` | period | any year range |
+
+**Why the scoping is not optional.** A share of revenue and a share of units can name
+different leaders. A market sized at wholesale and the same market sized at retail
+differ by the whole distribution margin — in hearing aids, by three to four times. So
+each value gets its own report rather than sharing a chart, and a report that cannot
+be produced on a given basis comes back **labelled and empty** rather than missing:
+
+```
+· share of revenue:     No per-company revenue share is published for this market…
+· share of units sold:  23.16 million units sold worldwide in 2025, but nobody
+                        publishes how that splits between manufacturers…
+```
+
+That second line is a real result from a real run. The units total is free and exact
+(EHIMA); the split does not exist anywhere, because the body that counts the units is
+owned by the companies whose shares it would reveal. An empty report that says *which*
+number is missing and *why* is the most commercially useful thing this produces —
+it tells you exactly what a paid source would buy you.
+
+**Sizing shows its arithmetic.** A market size is `COUNT × RATE × VALUE`, the formula
+all five S-1s in the corpus use. Each term is researched separately because each has a
+different sourcing profile — counts are nearly always free government or association
+data, per-unit values are proprietary almost everywhere. Where all three land, the
+report carries the calculation:
+
+```
+20.0M count  ×  85.0%  ×  $120 USD  =  $2.0B
+```
+
+Where one is missing it says which, whether that term is normally free or normally
+paid, and where to look — and it does **not** multiply the terms it has by a
+substitute for the one it lacks.
 
 ---
 

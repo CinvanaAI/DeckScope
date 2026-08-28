@@ -24,7 +24,30 @@ from .config import ALL_LENSES
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="deckscope",
-        description="Analyze a pitch deck, research its market, and compare the two.",
+        description=(
+            "Market reports with every figure traceable to its source, and "
+            "pitch decks read against that evidence.\n\n"
+            "START HERE\n"
+            "  setup      connect an AI and a search backend (seven questions)\n"
+            "  demo       a full sample analysis, no key and no network\n"
+            "  app        the drag-and-drop window\n\n"
+            "MARKET REPORTS\n"
+            "  ask        ask about a market in plain words\n"
+            "  report     produce one named report type about one subject\n"
+            "  reports    what report types exist, and how each is scoped\n"
+            "  market     the full twelve-question industry report\n"
+            "  panels     re-open reports you have already produced\n\n"
+            "PITCH DECKS\n"
+            "  run        analyze a deck against researched evidence\n"
+            "  panel      the same, across several AIs that review each other\n"
+            "  research   the question-driven research loop on its own\n\n"
+            "CHECKING AND SETTINGS\n"
+            "  doctor     check that everything is working\n"
+            "  models     which AI connections actually respond\n"
+            "  config     the current settings\n"
+            "  providers  available AI backends\n"
+            "  formats    available output formats\n"
+            "  eval       score DeckScope against decks with known answers"),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""examples:
   deckscope setup                        set everything up, step by step
@@ -438,19 +461,64 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _orientation() -> int:
+    """What this is and the one command to try next.
+
+    Seventeen commands is not a front door. This shows the two things the tool
+    actually does, one runnable line each that needs no setup and no key, and
+    where to find the rest — on the principle that a first screen should let
+    someone see output before it asks them for anything.
+    """
+    configured = settings.is_configured()
+
+    _out("")
+    _out("  DeckScope")
+    _out("  Market reports with every figure traceable to its source, and")
+    _out("  pitch decks read against that evidence.")
+    _out("")
+    _out("  Try it now — no key, no network, real recorded sources:")
+    _out("")
+    _out("      deckscope demo                      analyze a sample deck")
+    _out("      deckscope ask \"market share of cell phones\" --demo")
+    _out("")
+    if configured:
+        _out("  Then, on a real subject:")
+        _out("")
+        _out("      deckscope ask \"who leads the hearing aid market\"")
+        _out("      deckscope run yourdeck.pdf")
+    else:
+        _out("  To use it on a real subject you need an AI connection and a")
+        _out("  web search backend. Seven questions, changeable later:")
+        _out("")
+        _out("      deckscope setup")
+    _out("")
+    _out("  deckscope --help     every command, grouped")
+    _out("  deckscope reports    what kinds of report it can produce")
+    _out("  deckscope doctor     check what is working")
+    _out("")
+    return 0
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     # Make the console safe before anything is written to it.
     console.enable()
     args = build_parser().parse_args(argv)
     cmd = args.command
 
-    if cmd is None or cmd == "setup":
+    if cmd == "setup":
         from .wizard import run_wizard
-        if cmd is None and settings.is_configured():
-            build_parser().print_help()
-            return 0
-        run_wizard(reconfigure=(cmd == "setup"))
+        run_wizard(reconfigure=True)
         return 0
+
+    if cmd is None:
+        # Bare `deckscope` used to launch the seven-question setup wizard on an
+        # unconfigured machine. Two things wrong with that: typing a command's
+        # name to see what it does is not consent to be interrogated, and the
+        # wizard blocks on stdin, so any non-interactive invocation — a script,
+        # a CI step, a container — hung with no output and no way to know why.
+        # It now orients, and offers setup as the next step rather than
+        # starting it.
+        return _orientation()
 
     if cmd == "doctor":
         from .wizard import doctor
