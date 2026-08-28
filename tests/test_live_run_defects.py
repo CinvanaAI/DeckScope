@@ -513,3 +513,61 @@ def test_every_specialist_declares_how_it_knows():
 
     for spec in registered():
         assert spec.evidence in ("measured", "reasoned", "mixed"), spec.name
+
+
+# --------------------------------------------------------- the front door
+
+def _cli(*argv) -> "subprocess.CompletedProcess":
+    root = Path(__file__).resolve().parent.parent
+    return subprocess.run(
+        [sys.executable, "-m", "deckscope.cli", *argv],
+        capture_output=True, text=True, cwd=str(root), stdin=subprocess.DEVNULL,
+        timeout=120)
+
+
+def test_bare_invocation_does_not_block_on_stdin():
+    """It launched the seven-question setup wizard, which blocks reading
+    stdin — so any non-interactive invocation hung with no output and no way
+    to know why. Typing a command's name to see what it does is also not
+    consent to be interrogated.
+    """
+    result = _cli()
+    assert result.returncode == 0
+    assert "DeckScope" in result.stdout
+    assert "deckscope setup" in result.stdout      # offered, not started
+    assert "1 of 7" not in result.stdout           # the wizard did not run
+
+
+def test_a_misspelled_report_type_is_not_reported_as_a_missing_api_key():
+    """`--report nonsense` fell through to the provider check and came back
+    "no AI model is connected", sending the user to fix their credentials when
+    the actual problem was one misspelled word.
+    """
+    result = _cli("ask", "hearing aids", "--report", "nonsense")
+    assert result.returncode == 2
+    assert "no report type called 'nonsense'" in result.stdout
+    assert "API key" not in result.stdout
+    # And it lists the real ones rather than making the user go looking.
+    assert "market-size" in result.stdout
+
+
+def test_a_value_from_the_wrong_dimension_says_where_it_belongs():
+    """Reaching for another report's vocabulary is the commonest mistake, so
+    the message names where the value actually lives.
+    """
+    result = _cli("ask", "hearing aids", "--report", "market-size",
+                  "--measures", "units")
+    assert result.returncode == 2
+    assert "not one of its values" in result.stdout
+    assert "wholesale" in result.stdout
+    assert "is a value of 'basis'" in result.stdout
+    assert "market-share" in result.stdout
+    assert "API key" not in result.stdout
+
+
+def test_the_commands_the_front_page_suggests_actually_run():
+    """The orientation screen tells a new user to run two things. Suggesting a
+    command that does not work is the same class of claim as any other.
+    """
+    assert _cli("demo").returncode == 0
+    assert _cli("ask", "market share of cell phones", "--demo").returncode == 0

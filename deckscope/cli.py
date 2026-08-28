@@ -881,6 +881,76 @@ def _panels(args: Any) -> int:
     return 0
 
 
+def _check_report_args(args: Any) -> int:
+    """Validate --report and --measures against the registries. 0 if fine.
+
+    Every message here names what was wrong AND what the valid answers are, in
+    the same breath. A CLI that says "unknown report type" and stops has made
+    the user go looking for a list that it is holding.
+    """
+    from marketreport.dimensions import get as get_dimension
+    from marketreport.specialists import get as get_specialist
+    from marketreport.specialists import registered as specialists
+
+    name = (getattr(args, "report", None) or "market-share").strip()
+    spec = get_specialist(name)
+    if spec is None:
+        _out("")
+        _out(f"  There is no report type called {name!r}.")
+        _out("")
+        for other in specialists():
+            _out(f"      {other.name:<24}{other.job[:52]}")
+        _out("")
+        _out("  'deckscope reports' shows each one in full.")
+        return 2
+
+    named = _measures_arg(args)
+    if not named:
+        return 0
+
+    axis = get_dimension(spec.dimension)
+    if axis is None:
+        return 0
+    _resolved, unknown = axis.resolve(named)
+    if not unknown:
+        return 0
+
+    _out("")
+    _out(f"  {name!r} reports are scoped by {axis.key} — {axis.label} what.")
+    for bad in unknown:
+        _out(f"  {bad!r} is not one of its values.")
+    _out("")
+    if axis.options:
+        for option in axis.options:
+            _out(f"      {option.key:<22}{option.label}")
+        # The commonest mistake is reaching for another report's vocabulary,
+        # so say where the value they typed actually belongs rather than only
+        # that it does not belong here.
+        for bad in unknown:
+            for other in _dimensions_holding(bad):
+                if other.key != axis.key:
+                    _out("")
+                    _out(f"  {bad!r} is a value of {other.key!r}. Reports "
+                         f"scoped by that: "
+                         f"{', '.join(_specialists_using(other.key))}.")
+    else:
+        _out(f"      any {axis.expects}")
+    _out("")
+    return 2
+
+
+def _dimensions_holding(value: str) -> List[Any]:
+    from marketreport.dimensions import registered
+
+    return [d for d in registered() if d.get(value) is not None]
+
+
+def _specialists_using(dimension: str) -> List[str]:
+    from marketreport.specialists import registered
+
+    return [s.name for s in registered() if s.dimension == dimension]
+
+
 def _ask_market(args: Any) -> int:
     """A plain question, answered as panels."""
     import json as _json
@@ -889,6 +959,15 @@ def _ask_market(args: Any) -> int:
     from marketreport.panel_render import panel_text
 
     settings.load_env()
+
+    # Checked before anything else, because these are typos and a typo must not
+    # be reported as a missing API key. `--report nonsense` and a price level
+    # passed to a share report both used to fall through to the provider check
+    # and come back "no AI model is connected" — sending someone to fix their
+    # credentials when the actual problem was one misspelled word.
+    problem = _check_report_args(args)
+    if problem:
+        return problem
 
     request = read_request(args.question)
     if not request.ready:
