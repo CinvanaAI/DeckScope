@@ -55,18 +55,25 @@ its first line rather than listing confident findings. See
 > architecture as a well-tested hypothesis. See [Limitations](#limitations).
 >
 > **The market-report half is newer and less proven than the deck half.** Seven report
-> types are registered and runnable. Two have been driven end to end with a frontier
-> model and the output read line by line — market share and market size. The other
-> four (growth, regulation, competitive landscape, demographics) have agents,
-> scoping and cross-checks, but nobody has yet graded what they produce. Treat their
-> output as unverified.
+> types are registered and runnable. How far each has been checked differs, and the
+> difference matters more than the count:
 >
-> That distinction is worth stating plainly because those two graded runs found
-> **eight** defects between them, every one invisible to a test suite that was green
-> at the time, and every one a case of the system rendering something it could not
-> establish as something it had measured. There is no reason to assume the ungraded
-> four are cleaner. See [tests/test_live_run_defects.py](tests/test_live_run_defects.py),
-> which pins all eight.
+> | | driven with a live model | run on recorded pages | output read line by line |
+> |---|---|---|---|
+> | market-share | yes | yes | yes |
+> | market-size | yes | — | yes |
+> | competitive-landscape | no | yes | yes |
+> | growth, regulation, demographics | no | **no recorded pages exist** | no |
+> | industry-report | no | no | no |
+>
+> Those checks found **eleven** defects, every one invisible to a test suite that was
+> green at the time, and almost every one a case of the system rendering something it
+> could not establish as something it had measured. Two were found by simply *running*
+> the four unchecked types for the first time: `--report` turned out to be silently
+> ignored, so four report types produced identical output, and the offline demo
+> answered a regulation question from five smartphone market-share articles without
+> noticing. There is no reason to assume the rest are cleaner.
+> [tests/test_live_run_defects.py](tests/test_live_run_defects.py) pins all eleven.
 
 Most deck-analysis tools ask one model to read a deck and give an opinion. That opinion
 inherits the deck's own framing: if the deck says the market is $47B, the model reasons

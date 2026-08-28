@@ -106,16 +106,44 @@ NOTE = (f"replay of pages recorded on {RETRIEVED} — real published research, "
         f"not live, and correct as of the quarter each one describes")
 
 
-def covered(market: str) -> bool:
-    """Whether the recorded pages have anything for this market.
+#: The report types these pages can actually answer. They are five smartphone
+#: market-share articles; nothing in them says a word about regulation, buyer
+#: demographics or growth drivers.
+#:
+#: Without this the demo ran every report type against them and returned the
+#: same market-share headline each time — "Samsung leads on units; Apple leads
+#: on revenue" — under the heading of a regulation report and a demographics
+#: report. The demo is what somebody runs to learn what the tool does, so that
+#: was not a thin answer, it was a false lesson about four of the seven types.
+SUPPORTS = ("market-share", "competitive-landscape")
 
-    Checked rather than assumed. Running the demo on a market these pages do
-    not cover would otherwise produce an empty panel that reads like a real
-    failure of the live backends, when it is only a demo with the wrong subject.
+
+def covered(market: str, report: str = "") -> bool:
+    """Whether the recorded pages can answer this report about this market.
+
+    Checked rather than assumed, on both axes. Running the demo outside what
+    the pages hold produces something that reads like a real failure of the
+    live backends when it is only a demo pointed at the wrong thing — and, for
+    the wrong report type, something worse: a confident answer to a question
+    the sources never addressed.
     """
     words = {"phone", "phones", "smartphone", "smartphones", "handset",
              "handsets", "mobile"}
-    return any(word in (market or "").lower() for word in words)
+    if not any(word in (market or "").lower() for word in words):
+        return False
+    return not report or report.strip().lower() in SUPPORTS
+
+
+def why_not(market: str, report: str = "") -> str:
+    """The specific reason `covered` said no, for the caller to print."""
+    if not covered(market):
+        return (f"the offline demo only has recorded pages for the mobile "
+                f"phone market, and this is about {market or 'nothing'!r}")
+    return (f"the recorded pages are five smartphone market-share articles. "
+            f"They cannot support a {report!r} report — nothing in them "
+            f"addresses that question, so the demo would answer it from the "
+            f"wrong material and look confident doing it. Recorded demos "
+            f"exist for: {', '.join(SUPPORTS)}")
 
 
 class RecordedResearcher:

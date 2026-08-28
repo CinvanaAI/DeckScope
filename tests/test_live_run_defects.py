@@ -571,3 +571,62 @@ def test_the_commands_the_front_page_suggests_actually_run():
     """
     assert _cli("demo").returncode == 0
     assert _cli("ask", "market share of cell phones", "--demo").returncode == 0
+
+
+# ---------------------------------------------------- the --report flag
+
+def test_report_is_not_silently_ignored():
+    """`--report` was parsed, validated against the registry, and then dropped
+    unless `--measures` was also given — and the demo path returned before
+    either was read. So `--report growth`, `--report regulation` and
+    `--report demographics` each produced the SAME market-share panel, down to
+    the identical list of questions they failed to answer.
+
+    A flag that is accepted and then discarded is worse than one rejected: the
+    user has no way to find out it did nothing.
+    """
+    result = _cli("ask", "market share of cell phones",
+                  "--report", "competitive-landscape", "--demo")
+    assert result.returncode == 0
+    assert "competitive-landscape:" in result.stdout
+    assert "market-share:" not in result.stdout
+
+
+def test_the_demo_refuses_a_report_its_pages_cannot_answer():
+    """The recorded corpus is five smartphone market-share articles. Run a
+    regulation report against them and every stage works, producing "Samsung
+    leads on units; Apple leads on revenue" under a regulation heading — a
+    confident answer to a question the sources never addressed.
+
+    The demo is what somebody runs to learn what the tool does, so that was
+    not a thin answer, it was a false lesson about four of seven report types.
+    """
+    result = _cli("ask", "market share of cell phones",
+                  "--report", "regulation", "--demo")
+    assert result.returncode == 2
+    assert "cannot support a 'regulation' report" in result.stdout
+    assert "Samsung" not in result.stdout
+    # And it says which ones do work rather than leaving the user guessing.
+    assert "market-share" in result.stdout
+
+
+def test_the_demo_still_runs_what_it_can():
+    for report in ("market-share", "competitive-landscape"):
+        result = _cli("ask", "market share of cell phones",
+                      "--report", report, "--demo")
+        assert result.returncode == 0, f"{report}: {result.stdout[-400:]}"
+
+
+def test_every_producer_returns_the_shape_the_printer_reads():
+    """Twice a new producer returned a result without `request`, and
+    `_finish_ask` raised KeyError AFTER the research had been paid for — the
+    most expensive moment to discover a missing dictionary key.
+    """
+    from deckscope import cli
+
+    try:
+        cli._finish_ask(object(), {"panels": []})
+    except RuntimeError as exc:
+        assert "_completed()" in str(exc)
+    else:                                          # pragma: no cover
+        raise AssertionError("a malformed result was accepted")

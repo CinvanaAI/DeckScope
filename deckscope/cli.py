@@ -939,6 +939,65 @@ def _check_report_args(args: Any) -> int:
     return 2
 
 
+def _unscoped(request: Any, report: str, *, provider: Any,
+              researcher: Any) -> Dict[str, Any]:
+    """One report, no scope named — the degraded path, run deliberately.
+
+    `Brief` refuses an empty value list on purpose: deciding the scope belongs
+    upstream, and a guessed basis is the error the whole split exists to
+    prevent. But somebody typing `--report growth` with nothing else has not
+    made a mistake, they have declined to choose, and the honest response is to
+    run it, say the figures may end up on different footings, and show them the
+    values they could have picked.
+    """
+    from marketreport.dimensions import get as get_dimension
+    from marketreport.specialists import get as get_specialist, run_specialist
+    from .security.policy import SecurityPolicy
+
+    spec = get_specialist(report)
+    axis = get_dimension(spec.dimension) if spec.dimension else None
+
+    _out("")
+    _out(f"  Running {report} with no {axis.key if axis else 'scope'} named. "
+         f"Figures may end up on different footings, and the panel says so.")
+    if axis is not None and axis.options:
+        _out(f"  For one report per value: --measures "
+             f"{','.join(o.key for o in axis.options)}")
+    elif axis is not None:
+        _out(f"  To scope it: --measures <{axis.expects}>")
+    _out("")
+
+    panel = run_specialist(spec, market=request.market, place=request.place,
+                           measure=None, provider=provider,
+                           researcher=researcher, policy=SecurityPolicy(),
+                           framing=request.framing(), on_event=_out)
+    return _completed({"panels": [panel], "unknown": [], "failed": []},
+                      request)
+
+
+def _completed(result: Dict[str, Any], request: Any) -> Dict[str, Any]:
+    """Give a result the shape `_finish_ask` reads, and store its panels.
+
+    Every producer has to return `request` and `stored` alongside `panels`, and
+    twice now a new one did not — `_finish_ask` raised `KeyError: 'request'`
+    after the research had already been paid for, which is the most expensive
+    moment to discover a missing dictionary key. One function so a third
+    producer cannot get it wrong.
+    """
+    result["request"] = request
+    if "stored" in result:
+        return result
+    try:
+        from marketreport.library import Library
+        result["stored"] = Library().save_all(
+            result["panels"], market=request.market, place=request.place,
+            request=request.text)
+    except OSError as exc:
+        _out(f"  could not store the reports: {exc}")
+        result["stored"] = []
+    return result
+
+
 def _dimensions_holding(value: str) -> List[Any]:
     from marketreport.dimensions import registered
 
@@ -997,23 +1056,31 @@ def _ask_market(args: Any) -> int:
     from .security.policy import SecurityPolicy
 
     if getattr(args, "demo", False):
-        from marketreport.demo_sources import NOTE, RecordedResearcher, covered
+        from marketreport.demo_sources import (NOTE, RecordedResearcher,
+                                                covered, why_not)
         from .providers.mock_provider import MockProvider
 
-        if not covered(request.market):
+        wanted = (getattr(args, "report", None) or "market-share").strip()
+        if not covered(request.market, wanted):
             _out("")
-            _out(f"  The offline demo only has recorded pages for the mobile "
-                 f"phone market, and this request is about "
-                 f"'{request.market}'.")
-            _out("  Running it would produce an empty panel that reads like a "
-                 "real failure rather than a demo with the wrong subject.")
-            _out("  Try: deckscope ask \"market share of cell phones\" --demo")
+            _out(f"  Not available offline: {why_not(request.market, wanted)}.")
+            _out("")
+            _out("  Try:  deckscope ask \"market share of cell phones\" --demo")
+            _out("  Or connect a model and a search backend: deckscope setup")
             return 2
         _out(f"  {NOTE}")
-        result = answer(args.question, provider=MockProvider(),
-                        researcher=RecordedResearcher(),
-                        policy=SecurityPolicy(), on_event=_out)
-        return _finish_ask(args, result)
+        # The demo path honours --report and --measures like every other path.
+        # It did not, and returned here before either was read, so `--demo`
+        # silently downgraded any report type to market-share. That is the
+        # worst place for the flag to be ignored: the demo is what somebody
+        # runs to find out what the tool does, so it was teaching them that
+        # four report types produce identical output.
+        return _finish_ask(args, _dispatch(
+            request, args, provider=MockProvider(),
+            researcher=RecordedResearcher(),
+            fallback=lambda: answer(args.question, provider=MockProvider(),
+                                    researcher=RecordedResearcher(),
+                                    policy=SecurityPolicy(), on_event=_out)))
 
     # Both take a config object. Passing None produced "'NoneType' object has
     # no attribute 'name'" — a message that named neither the missing setup
@@ -1046,15 +1113,35 @@ def _ask_market(args: Any) -> int:
              "exactly what would be researched.")
         return 4
 
-    named = _measures_arg(args)
-    if named is not None:
-        return _finish_ask(args, _by_measure(
-            request, named, provider=provider, researcher=researcher,
-            report=getattr(args, "report", None) or "market-share"))
+    return _finish_ask(args, _dispatch(
+        request, args, provider=provider, researcher=researcher,
+        fallback=lambda: answer(args.question, provider=provider,
+                                researcher=researcher,
+                                policy=SecurityPolicy(), on_event=_out)))
 
-    result = answer(args.question, provider=provider, researcher=researcher,
-                    policy=SecurityPolicy(), on_event=_out)
-    return _finish_ask(args, result)
+
+def _dispatch(request: Any, args: Any, *, provider: Any, researcher: Any,
+              fallback: Any) -> Dict[str, Any]:
+    """Route one `ask` to the right producer, honouring --report and --measures.
+
+    One function so the live path and the demo path cannot disagree about what
+    the flags mean. They did: `--report` was parsed, validated against the
+    registry, and then ignored unless `--measures` was ALSO given, because only
+    the measures branch read it — and the demo path returned before either was
+    read at all.
+
+    So `--report growth`, `--report regulation` and `--report demographics`
+    each produced the same market-share panel, down to the identical list of
+    questions they failed to answer. Four report types, one output, no error.
+    A flag that is accepted and then discarded is worse than one rejected: the
+    user has no way to find out it did nothing.
+    """
+    named = _measures_arg(args)
+    report = (getattr(args, "report", None) or "").strip()
+    if named is None and not report:
+        return fallback()
+    return _by_measure(request, named or [], provider=provider,
+                       researcher=researcher, report=report or "market-share")
 
 
 def _measures_arg(args: Any) -> Optional[List[str]]:
@@ -1079,6 +1166,10 @@ def _by_measure(request: Any, names: List[str], *, provider: Any,
     from marketreport.measures import registered
     from .security.policy import SecurityPolicy
 
+    if not names:
+        return _unscoped(request, report or "market-share",
+                         provider=provider, researcher=researcher)
+
     try:
         brief = Brief(market=request.market, place=request.place,
                       measures=names, framing=request.framing(),
@@ -1097,15 +1188,7 @@ def _by_measure(request: Any, names: List[str], *, provider: Any,
     # a second printer keeps the two doors rendering identically — but it does
     # mean this dict has to satisfy the same shape, which the first version
     # did not and which no test caught because nothing ran the two together.
-    result["request"] = request
-    try:
-        from marketreport.library import Library
-        result["stored"] = Library().save_all(
-            result["panels"], market=request.market, place=request.place,
-            request=request.text)
-    except OSError as exc:
-        _out(f"  could not store the reports: {exc}")
-        result["stored"] = []
+    result = _completed(result, request)
 
     _out("")
     for row in stats["measures"]:
@@ -1132,6 +1215,12 @@ def _finish_ask(args: Any, result: Dict[str, Any]) -> int:
 
     from marketreport.panel_render import panel_text
 
+    missing = [k for k in ("panels", "request") if k not in result]
+    if missing:
+        raise RuntimeError(
+            f"a report producer returned a result without {missing}. Every "
+            f"producer must go through _completed(), which fills the shape "
+            f"this function reads — see its docstring for why.")
     panels = result["panels"]
     request = result["request"]
     for ref in result.get("stored") or []:
