@@ -523,8 +523,10 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     if measure is not None:
         job = (f"{spec.job}, measured strictly as {measure.label} — "
                f"{measure.counts}")
+        axis = get_dimension(spec.dimension)
+        noun = axis.key.replace("_", " ") if axis is not None else "basis"
         refuse = (f"{measure.refuse}\n\nEverything in this report is on one "
-                  f"basis: {measure.label}. A figure on any other basis does "
+                  f"{noun}: {measure.label}. A figure on any other {noun} does "
                   f"not belong here, however good it is, because a separate "
                   f"report covers each of the others and mixing them is the "
                   f"failure this split exists to prevent. The likeliest "
@@ -538,8 +540,17 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     # meant the heading read "...by units and by revenue" directly above a
     # brief saying to report revenue only — the two most prominent lines in
     # the prompt contradicting each other, with the wrong one first.
-    title = (f"Who holds what {measure.label} of a market"
-             if measure is not None else spec.job.capitalize())
+    #
+    # Built from the job rather than from a fixed sentence. The first version
+    # said "Who holds what X of a market", which is the market-share question
+    # wearing every other report's parameter: a market-size run was headed
+    # "Who holds what wholesale value of a market", which is not a question
+    # anyone asks.
+    title = spec.job.capitalize()
+    if measure is not None:
+        axis = get_dimension(spec.dimension)
+        joiner = axis.label if axis is not None else "measured as"
+        title = f"{title} — {joiner} {measure.label}"
     brief = Section(key=spec.name, title=title,
                     brief=job, refuse=refuse, sources=sources_hint)
     try:
