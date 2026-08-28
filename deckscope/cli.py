@@ -42,6 +42,7 @@ def build_parser() -> argparse.ArgumentParser:
             "  panel      the same, across several AIs that review each other\n"
             "  research   the question-driven research loop on its own\n\n"
             "CHECKING AND SETTINGS\n"
+            "  check      grade report types against known-correct cases\n"
             "  doctor     check that everything is working\n"
             "  models     which AI connections actually respond\n"
             "  config     the current settings\n"
@@ -274,6 +275,31 @@ def build_parser() -> argparse.ArgumentParser:
                                "mechanics.")
     research.add_argument("--config", default=None)
 
+    check_cmd = sub.add_parser(
+        "check",
+        help="Grade market reports against cases with known-correct answers",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=(
+            "Runs each case's recorded pages through the real report path and "
+            "grades what comes out, on two axes:\n\n"
+            "  recall     did it find what is genuinely in the sources\n"
+            "  clean      did it decline to assert what is not\n\n"
+            "The second matters more and is scored separately, so a "
+            "fabrication cannot be offset by finding more facts. Every case "
+            "carries traps: plausible claims the sources do not support, "
+            "written as the sentence a confident but sloppy report would "
+            "produce from that exact material.\n\n"
+            "  deckscope check                 every case\n"
+            "  deckscope check --only growth   one report type\n"
+            "  deckscope check --demo          with the offline mock"))
+    check_cmd.add_argument("--only", default="",
+                           help="Run cases whose id or report type matches")
+    check_cmd.add_argument("--demo", action="store_true",
+                           help="Use the offline mock. Scores the fixture, "
+                                "not the specialists — useful only as a "
+                                "regression baseline.")
+    check_cmd.add_argument("--config", default=None)
+
     reports_cmd = sub.add_parser(
         "reports",
         help="List the report types this can produce",
@@ -461,6 +487,40 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _check(args: Any) -> int:
+    """Grade the report types against known-correct cases."""
+    from marketreport.cases.runner import report as summarise, run_all
+
+    settings.load_env()
+    if getattr(args, "demo", False):
+        from .providers.mock_provider import MockProvider
+        provider: Any = MockProvider()
+    else:
+        from .config import load_config
+        from .providers import get_provider
+        try:
+            provider = get_provider(
+                load_config(getattr(args, "config", None) or None).provider)
+        except Exception as exc:  # noqa: BLE001
+            _out("")
+            _out(f"  No AI model is connected — {exc}")
+            _out("  Run 'deckscope setup', or 'deckscope check --demo' to see "
+                 "the harness run against the offline mock.")
+            return 4
+
+    results = run_all(provider=provider, only=getattr(args, "only", "") or "")
+    if not results:
+        _out("")
+        _out(f"  No cases match {getattr(args, 'only', '')!r}.")
+        return 2
+    _out("")
+    _out(summarise(results, provider))
+    _out("")
+    # Exit non-zero on a fabrication even if recall is high, so a gate built on
+    # this cannot be satisfied by a report that invents things confidently.
+    return 0 if all(r.passed for r in results) else 1
+
+
 def _orientation() -> int:
     """What this is and the one command to try next.
 
@@ -519,6 +579,9 @@ def main(argv: Optional[List[str]] = None) -> int:
         # It now orients, and offers setup as the next step rather than
         # starting it.
         return _orientation()
+
+    if cmd == "check":
+        return _check(args)
 
     if cmd == "doctor":
         from .wizard import doctor

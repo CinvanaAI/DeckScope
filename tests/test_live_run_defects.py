@@ -630,3 +630,126 @@ def test_every_producer_returns_the_shape_the_printer_reads():
         assert "_completed()" in str(exc)
     else:                                          # pragma: no cover
         raise AssertionError("a malformed result was accepted")
+
+
+# --------------------------------------------------- the evaluation harness
+
+def _case():
+    from marketreport.cases import Case, Expect, Trap
+
+    return Case(
+        id="toy", name="toy", market="widgets", report="market-share",
+        pages=[{"title": "t", "url": "https://e.org", "published": "2026-01-01",
+                "snippet": "The market was 10 million units in 2025."}],
+        expect=[Expect(r"10 million", "the only real fact", weight=1.0)],
+        traps=[Trap(r"20 million", "no source says twenty")],
+        absences=[Expect(r"not established", "must say what it lacks")])
+
+
+def test_the_scorer_can_actually_fail():
+    """A harness that cannot fail is decoration. Checked first, because every
+    later assertion is worthless if this one is not true.
+    """
+    from marketreport.cases import score
+
+    perfect = score(_case(), "The market was 10 million units. Growth was "
+                             "not established.")
+    assert perfect.recall == 1.0 and perfect.clean and perfect.passed
+
+    empty = score(_case(), "")
+    assert empty.recall == 0.0 and not empty.passed
+
+
+def test_a_fabrication_is_not_offset_by_recall():
+    """The asymmetry the harness exists for. A report that finds everything
+    and invents one thing must not outrank one that finds less and invents
+    nothing — the reader cannot tell which sentence was invented.
+    """
+    from marketreport.cases import score
+
+    invents = score(_case(), "The market was 10 million units, or 20 million "
+                             "by another count. Growth was not established.")
+    assert invents.recall == 1.0        # found every fact
+    assert not invents.clean            # and is still a failure
+    assert not invents.passed
+    assert "no source says twenty" in invents.fabricated[0][1]
+
+
+def test_an_omitted_absence_fails_even_with_full_recall():
+    """Saying nothing about what could not be established is its own failure:
+    the reader is left to assume the gap is zero.
+    """
+    from marketreport.cases import score
+
+    quiet = score(_case(), "The market was 10 million units.")
+    assert quiet.recall == 1.0
+    assert quiet.clean
+    assert not quiet.passed
+    assert quiet.absences_omitted
+
+
+def test_a_case_with_no_corpus_is_refused():
+    """It would grade a report against nothing and pass whatever it saw."""
+    from marketreport.cases import Case, Expect
+
+    try:
+        Case(id="x", name="x", market="m", report="market-share",
+             expect=[Expect("a", "b")])
+    except ValueError as exc:
+        assert "no recorded pages" in str(exc)
+    else:                                          # pragma: no cover
+        raise AssertionError("a case with no corpus was accepted")
+
+
+def test_a_case_that_only_sets_traps_is_refused():
+    """Traps alone reward silence — a report saying nothing would score
+    perfectly.
+    """
+    from marketreport.cases import Case, Trap
+
+    try:
+        Case(id="x", name="x", market="m", report="market-share",
+             pages=[{"title": "t", "url": "u", "snippet": "s"}],
+             traps=[Trap("a", "b")])
+    except ValueError as exc:
+        assert "rewards silence" in str(exc)
+    else:                                          # pragma: no cover
+        raise AssertionError("a trap-only case was accepted")
+
+
+def test_every_case_names_real_pages_with_urls():
+    """The corpus is the ground truth. A case built on invented material
+    grades the fixture, which is the failure CRITIQUE.md #1 already records
+    once for the Census demo.
+    """
+    from marketreport.cases import registered
+
+    for case in registered():
+        assert case.pages, case.id
+        for page in case.pages:
+            assert page.get("url", "").startswith("http"), case.id
+            assert len(page.get("snippet", "")) > 80, case.id
+        assert case.traps, f"{case.id} sets no traps"
+
+
+def test_the_harness_says_when_a_score_measures_the_fixture():
+    """Run against the offline mock every case fails, which reads as "the
+    specialists are broken" and means "the stub cannot answer". Publishing
+    that number without saying so would be the same class of thing the
+    harness exists to catch.
+    """
+    from deckscope.providers.mock_provider import MockProvider
+    from marketreport.cases.runner import caveat
+
+    said = caveat(MockProvider())
+    assert "measure the fixture" in said
+    assert caveat(object()) == ""
+
+
+def test_check_runs_from_the_command_line():
+    result = _cli("check", "--demo", "--only", "growth")
+    assert "growth-hearing-aids-worldwide" in result.stdout
+    assert "recall" in result.stdout
+    # Non-zero on a failing case, so a gate built on this cannot be satisfied
+    # by a report that invents things confidently.
+    assert result.returncode == 1
