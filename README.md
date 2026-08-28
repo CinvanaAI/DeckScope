@@ -62,13 +62,15 @@ its first line rather than listing confident findings. See
 > |---|---|---|---|---|
 > | market-share | yes | yes | yes | yes |
 > | market-size | yes | yes | yes | yes |
-> | competitive-landscape | no | yes | yes | — |
+> | competitive-landscape | no | yes | yes | yes |
 > | growth | no | yes | no | yes |
 > | regulation | no | yes | no | yes |
 > | demographics | no | yes | no | yes |
 > | industry-report | no | no | no | — |
 >
-> "Graded case" is the strongest column: a case in `deckscope check` with
+> Every row of that table is produced by running things, and the "graded case"
+> column is enforced: a test fails the suite if a specialist registers without
+> one. "Graded case" is the strongest column: a case in `deckscope check` with
 > known-correct answers and traps, re-checkable by anyone at any time rather than
 > by one person once. Every type with its own agent now has one, and a test fails
 > the suite if a new agent registers without one — every type before the harness

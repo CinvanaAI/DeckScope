@@ -331,20 +331,17 @@ def test_the_repository_itself_is_clean():
 
 
 if __name__ == "__main__":  # pragma: no cover
-    # Runnable without pytest installed, because the environment that most
-    # needs to run these — a clean box checking a release — may not have it.
-    failed = 0
-    for _name, _fn in sorted(dict(globals()).items()):
-        if not _name.startswith("test_") or not callable(_fn):
-            continue
-        try:
-            _fn()
-            print(f"  PASS {_name}")
-        except Exception as _exc:        # noqa: BLE001 - reporting, not handling
-            failed += 1
-            print(f"  FAIL {_name}: {type(_exc).__name__}: {_exc}")
-    print(f"\n  {failed} failed")
-    raise SystemExit(1 if failed else 0)
+    # Delegates to the real runner, which collects AFTER the module is fully
+    # imported. The block this replaces ran the tests itself from its own
+    # lexical position mid-file — so the thirty-one tests appended below it
+    # over a working day never executed, while it printed "0 failed". A gate
+    # that runs part of itself and reports on all of itself is the exact
+    # defect shape this file exists to pin.
+    import runpy
+
+    sys.argv = [sys.argv[0], "--only", "live_run_defects"]
+    runpy.run_path(str(Path(__file__).resolve().parent.parent / "scripts"
+                       / "run_tests.py"), run_name="__main__")
 
 
 # ------------------------------------------------- the market-size live run

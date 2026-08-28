@@ -23,7 +23,8 @@ from __future__ import annotations
 from .schema import Case, Expect, Trap, register
 
 __all__ = ["REGULATION_US", "DEMOGRAPHICS_US", "GROWTH_WORLDWIDE",
-           "MARKET_SHARE_SMARTPHONES", "MARKET_SIZE_WHOLESALE"]
+           "MARKET_SHARE_SMARTPHONES", "MARKET_SIZE_WHOLESALE",
+           "COMPETITIVE_LANDSCAPE_HEARING"]
 
 
 # ==================================================================== rules
@@ -527,5 +528,130 @@ MARKET_SIZE_WHOLESALE = register(Case(
              r"(?:worldwide|globally)[^.\n]{0,80}\$774",
              "The $774 invoice is United States, 2019. Applied worldwide it "
              "manufactures the value term the corpus says does not exist."),
+    ],
+))
+
+
+# ==================================================== competitive landscape
+
+COMPETITIVE_LANDSCAPE_HEARING = register(Case(
+    id="competitive-landscape-hearing-aids",
+    name="A five-firm structure with a pending deal that ends it",
+    market="hearing aids",
+    report="competitive-landscape",
+    measure="",
+    retrieved="2026-08-27",
+    notes=("The corpus's centre of gravity is one fact that outranks every "
+           "share figure: Amplifon has AGREED to acquire GN Hearing — "
+           "announced, not completed. A pending deal invalidates the "
+           "participant list rather than adding to it, and the traps are the "
+           "tenses a sloppy report would get wrong: the deal stated as done, "
+           "its direction reversed, or the post-OTC market described as "
+           "opened up when the recorded reporting says competition remains "
+           "limited precisely because of vertical integration."),
+    pages=[
+        {
+            "title": "Amplifon's $2 billion move into manufacturing: what it "
+                     "means for audiology — ENT & Audiology News",
+            "url": "https://www.entandaudiologynews.com/news/post/"
+                   "amplifon-s-2-billion-move-into-manufacturing-what-it-"
+                   "means-for-audiology",
+            "published": "2026-08-01",
+            "snippet": (
+                "Amplifon announced a transformative EUR 2.3bn acquisition "
+                "of Danish manufacturer GN Hearing, shifting Amplifon from a "
+                "pure-play audiology retailer into a fully vertically "
+                "integrated global platform. Historically Amplifon relied on "
+                "major manufacturers such as Sonova, Demant and GN for "
+                "product supply. The deal has been announced and has not "
+                "completed."),
+        },
+        {
+            "title": "Amplifon vertically integrates as Sonova refocuses "
+                     "core — Candesic",
+            "url": "https://candesic.com/article/amplifon-vertically-"
+                   "integrates-as-sonova-refocuses-core/",
+            "published": "2026-07-20",
+            "snippet": (
+                "Sonova and Demant are vertically integrated hearing aid "
+                "manufacturers, controlling multiple aspects of the business "
+                "from manufacturing through to retail. Amplifon currently "
+                "sells Sonova and Demant products in its stores."),
+        },
+        {
+            "title": "Four Years After OTC Hearing Aid Rule, Competition in "
+                     "Hearing Aid Market Remains Limited Due to Deep "
+                     "Vertical Integration — The Capitol Forum",
+            "url": "https://thecapitolforum.com/four-years-after-otc-"
+                   "hearing-aid-rule-competition-in-hearing-aid-market-"
+                   "remains-limited/",
+            "published": "2026-06-15",
+            "snippet": (
+                "Four years after the over-the-counter hearing aid rule took "
+                "effect, competition in the hearing aid market remains "
+                "limited due to deep vertical integration, sources say. The "
+                "regulatory change has not redistributed the market's "
+                "structure."),
+        },
+        {
+            "title": "Demant buys Amplifon's UK chain — The Hearing Wire",
+            "url": "https://news.hearingtracker.com/news/"
+                   "f9932318-19e6-4184-8d57-efa3fca36c90",
+            "published": "2026-05-10",
+            "snippet": (
+                "Demant has built its retail footprint through acquisitions "
+                "including Audika in 2015 in France and ShengWang in 2022 in "
+                "China, and operates four retail brands by geography: "
+                "HearingLife in the US, Hidden Hearing in the UK, Audika in "
+                "Europe and ShengWang in China. Demant has also acquired "
+                "Amplifon's UK clinics."),
+        },
+    ],
+    expect=[
+        Expect(r"(?:EUR|€) ?2\.3 ?b(?:n|illion)",
+               "The deal's size — the single most consequential figure in "
+               "the corpus.", weight=2.0, must_cite=True),
+        Expect(r"GN Hearing",
+               "What is being acquired. The participant list is ending, and "
+               "the report must name how.", weight=2.0),
+        Expect(r"Amplifon",
+               "The acquirer, previously a pure-play retailer.", weight=2.0),
+        Expect(r"announced|agreed|pending|not (?:yet )?complet",
+               "The deal's tense. Announced and completed are different "
+               "market structures, and only one of them exists.",
+               weight=2.0),
+        Expect(r"vertical(?:ly)? integrat",
+               "The structural fact the whole corpus turns on.", weight=1.5),
+        Expect(r"Sonova",
+               "A named incumbent that both manufactures and retails."),
+        Expect(r"Demant",
+               "The other, with its four named retail brands."),
+        Expect(r"remains limited|has not redistributed",
+               "The Capitol Forum finding: the OTC rule did not open the "
+               "structure up. A landscape report that implies otherwise has "
+               "inverted its best source.", weight=1.5),
+    ],
+    traps=[
+        Trap(r"(?:has|have) (?:completed|closed|finali[sz]ed)[^.\n]{0,40}"
+             r"acquisition|acquisition (?:is complete|has closed|closed in)",
+             "The deal is announced, not completed. Stating it as done "
+             "reports a market structure that does not exist yet — the exact "
+             "tense error a pending deal invites."),
+        Trap(r"GN (?:Hearing )?(?:acquires?|acquired|is acquiring|to acquire)"
+             r"[^.\n]{0,30}Amplifon",
+             "Direction reversed. Amplifon is buying GN Hearing; a report "
+             "that swaps acquirer and target has the money flowing the wrong "
+             "way through a EUR 2.3bn transaction."),
+        Trap(r"competition (?:has )?(?:increased|opened|intensified)|"
+             r"OTC rule (?:opened|increased|transformed) (?:up )?"
+             r"(?:the )?(?:market|competition)",
+             "The recorded reporting says the opposite: four years after the "
+             "OTC rule, competition remains limited due to vertical "
+             "integration."),
+        Trap(r"Amplifon (?:manufactures|makes|produces) hearing aids",
+             "Pre-completion, Amplifon manufactures nothing — it sells "
+             "Sonova and Demant products in its stores. Its manufacturing is "
+             "the future the deal would create, not the present the corpus "
+             "describes."),
     ],
 ))
