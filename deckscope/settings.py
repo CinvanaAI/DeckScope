@@ -150,6 +150,18 @@ def save_panel(members: List[str], rounds: Optional[int] = None) -> Path:
 
 
 def is_configured() -> bool:
+    """Whether a run can proceed without the wizard.
+
+    The environment counts. `load_config` documents DECKSCOPE_PROVIDER as a
+    configuration layer, and every `ask`/`report` path honours it — but this
+    predicate only looked for the wizard's file, so `deckscope run` with
+    DECKSCOPE_PROVIDER=mock exported said "isn't set up yet" and pointed the
+    user at a seven-question wizard to answer a question their environment had
+    already answered. Two components disagreeing about what "configured"
+    means, found on the exact path a first-time guest walks.
+    """
+    if os.getenv("DECKSCOPE_PROVIDER"):
+        return True
     return config_path().exists() and bool(load_settings().get("provider"))
 
 

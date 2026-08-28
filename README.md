@@ -68,13 +68,12 @@ its first line rather than listing confident findings. See
 > | demographics | no | yes | no | yes |
 > | industry-report | no | no | no | — |
 >
-> Every row of that table is produced by running things, and the "graded case"
-> column is enforced: a test fails the suite if a specialist registers without
-> one. "Graded case" is the strongest column: a case in `deckscope check` with
-> known-correct answers and traps, re-checkable by anyone at any time rather than
-> by one person once. Every type with its own agent now has one, and a test fails
-> the suite if a new agent registers without one — every type before the harness
-> shipped unchecked, and averaged two defects each when finally run. The harness
+> Every row of that table is produced by running things. "Graded case" is the
+> strongest column: a case in `deckscope check` with known-correct answers and
+> traps, re-checkable by anyone at any time rather than by one person once. Every
+> type with its own agent has one, and a test fails the suite if a new agent
+> registers without one — every type before the harness shipped unchecked, and
+> averaged two defects each when finally run. The harness
 > has also been audited against itself: the scorer originally convicted a correct
 > report for *stating* an absence its own case required ("no forecast is
 > published" tripped the /forecast/ trap), and passed a case whose load-bearing
@@ -246,6 +245,10 @@ Full details, including offline and locked-down environments, in
 ---
 
 ## Quick start
+
+**Handing this to someone with a deck?** [docs/FIRST_RUN.md](docs/FIRST_RUN.md) is
+the one-page version of this section, written for them — every command on it was
+executed before being written down.
 
 **See what it does before configuring anything.** No AI account, no key, no cost —
 the model's answers are built in:

@@ -521,6 +521,25 @@ def _check(args: Any) -> int:
     return 0 if all(r.passed for r in results) else 1
 
 
+def _warn_if_stub(cfg: Any, *, demo: bool = False) -> None:
+    """Say loudly when the connected AI is the offline mock and the input is real.
+
+    --demo banners this itself; a mock reached through saved settings or
+    DECKSCOPE_PROVIDER did not, so a real deck could be answered with canned
+    sample text about a fictional company, disclosed only in a footer nobody
+    reads. Three commands resolve config the same way, so this is one helper
+    rather than the same block pasted at each site — the first attempt patched
+    exactly one of the three, and the one it patched was not the one being
+    tested.
+    """
+    if demo or getattr(getattr(cfg, "provider", None), "name", "") != "mock":
+        return
+    _out("NOTE: the connected AI is the offline mock. Its replies are fixed "
+         "sample text about a\nfictional company, whatever input you give "
+         "it. Every figure below is illustrative.\nRun 'deckscope setup' to "
+         "connect a real model.\n")
+
+
 def _orientation() -> int:
     """What this is and the one command to try next.
 
@@ -1521,6 +1540,7 @@ def _research(args: Any) -> int:
             return 1
         cfg = settings.settings_to_runconfig(overrides)
 
+    _warn_if_stub(cfg, demo=bool(getattr(args, 'demo', False)))
     provider = get_provider(cfg.provider)
     researcher = get_researcher(cfg.research, provider)
     policy: SecurityPolicy = cfg.security or SecurityPolicy()
@@ -1863,6 +1883,7 @@ def _run(args: Any) -> int:
             return 1
         cfg = settings.settings_to_runconfig(overrides)
 
+    _warn_if_stub(cfg, demo=bool(getattr(args, "demo", False)))
     mode = getattr(args, "mode", "pipeline")
     replay = None
     if getattr(args, "corpus", None):
@@ -2233,6 +2254,7 @@ def _panel(args: Any) -> int:
     else:
         from .config import load_config
         cfg = load_config(None, **overrides)
+    _warn_if_stub(cfg, demo=bool(getattr(args, "demo", False)))
 
     try:
         panelists = [parse_panelist(spec) for spec in members]

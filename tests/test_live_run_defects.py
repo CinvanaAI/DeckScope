@@ -21,6 +21,7 @@ in a way a reader cannot see, which is the only failure mode that actually
 matters for a research tool.
 """
 import ast
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -876,3 +877,56 @@ def test_an_uncited_load_bearing_figure_fails_the_case():
     # And cited, it passes.
     assert score(case, "The market was 10 million units.",
                  cited="10 million units S1").passed
+
+
+# --------------------------------------------------- the guest's first run
+
+def test_an_env_configured_provider_counts_as_configured():
+    """DECKSCOPE_PROVIDER is a documented configuration layer and every
+    ask/report path honours it — but is_configured() only looked for the
+    wizard's file, so `deckscope run` with the env set said "isn't set up
+    yet" and pointed at a seven-question wizard to answer a question the
+    environment had already answered. Found walking the exact path a
+    first-time guest walks.
+    """
+    import tempfile
+
+    root = Path(__file__).resolve().parent.parent
+    # tempfile paths, not /tmp: the machine this trial actually happens on is
+    # Windows, and the suite's own audit test rejects hard-coded POSIX
+    # temporary directories — a rule that caught this very test the first
+    # time the whole suite could run.
+    env = dict(os.environ, DECKSCOPE_PROVIDER="mock", DECKSCOPE_RESEARCH="none",
+               HOME=tempfile.mkdtemp(prefix="ds_guest_home_"))
+    result = subprocess.run(
+        [sys.executable, "-m", "deckscope.cli", "run",
+         "deckscope/evaluation/suite/decks/inflated_tam.md",
+         "--format", "md", "--out", tempfile.mkdtemp(prefix="ds_guest_out_")],
+        capture_output=True, text=True, cwd=str(root), env=env,
+        stdin=subprocess.DEVNULL, timeout=400)
+    assert "isn't set up yet" not in result.stdout
+    assert result.returncode == 0, result.stdout[-500:]
+
+
+def test_a_mock_provider_on_a_real_deck_banners_loudly():
+    """The mock's replies are canned analysis of a fictional company,
+    whatever deck it is given. Reached through saved settings or the env, it
+    produced specific-sounding advice about products the deck never mentions,
+    disclosed only in a footer. --demo banners this; run did not. And the
+    first fix patched exactly one of the three commands that resolve config
+    the same way — the research command, not the run command being tested —
+    so the banner lives in one helper called at all three sites now.
+    """
+    import tempfile
+
+    root = Path(__file__).resolve().parent.parent
+    env = dict(os.environ, DECKSCOPE_PROVIDER="mock", DECKSCOPE_RESEARCH="none",
+               HOME=tempfile.mkdtemp(prefix="ds_guest_home_"))
+    result = subprocess.run(
+        [sys.executable, "-m", "deckscope.cli", "run",
+         "deckscope/evaluation/suite/decks/inflated_tam.md",
+         "--format", "md", "--out", tempfile.mkdtemp(prefix="ds_guest_out_")],
+        capture_output=True, text=True, cwd=str(root), env=env,
+        stdin=subprocess.DEVNULL, timeout=400)
+    assert "offline mock" in result.stdout
+    assert "illustrative" in result.stdout
