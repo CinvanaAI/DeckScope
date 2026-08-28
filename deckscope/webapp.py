@@ -514,7 +514,8 @@ class Handler(BaseHTTPRequestHandler):
 
         try:
             refs = Library().list(limit=int(payload.get("limit") or 60),
-                                  market=str(payload.get("market") or ""))
+                                  market=str(payload.get("market") or ""),
+                                  measure=str(payload.get("measure") or ""))
         except Exception as exc:  # noqa: BLE001
             return self._json({"error": f"Could not read the library: {exc}"},
                               500)
@@ -996,6 +997,20 @@ async function loadPanels(){
       row.className = 'card';
       row.style.cssText = 'margin:8px 0;cursor:pointer';
       row.onclick = () => openPanel(p.id);
+      // The measure goes ABOVE the headline, not into the metadata line.
+      // It is what the report is a report OF: two reports on one market on
+      // two bases have different answers, and a gallery that shows only the
+      // headline makes them look like near-duplicates of each other — which
+      // is the confusion the whole per-measure split exists to remove. A
+      // report with no measure says so, because unlabelled is a real state
+      // and it should not look like the tidy default.
+      const basis = document.createElement('p');
+      basis.style.cssText = 'margin:0 0 3px;font-size:11px;letter-spacing:.06em;'
+        + 'text-transform:uppercase;opacity:.75';
+      basis.textContent = p.measure_label || p.measure || 'basis not named';
+      if(!p.measure) basis.style.opacity = '.5';
+      row.appendChild(basis);
+
       const head = document.createElement('b');
       head.textContent = p.headline || p.question;
       row.appendChild(head);
