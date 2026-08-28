@@ -461,3 +461,29 @@ def test_a_market_total_is_never_read_as_the_value_term():
                          "USD 7.5 billion in 2025.")
     assert _per_unit("Average annual spend is $120 per person.")
     assert _per_unit("agilon takes $10,000 of revenue per member.")
+
+
+# ------------------------------------------------- measured versus reasoned
+
+def test_a_reasoned_report_says_so_before_anything_else():
+    """Barriers to entry and what substitutes for a market are arguments;
+    nobody publishes a number for either. Set in the same typeface with
+    citations underneath, an argument is indistinguishable from a
+    measurement — so the report has to say which it is, first.
+    """
+    from marketreport.specialists import EVIDENCE_NOTES, get
+
+    landscape = get("competitive-landscape")
+    assert landscape.evidence == "mixed"
+    assert "mixed" in EVIDENCE_NOTES
+
+    # And a measured job does not carry the disclaimer, or it means nothing.
+    assert get("market-share").evidence == "measured"
+    assert EVIDENCE_NOTES.get("measured") is None
+
+
+def test_every_specialist_declares_how_it_knows():
+    from marketreport.specialists import registered
+
+    for spec in registered():
+        assert spec.evidence in ("measured", "reasoned", "mixed"), spec.name

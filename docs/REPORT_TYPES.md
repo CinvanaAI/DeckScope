@@ -257,3 +257,69 @@ Each type gets the same treatment market share now has: a named parameter, one
 report per value of it, an honest empty report when the basis is unsourceable
 for that particular market, and a card in the gallery that says which basis it
 is on.
+
+---
+
+## What building them changed
+
+Written after the fact, because three things in the plan above turned out to be
+wrong or incomplete once the code existed and a real model ran it.
+
+### Market size is not one report, it is three
+
+The plan treated market size as a type with a parameter. It is a type with a
+parameter *and* three separately-sourced terms, and the terms matter more:
+
+    COUNT   almost always free — government statistics, regulators, trade
+            associations. The strongest thing this system does.
+    RATE    a qualifying screen. Usually a survey, sometimes a definition,
+            occasionally nobody's business but the analyst's.
+    VALUE   proprietary in every filing in the corpus. This is the term the
+            research firms are actually selling.
+
+The live hearing-aid run made the case. COUNT was settled free and exactly —
+EHIMA, 23.16 million units for 2025, defined as net wholesale units sold to
+dispensers. VALUE did not exist: no worldwide average wholesale price has been
+published since 2019.
+
+Blended, that reads "the market cannot be sized", which sounds like the system
+failed. Split, it reads: the count is settled, and **one number** is missing.
+Same evidence, opposite impression, and the second one is true. It also answers
+the question a buyer actually has — a commissioned study here would not be
+buying a report, it would be buying one price.
+
+`sizing.py` had the arithmetic from the beginning and nothing was feeding it.
+`terms.py` is the sorter that does.
+
+### The real split is measured versus reasoned
+
+Decomposing the other four the same way was the obvious next move and it is
+the wrong one. Their parts do not have four different sourcing profiles; they
+have **two**, and the line falls in a different place:
+
+| | measured | reasoned |
+|---|---|---|
+| competitive landscape | participants, recent deals | barriers to entry, substitutes |
+| growth | historical endpoints | drivers, and any forecast |
+| demographics | counts | behaviour change |
+| regulation | named instruments, thresholds | — |
+
+Nobody publishes a barrier-to-entry number. What substitutes for a market
+depends entirely on where its boundary was drawn. Both are arguments over
+sourced facts, which is legitimate — and indistinguishable from a measurement
+once it is set in the same typeface with citations underneath.
+
+So `Specialist.evidence` is `measured`, `reasoned` or `mixed`, declared per
+type because it is a property of the question rather than of what a run
+happened to find, and a reasoned or mixed report says so before anything else
+it says.
+
+### Producibility per market, confirmed twice
+
+The plan said producibility is per-market rather than per-type. Both live runs
+bore that out, in opposite directions: unit share is producible for cell phones
+and not for hearing aids, and a wholesale market size is producible wherever a
+price is published and nowhere else. The empty-but-labelled report is not an
+edge case to tidy away. It is the normal output for roughly half the
+combinations, and it carries the most commercially useful sentence the system
+produces — which term is missing, and where it would have to come from.

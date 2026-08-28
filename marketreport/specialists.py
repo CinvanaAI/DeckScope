@@ -76,6 +76,17 @@ class Specialist:
     #: one, and the ones that looked like they did not turned out to have been
     #: quietly defaulting.
     dimension: str = ""
+    #: How this job knows what it knows: "measured", "reasoned" or "mixed".
+    #:
+    #: A market share is measured — somebody counted. Barriers to entry are
+    #: reasoned — nobody publishes a barrier-to-entry number, and the answer is
+    #: an argument built over sourced facts. Both are legitimate; presenting
+    #: the second as the first is not, and the difference is invisible once
+    #: both are set in the same typeface with citations underneath.
+    #:
+    #: Declared per specialist rather than inferred, because it is a property
+    #: of the question rather than of what the run happened to find.
+    evidence: str = "measured"
     #: Runs after the loop, before the shaper. Returns extra figures and
     #: caveats — the specialist's own analysis, in Python.
     check: Optional[Callable[..., Dict[str, Any]]] = None
@@ -346,6 +357,21 @@ MARKET_SHARE = register(Specialist(
     iterations=14,
     answers=("Q5", "Q6"),
 ))
+
+
+#: What each kind of knowing means, said to the reader in their words.
+EVIDENCE_NOTES = {
+    "reasoned": (
+        "This report is an argument, not a measurement. Nobody publishes the "
+        "answer to this question as a number; what is below is reasoning over "
+        "sourced facts. Read the facts and judge the argument — do not quote "
+        "the conclusion as a finding."),
+    "mixed": (
+        "Part of this report is measured and part of it is reasoned. Figures "
+        "carry their own provenance, and anything not marked as sourced or "
+        "derived is a judgment made here rather than a fact somebody "
+        "published."),
+}
 
 
 def _stamp(panel: Panel, measure: Any) -> None:
@@ -624,6 +650,10 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     # rather than instructed, because instruction is advisory.
     if measure is not None:
         _off_basis(panel, measure, get_dimension(spec.dimension))
+
+    note = EVIDENCE_NOTES.get(spec.evidence)
+    if note:
+        panel.caveats.insert(0, note)
 
     if spec.check is not None:
         try:

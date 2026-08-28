@@ -230,6 +230,10 @@ GROWTH = register(Specialist(
         "own published growth beats any analyst CAGR, and saying so is the "
         "finding. Do not extend a historical series forward yourself; a "
         "forecast this report invented is worse than no forecast."),
+    # History is measured; the drivers section is reasoning about why. The
+    # forecast, where one exists at all, is somebody else's judgment reported
+    # as theirs.
+    evidence="mixed",
     check=_growth_check,
     iterations=10,
     answers=("Q4",),
@@ -386,6 +390,11 @@ COMPETITIVE_LANDSCAPE = register(Specialist(
         "the boundary before naming any. A pending acquisition that would "
         "change the participant list outranks any share figure, because it "
         "invalidates the list rather than adding to it."),
+    # Two of its four questions have published answers and two do not.
+    # Participants and recent deals are matters of record; barriers to entry
+    # and what substitutes for a market are arguments, and no source will ever
+    # hand over a number for either.
+    evidence="mixed",
     check=_landscape_check,
     iterations=12,
     answers=("Q9",),
