@@ -60,19 +60,24 @@ its first line rather than listing confident findings. See
 >
 > | | live model | recorded pages | read line by line | graded case |
 > |---|---|---|---|---|
-> | market-share | yes | yes | yes | — |
-> | market-size | yes | — | yes | — |
+> | market-share | yes | yes | yes | yes |
+> | market-size | yes | yes | yes | yes |
 > | competitive-landscape | no | yes | yes | — |
-> | growth | no | yes | no | **yes** |
-> | regulation | no | yes | no | **yes** |
-> | demographics | no | yes | no | **yes** |
+> | growth | no | yes | no | yes |
+> | regulation | no | yes | no | yes |
+> | demographics | no | yes | no | yes |
 > | industry-report | no | no | no | — |
 >
-> "Graded case" is the strongest column and the newest: a case in
-> `deckscope check` with known-correct answers and traps, so the type can be
-> re-checked by anyone at any time rather than by me once. The two types with the
-> most human attention have the weakest automated coverage, which is backwards and
-> is the next thing to fix.
+> "Graded case" is the strongest column: a case in `deckscope check` with
+> known-correct answers and traps, re-checkable by anyone at any time rather than
+> by one person once. Every type with its own agent now has one, and a test fails
+> the suite if a new agent registers without one — every type before the harness
+> shipped unchecked, and averaged two defects each when finally run. The harness
+> has also been audited against itself: the scorer originally convicted a correct
+> report for *stating* an absence its own case required ("no forecast is
+> published" tripped the /forecast/ trap), and passed a case whose load-bearing
+> figure arrived uncited. Both are fixed and pinned in the same test file as
+> everything else.
 >
 > Those checks found **eleven** defects, every one invisible to a test suite that was
 > green at the time, and almost every one a case of the system rendering something it
@@ -81,7 +86,9 @@ its first line rather than listing confident findings. See
 > ignored, so four report types produced identical output, and the offline demo
 > answered a regulation question from five smartphone market-share articles without
 > noticing. There is no reason to assume the rest are cleaner.
-> [tests/test_live_run_defects.py](tests/test_live_run_defects.py) pins all eleven.
+> [tests/test_live_run_defects.py](tests/test_live_run_defects.py) pins every one of
+> them, alongside the two harness defects above — thirteen so far, each with the
+> failure it reproduces named in its docstring.
 >
 > **`deckscope check` exists so the next one does not need me to find it.** It grades
 > report types against cases with known-correct answers planted in real recorded

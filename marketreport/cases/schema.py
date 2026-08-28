@@ -137,8 +137,15 @@ class Result:
 
     @property
     def passed(self) -> bool:
+        # `uncited` fails the case. It did not at first, and the very first
+        # full docket run showed why that was wrong: a case PASSED with
+        # "1 uncited" — a figure its own Expect marked must_cite, present but
+        # unattributed, flagged in the summary and waved through the verdict.
+        # The product's one-line promise is that every figure is traceable to
+        # its source; a grader that treats untraceable as a footnote is
+        # grading a different product.
         return self.clean and not self.error and not self.absences_omitted \
-            and self.recall >= 0.5
+            and not self.uncited and self.recall >= 0.5
 
     def summary(self) -> str:
         if self.error:
@@ -159,6 +166,54 @@ def _hit(pattern: str, text: str) -> bool:
         return bool(re.search(pattern, text, re.I | re.S))
     except re.error:          # a broken pattern is a broken case, not a pass
         return False
+
+
+#: Words that turn a sentence about a claim into a denial of it.
+_DENIAL = re.compile(
+    r"\b(?:no|not|never|nobody|none|cannot|can ?not|could not|without|"
+    r"un(?:published|available|stated|verified)|absent|lacks?|missing|"
+    r"does not|do not|is not|are not|was not|were not|refus\w+|"
+    r"declin\w+ to)\b", re.I)
+
+
+def _asserted(pattern: str, text: str) -> bool:
+    """Whether the text ASSERTS a match for `pattern`, rather than denying one.
+
+    The first scorer checked traps with a bare `re.search`, which convicted the
+    innocent in a way one case made mandatory: the growth case *requires* the
+    report to state "no forecast is published" (that is its `absences` check),
+    and its trap pattern contains the word "forecast" — so the honest sentence
+    satisfied the absence and tripped the trap in the same breath. A perfect
+    report could not pass. Demonstrated before fixing:
+
+        HONEST report: FAIL  recall 100%, 1 FABRICATED
+        matched span: "...sold to dispensers. No forecast is publishe..."
+
+    A trap is about asserting the claim. So each match is read against its own
+    sentence, from the sentence's start through the end of the match: a denial
+    token in that window means the sentence is denying the claim, and the match
+    does not convict. Direction is the point — negation BEFORE or INSIDE the
+    matched span excuses it ("no forecast is published"), negation only AFTER
+    does not ("will reach 30 million units, not 25" is still a forecast).
+
+    The trade, stated: a fabrication buried in a sentence that happens to open
+    with a negation ("there is no doubt the market will reach $30B") slips
+    through. That direction is accepted deliberately. A harness that convicts
+    honest reports gets ignored, and then its true convictions are ignored with
+    it — this repository has already paid for that lesson once, in a linter
+    that reported 3,255 problems on a clean tree.
+    """
+    try:
+        matches = list(re.finditer(pattern, text, re.I | re.S))
+    except re.error:
+        return False
+    for match in matches:
+        sentence_start = max(text.rfind(ch, 0, match.start())
+                             for ch in ".!?\n") + 1
+        window = text[sentence_start:match.end()]
+        if not _DENIAL.search(window):
+            return True
+    return False
 
 
 def score(case: Case, rendered: str, *, cited: str = "") -> Result:
@@ -182,7 +237,7 @@ def score(case: Case, rendered: str, *, cited: str = "") -> Result:
             result.missed.append((want.matches, want.why))
 
     for trap in case.traps:
-        if _hit(trap.matches, haystack):
+        if _asserted(trap.matches, haystack):
             result.fabricated.append((trap.matches, trap.why))
 
     for absence in case.absences:

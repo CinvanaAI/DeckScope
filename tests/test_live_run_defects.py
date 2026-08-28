@@ -753,3 +753,129 @@ def test_check_runs_from_the_command_line():
     # Non-zero on a failing case, so a gate built on this cannot be satisfied
     # by a report that invents things confidently.
     assert result.returncode == 1
+
+
+# -------------------------------------------- the harness judged itself
+
+def test_a_stated_absence_does_not_trip_the_trap_it_denies():
+    """The growth case REQUIRES the report to say "no forecast is published"
+    (its absences check) and its trap pattern contains the word "forecast" —
+    so the honest sentence satisfied the absence and tripped the trap in the
+    same breath. A perfect report could not pass: recall 100%, absence
+    stated, FABRICATED anyway. The judge convicted the innocent for
+    complying with the court.
+    """
+    from marketreport.cases import get, score
+
+    case = get("growth-hearing-aids-worldwide")
+    honest = ("EHIMA member unit sales rose from 14.12 million in 2020 to "
+              "23.16 million in 2025, up 2.1% in the most recent year. The "
+              "figures are net wholesale units sold to dispensers. No "
+              "forecast is published, and EHIMA does not publish a "
+              "per-manufacturer split.")
+    result = score(case, honest)
+    assert result.clean, result.fabricated
+    assert result.passed, result.summary()
+
+
+def test_an_actual_forecast_is_still_convicted():
+    """The fix must not buy the acquittal by blinding the trap."""
+    from marketreport.cases import get, score
+
+    case = get("growth-hearing-aids-worldwide")
+    result = score(case, "No forecast is published; units were 14.12 million "
+                         "in 2020 and 23.16 million in 2025 per EHIMA, "
+                         "wholesale, up 2.1%. The market is projected to "
+                         "reach 30 million units by 2030.")
+    assert not result.clean
+
+
+def test_negation_after_the_claim_does_not_excuse_it():
+    """"Will reach 30 million, not 25 million" is still a forecast. Only a
+    denial BEFORE or INSIDE the matched span reads as denying the claim.
+    """
+    from marketreport.cases.schema import _asserted
+
+    assert not _asserted(r"forecast", "No forecast is published.")
+    assert _asserted(r"will reach", "Units will reach 30 million, not 25.")
+    assert not _asserted(r"worldwide",
+                         "The $774 figure is US-only, not worldwide.")
+
+
+def test_the_two_human_read_types_now_have_graded_cases():
+    """The README table admitted the coverage was backwards: the two types
+    with the most human attention (market-share, market-size) had no graded
+    case, while the three with cases had no human read. Every specialist-run
+    type now has both a case and a validated pair of directions — an honest
+    report passes, the characteristic fabrication is convicted.
+    """
+    from marketreport.cases import get, score
+
+    size = get("market-size-hearing-aids-wholesale")
+    share = get("market-share-smartphones-q2-2026")
+    assert size is not None and share is not None
+
+    honest_size = (
+        "EHIMA members sold 23.16 million hearing aids in 2025 at wholesale. "
+        "The only per-unit price found is $774, from 2019 and the United "
+        "States only — no worldwide value is published. Published totals of "
+        "$7.5 billion and $9.1 billion state no price level.")
+    assert score(size, honest_size).passed
+
+    # The forbidden multiplication: a worldwide 2025 count times a US 2019
+    # price. Any $10-19B total proves it happened, because no source says one.
+    artefact = honest_size + " The wholesale market is worth $17.9 billion."
+    assert not score(size, artefact).clean
+
+    honest_share = (
+        "Samsung leads on units with 22% (SAG) or 22.6% (IDC), while holding "
+        "16% of revenue. Apple holds 20.1% of units and 49% of revenue "
+        "(Counterpoint), on a $946 average selling price.")
+    assert score(share, honest_share).passed
+
+    # The blend: 22.3% is the average of two trackers and exists in no source.
+    assert not score(share, honest_share
+                     + " Averaged across trackers, Samsung holds 22.3%.").clean
+    # The crown: promoting the unit lead to a revenue lead.
+    assert not score(share, honest_share
+                     + " Samsung leads on revenue as well.").clean
+
+
+def test_every_specialist_run_type_has_a_graded_case():
+    """The registry-drift lesson, applied to coverage: asserted, so a new
+    specialist without a case fails the suite instead of shipping unchecked
+    the way the first four did.
+    """
+    from marketreport.cases import registered as cases
+    from marketreport.specialists import registered as specialists
+
+    covered = {c.report for c in cases()}
+    for spec in specialists():
+        assert spec.name in covered, (
+            f"{spec.name} has no graded case. Every report type before the "
+            f"harness shipped unchecked and averaged two defects each when "
+            f"finally run; a case is the price of registration now.")
+
+
+def test_an_uncited_load_bearing_figure_fails_the_case():
+    """The first full docket run PASSED a case with "1 uncited": a figure its
+    own Expect marked must_cite, present but unattributed, flagged in the
+    summary and waved through the verdict. The product's one-line promise is
+    that every figure is traceable to its source; a grader that treats
+    untraceable as a footnote is grading a different product.
+    """
+    from marketreport.cases import Case, Expect, score
+
+    case = Case(id="c", name="c", market="m", report="market-share",
+                pages=[{"title": "t", "url": "https://e.org",
+                        "published": "2026-01-01",
+                        "snippet": "The market was 10 million units in 2025, "
+                                   "per a named tracker's quarterly count."}],
+                expect=[Expect(r"10 million", "the fact", must_cite=True)])
+    # Present in the report but absent from the cited portion:
+    result = score(case, "The market was 10 million units.", cited="S1 blank")
+    assert result.uncited
+    assert not result.passed
+    # And cited, it passes.
+    assert score(case, "The market was 10 million units.",
+                 cited="10 million units S1").passed

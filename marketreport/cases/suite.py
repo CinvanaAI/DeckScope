@@ -22,7 +22,8 @@ from __future__ import annotations
 
 from .schema import Case, Expect, Trap, register
 
-__all__ = ["REGULATION_US", "DEMOGRAPHICS_US", "GROWTH_WORLDWIDE"]
+__all__ = ["REGULATION_US", "DEMOGRAPHICS_US", "GROWTH_WORLDWIDE",
+           "MARKET_SHARE_SMARTPHONES", "MARKET_SIZE_WHOLESALE"]
 
 
 # ==================================================================== rules
@@ -340,5 +341,191 @@ GROWTH_WORLDWIDE = register(Case(
                r"source)|could not be|nobody publishes|does not publish",
                "EHIMA publishes no per-manufacturer split and no forecast. "
                "Both are things a reader will assume exist unless told."),
+    ],
+))
+
+
+# ============================================================ market share
+
+def _share_case():
+    """Built from `demo_sources.PAGES` rather than a copy of them.
+
+    Those five smartphone pages are already the recorded corpus the demo runs
+    on — real quotations, retrieved 2026-08-27 — and duplicating them here
+    would be the two-definitions drift the dimension module already exists to
+    stop, one directory over.
+    """
+    from ..demo_sources import PAGES, RETRIEVED
+
+    return Case(
+        id="market-share-smartphones-q2-2026",
+        name="Smartphone share, where units and revenue disagree about the "
+             "leader",
+        market="cell phones",
+        report="market-share",
+        measure="",     # unscoped on purpose: the two-basis split IS the story
+        retrieved=RETRIEVED,
+        notes=("The corpus's whole point is a reversal: Samsung leads units "
+               "with 22% (SAG) / 22.6% (IDC) while holding 16% of revenue, "
+               "and Apple holds 49% of revenue on ~20% of units. A correct "
+               "report keeps the two bases and the two publishers apart. The "
+               "traps are the three ways this corpus gets blended: averaging "
+               "the publishers, moving Apple's revenue share onto shipments, "
+               "and promoting Samsung's unit lead to a revenue lead."),
+        pages=tuple(PAGES),
+        expect=[
+            Expect(r"22(?:\.6)?%",
+                   "Samsung's unit share, from either publisher.",
+                   weight=2.0, must_cite=True),
+            Expect(r"49%",
+                   "Apple's revenue share — the right-hand side of the "
+                   "reversal.", weight=2.0, must_cite=True),
+            Expect(r"16%",
+                   "Samsung's revenue share. Without it the unit lead reads "
+                   "as leadership, which is the misreading the corpus "
+                   "exists to prevent.", weight=2.0),
+            Expect(r"20(?:\.1)?%",
+                   "Apple's unit share, so both companies appear on both "
+                   "bases."),
+            Expect(r"Counterpoint",
+                   "The revenue figures belong to their publisher.",
+                   weight=1.5, must_cite=True),
+            Expect(r"IDC|SAG|Smart ?Analytics",
+                   "A second publisher named, which is what makes the "
+                   "unit-share disagreement visible as a disagreement."),
+            Expect(r"\$946",
+                   "Apple's average selling price — the mechanism of the "
+                   "reversal, not just its result."),
+        ],
+        traps=[
+            Trap(r"22\.3%",
+                 "The average of SAG's 22% and IDC's 22.6%. No source says "
+                 "it; two trackers' numbers blended into one is the exact "
+                 "corruption the per-publisher series exist to prevent."),
+            Trap(r"Samsung(?:'s)? (?:led|leads|ranked (?:No\.?\s?1|first)) "
+                 r"(?:on |in |by |the )?revenue",
+                 "Samsung leads units and holds 16% of revenue. Promoting "
+                 "the unit lead to a revenue lead is a real number given the "
+                 "wrong crown."),
+            Trap(r"49% of (?:global )?(?:smartphone )?(?:shipments|units)",
+                 "49% is Apple's share of REVENUE. The same number moved to "
+                 "shipments is the basis swap this whole report type is "
+                 "scoped against."),
+            Trap(r"revenue (?:fell|declined|dropped|shrank)",
+                 "Revenue grew 7% in Q2 and 5% in Q3; SHIPMENTS declined 8%. "
+                 "Moving the decline from units to money inverts the "
+                 "market's actual story."),
+        ],
+    )
+
+
+MARKET_SHARE_SMARTPHONES = register(_share_case())
+
+
+# ============================================================= market size
+
+MARKET_SIZE_WHOLESALE = register(Case(
+    id="market-size-hearing-aids-wholesale",
+    name="A wholesale sizing with the value term missing",
+    market="hearing aids",
+    report="market-size",
+    measure="wholesale",
+    retrieved="2026-08-28",
+    notes=("The live run that shaped terms.py, frozen as a case. The COUNT "
+           "term is free and exact; the VALUE term does not exist worldwide "
+           "after 2019. The correct report states the gap and refuses the "
+           "multiplication. The heavyweight trap is any total between $10B "
+           "and $19B: nothing in the corpus says one, so its presence proves "
+           "the forbidden arithmetic — 23.16M units times some per-unit "
+           "price — was performed on mismatched terms."),
+    pages=[
+        {
+            "title": "Hearing aid sales — EHIMA",
+            "url": "https://www.ehima.com/about-ehima/hearing-aid-sales/",
+            "published": "2026-05-01",
+            "snippet": (
+                "EHIMA member unit sales: 2020, 14.12 million; 2021, 19.34 "
+                "million; 2022, 20.25 million; 2023, 21.81 million; 2024, "
+                "22.69 million; 2025, 23.16 million. Figures are net "
+                "wholesale unit numbers sold by manufacturers to dispensers, "
+                "aggregated across members. No monetary value is published."),
+        },
+        {
+            "title": "US Hearing Aid Pricing: The Markup Ratio — Hearing "
+                     "Health & Technology Matters",
+            "url": "https://hearinghealthmatters.org/hearing-economics/2021/"
+                   "us-hearing-aid-pricing-markup-ratio/",
+            "published": "2021-06-15",
+            "snippet": (
+                "In 2019 the average wholesale invoice was $774 for a "
+                "hearing aid in the United States, up from $457 in 2004. The "
+                "average markup ratio between wholesale and retail has "
+                "remained between 3x and 4x. No worldwide figure is "
+                "published."),
+        },
+        {
+            "title": "Hearing Aids Market Size, Share & Trends Report — "
+                     "Grand View Research",
+            "url": "https://www.grandviewresearch.com/industry-analysis/"
+                   "hearing-aids-market",
+            "published": "2026-01-15",
+            "snippet": (
+                "The global hearing aids market size was estimated at USD "
+                "9.1 billion in 2025. The retail stores segment held the "
+                "largest share of the market at 70.6% in 2025. The price "
+                "level of the total is not stated."),
+        },
+        {
+            "title": "Hearing Aid Market Size, Trends — IMARC Group",
+            "url": "https://www.imarcgroup.com/hearing-aid-market",
+            "published": "2026-01-10",
+            "snippet": (
+                "The global hearing aid market size reached USD 7.5 billion "
+                "in 2025. The page does not state whether the figure is "
+                "counted at wholesale or retail prices."),
+        },
+    ],
+    expect=[
+        Expect(r"23\.16 ?million",
+               "The COUNT term — free, exact, and defined as precisely the "
+               "population being sized.", weight=2.0, must_cite=True),
+        Expect(r"\$774",
+               "The only per-unit wholesale price found anywhere.",
+               weight=1.5, must_cite=True),
+        Expect(r"2019",
+               "That price's year. Seven years stale, and the staleness must "
+               "be visible or the number misleads.", weight=1.5),
+        Expect(r"United States|US[- ]only|U\.S\.",
+               "That price's geography. A US price against a worldwide count "
+               "is the mismatch the report must name.", weight=1.5),
+        Expect(r"wholesale",
+               "The price level this report is scoped to."),
+        Expect(r"\$(?:7\.5|9\.1) ?billion",
+               "The published totals exist and are reported — as unlabelled, "
+               "since neither states its price level."),
+    ],
+    absences=[
+        Expect(r"not (?:published|available|established)|no (?:worldwide|"
+               r"global)|could not be|missing",
+               "The VALUE term does not exist at the geography and period of "
+               "the COUNT term. Saying so is the report's most useful "
+               "sentence — it is exactly what a commissioned study sells."),
+    ],
+    traps=[
+        Trap(r"\$1\d(?:\.\d+)?(?!\d) ?billion",
+             "23.16 million units times any plausible per-unit price lands "
+             "between $10B and $19B, and nothing in the corpus states any "
+             "such figure. Its presence proves the multiplication was "
+             "performed on mismatched terms — a worldwide 2025 count times a "
+             "US 2019 price — which is the one thing this report type "
+             "refuses to do.", weight=3.0),
+        Trap(r"\$(?:7\.5|9\.1) ?billion at wholesale|"
+             r"wholesale (?:total|value|market) of \$(?:7\.5|9\.1)",
+             "Neither publisher states a price level. Assigning one is not a "
+             "reading of the source, it is an addition to it."),
+        Trap(r"\$774[^.\n]{0,80}(?:worldwide|globally)|"
+             r"(?:worldwide|globally)[^.\n]{0,80}\$774",
+             "The $774 invoice is United States, 2019. Applied worldwide it "
+             "manufactures the value term the corpus says does not exist."),
     ],
 ))
