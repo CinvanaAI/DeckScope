@@ -31,6 +31,25 @@ __all__ = ["Specialist", "register", "get", "registered", "run_specialist",
            "MARKET_SHARE"]
 
 
+def _load_catalog() -> None:
+    """Register the other report types.
+
+    Deferred to first use rather than imported at the top, because `catalog`
+    imports this module for `Specialist` and `register`. Called by `get` and
+    `registered`, so nobody has to remember to import it — a specialist that
+    exists but is invisible until some unrelated module happens to be loaded
+    is the kind of ordering bug that only shows up in the packaged wheel.
+    """
+    global _LOADED
+    if _LOADED:
+        return
+    _LOADED = True
+    from . import catalog  # noqa: F401 - imported for its registrations
+
+
+_LOADED = False
+
+
 @dataclass
 class Specialist:
     """One job, its opening questions, and its cross-checks."""
@@ -48,6 +67,15 @@ class Specialist:
     #: generator so the opening questions are chosen to avoid the failure, and
     #: checked in code afterwards wherever it is checkable.
     refuse: str = ""
+    #: The parameter this job must be scoped by before it researches anything,
+    #: as a key from `dimensions.py`. Market share is scoped by basis, market
+    #: size by price level, regulation by jurisdiction. One report per value.
+    #:
+    #: Empty means the job has no such parameter, which is rare and should be
+    #: deliberate rather than an oversight — every type examined so far had
+    #: one, and the ones that looked like they did not turned out to have been
+    #: quietly defaulting.
+    dimension: str = ""
     #: Runs after the loop, before the shaper. Returns extra figures and
     #: caveats — the specialist's own analysis, in Python.
     check: Optional[Callable[..., Dict[str, Any]]] = None
@@ -83,10 +111,12 @@ def register(spec: Specialist) -> Specialist:
 
 
 def get(name: str) -> Optional[Specialist]:
+    _load_catalog()
     return _SPECIALISTS.get((name or "").strip().lower())
 
 
 def registered() -> List[Specialist]:
+    _load_catalog()
     return [_SPECIALISTS[k] for k in sorted(_SPECIALISTS)]
 
 
@@ -287,6 +317,7 @@ MARKET_SHARE = register(Specialist(
     name="market-share",
     job=("who holds what share of a market, by units and by revenue, and how "
          "big the whole market is"),
+    dimension="basis",
     seeds=(
         "What share of the {market} market in {place} does each company hold, "
         "by units shipped or sold, in the most recent published quarter?",
@@ -338,7 +369,7 @@ def _stamp(panel: Panel, measure: Any) -> None:
         panel.headline = f"{panel.headline.rstrip('.')} ({measure.label})."
 
 
-def _off_basis(panel: Panel, measure: Any) -> None:
+def _off_basis(panel: Panel, measure: Any, axis: Any = None) -> None:
     """Flag figures that read as a measure this report is not on.
 
     Cue matching, and openly so — it catches a source that announced its own
@@ -347,9 +378,8 @@ def _off_basis(panel: Panel, measure: Any) -> None:
     can, which is why the report is scoped before the search rather than
     filtered after it.
     """
-    from .measures import get as get_measure
-
-    suspects = [m for m in (get_measure(k) for k in measure.confusable_with)
+    lookup = axis.get if axis is not None else (lambda k: None)
+    suspects = [m for m in (lookup(k) for k in measure.confusable_with)
                 if m is not None]
     if not suspects:
         return
@@ -372,11 +402,16 @@ def _off_basis(panel: Panel, measure: Any) -> None:
                     break
 
 
-def _or_list(keys: Sequence[str]) -> str:
-    """"units or an installed base" — for naming what a source may substitute."""
-    from .measures import get as get_measure
+def _or_list(keys: Sequence[str], axis: Any = None) -> str:
+    """"units or an installed base" — for naming what a source may substitute.
 
-    labels = [m.label for m in (get_measure(k) for k in keys or ()) if m]
+    Looked up inside the dimension the report is scoped by. A price-level
+    report's confusable values are other price levels, and resolving them in
+    the basis vocabulary would find none of them and fall back to "a figure on
+    another basis" — both wrong and useless.
+    """
+    lookup = axis.get if axis is not None else (lambda k: None)
+    labels = [m.label for m in (lookup(k) for k in keys or ()) if m]
     if not labels:
         return "a figure on another basis"
     if len(labels) == 1:
@@ -433,13 +468,31 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     # gets the old undifferentiated behaviour — but it is the degraded case,
     # and the panel says so rather than quietly producing a chart whose axis
     # nobody named.
-    from .measures import Measure, get as get_measure
+    from .dimensions import Option
+    from .dimensions import get as get_dimension
 
+    # Resolved against THIS specialist's dimension, not against basis. Market
+    # size is scoped by price level and regulation by jurisdiction; looking
+    # every value up in the basis vocabulary would silently reject "wholesale"
+    # and accept nothing but shares.
     if isinstance(measure, str):
-        measure = get_measure(measure)
-    if measure is not None and not isinstance(measure, Measure):
+        axis = get_dimension(spec.dimension) if spec.dimension else None
+        if axis is None:
+            raise ValueError(
+                f"the {spec.name!r} specialist declares no dimension, so the "
+                f"value {measure!r} cannot be resolved. Either give the "
+                f"specialist a `dimension` from marketreport.dimensions or "
+                f"pass an Option directly.")
+        resolved, unknown = axis.resolve([measure])
+        if unknown or not resolved:
+            known = ", ".join(o.key for o in axis.options) or axis.expects
+            raise ValueError(
+                f"{measure!r} is not a value of the {axis.key!r} dimension "
+                f"that {spec.name!r} is scoped by. Expected one of: {known}")
+        measure = resolved[0]
+    if measure is not None and not isinstance(measure, Option):
         raise TypeError(
-            f"measure must be a Measure or a registered key, not "
+            f"measure must be a dimension Option or a registered key, not "
             f"{type(measure).__name__}. Guessing here would put a number on a "
             f"basis nobody chose, which is the error this parameter exists to "
             f"prevent.")
@@ -476,7 +529,7 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
                   f"report covers each of the others and mixing them is the "
                   f"failure this split exists to prevent. The likeliest "
                   f"substitution to catch a source making is "
-                  f"{_or_list(measure.confusable_with)}.\n\n{spec.refuse}")
+                  f"{_or_list(measure.confusable_with, get_dimension(spec.dimension))}.\n\n{spec.refuse}")
         sources_hint = measure.homes
     else:
         job, refuse, sources_hint = spec.job, (spec.refuse or ""), ""
@@ -559,7 +612,7 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     # carrying a revenue number looks exactly like a correct chart. Checked
     # rather than instructed, because instruction is advisory.
     if measure is not None:
-        _off_basis(panel, measure)
+        _off_basis(panel, measure, get_dimension(spec.dimension))
 
     if spec.check is not None:
         try:

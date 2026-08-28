@@ -33,7 +33,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
-from .measures import resolve
 from .panel import Panel
 
 __all__ = ["Brief", "run_brief"]
@@ -46,14 +45,18 @@ class Brief:
     #: The market as upstream resolved it — already disambiguated. "Hearing aid
     #: manufacturers", not "hearing aids", if that is the reading it chose.
     market: str
-    #: Measure keys from `marketreport.measures`. One report is produced for
-    #: each, in this order. An unknown key is reported, never skipped quietly.
+    #: Values of the specialist's dimension — bases for market share, price
+    #: levels for market size, jurisdictions for regulation. One report is
+    #: produced for each, in this order. An unknown value is reported, never
+    #: skipped quietly.
     measures: Sequence[str] = ()
     place: str = ""
     #: Industry codes and geography ids the dataset backends need.
     framing: Dict[str, Any] = field(default_factory=dict)
-    #: Which specialist to run. One today; the parameter exists so a second
-    #: report type does not need this module rewritten.
+    #: Which report to produce: market-share, market-size, growth, regulation,
+    #: competitive-landscape, demographics. Each declares the dimension its
+    #: values are resolved against, so this field and `measures` travel
+    #: together — a price level means nothing to the market-share specialist.
     specialist: str = "market-share"
     #: Free text from upstream about why this market was read this way. Carried
     #: onto every panel so a reader can see the boundary decision that shaped
@@ -67,14 +70,23 @@ class Brief:
                 "phrase 'in worldwide' and return a report about nothing, "
                 "which is worse than refusing.")
         if not self.measures:
-            from .measures import registered
+            from .dimensions import get as get_dimension
+            from .specialists import get as get_specialist
+
+            spec = get_specialist(self.specialist)
+            axis = get_dimension(spec.dimension) if spec else None
+            expected = ""
+            if axis is not None:
+                expected = (", ".join(o.key for o in axis.options)
+                            or axis.expects)
             raise ValueError(
-                f"a brief for {self.market!r} names no measures, so there is "
-                f"nothing to produce. Deciding which yardsticks a market is "
-                f"sold in belongs upstream: this stage would have to guess, "
-                f"and a guessed basis is the one error the whole split exists "
-                f"to prevent. Registered measures: "
-                f"{', '.join(m.key for m in registered())}")
+                f"a brief for {self.market!r} names no values, so there is "
+                f"nothing to produce. Deciding how a market should be scoped "
+                f"belongs upstream: this stage would have to guess, and a "
+                f"guessed scope is the one error the whole split exists to "
+                f"prevent."
+                + (f" {self.specialist!r} is scoped by {axis.key!r} — expected "
+                   f"one of: {expected}" if axis is not None else ""))
 
 
 def run_brief(brief: Brief, *, provider: Any, researcher: Any,
@@ -107,10 +119,24 @@ def run_brief(brief: Brief, *, provider: Any, researcher: Any,
         raise ValueError(f"no specialist named {brief.specialist!r} is "
                          f"registered")
 
-    measures, unknown = resolve(brief.measures)
+    # Resolved against the SPECIALIST's dimension. A market-size brief names
+    # price levels and a regulation brief names jurisdictions; resolving both
+    # in the basis vocabulary — which is what this did while market share was
+    # the only specialist — would reject every one of them.
+    from .dimensions import get as get_dimension
+
+    axis = get_dimension(spec.dimension) if spec.dimension else None
+    if axis is None:
+        raise ValueError(
+            f"the {spec.name!r} specialist declares no dimension, so a brief "
+            f"naming values for it cannot be resolved. Give it a `dimension` "
+            f"from marketreport.dimensions.")
+    measures, unknown = axis.resolve(brief.measures)
     for name in unknown:
-        emit(f"  ignoring unknown measure {name!r} — nothing was produced for "
-             f"it. Registered measures are named in marketreport.measures.")
+        known = ", ".join(o.key for o in axis.options) or axis.expects
+        emit(f"  ignoring {name!r} — not a value of the {axis.key!r} dimension "
+             f"that {spec.name!r} is scoped by, so nothing was produced for "
+             f"it. Expected one of: {known}")
 
     runner = run or run_specialist
     panels: List[Panel] = []

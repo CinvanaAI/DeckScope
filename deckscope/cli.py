@@ -322,15 +322,22 @@ def build_parser() -> argparse.ArgumentParser:
             "on a US industry; the two share their machinery and increasingly "
             "their answers."))
     ask.add_argument("question", help="What you want to know, in plain words")
+    ask.add_argument("--report", default="market-share", metavar="TYPE",
+                     help="Which report to produce: market-share, "
+                          "market-size, growth, regulation, "
+                          "competitive-landscape, demographics. "
+                          "'deckscope reports' lists them with the values "
+                          "each accepts.")
     ask.add_argument("--measures", default=None, metavar="LIST",
-                     help="Comma-separated measures to report, one report "
-                          "each: revenue, units, usage, installed_base, "
-                          "subscribers, outlets, capacity. A share of revenue "
-                          "and a share of units are different answers that "
-                          "often name different leaders, so each gets its own "
-                          "report rather than sharing a chart. Omit this and "
-                          "you get one undifferentiated report, which is the "
-                          "degraded path.")
+                     help="Comma-separated values to report, one report each. "
+                          "What is valid depends on --report: bases "
+                          "(revenue, units, usage...) for market-share, price "
+                          "levels (wholesale, retail, manufacturer_revenue) "
+                          "for market-size, a jurisdiction for regulation. "
+                          "Two values of one dimension are different answers "
+                          "that often disagree, so each gets its own report "
+                          "rather than sharing a chart. Omit this and you get "
+                          "one undifferentiated report, the degraded path.")
     ask.add_argument("--save", default=None, metavar="FILE",
                      help="Write the panels to a file — .html .md .txt .json")
     ask.add_argument("--json", action="store_true",
@@ -561,14 +568,32 @@ def _report_types(args: Any) -> int:
     _out("")
     _out("  Report types:")
     _out("")
+    # The scoping parameter is listed with each type, because it is the thing
+    # a caller has to decide before running one and there is nowhere else they
+    # would find it. A reader who does not know that market-size wants a price
+    # level will get the degraded single-report path and never learn why the
+    # published totals they are shown disagree.
+    from marketreport.dimensions import get as get_dimension
+    from marketreport.specialists import get as get_specialist
+
     for report in registered():
         _out(f"  {report.key}")
         _out(f"    {report.answers}")
         _out(f"    {len(report.sections)} sections · "
              + " → ".join(s.key for s in report.order()))
+        spec = get_specialist(report.key)
+        axis = get_dimension(spec.dimension) if spec and spec.dimension else None
+        if axis is not None:
+            values = ", ".join(o.key for o in axis.options) or axis.expects
+            _out(f"    scoped by {axis.key} ({axis.label}) — one report each: "
+                 f"{values}")
+        elif spec is None:
+            _out("    no specialist yet — runs as section briefs, unscoped")
         _out("")
     _out("  'deckscope reports --type market-share' shows one in detail.")
     _out("  'deckscope report market-share \"cell phones\"' runs one.")
+    _out("  'deckscope ask \"...\" --report market-size --measures "
+         "wholesale,retail' runs one per value.")
     return 0
 
 
@@ -908,7 +933,9 @@ def _by_measure(request: Any, names: List[str], *, provider: Any,
 
     try:
         brief = Brief(market=request.market, place=request.place,
-                      measures=names, framing=request.framing())
+                      measures=names, framing=request.framing(),
+                      specialist=getattr(args, "report", None)
+                      or "market-share")
     except ValueError as exc:
         _out("")
         _out(f"  {exc}")
