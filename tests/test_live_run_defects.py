@@ -319,3 +319,66 @@ if __name__ == "__main__":  # pragma: no cover
             print(f"  FAIL {_name}: {type(_exc).__name__}: {_exc}")
     print(f"\n  {failed} failed")
     raise SystemExit(1 if failed else 0)
+
+
+# ------------------------------------------------- the market-size live run
+
+class _Fact:
+    """A finding, as the reader records one."""
+
+    metric = None
+
+    def __init__(self, statement, value, value_text, unit="USD"):
+        self.statement, self.value = statement, value
+        self.value_text, self.unit = value_text, unit
+
+
+def _size_spread(findings) -> bool:
+    from marketreport.catalog import _size_check
+    from marketreport.panel import Panel
+
+    result = _size_check(findings=findings, panel=Panel(question="q"),
+                         market="hearing aids")
+    return any("disagree by more than half" in c for c in result["caveats"])
+
+
+def test_a_unit_price_is_not_a_market_total():
+    """The market-size run reported "published totals for this market
+    disagree, from $774 to $400-3500" — comparing the average wholesale
+    invoice for ONE hearing aid against the price range for ONE hearing aid,
+    and calling both market sizes. Same currency unit, nine orders of
+    magnitude apart.
+    """
+    assert not _size_spread([
+        _Fact("The average wholesale invoice for a hearing aid was $774 in "
+              "2019.", 774, "$774"),
+        _Fact("Single-unit wholesale prices range from $400 to $3,500 per "
+              "hearing aid.", 1950, "$400-3500"),
+    ])
+
+
+def test_two_real_totals_still_disagree():
+    assert _size_spread([
+        _Fact("IMARC Group puts the global hearing aid market at USD 7.5 "
+              "billion in 2025.", 7.5, "$7.5B"),
+        _Fact("The global hearing aids market was USD 15.11 billion in 2025.",
+              15.11, "$15.11B"),
+    ])
+
+
+def test_a_caption_promising_a_share_over_a_non_share_is_flagged():
+    """The run drew a row reading "Retail share of channel — 3-4x". Every part
+    of it was sourced and traceable; the row still told the reader something
+    false, and the citation led to a statement that did not say it.
+    """
+    from marketreport.shaper import _mislabelled
+
+    markup = _Fact("Dispensers mark hearing aids up three to four times.",
+                   3.5, "3-4x", unit="n/a")
+    assert _mislabelled("Retail share of channel", markup)
+    # A caption that promises a share over an actual share is fine, and so is
+    # one that promises nothing.
+    real = _Fact("Retail stores were 70.6% of the channel.", 70.6, "70.6%",
+                 unit="%")
+    assert not _mislabelled("Retail share of channel", real)
+    assert not _mislabelled("Dispensing markup", markup)

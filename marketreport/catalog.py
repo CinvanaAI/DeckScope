@@ -21,6 +21,7 @@ the chain they counted the money.
 """
 from __future__ import annotations
 
+import re
 from typing import Any, Dict, List, Sequence
 
 from .panel import ABSENT, DERIVED, Figure, Panel
@@ -33,6 +34,21 @@ __all__ = ["MARKET_SIZE", "GROWTH", "REGULATION", "COMPETITIVE_LANDSCAPE",
 
 
 # ------------------------------------------------------------- market size
+
+#: A per-unit amount, in the words sources actually use for one. Checked
+#: directly rather than through `metrics.classify`, which returns "unknown" for
+#: all three of the statements this had to separate: its PRICE rule matches
+#: `\bprice\b`, so "wholesale prices range from $400" slips past on the plural.
+#: A narrow explicit test that works beats a general one that does not.
+_PER_UNIT = re.compile(
+    r"\b(per (unit|device|item|piece|hearing aid|handset|user|customer|seat|"
+    r"patient|subscriber)|unit price|selling price|invoice|asp\b|"
+    r"average price|price per|prices? (range|of)|each)\b", re.I)
+
+
+def _per_unit(statement: str) -> bool:
+    return bool(_PER_UNIT.search(statement or ""))
+
 
 def _size_check(*, findings: Sequence[Any], panel: Panel, market: str,
                 place: str = "", **_: Any) -> Dict[str, Any]:
@@ -47,9 +63,16 @@ def _size_check(*, findings: Sequence[Any], panel: Panel, market: str,
     figures: List[Figure] = []
     caveats: List[str] = []
 
+    # Market totals only. Filtering on the currency unit alone swept in every
+    # per-unit price as well, and the live run duly reported "published totals
+    # for this market disagree, from $774 to $400-3500" — comparing the average
+    # wholesale invoice for one hearing aid against the price range for one
+    # hearing aid, and calling both market sizes. A price and a total are the
+    # same unit and differ by nine orders of magnitude.
     sizes = [f for f in findings
              if getattr(f, "value", None) is not None
-             and str(getattr(f, "unit", "")).upper() in ("USD", "EUR", "GBP")]
+             and str(getattr(f, "unit", "")).upper() in ("USD", "EUR", "GBP")
+             and not _per_unit(str(getattr(f, "statement", "")))]
 
     # A spread between independent estimates is the finding, not a nuisance to
     # average away. Averaging is the one thing that must not happen here: the

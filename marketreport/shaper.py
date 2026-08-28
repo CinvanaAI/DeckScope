@@ -216,6 +216,44 @@ def _as_float(text: Any) -> Optional[float]:
         return None
 
 
+#: Words in a caption that promise a proportion. A figure captioned with one
+#: of these and carrying anything other than a percentage is not a matter of
+#: taste — the caption states a kind of quantity the number is not.
+_PROMISES_A_SHARE = ("share", "percent", "percentage", "proportion", "%",
+                     " of total", "penetration", "rate of")
+
+
+def _mislabelled(label: str, finding: Any) -> str:
+    """A caption that promises a proportion over a number that is not one.
+
+    Deliberately narrow. The first attempt compared the caption's words with
+    the cited statement's words, which was wrong in both directions on real
+    output: it missed "Retail share of channel" over a markup finding, because
+    both contain "retail", and it flagged "Dispensing markup" over "Dispensers
+    mark ... up", because the words are inflected differently. A checker that
+    both cries wolf and sleeps through the burglary is worse than none, and
+    this repository has already paid for that lesson once in its linter.
+
+    So this checks the one thing that can be decided from the text with
+    certainty: a caption saying "share" over a value that is not a percentage.
+    That is exactly the row the live run produced — "Retail share of channel"
+    displaying "3-4x" — and it needs no judgment to call wrong.
+    """
+    low = f" {(label or '').lower()} "
+    if not any(word in low for word in _PROMISES_A_SHARE):
+        return ""
+    unit = str(getattr(finding, "unit", "") or "").strip()
+    text = str(getattr(finding, "value_text", "") or "")
+    if "%" in unit or "%" in text or "percent" in unit.lower():
+        return ""
+    if getattr(finding, "value", None) is None:
+        return ""       # an absence carries no number to contradict
+    return (f"The figure captioned {label!r} promises a share, but the value "
+            f"behind it is {text or getattr(finding, 'value', '')!r}, which is "
+            f"not a proportion. The number is sourced; the caption describes "
+            f"something else. Read it against \"{str(getattr(finding, 'statement', ''))[:110]}\".")
+
+
 def build_panel(question: str, findings: Sequence[Any],
                 shaped: Dict[str, Any], *, agent: str = "") -> Panel:
     """Turn a shaper's answer into a panel, keeping only what it can support.
@@ -315,8 +353,19 @@ def build_panel(question: str, findings: Sequence[Any],
                 finding_id=str(getattr(finding, "id", ""))))
             continue
 
+        # The label is free text and the value comes from the finding, so
+        # nothing forced them to be about the same thing. A live run produced
+        # "Retail share of channel — 3-4x", where the label named a percentage
+        # and the cited finding was the dispensing markup. Every part was
+        # sourced and traceable; the row still told the reader something
+        # false, and the citation trail led to a statement that did not say it.
+        statement = str(getattr(finding, "statement", "") or "")
+        note = _mislabelled(label, finding)
+        if note:
+            panel.caveats.append(note)
+
         panel.figures.append(Figure(
-            label=label or getattr(finding, "statement", "")[:48],
+            label=label or statement[:48],
             value=getattr(finding, "value", None),
             value_text=str(getattr(finding, "value_text", "") or ""),
             unit=str(getattr(finding, "unit", "") or ""),
