@@ -40,10 +40,18 @@ __all__ = ["MARKET_SIZE", "GROWTH", "REGULATION", "COMPETITIVE_LANDSCAPE",
 #: all three of the statements this had to separate: its PRICE rule matches
 #: `\bprice\b`, so "wholesale prices range from $400" slips past on the plural.
 #: A narrow explicit test that works beats a general one that does not.
+#: Two branches, because enumerating the nouns alone was too brittle: the
+#: first list omitted "person" and so failed to recognise "average annual spend
+#: is $120 per person" as a per-unit figure, which is FIGS's actual value term.
+#: The second branch catches any "per <noun>" in a sentence that is plainly
+#: about money, which is the general case; the first catches the money words
+#: that carry no "per" at all.
 _PER_UNIT = re.compile(
-    r"\b(per (unit|device|item|piece|hearing aid|handset|user|customer|seat|"
-    r"patient|subscriber)|unit price|selling price|invoice|asp\b|"
-    r"average price|price per|prices? (range|of)|each)\b", re.I)
+    r"\b(unit price|selling price|invoice|asp\b|average (annual )?"
+    r"(price|spend|revenue|cost|value)|price per|prices? (range|of)"
+    r"|per (unit|device|item|piece|head|capita|each))\b"
+    r"|(?=.*\b(spend|spent|price|prices|cost|paid|pays|revenue|invoice|"
+    r"charge)\b).*\bper [a-z][a-z-]+\b", re.I)
 
 
 def _per_unit(statement: str) -> bool:
@@ -91,9 +99,44 @@ def _size_check(*, findings: Sequence[Any], panel: Panel, market: str,
                 f"is correct. They are not averaged, deliberately: the mean of "
                 f"two definitions describes no market.")
 
+    # Assemble the arithmetic from whatever terms the run established, rather
+    # than only complaining that none is shown. `sizing.py` has had COUNT x
+    # RATE x VALUE since the beginning and nothing was feeding it; `terms.py`
+    # sorts findings into the three factors so a reader gets the calculation
+    # where it can be made, and the name of the missing factor where it cannot.
+    from .terms import assemble, shortfall
+
+    by_term = {"count": [], "rate": [], "value": []}
+    for finding in findings:
+        unit = str(getattr(finding, "unit", "")).upper()
+        statement = str(getattr(finding, "statement", ""))
+        if unit == "COUNT":
+            by_term["count"].append(finding)
+        elif unit == "%":
+            by_term["rate"].append(finding)
+        elif unit in ("USD", "EUR", "GBP") and _per_unit(statement):
+            # Only PER-UNIT money is the value term. A market total is an
+            # output of the arithmetic, not an input to it, and feeding one in
+            # here would multiply a total by a count.
+            by_term["value"].append(finding)
+
+    ring, gaps = assemble(place or "worldwide", by_term)
+    if ring.size is not None:
+        figures.append(Figure(
+            label="Market size, computed here",
+            value=ring.size, value_text=f"${ring.size:,.0f}",
+            unit="USD", state=DERIVED,
+            operands=[t.kind for t in ring.terms if t.known],
+            how=ring.arithmetic(),
+            because="computed from the terms below, not quoted from a "
+                    "publisher"))
+    elif any(t.known for t in ring.terms):
+        caveats.append(shortfall(ring, gaps))
+
     # The method sentence. A size with no arithmetic beside it is the exact
     # thing the corpus never does and the syndicated reports always do.
     shown = [f for f in panel.figures if f.state == DERIVED and f.operands]
+    shown += [f for f in figures if f.state == DERIVED and f.operands]
     if sizes and not shown:
         caveats.append(
             "No figure here is shown with its arithmetic. Every filing in the "
@@ -102,12 +145,18 @@ def _size_check(*, findings: Sequence[Any], panel: Panel, market: str,
             "lets a reader disagree with it. Treat these as quoted totals "
             "rather than as a sizing this report performed.")
 
-    if not sizes:
+    # Only absent if nothing published one AND nothing could be computed. The
+    # first version checked `sizes` alone, so a panel that had just derived
+    # $2.04B from three sourced terms also carried a figure saying no total for
+    # this market exists. Both statements were produced by the same function,
+    # four lines apart.
+    if not sizes and ring.size is None:
         figures.append(Figure(
             label="A total for this market",
             state=ABSENT,
             because="no source reached published a money total on the price "
-                    "level this report is scoped to"))
+                    "level this report is scoped to, and the terms needed to "
+                    "compute one are not all established"))
     return {"figures": figures, "caveats": caveats}
 
 

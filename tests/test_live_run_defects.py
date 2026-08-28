@@ -382,3 +382,82 @@ def test_a_caption_promising_a_share_over_a_non_share_is_flagged():
                  unit="%")
     assert not _mislabelled("Retail share of channel", real)
     assert not _mislabelled("Dispensing markup", markup)
+
+
+# ------------------------------------------- sizing as three separate terms
+
+def _sized(findings):
+    from marketreport.catalog import _size_check
+    from marketreport.panel import Panel
+    return _size_check(findings=findings, panel=Panel(question="q"),
+                       market="scrubs", place="United States")
+
+
+class _Term(_Fact):
+    """A finding with the fields the term sorter reads."""
+
+    def __init__(self, statement, value, value_text, unit):
+        super().__init__(statement, value, value_text, unit)
+        self.source_ids, self.as_of, self.method = ["S1"], "2025", "search"
+
+
+def test_three_sourced_terms_produce_the_arithmetic():
+    """FIGS's actual sizing, reproduced: 20 million healthcare professionals,
+    85% who buy their own uniforms, $120 a head. The point is not the total —
+    it is that a reader can disagree with each factor.
+    """
+    result = _sized([
+        _Term("There are 20 million healthcare professionals in the United "
+              "States.", 20_000_000, "20m", "count"),
+        _Term("85% of them buy their own uniforms.", 85.0, "85%", "%"),
+        _Term("Average annual spend is $120 per person.", 120.0, "$120",
+              "USD"),
+    ])
+    derived = [f for f in result["figures"] if f.state == "derived"]
+    assert len(derived) == 1
+    assert derived[0].value == 2_040_000_000
+    assert set(derived[0].operands) == {"count", "rate", "value"}
+    assert "×" in derived[0].how
+
+
+def test_a_computed_total_is_not_also_reported_absent():
+    """The first version added "A total for this market — ABSENT" whenever no
+    publisher had one, even when the same function had just derived a total
+    from three sourced terms four lines earlier.
+    """
+    result = _sized([
+        _Term("There are 20 million healthcare professionals in the United "
+              "States.", 20_000_000, "20m", "count"),
+        _Term("85% of them buy their own uniforms.", 85.0, "85%", "%"),
+        _Term("Average annual spend is $120 per person.", 120.0, "$120",
+              "USD"),
+    ])
+    absent = [f for f in result["figures"] if f.state == "absent"]
+    assert not absent
+
+
+def test_a_missing_term_is_named_rather_than_substituted():
+    """The hearing-aid case: the count is free and exact, the value does not
+    exist worldwide after 2019. The useful output is which factor is missing
+    and where it would come from — not a total built on a substitute.
+    """
+    result = _sized([
+        _Term("EHIMA members sold 23.16 million hearing aids in 2025.",
+              23_160_000, "23.16m", "count"),
+    ])
+    assert not [f for f in result["figures"] if f.state == "derived"]
+    gap = " ".join(result["caveats"])
+    assert "what each one is worth per year" in gap
+    assert "commissioned studies exist to sell" in gap
+
+
+def test_a_market_total_is_never_read_as_the_value_term():
+    """A published total is an OUTPUT of the arithmetic. Feeding one in as the
+    per-unit value would multiply a total by a count.
+    """
+    from marketreport.catalog import _per_unit
+
+    assert not _per_unit("IMARC Group puts the global hearing aid market at "
+                         "USD 7.5 billion in 2025.")
+    assert _per_unit("Average annual spend is $120 per person.")
+    assert _per_unit("agilon takes $10,000 of revenue per member.")
