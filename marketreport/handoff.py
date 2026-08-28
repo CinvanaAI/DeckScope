@@ -14,11 +14,12 @@ is and which yardsticks it is meaningfully sold in. The agent's job is to
 receive that decision and carry it out — one report per measure, every one of
 them, including the measures that turn out to have no data behind them.
 
-The upstream that produces a `Brief` is not built yet. That does not change
-what this side has to look like, and building the receiver first means the
-boundary is a real contract rather than a shape the two ends negotiate later.
-A `Brief` can be constructed by hand, by a manager, or by a deck reader, and
-none of them need to know anything about how research works.
+The upstream exists now: `scoping.py` reads a deck's analysis and produces
+these Briefs, which is what building the receiver first was for — the
+boundary was already a real contract by the time its producer arrived. A
+`Brief` can equally be constructed by hand (`--measures` on the CLI) or by
+any future manager; none of them need to know anything about how research
+works.
 
 **Why one report per measure rather than one report with several series.**
 A share of revenue and a share of units are different answers to different

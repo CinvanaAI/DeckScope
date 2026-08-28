@@ -36,6 +36,9 @@ AI providers on quality and makes no recommendation — pick the one you pay for
 ```bash
 deckscope run yourdeck.pdf
 deckscope run yourdeck.pdf --format html md      # choose output formats
+deckscope run yourdeck.pdf --with-market-reports # also build the market
+                                                 # reports the deck's claims
+                                                 # depend on (costs more)
 ```
 
 PDF, PPTX, DOCX, and Markdown decks all work. Prefer the window to a terminal?

@@ -167,6 +167,13 @@ def build_parser() -> argparse.ArgumentParser:
                      help="Also research the category from scratch, without the deck, "
                           "and report what that pass found which the claim-directed "
                           "research never looked for")
+    run.add_argument("--with-market-reports", action="store_true",
+                     help="After the deck analysis, have the model decide "
+                          "which market this deck is really about and which "
+                          "measures matter, then dispatch the report "
+                          "specialists to produce those market reports too — "
+                          "stored alongside your other panels. Each report "
+                          "is a full research run, so this costs more.")
     run.add_argument("--save-corpus", default=None, metavar="FILE",
                      help="Write the frozen evidence to a file, so a later run can "
                           "replay the identical sources")
@@ -1924,7 +1931,66 @@ def _run(args: Any) -> int:
              f"{result.corpus.fingerprint()}) — replay it with --corpus\n")
 
     _print_summary(result, files)
+
+    if getattr(args, "with_market_reports", False):
+        _market_reports_for_deck(result, cfg)
+    else:
+        _out("\nAdd --with-market-reports to also generate the underlying "
+             "market reports this deck's claims depend on.")
     return _format_exit_code(result)
+
+
+def _market_reports_for_deck(result: Any, cfg: Any) -> None:
+    """The managing step Von specified at the very start of this project:
+
+        "one agent that gets called by a managing agent that decided that
+        this market share data mattered, and since it was generated, it
+        should be a selectable thing the user is able to look at"
+
+    The scoper reads the deck's analysis, decides market + measures + report
+    types, and the specialists do the rest. Every panel lands in the library,
+    which is what makes it selectable in `deckscope panels` and the app. A
+    scoper that cannot scope says so and dispatches nothing — refusal over a
+    guessed market, same as everywhere else.
+    """
+    from marketreport.handoff import run_brief
+    from marketreport.library import Library
+    from marketreport.scoping import briefs_from_deck, summary
+    from .providers import get_provider
+    from .research.registry import get_researcher
+
+    # Built from the same cfg the pipeline just ran on, not smuggled out of
+    # the pipeline's internals — the first wiring referenced a `provider`
+    # variable _run never had, and crashed AFTER the deck analysis had been
+    # paid for. The suite's producer-contract lesson, one layer up.
+    provider = get_provider(cfg.provider)
+    researcher = get_researcher(cfg.research, provider)
+
+    _out("\n─── Market reports " + "─" * 49)
+    deck = getattr(result, "deck", None) or {}
+    briefs, notes = briefs_from_deck(deck, provider)
+    _out(summary(briefs, notes))
+    if not briefs:
+        return
+
+    library = Library()
+    for brief in briefs:
+        _out(f"\n  producing {brief.specialist} "
+             f"({', '.join(brief.measures)})…")
+        try:
+            outcome = run_brief(brief, provider=provider,
+                                researcher=researcher, on_event=_out)
+        except Exception as exc:  # noqa: BLE001 - one report must not sink the run
+            _out(f"  {brief.specialist} failed: {exc}")
+            continue
+        try:
+            stored = library.save_all(outcome["panels"], market=brief.market,
+                                      place=brief.place, request=brief.market)
+            for ref in stored:
+                _out(f"  stored as {ref.id}")
+        except OSError as exc:
+            _out(f"  could not store: {exc}")
+    _out("\n  Open them any time:  deckscope panels")
 
 
 def _format_exit_code(result: Any) -> int:

@@ -930,3 +930,97 @@ def test_a_mock_provider_on_a_real_deck_banners_loudly():
         stdin=subprocess.DEVNULL, timeout=400)
     assert "offline mock" in result.stdout
     assert "illustrative" in result.stdout
+
+
+# ------------------------------------------------ the deck-to-briefs scoper
+
+_SCOPER_DECK = {
+    "company": {"name": "Northwind Ledger",
+                "one_liner": "AI agents that run back-office workflows"},
+    "market": {"category": "Workflow automation / agentic RPA",
+               "tam_claimed": "$88B"},
+    "claims": [{"type": "market-size", "load_bearing": "high",
+                "claim": "The financial reconciliation software market is "
+                         "$88B, growing at 31% CAGR"}],
+}
+
+
+def test_the_scoper_validates_everything_and_guesses_nothing():
+    """The upstream Von specified from the start: read the deck, decide the
+    market and its measures, hand off Briefs. Report types are validated
+    against the specialist registry and values against each type's own
+    dimension — anything unknown becomes a note, never a guess, because a
+    guessed scope is the error the whole handoff exists to prevent.
+    """
+    from marketreport.scoping import briefs_from_deck
+
+    class Good:
+        def complete_json(self, s, u, **k):
+            return {"market": "financial close and reconciliation software",
+                    "place": "",
+                    "definition": "narrower than the deck's own frame",
+                    "reports": [
+                        {"type": "market-size",
+                         "values": ["wholesale", "bogus"]},
+                        {"type": "nonsense-type", "values": ["x"]}]}
+
+    briefs, notes = briefs_from_deck(_SCOPER_DECK, Good())
+    assert [b.specialist for b in briefs] == ["market-size"]
+    assert briefs[0].measures == ["wholesale"]
+    # The boundary decision travels on the brief, so every panel it produces
+    # carries the re-framing that shaped it.
+    assert "narrower" in briefs[0].definition
+    assert any("'bogus'" in n for n in notes)
+    assert any("nonsense-type" in n for n in notes)
+
+
+def test_a_scoper_that_cannot_scope_says_so_and_dispatches_nothing():
+    """The mock answers every unknown prompt with {'note': 'mock', ...}. A
+    scoper handed that must produce zero briefs and the reason — not invent a
+    market to research, which would spend a full research budget on a guess.
+    """
+    from marketreport.scoping import briefs_from_deck
+
+    class MockLike:
+        def complete_json(self, s, u, **k):
+            return {"note": "mock", "echo": u[:40]}
+
+    class Broken:
+        def complete_json(self, s, u, **k):
+            raise RuntimeError("provider fell over")
+
+    for provider in (MockLike(), Broken()):
+        briefs, notes = briefs_from_deck(_SCOPER_DECK, provider)
+        assert briefs == []
+        assert notes and "no market reports were dispatched" in notes[0]
+
+
+def test_the_deck_run_offers_and_honours_the_market_reports_flag():
+    """Without the flag, one hint line. With it, the scoper section appears —
+    and with the mock, it must be the honest refusal rather than a crash,
+    because the first wiring referenced a variable _run never had and died
+    AFTER the deck analysis was paid for.
+    """
+    import tempfile
+
+    root = Path(__file__).resolve().parent.parent
+    env = dict(os.environ, DECKSCOPE_PROVIDER="mock", DECKSCOPE_RESEARCH="none",
+               HOME=tempfile.mkdtemp(prefix="ds_scope_home_"))
+
+    def run(*extra):
+        return subprocess.run(
+            [sys.executable, "-m", "deckscope.cli", "run",
+             "deckscope/evaluation/suite/decks/inflated_tam.md",
+             "--format", "md", "--out",
+             tempfile.mkdtemp(prefix="ds_scope_out_"), *extra],
+            capture_output=True, text=True, cwd=str(root), env=env,
+            stdin=subprocess.DEVNULL, timeout=400)
+
+    plain = run()
+    assert plain.returncode == 0
+    assert "--with-market-reports" in plain.stdout      # the offer
+
+    flagged = run("--with-market-reports")
+    assert flagged.returncode == 0, flagged.stdout[-500:]
+    assert "Market reports" in flagged.stdout
+    assert "no market reports were dispatched" in flagged.stdout
