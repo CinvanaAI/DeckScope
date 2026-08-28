@@ -58,13 +58,21 @@ its first line rather than listing confident findings. See
 > types are registered and runnable. How far each has been checked differs, and the
 > difference matters more than the count:
 >
-> | | driven with a live model | run on recorded pages | output read line by line |
-> |---|---|---|---|
-> | market-share | yes | yes | yes |
-> | market-size | yes | — | yes |
-> | competitive-landscape | no | yes | yes |
-> | growth, regulation, demographics | no | **no recorded pages exist** | no |
-> | industry-report | no | no | no |
+> | | live model | recorded pages | read line by line | graded case |
+> |---|---|---|---|---|
+> | market-share | yes | yes | yes | — |
+> | market-size | yes | — | yes | — |
+> | competitive-landscape | no | yes | yes | — |
+> | growth | no | yes | no | **yes** |
+> | regulation | no | yes | no | **yes** |
+> | demographics | no | yes | no | **yes** |
+> | industry-report | no | no | no | — |
+>
+> "Graded case" is the strongest column and the newest: a case in
+> `deckscope check` with known-correct answers and traps, so the type can be
+> re-checked by anyone at any time rather than by me once. The two types with the
+> most human attention have the weakest automated coverage, which is backwards and
+> is the next thing to fix.
 >
 > Those checks found **eleven** defects, every one invisible to a test suite that was
 > green at the time, and almost every one a case of the system rendering something it
