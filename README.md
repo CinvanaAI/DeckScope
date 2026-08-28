@@ -74,6 +74,22 @@ its first line rather than listing confident findings. See
 > answered a regulation question from five smartphone market-share articles without
 > noticing. There is no reason to assume the rest are cleaner.
 > [tests/test_live_run_defects.py](tests/test_live_run_defects.py) pins all eleven.
+>
+> **`deckscope check` exists so the next one does not need me to find it.** It grades
+> report types against cases with known-correct answers planted in real recorded
+> pages, on two axes kept deliberately apart:
+>
+> ```
+> recall   did it find what is genuinely in the sources
+> clean    did it decline to assert what is not
+> ```
+>
+> A fabrication is never offset by recall. Every case carries *traps* — plausible
+> claims the sources do not support, written as the sentence that exact corpus would
+> produce if a stage got its job slightly wrong. Most are failures that have really
+> happened here: a prevalence rate moved off the population it was measured on, a US
+> figure restated as worldwide, units sold restated as people, a CAGR flattered by a
+> pandemic base year, a forecast where the corpus contains none.
 
 Most deck-analysis tools ask one model to read a deck and give an opinion. That opinion
 inherits the deck's own framing: if the deck says the market is $47B, the model reasons
