@@ -901,8 +901,9 @@ def _ask_market(args: Any) -> int:
 
     named = _measures_arg(args)
     if named is not None:
-        return _finish_ask(args, _by_measure(request, named, provider=provider,
-                                             researcher=researcher))
+        return _finish_ask(args, _by_measure(
+            request, named, provider=provider, researcher=researcher,
+            report=getattr(args, "report", None) or "market-share"))
 
     result = answer(args.question, provider=provider, researcher=researcher,
                     policy=SecurityPolicy(), on_event=_out)
@@ -918,7 +919,7 @@ def _measures_arg(args: Any) -> Optional[List[str]]:
 
 
 def _by_measure(request: Any, names: List[str], *, provider: Any,
-                researcher: Any) -> Dict[str, Any]:
+                researcher: Any, report: str = "market-share") -> Dict[str, Any]:
     """One report per named measure, through the handoff.
 
     This is the shape the report agent is meant to be driven in: a market and
@@ -934,8 +935,7 @@ def _by_measure(request: Any, names: List[str], *, provider: Any,
     try:
         brief = Brief(market=request.market, place=request.place,
                       measures=names, framing=request.framing(),
-                      specialist=getattr(args, "report", None)
-                      or "market-share")
+                      specialist=report or "market-share")
     except ValueError as exc:
         _out("")
         _out(f"  {exc}")
@@ -2330,11 +2330,18 @@ def _eval(args: Any) -> int:
             # found this mode reporting a clean sweep over zero runs while
             # every one of its nine cases had crashed — the errors were listed
             # forty lines further down, under a different heading.
+            # `red()` was never defined or imported here, so this branch raised
+            # NameError instead of printing its warning — and it is the branch
+            # that fires when EVERY case in a mode crashed. The comment above
+            # describes an audit finding about a gate that could not fail being
+            # quoted as a pass; the code written to prevent it could not run.
+            # Found by scripts/lint.py's undefined-name check, which was added
+            # after this same class of bug shipped twice in one day.
             broken = len([e for e in result.errors() if e["mode"] == mode])
-            _out(red(f"    NOTHING RAN — all {broken} case(s) failed to "
-                     f"execute. The dimension table above shows no score for "
-                     f"this mode because there is none, not because it was "
-                     f"perfect. See 'Cases that could not run' below."))
+            _out(f"    NOTHING RAN — all {broken} case(s) failed to execute. "
+                 f"The dimension table above shows no score for this mode "
+                 f"because there is none, not because it was perfect. See "
+                 f"'Cases that could not run' below.")
         else:
             _out("    every check passed")
 

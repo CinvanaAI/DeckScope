@@ -48,6 +48,7 @@ Exit code is 1 if anything is found, so CI can gate on it.
 from __future__ import annotations
 
 import ast
+import builtins
 import sys
 from pathlib import Path
 from typing import Iterator, List, Tuple
@@ -150,6 +151,148 @@ def _unused_imports(tree: ast.Module) -> Iterator[Tuple[int, str]]:
             yield line, f"unused import: {name}"
 
 
+def _bindings(node: ast.AST) -> set:
+    """Every name bound anywhere inside one scope.
+
+    Deliberately position-blind: a name assigned on the last line counts as
+    bound on the first. That makes this unable to catch use-before-assignment,
+    which is the price of never producing a false positive on a name that
+    plainly exists somewhere in the function. A checker nobody trusts gets
+    worked around rather than fixed, so it errs toward silence.
+    """
+    names = set()
+
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+        a = node.args
+        for arg in (list(a.posonlyargs) + list(a.args) + list(a.kwonlyargs)
+                    + [a.vararg, a.kwarg]):
+            if arg is not None:
+                names.add(arg.arg)
+
+    body = node.body if isinstance(node.body, list) else [node.body]
+    for statement in body:
+        for child in ast.walk(statement):
+            if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Store):
+                names.add(child.id)
+            elif isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef,
+                                    ast.ClassDef)):
+                names.add(child.name)
+            elif isinstance(child, ast.Import):
+                for alias in child.names:
+                    names.add(alias.asname or alias.name.split(".")[0])
+            elif isinstance(child, ast.ImportFrom):
+                for alias in child.names:
+                    if alias.name != "*":
+                        names.add(alias.asname or alias.name)
+            elif isinstance(child, ast.ExceptHandler) and child.name:
+                names.add(child.name)
+            elif isinstance(child, (ast.Global, ast.Nonlocal)):
+                names.update(child.names)
+    return names
+
+
+def _undefined(tree: ast.Module) -> Iterator[Tuple[int, str]]:
+    """Names read but bound in no enclosing scope.
+
+    This is here because the checker twice reported a file clean that raised
+    `NameError` the moment it ran — `ABSENT` used in shaper.py without being
+    imported, and `args` read inside a function that has no such parameter.
+    Both crashed on the first real call. A linter that resolves imports but
+    never asks whether a used name exists is checking the easier half of the
+    same question.
+
+    A star import anywhere disables the check for that file: the names it
+    brings in are unknowable from the syntax tree, and guessing would produce
+    exactly the false positives that make a checker ignorable.
+    """
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and any(
+                a.name == "*" for a in node.names):
+            return
+
+    module_scope = _bindings(tree) | set(dir(builtins)) | {
+        "__file__", "__name__", "__doc__", "__spec__", "__package__",
+        "__loader__", "__builtins__", "__debug__",
+    }
+
+    def walk(node: ast.AST, enclosing: set) -> Iterator[Tuple[int, str]]:
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef,
+                                  ast.Lambda)):
+                scope = enclosing | _bindings(child)
+                # Decorators and defaults are evaluated in the OUTER scope.
+                for extra in (list(getattr(child, "decorator_list", []))
+                              + list(child.args.defaults)
+                              + [d for d in child.args.kw_defaults if d]):
+                    yield from _reads(extra, enclosing)
+                # Recurse on the function NODE, not on its statements. Passing
+                # the statements meant a function nested inside this one was
+                # reached through the generic branch below, which never adds
+                # its parameters — so every inner function's own arguments
+                # read as undefined. This checker reported 3255 problems on a
+                # clean repository until that was fixed, which is the exact
+                # failure mode its own docstring warns about one rule up.
+                body = child.body if isinstance(child.body, list) else [child.body]
+                for statement in body:
+                    yield from _reads(statement, scope, skip_nested=True)
+                yield from walk(child, scope)
+            elif isinstance(child, ast.ClassDef):
+                # A class body sees the enclosing scope; its methods do not see
+                # the class body, so that is what gets passed down.
+                scope = enclosing | _bindings(child)
+                for statement in child.body:
+                    yield from _reads(statement, scope, skip_nested=True)
+                yield from walk(child, enclosing)
+            elif isinstance(child, ast.arguments):
+                continue        # handled above, in the correct scope
+            else:
+                yield from _reads(child, enclosing, skip_nested=True)
+                yield from walk(child, enclosing)
+
+    def _reads(node: ast.AST, scope: set,
+               skip_nested: bool = False) -> Iterator[Tuple[int, str]]:
+        """Names loaded in this node, not descending into a nested scope.
+
+        Its own traversal rather than `ast.walk`, because `ast.walk` yields
+        every descendant and skipping the node of a nested function does not
+        stop it walking that function's body. The first version did exactly
+        that, so every method's `self` was checked against the class's scope
+        instead of the method's — 2457 phantom reports of an undefined `self`.
+        """
+        # A statement that IS a nested scope is skipped whole; `walk` reaches
+        # it with the right scope of its own. Without this the guard below only
+        # caught scopes nested one level in, so a method reached as a class
+        # body statement still had its body read against the class's names.
+        if skip_nested and isinstance(node, (ast.FunctionDef,
+                                             ast.AsyncFunctionDef,
+                                             ast.Lambda, ast.ClassDef)):
+            return
+        stack = [node]
+        while stack:
+            current = stack.pop()
+            if isinstance(current, ast.Name) and isinstance(current.ctx, ast.Load):
+                if current.id not in scope:
+                    yield current.lineno, f"undefined name: {current.id}"
+            for child in ast.iter_child_nodes(current):
+                if skip_nested and isinstance(
+                        child, (ast.FunctionDef, ast.AsyncFunctionDef,
+                                ast.Lambda, ast.ClassDef)):
+                    continue
+                stack.append(child)
+
+    seen = set()
+    for line, message in walk(tree, module_scope):
+        if (line, message) not in seen:
+            seen.add((line, message))
+            yield line, message
+
+
+def _skipped(text: str, line: int) -> bool:
+    """`# noqa` on the offending line."""
+    lines = text.splitlines()
+    return 0 < line <= len(lines) and "# noqa" in lines[line - 1]
+
+
 def check(path: Path) -> List[Problem]:
     text = path.read_text(encoding="utf-8")
     # `# noqa` marks a deliberate exception. A checker that cannot be overridden
@@ -167,6 +310,10 @@ def check(path: Path) -> List[Problem]:
     found: List[Problem] = []
     is_test = path.parts[-2] == "tests" or path.name.startswith("test_")
     specs = _format_specs(tree)
+
+    for line, message in _undefined(tree):
+        if not _skipped(text, line):
+            found.append((path, line, message))
 
     for line, message in _unused_imports(tree):
         if line not in suppressed:
