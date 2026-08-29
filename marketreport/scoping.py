@@ -207,3 +207,56 @@ def summary(briefs: Sequence[Brief], notes: Sequence[str]) -> str:
     for note in notes:
         lines.append(f"    note: {note}")
     return "\n".join(lines)
+
+
+def dispatch_for_deck(deck: Dict[str, Any], cfg: Any,
+                      on_event: Any = None) -> Tuple[List[str], List[str]]:
+    """Scope a deck and run every brief — the shared engine under the CLI
+    flag and the app checkbox.
+
+    Returns `(stored_panel_ids, lines)`, where `lines` is everything a caller
+    should show: the scoping summary, per-brief progress, refusal notes.
+    Extracted from the CLI so the web app cannot grow a second, slightly
+    different copy of the deck→reports handoff — the two-doors-drifting
+    failure, pre-empted at the door-making stage.
+    """
+    from deckscope.providers import get_provider
+    from deckscope.research.registry import get_researcher
+    from .handoff import run_brief
+    from .library import Library
+
+    emit = on_event or (lambda *_: None)
+    lines: List[str] = []
+
+    def say(text: str) -> None:
+        lines.append(text)
+        emit(text)
+
+    provider = get_provider(cfg.provider)
+    researcher = get_researcher(cfg.research, provider)
+
+    briefs, notes = briefs_from_deck(deck, provider)
+    say(summary(briefs, notes))
+    if not briefs:
+        return [], lines
+
+    stored_ids: List[str] = []
+    library = Library()
+    for brief in briefs:
+        say(f"  producing {brief.specialist} ({', '.join(brief.measures)})…")
+        try:
+            outcome = run_brief(brief, provider=provider,
+                                researcher=researcher, on_event=emit)
+        except Exception as exc:  # noqa: BLE001 - one report must not sink the set
+            say(f"  {brief.specialist} failed: {exc}")
+            continue
+        try:
+            stored = library.save_all(outcome["panels"], market=brief.market,
+                                      place=brief.place, request=brief.market)
+        except OSError as exc:
+            say(f"  could not store: {exc}")
+            continue
+        for ref in stored:
+            stored_ids.append(ref.id)
+            say(f"  stored as {ref.id}")
+    return stored_ids, lines

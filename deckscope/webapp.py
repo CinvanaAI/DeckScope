@@ -612,6 +612,12 @@ def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
         }
         if payload.get("out_dir"):
             overrides["output"]["out_dir"] = payload["out_dir"]
+        if payload.get("opportunity"):
+            # Defaults for dilution / exit multiple / horizon live in
+            # OpportunityConfig; the CLI exposes flags to change them and the
+            # app deliberately does not — a guest tuning exit multiples in a
+            # form they do not understand is worse than a stated default.
+            overrides["opportunity"] = {"enabled": True}
         if payload.get("research"):
             overrides["research"] = {"name": payload["research"]}
         if payload.get("demo"):
@@ -631,6 +637,11 @@ def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
             result = panel.run()
             files = panel.render(result)
             _remember(files)
+            if payload.get("market_reports"):
+                # Saying so beats silently dropping the request — the
+                # six-of-seven-arrived lesson, again.
+                log("Market reports are not produced on panel runs yet — "
+                    "run the deck with a single model to get them.")
             job.update({
                 "status": "done", "files": files,
                 "result": {
@@ -660,11 +671,31 @@ def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
             pipe.close()
 
         _remember(files)
+
+        # The managing step, behind the same checkbox the CLI exposes as
+        # --with-market-reports. It runs through the exact function the CLI
+        # uses — marketreport.scoping.dispatch_for_deck — so this door and
+        # that one cannot drift apart. It runs AFTER render on purpose: the
+        # deck report is already safe on disk if a specialist dies.
+        reports: Dict[str, Any] = {}
+        if payload.get("market_reports"):
+            from marketreport.scoping import dispatch_for_deck
+
+            log("Scoping the market reports this deck's claims depend on…")
+            try:
+                stored, lines = dispatch_for_deck(
+                    getattr(result, "deck", None) or {}, cfg, on_event=log)
+                reports = {"stored": stored, "notes": lines}
+            except Exception as exc:  # noqa: BLE001 - reports must not sink the deck
+                reports = {"stored": [], "notes": [f"market reports failed: {exc}"]}
+                log(f"Market reports failed: {exc}")
+
         reg = getattr(result, "registry", None)
         job.update({
             "status": "done", "files": files,
             "result": {
                 "company": result.company,
+                "market_reports": reports,
                 "security": (result.security or {}).get("overall_risk", "clean"),
                 "sources": reg.stats() if reg else {},
                 "verdicts": {
@@ -815,73 +846,40 @@ border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer}
 .pickfoot{padding:11px 14px;border-top:1px solid var(--line);background:var(--panel)}
 .note{font-size:13px;line-height:1.5}
 .note.warn{color:var(--warn)}
+.opt{display:flex;gap:10px;align-items:flex-start;margin:9px 0;cursor:pointer;
+font-size:14px;text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink)}
+.opt input{margin-top:3px;flex:none;width:16px;height:16px;accent-color:var(--accent)}
 button.small{padding:5px 10px;font-size:12px}
 </style></head><body><div class="wrap">
 <h1>DeckScope</h1>
-<div class="sub">Two things. <b>Report a market</b> — the industry section an
-investment bank writes once, for any market you name. <b>Check a deck</b> — read
-a pitch deck against that market and show where the two disagree.</div>
+<div class="sub"><b>Check a pitch deck</b> against independent evidence — what the
+deck claims that the market data doesn't support, what it leaves out, and what
+could not be checked either way. Or skip the deck and <b>report a market</b>
+directly, further down the page.</div>
 
-<div class="card">
-  <h2 style="margin-top:0">Report a market</h2>
-  <p class="hint">Twelve questions, each answered or explained. Every figure
-  shows its arithmetic and its source, and the report says at the top how much
-  of itself it could establish.</p>
-
-  <label>What market?</label>
-  <input id="m-naics" type="text" placeholder="landscaping in Phoenix">
-  <p class="hint" style="margin-top:4px">Say it the way you would out loud. A
-  NAICS code works too. If the words match more than one industry it will ask
-  rather than pick one &mdash; a report about the wrong market looks exactly
-  like a report about the right one.</p>
-
-  <details style="margin:10px 0">
-    <summary class="hint" style="cursor:pointer">Be exact instead</summary>
-    <label>What to call it <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
-    <input id="m-label" type="text" placeholder="Landscaping services">
-
-    <label>State FIPS <span style="text-transform:none;letter-spacing:0">(optional &mdash; 04 is Arizona)</span></label>
-    <input id="m-state" type="text" placeholder="04" maxlength="2">
-
-    <label>County FIPS <span style="text-transform:none;letter-spacing:0">(optional &mdash; 013 is Maricopa)</span></label>
-    <input id="m-county" type="text" placeholder="013" maxlength="3">
-  </details>
-
-  <button id="m-go" onclick="runMarket(false)">Produce the report</button>
-  <button class="ghost" onclick="runMarket(true)">Run the free demo</button>
-  <button class="ghost hidden" id="m-open">Open as a document</button>
-  <button class="ghost hidden" id="m-md">Save as Markdown</button>
-  <p id="m-note" class="hint"></p>
-  <div id="m-out"></div>
-</div>
-
-<div class="card">
-  <h2 style="margin-top:0">Panels you have made</h2>
-  <p class="hint">Every panel is kept when it is produced, so a question
-  answered once does not have to be paid for twice. Re-asking stores a new one
-  beside the old rather than replacing it &mdash; two runs of the same question
-  are different answers because the market moved, and keeping both is what
-  makes the change readable.</p>
-  <button class="ghost" onclick="loadPanels()">Show my panels</button>
-  <p id="p-note" class="hint"></p>
-  <div id="p-list"></div>
-  <div id="p-view"></div>
-</div>
 
 <div id="unconfigured" class="card hidden">
-  <b>Not set up yet.</b>
-  <p class="hint">Open a terminal and run <code>deckscope setup</code>, or press the
-  button below to run a full sample analysis with no AI account and no cost.</p>
+  <b>Not connected to an AI yet.</b>
+  <p class="hint">DeckScope needs two things: an AI service you already use, and a
+  web-search key. Connecting them happens in a terminal &mdash; open one and run
+  <code>deckscope setup</code> (seven questions, each answer tested as you go) &mdash;
+  because pasting secret keys into web pages is a habit this tool refuses to
+  teach. Meanwhile, both demos below run the full machinery at no cost, so you
+  can see exactly what you'd be setting up.</p>
   <button class="ghost" onclick="demo()">Run the free demo</button>
   <button class="ghost" onclick="demoPanel()">Run the free panel demo</button>
 </div>
 
 <div class="card">
+  <h2 style="margin-top:0">Check a deck</h2>
   <div id="drop" class="drop">
     <b>Drop a deck here</b>
     <p>PDF, PowerPoint, Word, Markdown or text — or click to browse</p>
     <p id="chosen" class="hint"></p>
   </div>
+  <p class="hint">The deck never leaves this machine except as text sent to the
+  AI service you configured. Nothing is uploaded anywhere else, and this page
+  itself runs locally.</p>
   <input id="file" type="file" class="hidden"
          accept=".pdf,.pptx,.docx,.md,.txt,.html,.json">
 
@@ -925,6 +923,20 @@ a pitch deck against that market and show where the two disagree.</div>
   <p class="hint">Decks and web pages can hide text meant to steer the AI. Balanced
   removes it and reports it; Strict refuses to analyze the deck at all.</p>
 
+  <label>Go deeper <span style="text-transform:none;letter-spacing:0">(optional — both cost extra API usage)</span></label>
+  <label class="opt"><input id="opt-reports" type="checkbox">
+    <span>Also build the market reports this deck's claims depend on.
+    <span class="hint" style="display:block">The AI reads the analysis, decides which
+    market this really is and which yardsticks matter, then researches each one
+    independently — market share, size, growth, whatever the claims lean on. Several
+    extra research runs; the reports land in &ldquo;Reports you have made&rdquo; below.</span></span></label>
+  <label class="opt"><input id="opt-opp" type="checkbox">
+    <span>Estimate the opportunity cost of this investment.
+    <span class="hint" style="display:block">What the round must return to beat an
+    index fund, using stated defaults (50% future dilution, 6&times; exit revenue
+    multiple, 5-year horizon). The arithmetic appears in the report so you can
+    disagree with any step of it.</span></span></label>
+
   <button id="go" class="go">Analyze this deck</button>
   <p class="hint" id="settings-note"></p>
 </div>
@@ -935,11 +947,59 @@ a pitch deck against that market and show where the two disagree.</div>
     <span class="hint" id="elapsed"></span>
   </div>
   <p class="hint">Three passes: read the deck, research the market independently,
-  then compare. Usually one to three minutes.</p>
+  then compare. Usually one to three minutes. Market reports, if you asked for
+  them, run afterwards and add a few minutes each — the log below narrates.</p>
   <pre class="log" id="log"></pre>
 </div>
 
 <div id="done" class="card hidden"></div>
+
+<div class="card">
+  <h2 style="margin-top:0">Report a market</h2>
+  <p class="hint">Twelve questions, each answered or explained. Every figure
+  shows its arithmetic and its source, and the report says at the top how much
+  of itself it could establish.</p>
+
+  <label>What market?</label>
+  <input id="m-naics" type="text" placeholder="landscaping in Phoenix">
+  <p class="hint" style="margin-top:4px">Say it the way you would out loud. A
+  NAICS code works too. If the words match more than one industry it will ask
+  rather than pick one &mdash; a report about the wrong market looks exactly
+  like a report about the right one.</p>
+
+  <details style="margin:10px 0">
+    <summary class="hint" style="cursor:pointer">Be exact instead</summary>
+    <label>What to call it <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+    <input id="m-label" type="text" placeholder="Landscaping services">
+
+    <label>State FIPS <span style="text-transform:none;letter-spacing:0">(optional &mdash; 04 is Arizona)</span></label>
+    <input id="m-state" type="text" placeholder="04" maxlength="2">
+
+    <label>County FIPS <span style="text-transform:none;letter-spacing:0">(optional &mdash; 013 is Maricopa)</span></label>
+    <input id="m-county" type="text" placeholder="013" maxlength="3">
+  </details>
+
+  <button id="m-go" onclick="runMarket(false)">Produce the report</button>
+  <button class="ghost" onclick="runMarket(true)">Run the free demo</button>
+  <button class="ghost hidden" id="m-open">Open as a document</button>
+  <button class="ghost hidden" id="m-md">Save as Markdown</button>
+  <p id="m-note" class="hint"></p>
+  <div id="m-out"></div>
+</div>
+
+<div class="card" id="panels-card">
+  <h2 style="margin-top:0">Reports you have made</h2>
+  <p class="hint">Everything produced is kept &mdash; market reports asked for
+  directly, and the ones built from a deck's claims. A question answered once
+  does not have to be paid for twice. Re-asking stores a new answer beside the
+  old rather than replacing it: two runs of the same question differ because
+  the market moved, and keeping both is what makes the change readable.</p>
+  <button class="ghost" onclick="loadPanels()">Show my panels</button>
+  <p id="p-note" class="hint"></p>
+  <div id="p-list"></div>
+  <div id="p-view"></div>
+</div>
+
 
 <script>
 const $ = s => document.querySelector(s);
@@ -1384,6 +1444,8 @@ function start(extra){
     body: JSON.stringify(Object.assign({
       deck: deck, company: $('#company').value, lenses: PICK.lenses,
       formats: PICK.formats, security: PICK.security,
+      market_reports: $('#opt-reports').checked,
+      opportunity: $('#opt-opp').checked,
       panel: $('#panel').value.split(',').map(s=>s.trim()).filter(Boolean)}, extra))})
     .then(r => r.json())
     .then(d => { if(d.error){ fail(d.error); } else poll(d.job); })
@@ -1424,8 +1486,34 @@ function finish(j){
   }
   html += `</p><label>Your reports</label>`;
   html += '<div id="filelist"></div>';
-  html += `<p class="hint" style="margin-top:18px">AI-generated analysis. Every figure
-    is traceable to the References section of the report — check it before relying on it.</p>`;
+
+  const mr = r.market_reports || {};
+  if((mr.stored || []).length){
+    html += `<label>Market reports built from this deck's claims</label>
+      <p class="hint">${mr.stored.length} report(s) were researched independently and
+      stored — find them under &ldquo;Reports you have made&rdquo; below.
+      <button class="ghost" onclick="jumpPanels()">Show them</button></p>`;
+  } else if(mr.notes && mr.notes.length){
+    html += `<label>Market reports</label>
+      <p class="hint">None were produced. The scoper's own account:</p>
+      <pre class="log">${esc(mr.notes.join('\n'))}</pre>`;
+  }
+
+  html += `<details style="margin-top:16px"><summary class="hint"
+      style="cursor:pointer">How to read the report</summary>
+    <p class="hint" style="margin-top:10px">Three marks matter more than anything
+    else on the page. A <b>source ID</b> after a figure (like S3) means the
+    bibliography has a link you can open and check — do that for anything you
+    intend to rely on. <b>&ldquo;no source&rdquo;</b> after a statement means the
+    analysis asserted it without evidence; it is printed precisely so you discount
+    it. <b>&ldquo;Could not be checked&rdquo;</b> is a research task, not a red
+    flag — the report will not convert its own gaps into a verdict against the
+    company. The headline is assembled by code from what was and wasn't
+    established; a model does not get to write it.</p></details>`;
+
+  html += `<p class="hint" style="margin-top:18px">AI-generated analysis, not investment
+    advice. Every figure is traceable to the References section of the report — check it
+    before relying on it.</p>`;
   $('#done').innerHTML = html; $('#done').classList.remove('hidden');
 
   // Build the file rows in the DOM rather than by string concatenation, so a
@@ -1449,6 +1537,12 @@ function fail(msg){
   $('#progress').classList.add('hidden'); $('#go').disabled = false;
   $('#done').innerHTML = `<div class="err"><b>That didn't work.</b>\n\n${esc(msg)}</div>`;
   $('#done').classList.remove('hidden');
+}
+
+function jumpPanels(){
+  loadPanels();
+  const card = document.getElementById('panels-card');
+  if(card) card.scrollIntoView({behavior:'smooth'});
 }
 
 function openFile(p){

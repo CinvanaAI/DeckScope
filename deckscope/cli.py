@@ -1947,50 +1947,17 @@ def _market_reports_for_deck(result: Any, cfg: Any) -> None:
         this market share data mattered, and since it was generated, it
         should be a selectable thing the user is able to look at"
 
-    The scoper reads the deck's analysis, decides market + measures + report
-    types, and the specialists do the rest. Every panel lands in the library,
-    which is what makes it selectable in `deckscope panels` and the app. A
-    scoper that cannot scope says so and dispatches nothing — refusal over a
-    guessed market, same as everywhere else.
+    The engine lives in `marketreport.scoping.dispatch_for_deck`, shared with
+    the app's checkbox so the two doors cannot drift; this is only the
+    console dressing.
     """
-    from marketreport.handoff import run_brief
-    from marketreport.library import Library
-    from marketreport.scoping import briefs_from_deck, summary
-    from .providers import get_provider
-    from .research.registry import get_researcher
-
-    # Built from the same cfg the pipeline just ran on, not smuggled out of
-    # the pipeline's internals — the first wiring referenced a `provider`
-    # variable _run never had, and crashed AFTER the deck analysis had been
-    # paid for. The suite's producer-contract lesson, one layer up.
-    provider = get_provider(cfg.provider)
-    researcher = get_researcher(cfg.research, provider)
+    from marketreport.scoping import dispatch_for_deck
 
     _out("\n─── Market reports " + "─" * 49)
-    deck = getattr(result, "deck", None) or {}
-    briefs, notes = briefs_from_deck(deck, provider)
-    _out(summary(briefs, notes))
-    if not briefs:
-        return
-
-    library = Library()
-    for brief in briefs:
-        _out(f"\n  producing {brief.specialist} "
-             f"({', '.join(brief.measures)})…")
-        try:
-            outcome = run_brief(brief, provider=provider,
-                                researcher=researcher, on_event=_out)
-        except Exception as exc:  # noqa: BLE001 - one report must not sink the run
-            _out(f"  {brief.specialist} failed: {exc}")
-            continue
-        try:
-            stored = library.save_all(outcome["panels"], market=brief.market,
-                                      place=brief.place, request=brief.market)
-            for ref in stored:
-                _out(f"  stored as {ref.id}")
-        except OSError as exc:
-            _out(f"  could not store: {exc}")
-    _out("\n  Open them any time:  deckscope panels")
+    stored, _lines = dispatch_for_deck(getattr(result, "deck", None) or {},
+                                       cfg, on_event=_out)
+    if stored:
+        _out("\n  Open them any time:  deckscope panels")
 
 
 def _format_exit_code(result: Any) -> int:

@@ -1,0 +1,173 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hearing Aid Manufacturers Worldwide</title>
+<style>
+:root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--paper:#fff;
+  --warn:#b45309;--warnbg:#fffbeb;--ok:#047857;--accent:#1d4ed8}
+*{box-sizing:border-box}
+body{margin:0;background:#f6f7f9;color:var(--ink);
+  font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,
+  Arial,sans-serif}
+.sheet{max-width:820px;margin:32px auto;background:var(--paper);padding:56px;
+  border:1px solid var(--line);border-radius:6px}
+h1{font-size:27px;margin:0 0 4px;line-height:1.25}
+h2{font-size:13px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 14px;font-weight:700}
+.stamp{color:var(--muted);font-size:13px;margin:0 0 28px}
+section{border-top:1px solid var(--line);padding:26px 0;
+  break-inside:avoid;page-break-inside:avoid}
+.q{color:var(--muted);font-size:14px;font-style:italic;margin:0 0 12px}
+.statement{margin:0 0 10px}
+.figure{font-size:22px;font-weight:600;margin:0 0 6px}
+.detail{background:#f9fafb;border:1px solid var(--line);border-radius:4px;
+  padding:12px 14px;margin:12px 0;font:13px/1.7 ui-monospace,SFMono-Regular,
+  Menlo,Consolas,monospace;white-space:pre-wrap;overflow-x:auto}
+.src{font-size:13px;color:var(--muted);margin:8px 0 0}
+.src b{color:var(--ok);font-weight:600}
+.unchecked{font-size:13px;color:var(--muted);font-style:italic;margin:8px 0 0}
+.demo{background:var(--warnbg);border-left:3px solid var(--warn);
+  padding:10px 14px;margin:12px 0 0;font-size:13px;color:var(--warn)}
+.missing{color:var(--warn)}
+.banner{border:1px solid var(--line);border-left:3px solid var(--accent);
+  padding:14px 18px;margin:0 0 22px;font-size:14px}
+.banner.warn{border-left-color:var(--warn);background:var(--warnbg);
+  color:var(--warn)}
+table.cover{width:100%;border-collapse:collapse;margin:0 0 30px;font-size:14px}
+table.cover td{padding:7px 0;border-bottom:1px solid var(--line)}
+table.cover td:last-child{text-align:right;font-variant-numeric:tabular-nums;
+  font-weight:600}
+@media (prefers-color-scheme:dark){
+  :root{--ink:#e5e7eb;--muted:#9ca3af;--line:#374151;--paper:#111827;
+    --warnbg:#1f1a0e}
+  body{background:#0b0f19}
+  .detail{background:#0f1623}
+}
+@media print{
+  body{background:#fff}
+  .sheet{margin:0;padding:0;border:0;max-width:none}
+  @page{margin:18mm}
+}
+
+.panel{border:1px solid var(--line);border-radius:6px;padding:24px 26px;
+  margin:0 0 26px;background:var(--paper);break-inside:avoid;
+  page-break-inside:avoid}
+.panel h3{font-size:20px;margin:0 0 4px;line-height:1.3;font-weight:600}
+.panel .asked{color:var(--muted);font-size:13px;margin:0 0 18px;font-style:italic}
+.charts{display:flex;flex-wrap:wrap;gap:26px;margin:0 0 18px}
+.chart{flex:1 1 260px;min-width:240px}
+.chart-title{font-size:15px;font-weight:600;margin:0 0 2px}
+.chart-sub{font-size:12px;color:var(--muted);margin:0 0 10px}
+.donut-wrap{display:flex;justify-content:center}
+.donut-lead{font-size:13px;fill:var(--muted)}
+.donut-val{font-size:19px;font-weight:600;fill:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 12px;font-size:12px;
+  color:var(--muted)}
+.key{display:inline-flex;align-items:center;gap:5px}
+.key i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.key i.hatch{background:repeating-linear-gradient(45deg,var(--line),
+  var(--line) 2px,transparent 2px,transparent 5px);border:1px solid var(--line)}
+.est{color:var(--warn);font-style:italic}
+.bars{display:flex;flex-direction:column;gap:7px}
+.bar-row{display:flex;align-items:center;gap:10px;font-size:13px}
+.bar-label{flex:0 0 34%;text-align:right;color:var(--muted)}
+.bar-track{flex:1;height:14px;background:var(--surface);border-radius:3px}
+.bar-fill{display:block;height:100%;border-radius:3px}
+.bar-value{flex:0 0 62px;font-variant-numeric:tabular-nums;font-weight:600}
+.figs{border-top:1px solid var(--line);margin:18px 0 0;padding:16px 0 0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.fig{font-size:13px}
+.fig .n{font-size:19px;font-weight:600;display:block;margin:0 0 2px}
+.fig .l{color:var(--muted);display:block}
+.fig .tag{display:inline-block;font-size:11px;padding:1px 6px;border-radius:3px;
+  margin-top:5px}
+.tag-sourced{background:var(--ok-bg);color:var(--ok)}
+.tag-derived{background:var(--surface);color:var(--muted);
+  border:1px solid var(--line)}
+.tag-estimated{background:var(--warn-bg);color:var(--warn)}
+.tag-absent{background:var(--warn-bg);color:var(--warn)}
+.fig .how{display:block;color:var(--muted);font-size:11.5px;margin-top:4px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.caveats{border-top:1px solid var(--line);margin:18px 0 0;padding:14px 0 0}
+.caveats p{font-size:13px;color:var(--muted);margin:0 0 7px;padding-left:16px;
+  position:relative}
+.caveats p:before{content:"—";position:absolute;left:0}
+.panel .srcs{font-size:12px;color:var(--muted);margin:12px 0 0}
+.panel .fail{background:var(--warn-bg);border-left:3px solid var(--warn);
+  padding:12px 16px;color:var(--warn);font-size:14px}
+</style></head><body><div class="sheet">
+<h1>Hearing Aid Manufacturers Worldwide</h1>
+<p class="stamp">Produced 2026-08-27 · 2 of 2 questions answered · every figure states its own source, or says it has none</p>
+<div class="panel">
+<h3>No per-company revenue share is published for the global hearing aid market; the only share figure available does not say what it measures (share of revenue).</h3>
+<p class="asked">Who holds what share of a market, by units and by revenue, and how big the whole market is — hearing aid manufacturers worldwide — share of revenue · answered by the market-share agent</p>
+<div class="figs">
+<div class="fig">
+<span class="n">92.4%</span>
+<span class="l">Top five combined, basis unstated</span>
+<span class="tag tag-sourced">sourced</span>
+<span class="how">S1</span>
+</div>
+</div>
+<div class="caveats">
+<p>The 92.4% top-five figure is deliberately not charted. Its source does not say whether it measures revenue or units, and this report is revenue only — placing it in a revenue chart would assert a basis nobody published.</p>
+<p>A revenue-basis table is buildable for this market, but not from trackers: Sonova, Demant and GN are listed and file audited segment revenue. It has to be constructed from their filings, and the segment lines must be separated first, because Sonova and Demant book both manufacture and their own dispensing while a manufacturer-only peer books just the first.</p>
+<p>Starkey is privately held and files nothing, so any revenue table built this way carries a residual rather than a fifth slice.</p>
+<p>See the share-of-units report for the other basis. It is a different question with a different answer and the two must not be read as one.</p>
+<p><b>Not established:</b> Per-company revenue share — Four pages that all name the same five companies and none of which attaches a revenue percentage to any of them. On this basis the table has to be built from the companies&#x27; own filed segment revenue rather than lifted from a tracker.</p>
+<p><b>Not established:</b> Sonova Demant WS Audiology GN Starkey hearing aid revenue 2025 annual  — no backend could answer this: an EDGAR lookup needs a CIK and this company was not matched to an SEC filer. That means no SEC filing, not necessarily no listing: a company listed outside the United States files with its own regulator and will never appear here. Its annual report is likely to be on its investor relations site</p>
+<p><b>Not established:</b> Sonova wholesale versus retail segment revenue split hearing instrumen — no backend could answer this: an EDGAR lookup needs a CIK and this company was not matched to an SEC filer. That means no SEC filing, not necessarily no listing: a company listed outside the United States files with its own regulator and will never appear here. Its annual report is likely to be on its investor relations site</p>
+<p><b>Not established:</b> Starkey Hearing Technologies annual revenue private company estimate — no backend could answer this: an EDGAR lookup needs a CIK and this company was not matched to an SEC filer. That means no SEC filing, not necessarily no listing: a company listed outside the United States files with its own regulator and will never appear here. Its annual report is likely to be on its investor relations site</p>
+<p><b>Not established:</b> total global hearing aid market revenue 2025 manufacturer level — no backend could answer this: an EDGAR lookup needs a CIK and this company was not matched to an SEC filer. That means no SEC filing, not necessarily no listing: a company listed outside the United States files with its own regulator and will never appear here. Its annual report is likely to be on its investor relations site</p>
+<p><b>Not established:</b> Sonova Demant GN hearing aid segment revenue CHF DKK 2025 investor rel — no backend could answer this: an EDGAR lookup needs a CIK and this company was not matched to an SEC filer. That means no SEC filing, not necessarily no listing: a company listed outside the United States files with its own regulator and will never appear here. Its annual report is likely to be on its investor relations site</p>
+</div>
+</div>
+<div class="panel">
+<h3>The hearing aid market sold 23.16 million units worldwide in 2025, but nobody publishes how that splits between manufacturers - the association that counts the total is owned by the companies whose split it would reveal (share of units sold).</h3>
+<p class="asked">Who holds what share of a market, by units and by revenue, and how big the whole market is — hearing aid manufacturers worldwide — share of units sold · answered by the market-share agent</p>
+<div class="charts">
+<div class="chart"><p class="chart-title">EHIMA member unit sales</p><p class="chart-sub">hearing aids sold worldwide · 2020-2025 · EHIMA (S7, S9)</p><div class="legend"><span class="key"><i style="background:#2a78d6"></i>2025 23.16count</span></div><div class="bars"><div class="bar-row"><span class="bar-label">2025</span><span class="bar-track"><span class="bar-fill" style="width:100.0%;background:#2a78d6"></span></span><span class="bar-value">23.16count</span></div></div></div>
+</div>
+<div class="figs">
+<div class="fig">
+<span class="n">23.16m</span>
+<span class="l">Units sold worldwide, 2025</span>
+<span class="tag tag-sourced">sourced</span>
+<span class="how">S6, S7, S8</span>
+</div>
+<div class="fig">
+<span class="n">14.12-23.16m</span>
+<span class="l">Six-year unit series</span>
+<span class="tag tag-sourced">sourced</span>
+<span class="how">S7, S9</span>
+</div>
+<div class="fig">
+<span class="n">5.4m / 1.7m</span>
+<span class="l">United States and Germany volumes</span>
+<span class="tag tag-sourced">sourced</span>
+<span class="how">S14</span>
+</div>
+<div class="fig">
+<span class="n">1</span>
+<span class="l">Collector of record</span>
+<span class="tag tag-sourced">sourced</span>
+<span class="how">S7, S10, S11</span>
+</div>
+</div>
+<div class="caveats">
+<p>This report has a denominator and no numerator. The total is unusually good - 23.16 million units in 2025, defined precisely as net wholesale units sold by manufacturers to dispensers, published free by EHIMA with a consistent six-year history. The per-company split does not exist in any source reached.</p>
+<p>That gap is structural, not a coverage failure. EHIMA is the manufacturers&#x27; own trade association, so the body that counts the units is owned by the firms whose relative shares the count would expose. Further searching will not find this number; it is not being withheld by one publisher, it is not being produced.</p>
+<p>No commercial channel panel for hearing aid units was found either. That matters for anyone considering buying a report: in handsets, paying buys a panel that genuinely counts units, whereas here the syndicated reports appear to publish an unattributed combined share and no per-company unit figure at all. The money may buy modelling rather than counting.</p>
+<p>The three sources giving 23.16 million all trace to one EHIMA release. Treat it as one measurement reported three times, not as three-way corroboration.</p>
+<p>EHIMA members are described as the largest manufacturers but membership is not stated to be exhaustive, so 23.16 million is a floor for worldwide volume rather than a measured total.</p>
+<p>The US and Germany volumes are a geographic split, not a company split, and do not help complete the share table.</p>
+<p>See the share-of-revenue report for the other basis. It has the opposite problem: a per-company comparison is buildable there from audited filings, but the denominator is contested.</p>
+<p>The evidence would not support a &#x27;trend&#x27; chart (series &#x27;EHIMA member unit sales&#x27; has 1 points; trend needs 2), so it is drawn as a &#x27;table&#x27;. That is a fact about how much this run established, not a formatting choice.</p>
+<p><b>Not established:</b> Split between manufacturers — The decisive finding. The denominator is free and precisely defined; the numerator is published by nobody reached. The gap is the split between members, not the total.</p>
+<p><b>Not established:</b> Per-member figures from EHIMA — The collector of record is a body owned by the very companies whose split would be revealed. That is a structural reason the numerator is unpublished, not an accident of coverage - and it means no amount of further searching will find it.</p>
+<p><b>Not established:</b> Any competing unit tracker — Materially changes what buying a paid report would get you here. In handsets a purchase buys a channel panel that genuinely counts units; in this market the syndicated reports appear to publish an unattributed combined share and no per-company unit figure at all, so the money may buy modelling rather than counting.</p>
+<p><b>Not established:</b> Sonova Demant hearing aid units shipped annual report volume disclosur — no backend could answer this: an EDGAR lookup needs a CIK and this company was not matched to an SEC filer. That means no SEC filing, not necessarily no listing: a company listed outside the United States files with its own regulator and will never appear here. Its annual report is likely to be on its investor relations site</p>
+</div>
+<p class="srcs"><b>Sources:</b> EHIMA (S7, S9)</p>
+</div>
+</div></body></html>
