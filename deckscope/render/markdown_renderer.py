@@ -776,14 +776,20 @@ def _references_markdown(result) -> str:
         if note:
             L.append(f"*{note}*")
             L.append("")
-        L.append("| ID | Source | Published | Reliability | Supports |")
-        L.append("|---|---|---|---|---|")
+        # Retrieved-when matters because a URL is a pointer, not evidence:
+        # live pages move on (the demo's recorded IDC snippet no longer
+        # matches its landing page). The capture date plus the snippet hash
+        # in the JSON export let a reader tell "the page changed since" from
+        # "the report misquoted the page".
+        L.append("| ID | Source | Published | Retrieved | Reliability | Supports |")
+        L.append("|---|---|---|---|---|---|")
         for s in sources:
             link = (f"[{s.title or s.domain or s.url}]({safe_url(s.url)})"
                     if safe_url(s.url) else (s.title or s.url or "—"))
             supports = "; ".join(s.cited_by[:4]) or "—"
+            retrieved = (getattr(s, "retrieved_at", "") or "—")[:10]
             L.append(f"| **{s.sid}** | {link} | {s.published or '—'} | "
-                     f"{s.reliability} | {supports} |")
+                     f"{retrieved} | {s.reliability} | {supports} |")
         L.append("")
 
     rows(reg.cited, "Cited in this analysis")

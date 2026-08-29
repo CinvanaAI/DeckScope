@@ -20,7 +20,7 @@ from marketreport.request import interpret
 
 
 class R1_TheOriginalQuestion(unittest.TestCase):
-    """Von's first question was "landscaping in Phoenix". Until now the
+    """the client's first question was "landscaping in Phoenix". Until now the
     product could not take it — it wanted `561730 --state 04 --county 013`."""
 
     def test_it_resolves_end_to_end(self):

@@ -1,6 +1,6 @@
 """The engineer pass: the crash shield, the flight recorder, the receipt.
 
-Von's question, verbatim: "As a software developer and engineer, what do I
+The client's question, verbatim: "As a software developer and engineer, what do I
 think about this program's design, architecture, safety…? Does it do logs
 and runtime tracking?" These pin the answers that pass added:
 

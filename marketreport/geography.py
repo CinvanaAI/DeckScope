@@ -2,7 +2,7 @@
 
 Today the product asks for `--state 04 --county 013`. That is a question only
 someone who already does this work can answer, which makes the tool useless to
-the person it was built for. Von's original question was "landscaping in
+the person it was built for. The client's original question was "landscaping in
 Phoenix", and nothing in the product could take it.
 
 Three tiers, in descending order of how much I trust myself:

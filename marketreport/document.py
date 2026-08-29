@@ -1,6 +1,6 @@
 """The report as a document, not as terminal output.
 
-The goal Von stated is *"output an S-1 report"*. A filed industry section is a
+The goal the client stated is *"output an S-1 report"*. A filed industry section is a
 document people read, print, forward and argue with. Text in a terminal is the
 developer's view of it, and shipping only that meant the deliverable did not
 exist yet.
@@ -257,7 +257,7 @@ def panel_document(panels: List[Panel], *, title: str = "Market report",
     This is what a request produces: the manager dispatches specialists, each
     returns a panel, and the panels are arranged. The market report's twelve
     sections are one arrangement of panels rather than a different kind of
-    thing — which is the whole point of Von's question, that a market report
+    thing — which is the whole point of the client's question, that a market report
     which cannot produce the market-share report is not a market report.
     """
     answered = [p for p in panels if p.answered]

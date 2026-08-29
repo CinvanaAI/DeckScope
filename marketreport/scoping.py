@@ -1,6 +1,6 @@
 """Deck in, briefs out — the upstream the handoff was built to receive.
 
-`handoff.py` opens with Von's specification and, until this file, a
+`handoff.py` opens with the client's specification and, until this file, a
 confession: "The upstream that produces a Brief is not built yet." This is
 that upstream. It reads the deck pipeline's own analysis — the category the
 deck claims, the company, the typed claims — and decides which market this

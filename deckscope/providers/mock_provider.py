@@ -1379,11 +1379,9 @@ def _read_for(prompt: str) -> dict:
         # stop a dense page flooding the run, and two was tuned for deck
         # analysis where a source carries one or two numbers that matter.
         for figure in _figures_in(snippet)[:6]:
-            sentence = _sentence_around(snippet, figure) or \
-                f"The source reports {figure}."
             findings.append({
-                "statement": sentence,
-                "value": figure, "unit": "%" if "%" in figure else "USD",
+                "statement": _statement_for(snippet, figure),
+                "value": figure, "unit": _unit_of(figure),
                 "as_of": src.get("published") or "", "confidence": "medium",
                 "source_ids": [src["sid"]]})
 
@@ -1447,7 +1445,78 @@ _FIG_RX = re.compile(
     r"\$\s?\d[\d,.]*\s*[-–]\s*\$?\d[\d,.]*\s*(?:[kKmMbB]|billion|million)?"
     r"|\$\s?\d[\d,.]*\s*(?:[kKmMbB]|billion|million)?"
     r"|\d+(?:\.\d+)?\s*[-–]\s*\d+(?:\.\d+)?\s*%"
-    r"|\d+(?:\.\d+)?\s*%")
+    r"|\d+(?:\.\d+)?\s*%"
+    # Counts. "277.5 million units" carried both a count and a 6.7% decline
+    # in one IDC sentence; this pattern only knew money and percentages, so
+    # it extracted the percentage and the whole sentence became its label —
+    # a figure that visually described one measurement while storing another
+    # (external audit finding). A shipment count is a figure too.
+    r"|\d[\d,.]*\s*(?:billion|million|thousand)?\s*units?\b")
+
+
+def _unit_of(figure: str) -> str:
+    """The unit a figure actually carries — never USD by default.
+
+    Everything non-percentage used to be stamped USD, which turned "277.5
+    million units" into dollars the moment anything downstream trusted the
+    unit field. A figure's unit is readable off its own text.
+    """
+    if "%" in figure:
+        return "%"
+    if "$" in figure:
+        return "USD"
+    if re.search(r"units?\b", figure, re.I):
+        return "units"
+    return "n/a"
+
+
+def _statement_for(snippet: str, figure: str) -> str:
+    """A statement entailed by exactly this figure.
+
+    When a sentence carries several figures, handing the WHOLE sentence to
+    each one makes every label describe every number. The clause around the
+    figure is what this figure supports; a fragment clause ("down 6.7%
+    year-over-year") is re-anchored to the sentence's subject so it still
+    says what fell.
+    """
+    sentence = _sentence_around(snippet, figure)
+    if not sentence:
+        return f"The source reports {figure}."
+    # Only figures of a DIFFERENT unit class force the narrowing. A count
+    # and a percentage in one sentence is the misleading case ("277.5
+    # million units, down 6.7%" — the label described one, the value stored
+    # the other). Two shares in one comparative sentence ("Samsung 22%;
+    # Apple 20%") are the same measurement of the same thing, and the whole
+    # sentence is the context the shaper reads the basis from — narrowing
+    # those broke the units/revenue split in the offline demo.
+    others = [f for f in _figures_in(sentence)
+              if f != figure and _unit_of(f) != _unit_of(figure)]
+    if not others:
+        return sentence
+    clauses = [c.strip() for c in re.split(r"[,;]", sentence) if c.strip()]
+    mine = next((c for c in clauses if figure in c), sentence)
+    if mine != clauses[0] and (len(mine.split()) < 6
+                               or mine[0].islower()):
+        subject = clauses[0]
+        # Keep the subject clause but not its own figure — that figure has
+        # its own finding, and repeating it here would re-create the
+        # two-numbers-one-label defect this function exists to end. Cut AT
+        # the figure rather than deleting it, so the verb that governed it
+        # ("reached 277.5M…") does not dangle in front of nothing.
+        for other in others:
+            idx = subject.find(other)
+            if idx >= 0:
+                subject = subject[:idx]
+        words = subject.split()
+        while words and words[-1].lower() in ("reached", "hit", "was", "were",
+                                              "at", "of", "to", "totaled",
+                                              "totalled", "grew", "a", "an",
+                                              "the", "with", "in"):
+            words.pop()
+        subject = " ".join(words)
+        if subject:
+            return f"{subject} — {mine}"
+    return mine
 
 
 def _question_terms(question: str) -> set:
@@ -1508,6 +1577,7 @@ _SENTENCE_STARTERS = {
     "Several", "Many", "Some", "Failures", "Operating", "Startup", "Typical",
     "Average", "State", "No", "Bundled", "A", "An", "In", "It", "Its", "We",
     "Our", "According", "Wider", "Category", "Both", "Half", "One", "Two",
+    "Worldwide", "Global", "Total", "Annual", "Overall", "Median", "Sales",
 }
 
 _NOT_A_COMPANY = {
@@ -1555,7 +1625,15 @@ def _org_names(text: str) -> list:
                     if not rest:
                         continue
                     name = rest.strip()
+            name = name.rstrip(".,;:")
             if not name or len(name) < 3:
+                continue
+            # A rank or period token is not a firm. "No.1 was Samsung" put a
+            # company called No.1 into a report and then asked the founder
+            # what position No.1 holds in the market (external audit
+            # finding). The shapes are closed: No./Top/#/Q/FY/H + digits.
+            if re.fullmatch(r"(?:No\.?|Top|#|Q|FY|H)\s?\.?\d+[A-Za-z]*",
+                            name, re.I):
                 continue
             if any(w in _NOT_A_COMPANY for w in name.split()):
                 continue

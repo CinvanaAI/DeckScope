@@ -1,6 +1,6 @@
 """The handoff: a brief in, one report per measure out.
 
-This is the receiving end of a boundary Von drew:
+This is the receiving end of a boundary the client drew:
 
     "when the AI looks at the pitch deck or whatever the input system is, it
     then says 'I identify this market' and then says 'This market measures in

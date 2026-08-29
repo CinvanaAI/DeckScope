@@ -974,7 +974,7 @@ _SCOPER_DECK = {
 
 
 def test_the_scoper_validates_everything_and_guesses_nothing():
-    """The upstream Von specified from the start: read the deck, decide the
+    """The upstream the client specified from the start: read the deck, decide the
     market and its measures, hand off Briefs. Report types are validated
     against the specialist registry and values against each type's own
     dimension — anything unknown becomes a note, never a guess, because a

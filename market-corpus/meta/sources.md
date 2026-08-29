@@ -3,7 +3,7 @@
 Every file in this corpus, where it came from, and how to get it again.
 Retrieved 2026-08-26 via the SEC EDGAR full-text search and archive endpoints.
 
-Licensing: see [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md). These are
+Licensing: see [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md). These are
 third-party documents included as research material. They are **not** covered
 by this repository's MIT licence.
 

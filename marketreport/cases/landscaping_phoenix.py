@@ -1,4 +1,4 @@
-"""Von's original question, sized properly: landscaping in Phoenix, Arizona.
+"""the client's original question, sized properly: landscaping in Phoenix, Arizona.
 
 The question that started this — "I have $5,000 and I want to open a landscaping
 business in Phoenix" — asked for a market the old system answered from a web

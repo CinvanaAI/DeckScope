@@ -1,6 +1,6 @@
 """Report types — the menu the user picks from.
 
-Von's correction, and he was right: the job is not to reproduce anybody's
+The client's correction, and he was right: the job is not to reproduce anybody's
 product. It is to notice which reports we can actually build from public
 sources, build those, and put them in front of the user to choose from.
 

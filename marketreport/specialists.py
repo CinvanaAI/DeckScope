@@ -94,7 +94,7 @@ class Specialist:
     iterations: int = 10
     #: Standing questions in the market report this specialist can answer.
     #:
-    #: This is the convergence Von named: "how you gonna make a market report
+    #: This is the convergence the client named: "how you gonna make a market report
     #: if you can't make the market share report you just made?" Q5 (how
     #: concentrated is it) and Q6 (who competes) ARE the market-share question.
     #: The Census HHI answer is a proxy that only works for fragmented US

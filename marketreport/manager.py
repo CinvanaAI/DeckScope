@@ -147,7 +147,7 @@ def read_request(text: str, *, offline: bool = False) -> Request:
     changes here is that failing to resolve a NAICS code is no longer fatal:
     "cell phones in Ireland" has no code and no FIPS, and refusing it would
     reproduce the exact limitation that made the old system useless for the
-    question Von actually asked.
+    question the client actually asked.
     """
     from .geography import resolve_city, state_fips, state_name
     from .request import _split
@@ -173,7 +173,7 @@ def read_request(text: str, *, offline: bool = False) -> Request:
     # A NAICS code is a bonus, not a requirement — but it IS evidence that a
     # phrase names a market, which is how "landscaping in Phoenix" gets in.
     #
-    # The first version required one of the market words, and rejected Von's
+    # The first version required one of the market words, and rejected the client's
     # original question. A guard whose job is to turn away "what is the weather
     # tomorrow" must not also turn away the question the whole product exists
     # to answer, and a bare industry name carries none of those words.

@@ -144,15 +144,45 @@ class Handler(BaseHTTPRequestHandler):
         allowed = {f"http://127.0.0.1:{port}", f"http://localhost:{port}"}
         return origin in allowed
 
+    def _host_ok(self) -> bool:
+        """Only the loopback names this server was actually launched on.
+
+        DNS rebinding works by pointing an attacker-controlled hostname at
+        127.0.0.1 after the victim's browser has loaded the attacker's page —
+        the browser then sends requests here with the attacker's hostname in
+        the Host header, and the same-origin policy no longer protects
+        anything. Refusing every Host that is not literally this loopback
+        address closes that door (external audit finding #7).
+        """
+        host = (self.headers.get("Host") or "").strip().lower()
+        port = self.server.server_address[1]
+        return host in {f"127.0.0.1:{port}", f"localhost:{port}",
+                        "127.0.0.1", "localhost"}
+
     # ---- routes
     def do_GET(self) -> None:  # noqa: N802
         route = urlparse(self.path)
         path = route.path
         query = parse_qs(route.query)
 
-        # The page itself is served unauthenticated — it contains no data, only
-        # the shell. Everything it then calls requires the token it was given.
+        if not self._host_ok():
+            return self._json({"error": "bad host"}, 403)
+
+        # The page carries the session token in its JavaScript, so serving it
+        # to anyone who can make a GET hands the key to whoever asks — a
+        # DNS-rebinding page could read it and then hold every token-gated
+        # endpoint (external audit finding #7). The launch URL printed at
+        # startup already carries ?token=…, so requiring it here costs the
+        # legitimate user nothing.
         if path in ("/", "/index.html"):
+            if not self._token_ok(query):
+                return self._send(
+                    403,
+                    b"DeckScope is running, but this page requires the "
+                    b"launch link.\nUse the full URL printed in the "
+                    b"terminal (it ends in ?token=...), or restart with: "
+                    b"deckscope app\n",
+                    ctype="text/plain; charset=utf-8")
             # The panel stylesheet is appended rather than duplicated, so a
             # panel drawn in the app window and the same panel saved to a file
             # cannot drift apart. The variable block maps the app's palette
@@ -222,6 +252,8 @@ class Handler(BaseHTTPRequestHandler):
         route = urlparse(self.path)
         query = parse_qs(route.query)
 
+        if not self._host_ok():
+            return self._json({"error": "bad host"}, 403)
         if not self._token_ok(query):
             return self._json({"error": "unauthorized"}, 401)
         if not self._origin_ok():

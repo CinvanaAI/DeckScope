@@ -239,7 +239,7 @@ class MCPStdioClient:
         handshake.
 
         This replaces asking every server for one hardcoded version, which meant
-        the client claimed `2024-11-05` forever and could never use anything a
+        The client claimed `2024-11-05` forever and could never use anything a
         newer server offered.
         """
         probe = self._rpc("server/discover", {

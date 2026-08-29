@@ -2007,7 +2007,7 @@ def _run(args: Any) -> int:
 
 
 def _market_reports_for_deck(result: Any, cfg: Any) -> None:
-    """The managing step Von specified at the very start of this project:
+    """The managing step the client specified at the very start of this project:
 
         "one agent that gets called by a managing agent that decided that
         this market share data mattered, and since it was generated, it

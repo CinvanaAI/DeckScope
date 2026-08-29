@@ -1,6 +1,6 @@
 """One sentence in, a market definition out — or a question back.
 
-This is the seam Von actually described: *"something that can be given a few key
+This is the seam the client actually described: *"something that can be given a few key
 pieces of information (such as a market) and output an S-1 report."* Everything
 downstream of here already works on a `MarketDefinition`. What was missing was
 the ability to produce one from "landscaping in Phoenix".

@@ -91,6 +91,28 @@ class Source:
     status: str = "consulted"     # consulted | cited | quarantined | dropped
     note: str = ""                # why it was dropped, if it was
     cited_by: List[str] = field(default_factory=list)  # e.g. ["C1", "scorecard:Market size"]
+    #: When the snippet was captured, and a hash of exactly what was captured.
+    #: A URL is a pointer, not evidence: the page it names moves on (the demo's
+    #: IDC page now shows a different quarter than the recorded snippet — the
+    #: snippet was independently corroborated, but the link no longer proves
+    #: it). The timestamp plus the snippet hash turn "traceable to a URL" into
+    #: "traceable to the evidence actually used": a reader can see when it was
+    #: read and verify the report quotes what was captured, even after the
+    #: live page changes (external audit finding #6).
+    retrieved_at: str = ""
+    snippet_sha256: str = ""
+
+    def stamp(self) -> None:
+        """Fill retrieval provenance from the snippet, once, at capture."""
+        import hashlib
+        from datetime import datetime, timezone
+
+        if not self.retrieved_at:
+            self.retrieved_at = datetime.now(timezone.utc).isoformat(
+                timespec="seconds")
+        if not self.snippet_sha256 and self.snippet:
+            self.snippet_sha256 = hashlib.sha256(
+                self.snippet.encode("utf-8")).hexdigest()[:16]
 
     @property
     def domain(self) -> str:
@@ -142,6 +164,7 @@ class SourceRegistry:
                 query=getattr(r, "source_query", None),
                 backend=backend,
             )
+            src.stamp()
             self.sources.append(src)
             self._by_url[key] = src
             added.append(src)

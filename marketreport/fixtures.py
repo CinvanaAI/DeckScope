@@ -28,7 +28,7 @@ from typing import Any, Dict, List
 DEMO_NOTE = ("illustrative figure from the offline demo, not a measurement — "
              "run with a Census key for the real value")
 
-#: Landscaping Services, the market Von asked about first. Establishment counts
+#: Landscaping Services, the market the client asked about first. Establishment counts
 #: are shaped like a real County Business Patterns response: a long tail of very
 #: small operators and almost nothing large, which is what a trade like this
 #: actually looks like and what makes the concentration reading interesting.

@@ -1,6 +1,6 @@
 """Panels — the unit the system was missing.
 
-Von asked for a cell-phone market-share chart. I produced one by hand in six
+The client asked for a cell-phone market-share chart. I produced one by hand in six
 minutes, and the repository could not have produced it: nothing in the code
 could express "the shape of this answer is two pies", so the shape could never
 depend on the answer. PANELS.md is the design; this is the enforcement.
@@ -698,7 +698,7 @@ class P10_TheManagerDecidesScope(unittest.TestCase):
 
 
 class P11_TheConvergence(unittest.TestCase):
-    """Von's question, which settles the architecture: how do you make a
+    """the client's question, which settles the architecture: how do you make a
     market report if you cannot make the market-share report you just made?
 
     Q5 ("how concentrated is it") and Q6 ("who competes") ARE the market-share

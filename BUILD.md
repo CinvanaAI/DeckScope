@@ -149,7 +149,7 @@ individually. Recorded in SCHEMA.md §4 with what it costs.
 
 The plain-language door is the point. Asking for `--state 04 --county 013` is a
 question only somebody who already does this work can answer, which made the
-product useless to the person it was built for — Von's first question was
+product useless to the person it was built for — the client's first question was
 "landscaping in Phoenix" and nothing in it could take that.
 
 **The resolver asks rather than guesses**, and this is the one place where that

@@ -12,7 +12,7 @@ Three stages, and only the first is new:
            →  SHAPE    turn findings into a panel (shaper.py, unchanged)
 
 **Opening questions are generated, not written in advance.** This is the fix for
-the thing Von caught: a hand-written seed list is a prompt wearing
+the thing the client caught: a hand-written seed list is a prompt wearing
 architecture's clothes. It cannot be surprised, and it is market-blind — the
 old market-share seeds asked for "the average selling price of landscaping",
 which is a nonsense question that got asked every single time. A brief plus the

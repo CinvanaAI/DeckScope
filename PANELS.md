@@ -1,6 +1,6 @@
 # Panels — the unit of work
 
-Written after Von asked for something the existing system could not do:
+Written after the client asked for something the existing system could not do:
 
 > Show me a market share pie graph of cell phones — and the breakdown, so I can
 > look at it and say "oh, that is the cell phone market, Samsung and Apple have
@@ -100,7 +100,7 @@ express, and it is why the cell-phone answer worked.
 
 ### Panels compose; they are not an alternative to the report
 
-Von's question, which settles the architecture:
+The client's question, which settles the architecture:
 
 > How you gonna make a market report if you don't/can't make the market share
 > report you just made?

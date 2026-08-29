@@ -63,6 +63,58 @@ def test_page_teaches_the_three_marks():
         assert mark in flat, f"the help block must teach the {mark!r} mark"
 
 
+# ------------------------------------------------------- the host boundary
+
+def _serve():
+    import threading
+    from http.server import ThreadingHTTPServer
+
+    from deckscope import webapp
+
+    httpd = ThreadingHTTPServer(("127.0.0.1", 0), webapp.Handler)
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    return httpd, httpd.server_address[1], webapp.SESSION_TOKEN
+
+
+def _get(port, path, host=None):
+    import urllib.error
+    import urllib.request
+
+    req = urllib.request.Request(f"http://127.0.0.1:{port}{path}")
+    if host:
+        req.add_header("Host", host)
+    try:
+        return urllib.request.urlopen(req).status
+    except urllib.error.HTTPError as e:
+        return e.code
+
+
+def test_the_token_bearing_page_requires_the_token():
+    """The root page embeds the session token in its JavaScript, so serving
+    it unauthenticated hands the key to whoever asks — a DNS-rebinding page
+    could read it and then hold every token-gated endpoint (external audit
+    finding #7). The launch URL printed at startup carries the token, so the
+    legitimate user pays nothing."""
+    httpd, port, tok = _serve()
+    try:
+        assert _get(port, "/") == 403
+        assert _get(port, f"/?token={tok}") == 200
+    finally:
+        httpd.shutdown()
+
+
+def test_a_rebound_host_is_refused():
+    """DNS rebinding sends requests with the attacker's hostname in the Host
+    header. Only this loopback's own names are served."""
+    httpd, port, tok = _serve()
+    try:
+        assert _get(port, f"/?token={tok}",
+                    host=f"evil.attacker.net:{port}") == 403
+        assert _get(port, f"/?token={tok}", host=f"localhost:{port}") == 200
+    finally:
+        httpd.shutdown()
+
+
 # ------------------------------------------------------------------ run job
 
 class _FakeResult:

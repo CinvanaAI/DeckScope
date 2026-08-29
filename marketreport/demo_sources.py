@@ -1,7 +1,7 @@
 """Recorded pages, so the whole panel path runs with no keys and no network.
 
 **These are real.** Every excerpt below was retrieved on 2026-08-27 from the URL
-recorded beside it, while answering Von's cell-phone question by hand. They are
+recorded beside it, while answering the client's cell-phone question by hand. They are
 quotations from published research, trimmed to the sentences that carry the
 figures, not text I wrote to be plausible.
 
