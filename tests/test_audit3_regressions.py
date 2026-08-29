@@ -100,7 +100,7 @@ def test_the_cli_reports_a_broken_suite_as_exit_2():
     proc = subprocess.run(
         [sys.executable, "-m", "deckscope", "eval", "--provider", "mock",
          "--only", "no-such-case"],
-        cwd=str(root), capture_output=True, text=True)
+        cwd=str(root), capture_output=True, text=True, encoding="utf-8", errors="replace")
     assert proc.returncode == 2, f"got {proc.returncode}: {proc.stdout[-400:]}"
     assert "checked nothing" in proc.stdout
 
@@ -513,7 +513,7 @@ def _server(*requests):
     proc = subprocess.run(
         [sys.executable, "-m", "deckscope.mcp_server"],
         input="\n".join(requests) + "\n", cwd=str(root),
-        capture_output=True, text=True)
+        capture_output=True, text=True, encoding="utf-8", errors="replace")
     import json as _json
     return [_json.loads(line) for line in proc.stdout.splitlines() if line.strip()]
 
@@ -808,13 +808,13 @@ def test_the_acceptance_script_refuses_to_run_inside_a_checkout():
         return
     try:
         probe = subprocess.run(["bash", "-c", "exit 7"],
-                               capture_output=True, text=True, timeout=30)
+                               capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30)
     except (OSError, subprocess.SubprocessError):
         return
     if probe.returncode != 7:
         return                              # not a shell whose exit codes mean anything
     proc = subprocess.run(["bash", str(script), sys.executable],
-                          cwd=str(root), capture_output=True, text=True)
+                          cwd=str(root), capture_output=True, text=True, encoding="utf-8", errors="replace")
     assert proc.returncode == 2, f"got {proc.returncode}: {proc.stdout[-300:]}"
     assert "only meaningful outside a source checkout" in proc.stdout
 

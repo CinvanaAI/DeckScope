@@ -42,3 +42,7 @@ benchmarks/**  -text
 *.docx          binary
 *.xlsx          binary
 *.zip           binary
+# The S-1 corpus is byte-hashed evidence, exactly like benchmarks: CRLF
+# conversion on a Windows checkout changed the raw bytes and made a fresh
+# clone fail its own provenance check (external audit finding).
+market-corpus/** -text

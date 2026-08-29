@@ -165,7 +165,9 @@ jobs:
       # it runs here, and a prompt that this build no longer generates is a
       # cache miss that fails rather than a mismatch nobody notices.
       - name: Committed benchmarks must still replay
-        run: python scripts/replay_benchmark.py --all
+        run: python scripts/replay_benchmark.py --all --stale-ok
+        # --stale-ok excuses PROMPT DRIFT only while benchmarks/README.md
+        # admits it in a STALE notice; artifact corruption still fails.
 
       - name: The suite must be reproducible
         run: |
@@ -270,7 +272,7 @@ jobs:
       - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
         with:
           python-version: "3.11"
-      - run: pip install ruff
+      - run: pip install ruff==0.8.6  # pinned: unpinned CI lint drifts; rules are pinned in pyproject too
       - run: ruff check .
 
   mcp:

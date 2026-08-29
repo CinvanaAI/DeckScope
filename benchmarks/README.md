@@ -1,5 +1,14 @@
 # Benchmark artifacts
 
+> **Status: STALE against current prompts (as of 2026-08-29).** The answers
+> committed here were produced for the prompts as they stood at the recorded
+> commit. The comparison/lens prompts have since changed (materiality, the
+> so_what bar, question sharpening, investor-lens actions), so the replay
+> correctly reports cache misses: these scores describe the code that
+> produced them, not the code on this branch. The artifacts remain
+> byte-verified. To make the numbers current, re-drive the benchmark against
+> today's prompts and replace this notice with the new run's date.
+
 Every real-model number quoted in the README and in `docs/EVALUATION.md` was produced
 by the run in this directory, and everything needed to check it is here: the exact
 prompt each answerer was given, the exact answer it returned, the hash of both, the

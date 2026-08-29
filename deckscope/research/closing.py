@@ -97,7 +97,19 @@ def relation(a: Finding, b: Finding) -> Tuple[str, str]:
     """
     ma, mb = getattr(a, "metric", None), getattr(b, "metric", None)
     if ma is not None and mb is not None:
-        ok, why = comparable(ma, mb)
+        # relation() is only ever called on findings answering the same
+        # registered question — but a shared question is not automatically a
+        # shared subject (off-topic retrieval lands in questions too). The
+        # vocabulary guard is waived only when a derivation is involved:
+        # a computed figure's statement narrates its METHOD ("starting from
+        # the operator count…"), and method words share no vocabulary with
+        # anything by construction — which is how a $548.9M top-down and a
+        # $571.6M bottom-up sizing of one question went uncompared
+        # (external audit finding). Two ordinary searched findings keep the
+        # full guard.
+        derived = "computed" in (getattr(a, "method", ""),
+                                 getattr(b, "method", ""))
+        ok, why = comparable(ma, mb, same_question=derived)
         if not ok:
             return INCOMPARABLE, why
 

@@ -530,7 +530,7 @@ class A8_ProvenanceAndHygiene(unittest.TestCase):
         root = Path(__file__).resolve().parent.parent
         res = subprocess.run(
             [sys.executable, str(root / "scripts" / "verify_corpus.py")],
-            capture_output=True, text=True, cwd=str(root))
+            capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(root))
         self.assertEqual(0, res.returncode, res.stdout + res.stderr)
 
     def test_the_corpus_has_a_third_party_notice(self):

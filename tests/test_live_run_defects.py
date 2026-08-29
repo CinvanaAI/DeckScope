@@ -327,7 +327,7 @@ def test_the_repository_itself_is_clean():
     root = Path(__file__).resolve().parent.parent
     result = subprocess.run(
         [sys.executable, str(root / "scripts" / "lint.py")],
-        capture_output=True, text=True, cwd=str(root))
+        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(root))
     assert result.returncode == 0, result.stdout + result.stderr
 
 
@@ -519,7 +519,7 @@ def _cli(*argv) -> "subprocess.CompletedProcess":
     root = Path(__file__).resolve().parent.parent
     return subprocess.run(
         [sys.executable, "-m", "deckscope.cli", *argv],
-        capture_output=True, text=True, cwd=str(root), stdin=subprocess.DEVNULL,
+        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(root), stdin=subprocess.DEVNULL,
         timeout=120)
 
 
@@ -930,7 +930,7 @@ def test_an_env_configured_provider_counts_as_configured():
         [sys.executable, "-m", "deckscope.cli", "run",
          "deckscope/evaluation/suite/decks/inflated_tam.md",
          "--format", "md", "--out", tempfile.mkdtemp(prefix="ds_guest_out_")],
-        capture_output=True, text=True, cwd=str(root), env=env,
+        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(root), env=env,
         stdin=subprocess.DEVNULL, timeout=400)
     assert "isn't set up yet" not in result.stdout
     assert result.returncode == 0, result.stdout[-500:]
@@ -954,7 +954,7 @@ def test_a_mock_provider_on_a_real_deck_banners_loudly():
         [sys.executable, "-m", "deckscope.cli", "run",
          "deckscope/evaluation/suite/decks/inflated_tam.md",
          "--format", "md", "--out", tempfile.mkdtemp(prefix="ds_guest_out_")],
-        capture_output=True, text=True, cwd=str(root), env=env,
+        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(root), env=env,
         stdin=subprocess.DEVNULL, timeout=400)
     assert "offline mock" in result.stdout
     assert "illustrative" in result.stdout
@@ -1041,7 +1041,7 @@ def test_the_deck_run_offers_and_honours_the_market_reports_flag():
              "deckscope/evaluation/suite/decks/inflated_tam.md",
              "--format", "md", "--out",
              tempfile.mkdtemp(prefix="ds_scope_out_"), *extra],
-            capture_output=True, text=True, cwd=str(root), env=env,
+            capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(root), env=env,
             stdin=subprocess.DEVNULL, timeout=400)
 
     plain = run()

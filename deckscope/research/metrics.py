@@ -168,6 +168,17 @@ def classify(statement: str, *, unit: str = "", value_text: str = "",
         if re.search(pattern, text):
             measure = name
             break
+    # The value outranks the vocabulary. "Counted bottom-up from
+    # establishments, the total is $571.6M" matched the count pattern off
+    # the word "counted" — but a dollar figure is not a count of anything,
+    # and the mislabel then blocked the top-down/bottom-up comparison the
+    # market report exists to make (external audit finding). The value_text
+    # is the checkable field; when it is money, a keyword-derived 'count'
+    # is circumstantial evidence losing to physical evidence. Downgraded to
+    # UNKNOWN rather than promoted to a money measure, because which money
+    # measure it is (size? funding? price?) the words did not establish.
+    if measure == COUNT and _norm_unit(value_text) == "USD":
+        measure = UNKNOWN
 
     basis = NO_BASIS
     for name, pattern in _BASIS_PATTERNS:
@@ -196,6 +207,19 @@ _NOT_A_NAME = frozenset((
     "there", "no", "not", "in", "on", "at", "by", "for", "of", "and", "or",
     "per", "about", "approximately", "around", "over", "under", "between",
     "one", "two", "three", "four", "five", "top", "leading", "largest",
+))
+
+#: The closed grammatical class of words that open English sentences without
+#: naming anything: indefinite pronouns, quantifiers, and conjunctive adverbs.
+#: Closed because grammar is finite — unlike a stoplist of nouns, this set
+#: does not grow with every new false entity found.
+_SENTENCE_OPENERS = frozenset((
+    "something", "anything", "nothing", "everything", "someone", "anyone",
+    "another", "other", "others", "some", "any", "each", "every", "both",
+    "all", "most", "many", "few", "several", "such", "however", "meanwhile",
+    "moreover", "overall", "together", "here", "when", "while", "although",
+    "because", "since", "despite", "given", "unlike", "beyond", "across",
+    "within", "without", "instead", "roughly", "typically", "historically",
 ))
 
 #: The leading run of capitalised tokens. Anchored at the start because that is
@@ -231,7 +255,31 @@ def _entity(statement: str) -> frozenset:
     # The name is the source, not the subject — leave the comparison open.
     if _REPORTS.match((statement or "")[match.end():]):
         return frozenset()
-    words = frozenset(w.lower().strip(".,;:") for w in match.group(1).split())
+    raw = match.group(1).split()
+    # A single leading capitalized token proves nothing by itself: English
+    # capitalizes EVERY sentence opener, so "Starting from the operator
+    # count…" and "Counted bottom-up…" each minted a fake entity, and the
+    # disjoint-entity rule then refused to compare a $548.9M top-down size
+    # with a $571.6M bottom-up size — silently deleting the one comparison
+    # the market report exists to make (found by external audit). The
+    # discriminator is grammar, not a noun stoplist: participial morphology
+    # (-ing/-ed) and the closed class of indefinite openers cannot be names,
+    # while "Sonova" (a plain name) and "GN" (name by form) still count —
+    # and a wrongly emptied entity only OPENS a comparison, which is this
+    # check's documented safe direction.
+    if len(raw) == 1:
+        token = raw[0].strip(".,;:")
+        lower = token.lower()
+        looks_like_name_by_form = (
+            token.isupper()                      # GN, IBM, IDC
+            or any(ch.isdigit() for ch in token)
+            or "&" in token or "." in token
+            or (len(token) > 1 and not token[1:].islower()))  # McKinsey, WSAudio
+        if not looks_like_name_by_form and (
+                lower in _SENTENCE_OPENERS
+                or lower.endswith(("ing", "ed"))):
+            return frozenset()
+    words = frozenset(w.lower().strip(".,;:") for w in raw)
     words = frozenset(w for w in words if w and w not in _NOT_A_NAME)
     # A single letter or digit run is noise, not a name.
     return frozenset(w for w in words if len(w) > 1 and not w.isdigit())
@@ -254,12 +302,22 @@ def _norm_unit(raw: str) -> str:
 SUBJECT_OVERLAP = 0.18
 
 
-def comparable(a: MetricID, b: MetricID) -> tuple:
+def comparable(a: MetricID, b: MetricID, *, same_question: bool = False) -> tuple:
     """Whether two metrics may be compared, and why not when they may not.
 
     Returns `(ok, reason)`. `reason` is written to be shown to a reader, because
     "these were not compared" is a finding in its own right and a bare False
     would be indistinguishable from "these disagree".
+
+    `same_question=True` is structural identity supplied by the caller: both
+    findings are registered answers to one question, so the vocabulary-overlap
+    guard is waived — a top-down estimate says "starting from the operator
+    count" and a bottom-up one says "counted from establishments", and those
+    describe METHODS, which share no words by construction. An external audit
+    caught the consequence: a $548.9M and a $571.6M sizing of the same
+    question, refused as "different subjects". The entity, measure, unit and
+    period gates all still apply — two companies answering "who leads?" are
+    the same question and are still not one subject.
     """
     # Refuse only on POSITIVE evidence of a mismatch.
     #
@@ -299,7 +357,7 @@ def comparable(a: MetricID, b: MetricID) -> tuple:
                        f"other about {' '.join(sorted(b.entity))} — two "
                        f"different subjects, not two views of one")
 
-    if a.subject and b.subject:
+    if a.subject and b.subject and not same_question:
         if _overlap(a.subject, b.subject) < SUBJECT_OVERLAP:
             return False, ("these describe different subjects; they share "
                            "almost no vocabulary beyond the units")

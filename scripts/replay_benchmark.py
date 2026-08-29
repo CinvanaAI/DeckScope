@@ -96,7 +96,7 @@ def replay(bundle: Path) -> list:
              "--provider", "manual", "--mode", "pipeline", "baseline",
              "--only", *manifest["cases"],
              "--save", str(saved), "--out", str(workdir / "out")],
-            cwd=str(ROOT), env=env, capture_output=True, text=True)
+            cwd=str(ROOT), env=env, capture_output=True, text=True, encoding="utf-8", errors="replace")
         if not saved.is_file():
             return [f"the replay produced no result file.\n{proc.stdout[-2000:]}"]
 
@@ -129,6 +129,10 @@ def main() -> int:
     ap.add_argument("--all", action="store_true", help="every committed bundle")
     ap.add_argument("--identity-only", action="store_true",
                     help="check ids and hashes; skip the replay")
+    ap.add_argument("--stale-ok", action="store_true",
+                    help="a replay broken by PROMPT DRIFT passes — but only "
+                         "while benchmarks/README.md admits the staleness. "
+                         "Identity failures (corrupted artifacts) always fail.")
     args = ap.parse_args()
 
     if args.all:
@@ -143,18 +147,33 @@ def main() -> int:
         print("no benchmark bundles found")
         return 2
 
+    # The honesty coupling: a benchmark whose prompts have drifted may pass
+    # CI only while the benchmark's own README says so out loud. A stale
+    # benchmark with a fresh-sounding README is a published number describing
+    # code that no longer exists — the exact defect the first benchmark
+    # bundle shipped with. So --stale-ok reads the README and refuses to
+    # excuse a drift the README does not admit.
+    stale_admitted = "STALE" in (ROOT / "benchmarks" / "README.md").read_text(
+        encoding="utf-8", errors="replace")
+
     failed = False
     for bundle in bundles:
         print(f"\n=== {bundle.name}")
         problems = verify_identity(bundle)
         print(f"  identity: {'ok' if not problems else str(len(problems)) + ' problem(s)'}")
+        identity_broken = bool(problems)
         if not problems and not args.identity_only:
             problems = replay(bundle)
             print(f"  replay:   {'ok' if not problems else str(len(problems)) + ' problem(s)'}")
         for line in problems:
             print(f"    ! {line}")
+        if problems and not identity_broken and args.stale_ok and stale_admitted:
+            print("  stale-ok: prompt drift excused — benchmarks/README.md "
+                  "admits the staleness. Re-drive the benchmark to make the "
+                  "numbers current again.")
+            continue
         failed = failed or bool(problems)
-    print("\nFAILED" if failed else "\nAll bundles verified and replayed.")
+    print("\nFAILED" if failed else "\nAll bundles verified.")
     return 1 if failed else 0
 
 

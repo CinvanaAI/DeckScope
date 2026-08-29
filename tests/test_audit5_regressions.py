@@ -314,7 +314,7 @@ def test_the_panel_counts_the_rounds_that_make_it_a_panel():
         out = Path(tmp) / "panel_cost"
         subprocess.run([sys.executable, "-m", "deckscope", "demo", "--panel",
                         "--format", "json", "--out", str(out)],
-                       cwd=str(root), capture_output=True, text=True, check=True)
+                       cwd=str(root), capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
         for path in out.glob("*.json"):
             data = json.loads(path.read_text(encoding="utf-8"))
             if "panelists" in (data.get("stats") or {}):

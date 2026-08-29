@@ -746,15 +746,25 @@ class P11_TheConvergence(unittest.TestCase):
                 self.assertIn("takes the money", answers.get(qid).statement)
 
     def test_the_panel_is_attached_to_the_report(self):
+        # One panel per distinct specialist that ran — an invariant, not a
+        # count. The old assertion pinned "1" from the era when market-share
+        # was the only specialist; five run now, on purpose (the specialist
+        # expansion), and the count-pin aged into a false alarm.
         answers = self._report(ask=self._ask)
-        self.assertEqual(1, len(answers.panels))
+        self.assertGreaterEqual(len(answers.panels), 1)
+        self.assertEqual(len(set(self.calls)), len(answers.panels))
 
     def test_one_specialist_runs_once_per_report(self):
         """Q5 and Q6 are both claimed by market-share. Without a cache the loop
         researched the same market twice and spent two budgets to produce two
         identical panels."""
         self._report(ask=self._ask)
-        self.assertEqual(["market-share"], self.calls)
+        # The property is "no specialist runs twice", not "only market-share
+        # exists". Q5 and Q6 are both claimed by market-share; a cache bug
+        # would show as a duplicate in this list.
+        self.assertEqual(len(self.calls), len(set(self.calls)),
+                         f"a specialist ran twice: {self.calls}")
+        self.assertIn("market-share", self.calls)
 
     def test_the_follow_up_fields_are_populated_from_the_panel(self):
         """A section answered by a specialist must satisfy the same structural
@@ -792,7 +802,10 @@ class P11_TheConvergence(unittest.TestCase):
 
         answers = self._report(ask=self._ask)
         body = render_as("html", answers)
-        self.assertEqual(2, body.count("<svg"))
+        # At least one chart per attached panel — the property that failed
+        # when Q5's panel rendered chartless. The exact count grew with the
+        # specialist expansion and is not the invariant.
+        self.assertGreaterEqual(body.count("<svg"), len(answers.panels))
         self.assertIn("takes the money", body)
 
     def test_every_format_carries_the_panel(self):
@@ -810,7 +823,10 @@ class P11_TheConvergence(unittest.TestCase):
 
         self.assertEqual(("Q5", "Q6"), MARKET_SHARE.answers)
         self.assertIs(MARKET_SHARE, specialist_for("Q5"))
-        self.assertIsNone(specialist_for("Q3"))
+        # Q3 was the "nobody claims this" example until market-size claimed
+        # it — deliberately, in the specialist expansion. The declaration
+        # mechanism is what is under test, so assert the claim it now makes.
+        self.assertEqual("market-size", specialist_for("Q3").name)
 
 
 class P12_TheLibrary(unittest.TestCase):

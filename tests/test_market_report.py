@@ -542,7 +542,7 @@ class M9_RequestFlow(unittest.TestCase):
         res = subprocess.run(
             [_sys.executable, "-m", "deckscope", "market", "561730",
              "--state", "04", "--demo", "--json"],
-            capture_output=True, text=True, cwd=str(root))
+            capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(root))
         self.assertEqual(6, res.returncode,
                          "an incomplete report is a real output and not a "
                          "success; a script must be able to tell")

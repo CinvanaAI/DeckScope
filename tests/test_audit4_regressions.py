@@ -224,7 +224,7 @@ def _demo_result(tmp_path):
     out = str(tmp_path / "demo")
     subprocess.run([sys.executable, "-m", "deckscope", "demo",
                     "--format", "json", "--out", out],
-                   cwd=str(root), capture_output=True, text=True, check=True)
+                   cwd=str(root), capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
     return json.loads(next(Path(out).glob("*.json")).read_text(encoding="utf-8"))
 
 

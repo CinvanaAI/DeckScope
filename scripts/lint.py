@@ -225,6 +225,22 @@ def _undefined(tree: ast.Module) -> Iterator[Tuple[int, str]]:
                               + list(child.args.defaults)
                               + [d for d in child.args.kw_defaults if d]):
                     yield from _reads(extra, enclosing)
+                # Annotations are references too. Under `from __future__
+                # import annotations` they never evaluate, so an undefined
+                # name in a signature crashes nothing — but it lies to every
+                # reader and typing tool, and the CI Ruff job rightly failed
+                # on `Dict` in marketreport/document.py while this checker
+                # said clean (external audit finding). Resolved against the
+                # outer scope, where annotation names live.
+                args = child.args
+                for arg in (list(getattr(args, "posonlyargs", []))
+                            + list(args.args) + list(args.kwonlyargs)
+                            + [args.vararg, args.kwarg]):
+                    if arg is not None and arg.annotation is not None:
+                        yield from _reads(arg.annotation, enclosing)
+                returns = getattr(child, "returns", None)
+                if returns is not None:
+                    yield from _reads(returns, enclosing)
                 # Recurse on the function NODE, not on its statements. Passing
                 # the statements meant a function nested inside this one was
                 # reached through the generic branch below, which never adds

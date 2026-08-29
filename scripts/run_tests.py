@@ -34,6 +34,7 @@ import sys
 import tempfile
 import traceback
 import types
+import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -212,7 +213,7 @@ def main(argv=None) -> int:
     if only:
         files = [f for f in files if only.lower() in f.name.lower()]
 
-    ran = failed = errored = 0
+    ran = failed = errored = ran_in_classes = 0
     broken_files = []
     for path in files:
         try:
@@ -227,10 +228,37 @@ def main(argv=None) -> int:
         # Collected from the module AFTER it is fully imported, in definition
         # order. Position in the file cannot exempt a test — see the module
         # docstring for the day that rule was earned.
+        #
+        # BOTH kinds of test are collected: module-level functions AND methods
+        # on Test* classes. The first version collected only functions, which
+        # silently skipped 419 of the suite's 924 tests — while printing a
+        # confident green total. An external audit running real pytest found
+        # the suite nearly twice the size this runner reported. The runner
+        # whose docstring lectures about tests that silently never execute
+        # had itself been running 55% of the suite. Counted, fixed, and now
+        # asserted: the summary line reports functions and methods separately
+        # so a collection regression is visible in every run.
         tests = [(name, obj) for name, obj in vars(module).items()
-                 if name.startswith("test_") and callable(obj)]
+                 if name.startswith("test_") and callable(obj)
+                 and not isinstance(obj, type)]
+        # By INHERITANCE, not by name: this suite's class-based tests are
+        # unittest.TestCase subclasses named for the property they defend
+        # (P1_ProvenanceIsRequired), so a pytest-style Test* name filter
+        # collects zero of them — which is how the first version of this
+        # collector still ran 505 of 924 after "fixing" collection.
+        classes = [(cname, obj) for cname, obj in vars(module).items()
+                   if isinstance(obj, type)
+                   and obj.__module__ == module.__name__
+                   and (issubclass(obj, unittest.TestCase)
+                        or cname.startswith("Test"))]
+        for cls_name, cls in classes:
+            for mname in [n for n in vars(cls) if n.startswith("test_")]:
+                tests.append((f"{cls_name}::{mname}", _bind(cls, mname)))
+
         for name, test in tests:
             ran += 1
+            if "::" in name:
+                ran_in_classes += 1
             try:
                 _call(test)
             except AssertionError as exc:
@@ -247,10 +275,53 @@ def main(argv=None) -> int:
                 for frame in tail[-3:-1]:
                     print(f"       {frame.strip()[:160]}")
 
-    print(f"\n{ran} ran, {failed} failed, {errored} errored, "
-          f"{len(files)} file(s)"
+    print(f"\n{ran} ran ({ran - ran_in_classes} functions + "
+          f"{ran_in_classes} class methods), {failed} failed, "
+          f"{errored} errored, {len(files)} file(s)"
           + ("" if have_pytest else "  [pytest shim]"))
     return 0 if failed == 0 and errored == 0 else 1
+
+
+def _bind(cls, method_name: str):
+    """One runnable callable for a test method, honoring both test styles.
+
+    unittest.TestCase gets its constructor-with-method-name and setUp/tearDown;
+    a plain pytest-style class gets a bare instance plus setup_method/
+    teardown_method when defined. Fixture injection then works through the
+    same `_call` path as module-level functions.
+    """
+    def run(**kwargs):
+        if isinstance(cls, type) and issubclass(cls, unittest.TestCase):
+            inst = cls(method_name)
+            inst.setUp()
+            try:
+                _call_with(getattr(inst, method_name), kwargs)
+            finally:
+                inst.tearDown()
+        else:
+            inst = cls()
+            method = getattr(inst, method_name)
+            if hasattr(inst, "setup_method"):
+                inst.setup_method(method)
+            try:
+                _call_with(method, kwargs)
+            finally:
+                if hasattr(inst, "teardown_method"):
+                    inst.teardown_method(method)
+
+    # _call inspects the signature to know which fixtures to build, so the
+    # wrapper must advertise the method's own parameters (minus self).
+    inner = getattr(cls, method_name)
+    params = [p for p in inspect.signature(inner).parameters.values()
+              if p.name != "self"]
+    run.__signature__ = inspect.Signature(params)
+    run.__name__ = f"{cls.__name__}.{method_name}"
+    return run
+
+
+def _call_with(method, kwargs) -> None:
+    accepted = set(inspect.signature(method).parameters)
+    method(**{k: v for k, v in kwargs.items() if k in accepted})
 
 
 if __name__ == "__main__":

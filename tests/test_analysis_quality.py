@@ -257,6 +257,49 @@ def test_markdown_renders_the_self_check_section():
     assert "Not checkable from what the deck states" in text
 
 
+def test_top_down_and_bottom_up_sizings_are_compared():
+    """External audit: a $548.9M top-down and a $571.6M bottom-up sizing of
+    the SAME question were refused as 'two different subjects' — sentence-
+    initial words like "Starting" and "Counted" minted fake entities, the
+    keyword 'counted' mislabeled a dollar figure as a count, and the
+    vocabulary guard finished the job because method narrations share no
+    words. Three fixes: sentence-position grammar can't mint an entity, the
+    value outranks the vocabulary for measure, and a derivation (method=
+    'computed') waives the vocabulary guard within its question."""
+    from deckscope.research.closing import relation
+    from deckscope.research.findings import FindingRegistry
+
+    registry = FindingRegistry()
+    registry.add("Starting from the operator count, the market is $548.9M",
+                 value_text="$548.9M", question_id="Q2", unit="USD",
+                 method="computed", source_ids=["S1"], beat="sizing")
+    registry.add("Counted bottom-up from establishments, the total "
+                 "is $571.6M", value_text="$571.6M", question_id="Q2",
+                 unit="USD", method="search", source_ids=["S2"], beat="sizing")
+    a, b = list(registry.findings)[:2]
+    rel, why = relation(a, b)
+    assert rel != "incomparable", (
+        f"the report's central convergence check refused to run: {why}")
+
+
+def test_off_topic_findings_in_one_question_stay_incomparable():
+    """The waiver is scoped to derivations — two ordinary searched findings
+    about genuinely different things keep the full vocabulary guard, so
+    off-topic retrieval cannot be forced into a comparison."""
+    from deckscope.research.closing import relation
+    from deckscope.research.findings import FindingRegistry
+
+    registry = FindingRegistry()
+    registry.add("Landscaping startup capital is $10,000",
+                 value_text="$10,000", question_id="Q3", unit="USD",
+                 method="search", source_ids=["S1"], beat="economics")
+    registry.add("Office software costs $10,200 annually",
+                 value_text="$10,200", question_id="Q3", unit="USD",
+                 method="search", source_ids=["S2"], beat="economics")
+    a, b = list(registry.findings)[:2]
+    assert relation(a, b)[0] == "incomparable"
+
+
 def test_headline_verb_matches_the_verdict_mix():
     """A live spool run opened with "Four claims are contradicted by cited
     evidence" when three of the four were only partially supported — an

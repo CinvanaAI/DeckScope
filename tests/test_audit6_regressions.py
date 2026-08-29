@@ -33,7 +33,7 @@ def _rpc(*messages):
     """Drive the stdio server and return {id: result-or-error}."""
     payload = "\n".join(json.dumps(m) for m in messages) + "\n"
     proc = subprocess.run([sys.executable, "-m", "deckscope.mcp_server"],
-                          input=payload, capture_output=True, text=True,
+                          input=payload, capture_output=True, text=True, encoding="utf-8", errors="replace",
                           cwd=str(ROOT), timeout=180)
     out = {}
     for line in proc.stdout.splitlines():
@@ -238,7 +238,7 @@ def test_the_replay_script_verifies_rather_than_describes():
     assert script.is_file()
     proc = subprocess.run([sys.executable, str(script), "--all",
                            "--identity-only"],
-                          capture_output=True, text=True, cwd=str(ROOT),
+                          capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(ROOT),
                           timeout=300)
     assert proc.returncode == 0, proc.stdout[-2000:]
     assert "identity: ok" in proc.stdout

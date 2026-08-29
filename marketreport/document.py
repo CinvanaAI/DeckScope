@@ -35,7 +35,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import html
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from .panel import Panel
 from .panel_render import PANEL_CSS, panel_html, panel_markdown, panel_text

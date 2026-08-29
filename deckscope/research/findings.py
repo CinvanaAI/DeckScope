@@ -274,7 +274,13 @@ class FindingRegistry:
                     # pass — the one that decides what "contested" means — was
                     # never switched over to it.
                     if a.metric is not None and b.metric is not None:
-                        ok, _why = comparable(a.metric, b.metric)
+                        # Grouped by question_id above; the vocabulary guard
+                        # is waived only when one side is a derivation, whose
+                        # statement narrates method rather than subject (see
+                        # closing.relation for the full account).
+                        derived = "computed" in (a.method, b.method)
+                        ok, _why = comparable(a.metric, b.metric,
+                                              same_question=derived)
                         if not ok:
                             continue
 

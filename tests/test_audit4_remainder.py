@@ -124,7 +124,7 @@ def _demo(tmp_path, formats):
     out = str(tmp_path / "d")
     subprocess.run([sys.executable, "-m", "deckscope", "demo",
                     "--format", *formats, "--out", out],
-                   cwd=str(root), capture_output=True, text=True, check=True)
+                   cwd=str(root), capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
     return Path(out)
 
 
@@ -236,7 +236,7 @@ def test_the_panel_produces_a_central_artifact_in_binary_formats(tmp_path):
     out = tmp_path / "p"
     subprocess.run([sys.executable, "-m", "deckscope", "demo", "--panel",
                     "--format", "md", "docx", "--out", str(out)],
-                   cwd=str(root), capture_output=True, text=True, check=True)
+                   cwd=str(root), capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
     central = [p.name for p in out.iterdir()
                if "_panel_" in p.name and p.suffix == ".docx"]
     assert central, f"no central panel .docx among {[p.name for p in out.iterdir()]}"

@@ -196,7 +196,7 @@ def _demo(fmts, out):
     root = Path(__file__).resolve().parent.parent
     subprocess.run([sys.executable, "-m", "deckscope", "demo",
                     "--format", *fmts, "--out", out],
-                   cwd=str(root), capture_output=True, text=True, check=True)
+                   cwd=str(root), capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
     return root
 
 
