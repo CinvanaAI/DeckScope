@@ -200,6 +200,14 @@ All nine cases, both modes, 36 exchanges:
 | baseline (one prompt) | **95 / 95** | 20,610 |
 | pipeline (three agents) | **94 / 95** | 195,310 |
 
+  > **These scores are STALE.** They were measured against the prompts at the
+  > recorded benchmark commit; the comparison prompts have since changed
+  > (materiality, evidence binding, and more), and the replay correctly
+  > reports cache misses against today's code. The numbers describe the code
+  > that produced them, not this branch — see
+  > [`../benchmarks/README.md`](../benchmarks/README.md). Re-driving the benchmark
+  > against current prompts is the top open validation item.
+
 **The pipeline's one failure is the finding.** On `anchored_category` it named
 *LangSmith* — a real product in that category, present in neither the deck nor the
 frozen corpus. Every prompt forbids inventing a company. That is world knowledge

@@ -197,6 +197,15 @@ DeckScope will not produce a confident-looking market view it cannot support.
 | API keys | `%APPDATA%\DeckScope\.env` | `~/.config/deckscope/.env` (mode 0600) |
 | Reports | `Documents\DeckScope Reports` | `~/Documents/DeckScope Reports` |
 | Cache | `%APPDATA%\DeckScope\cache` | `~/.config/deckscope/cache` |
+| Stored market reports (panels) | `%APPDATA%\DeckScope\panels` | `~/.config/deckscope/panels` |
+| Dataset caches (NAICS, county FIPS) | `%APPDATA%\DeckScope\*.json` | `~/.config/deckscope/*.json` |
+
+**Stored panels are cleartext.** A deck run with market reports enabled
+persists the specialist reports it produced, and those name the market and
+the claims that were checked — treat the panels folder with the same care as
+the deck itself. (Earlier versions wrote panels to an undocumented
+`~/.deckscope/panels`; on first use this version migrates them into the
+directory above, so the uninstall table really is the whole inventory.)
 
 Override the settings location with the `DECKSCOPE_HOME` environment variable — useful
 for keeping several profiles.
@@ -225,7 +234,10 @@ settings and saved keys gone too:
 
 | System | Delete |
 |---|---|
-| Windows | `%APPDATA%\DeckScope` |
-| macOS / Linux | `~/.config/deckscope` and `~/.deckscope` |
+| Windows | `%APPDATA%\DeckScope` and `%USERPROFILE%\.deckscope` (legacy, if present) |
+| macOS / Linux | `~/.config/deckscope` and `~/.deckscope` (legacy, if present) |
 
-Nothing else was ever written outside those places.
+Those tables are the complete inventory of what this version writes. The
+legacy `~/.deckscope` entry covers panels stored by earlier versions; the
+current version migrates them into the main directory on first use and
+removes the legacy folder when it empties.

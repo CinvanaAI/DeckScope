@@ -991,6 +991,14 @@ Worth reading before you trust anything it produces.
   | baseline (one prompt) | **95 / 95** | 20,610 |
   | pipeline (three agents) | **94 / 95** | 195,310 |
 
+  > **These scores are STALE.** They were measured against the prompts at the
+  > recorded benchmark commit; the comparison prompts have since changed
+  > (materiality, evidence binding, and more), and the replay correctly
+  > reports cache misses against today's code. The numbers describe the code
+  > that produced them, not this branch — see
+  > [`benchmarks/README.md`](benchmarks/README.md). Re-driving the benchmark
+  > against current prompts is the top open validation item.
+
   Every prompt and answer is committed under [`benchmarks/`](benchmarks/), and
   `python scripts/replay_benchmark.py --all` re-scores them offline in CI — so these
   numbers stop describing the code the moment the code moves.

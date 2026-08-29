@@ -96,7 +96,15 @@ else
   bad "size crashed (exit $rc)"
 fi
 
-"$PY" -m deckscope research deckscope/examples/sample_deck.md --demo \
+# The sample deck must come from the INSTALLED package, not a source-tree
+# path. This script runs in an empty directory by design, and the old
+# checkout-relative path (deckscope/examples/sample_deck.md) existed only
+# in a checkout — the one place this script refuses to run. The clean-wheel
+# CI job was red on exactly this: the wheel was fine and the address wrong
+# (external audit finding).
+SAMPLE="$("$PY" -c "import deckscope.cli, pathlib; print(pathlib.Path(deckscope.cli.__file__).resolve().parent / 'examples' / 'sample_deck.md')")"
+[ -f "$SAMPLE" ] && ok "packaged sample deck found" || bad "packaged sample deck missing: $SAMPLE"
+"$PY" -m deckscope research "$SAMPLE" --demo \
   --max-iterations 4 -q --save ./_accept_research.json >/dev/null 2>&1 \
   && ok "research --demo --save" || bad "research --demo --save"
 "$PY" -c "import json,sys; json.load(open('./_accept_research.json'))" \

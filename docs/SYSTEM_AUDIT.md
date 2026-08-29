@@ -1,25 +1,59 @@
-# System audit — 2026-08-29
+# System audit — 2026-08-29 (revised after external verification)
 
-The state of the system after working both audits: an external audit of a
-fresh clone at `dbf8d4d`, and the internal hostile-reviewer passes. Every
-claim below was verified by executing it on this branch, in this order,
-before being written down. Nineteen defects have now been found in this
-project's life; every one was found by *using* the product — running it,
-replaying it, reading its output as its reader — and never by reading the
-code. That is the operating lesson of this repository, and the audit below
-was conducted accordingly.
+The state of the system after working two external audits and the internal
+hostile-reviewer passes. Every claim below states WHERE it was verified,
+because the previous revision of this document did not — it said "the gates
+pass, all of them" after running local checks in a Linux sandbox, and the
+hosted CI for that exact commit (85e7b86) was red on three jobs the sandbox
+could not run: the real Ruff lint, the clean-wheel acceptance script, and
+Windows/Python 3.9. An external audit caught the contradiction. The rule
+this document now follows, permanently:
 
-## Verification state (executed on this branch)
+> **A gate's status is the hosted run's status for the exact commit.**
+> Local verification is evidence about local verification. This document
+> may say "fixed and verified locally; hosted run pending" — it may never
+> again say "all gates pass" ahead of the run that decides it.
 
-| Gate | Result |
+Nineteen prior defects plus this cycle's three CI reds were all found by
+using the product — running it, replaying it, installing it clean, reading
+its output as its reader — never by reading code.
+
+## Verification state
+
+Verified **locally in the development sandbox (Linux, Python 3.10)** on
+this branch:
+
+| Check | Result |
 |---|---|
-| Full test suite (canonical runner, both test styles) | **935 ran (516 functions + 419 class methods), 0 failed, 0 errored, 38 files** |
-| Custom linter (incl. new annotation-name resolution) | clean — 176 files |
-| Ruff-class findings (undefined names, unused imports) | fixed at source; Ruff pinned in CI |
-| `deckscope demo` / `--panel` / `--injected` | exit 0, all three |
-| Committed reference run (cold cache, from committed files) | replays green |
-| Committed benchmark bundle | byte-verified; **STALE against current prompts, stated in its README** — CI accepts staleness only while that admission exists |
-| Personal identifiers / personal paths | zero (`Von`, home paths, email all scrubbed; ships clean in the wheel) |
+| Full test suite (canonical runner, both styles) | 937 ran, 0 failed |
+| Custom linter (annotation-aware) | clean |
+| `deckscope demo` / `--panel` / `--injected` | exit 0 |
+| Committed reference run, cold cache | replays green |
+| Personal identifiers / paths / secrets in tree | none |
+
+Verified **by the external audit on Windows** (fresh clone, fully
+provisioned): 935/935 under real pytest on Python 3.13; wheel builds,
+installs clean, and runs demos and evaluation from outside the checkout;
+all eight output formats open; dependency advisories clean; SBOM valid;
+history scan free of credentials and personal identities.
+
+**Red on hosted CI at 85e7b86, fixed on this branch, hosted run pending:**
+
+1. **Ruff (12 violations).** The four production ones — three unused
+   function-local imports in cli.py, one in scoping.py — are removed; the
+   bare-name lambda in tests is a def. The custom linter and Ruff disagreed
+   because the custom checker's scope model is coarser; Ruff remains the
+   authority for its rule classes, pinned in CI.
+2. **Clean-wheel acceptance.** The script addressed a checkout-relative
+   fixture path from an intentionally empty directory — the wheel was fine,
+   the address wrong. It now resolves the sample deck from the installed
+   package itself, and a test forbids checkout-relative fixture paths in
+   the script.
+3. **Windows/Python 3.9.** The subprocess env allowlists matched
+   `SystemRoot` case-sensitively while Windows exposes `SYSTEMROOT`; child
+   Pythons lost it and died in interpreter startup. Membership is now
+   case-insensitive (secrets still excluded), pinned by a test that sets
+   the Windows casing explicitly.
 
 ## Security
 

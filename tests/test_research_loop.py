@@ -149,7 +149,8 @@ class ClosingRules(unittest.TestCase):
         """I9 — blaming the budget when the budget was fine sends the reader wrong."""
         reg = FindingRegistry()
         a = reg.add("Something", value_text="$1", source_ids=["S1"])
-        lookup = (lambda _s: type("S", (), {"url": "https://x.example"})())
+        def lookup(_s):
+            return type("S", (), {"url": "https://x.example"})()
         budget = decide([a], lookup, budget_exhausted=True)
         repeat = decide([a], lookup, budget_exhausted=True,
                         exhausted_reason="every query the loop could form for this "

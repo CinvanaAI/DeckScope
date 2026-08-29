@@ -228,7 +228,7 @@ def dispatch_for_deck(deck: Dict[str, Any], cfg: Any,
     from deckscope.research.registry import get_researcher
     from .handoff import run_brief
     from .library import Library
-    from .reconcile import Entry, document, entry_for
+    from .reconcile import Entry, entry_for
 
     emit = on_event or (lambda *_: None)
     lines: List[str] = []

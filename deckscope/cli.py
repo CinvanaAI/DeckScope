@@ -1164,10 +1164,7 @@ def _specialists_using(dimension: str) -> List[str]:
 
 def _ask_market(args: Any) -> int:
     """A plain question, answered as panels."""
-    import json as _json
-
     from marketreport.manager import answer, plan, read_request
-    from marketreport.panel_render import panel_text
 
     settings.load_env()
 
@@ -1562,7 +1559,6 @@ def _size(args: Any) -> int:
 
 def _research(args: Any) -> int:
     """The question-driven loop, end to end, printing its reasoning as it goes."""
-    import json
 
     from .agents.deck_agent import DeckAnalyst
     from .ingest.loader import load_deck

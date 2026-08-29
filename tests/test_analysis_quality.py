@@ -393,6 +393,67 @@ def test_summary_check_ignores_years_and_uncited_audit_rows():
     assert summary_unsourced_figures("It is a $5B market.", {}, comp) == ["$5B"]
 
 
+def test_windows_cased_environment_survives_the_allowlist(monkeypatch):
+    """The allowlist spells it SystemRoot; Windows exposes SYSTEMROOT. The
+    case-sensitive check dropped it from every child environment, and under
+    Windows/Python 3.9 a child Python died during interpreter startup —
+    the hosted CI job that stayed red after everything else was green
+    (external audit finding). Membership is case-insensitive now; the
+    secret-exclusion intent is unchanged."""
+    monkeypatch.setenv("SYSTEMROOT", r"C:\Windows")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-should-never-cross")
+    from deckscope.providers import cli_provider
+    from deckscope.providers.mcp_provider import child_env
+
+    env = child_env()
+    assert "SYSTEMROOT" in env
+    assert "ANTHROPIC_API_KEY" not in env
+    assert cli_provider._allowed("systemroot")
+    assert not cli_provider._allowed("AWS_SECRET_ACCESS_KEY")
+
+
+def test_panels_live_inside_the_documented_app_dir(monkeypatch, tmp_path):
+    """Panels wrote to an undocumented ~/.deckscope/panels while every doc
+    and the uninstall table pointed at the app dir — leftover cleartext
+    reports naming a confidential company's market (external audit finding
+    #5). One documented location now, with legacy migration that survives a
+    cross-filesystem move (os.replace raised EXDEV there; shutil.move does
+    not — caught by this test before it shipped)."""
+    import os
+
+    home = tmp_path / "apphome"
+    monkeypatch.setenv("DECKSCOPE_HOME", str(home))
+    fake_user_home = tmp_path / "userhome"
+    legacy = fake_user_home / ".deckscope" / "panels"
+    legacy.mkdir(parents=True)
+    (legacy / "20260101-legacy.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(os.path, "expanduser",
+                        lambda p: p.replace("~", str(fake_user_home)))
+
+    from marketreport.library import default_dir
+    from marketreport.naics import _cache_path
+
+    d = default_dir()
+    assert d.startswith(str(home)), f"panels outside the app dir: {d}"
+    assert (tmp_path / "apphome" / "panels" / "20260101-legacy.json").exists()
+    assert not legacy.exists(), "the undocumented location must not remain"
+    assert _cache_path().startswith(str(home))
+
+
+def test_acceptance_script_addresses_the_packaged_sample():
+    """The clean-wheel CI job ran a checkout-relative fixture path from an
+    intentionally empty directory — the wheel was fine, the address wrong.
+    The script must resolve the sample from the installed package."""
+    from pathlib import Path
+
+    script = (Path(__file__).resolve().parent.parent / "scripts"
+              / "acceptance.sh").read_text(encoding="utf-8")
+    assert "deckscope.cli.__file__" in script, (
+        "the sample must be resolved from the installed package")
+    assert '-m deckscope research deckscope/examples' not in script, (
+        "no checkout-relative fixture paths in the clean-install test")
+
+
 # --------------------------------------------- one evidence engine
 
 def test_reports_run_inside_the_pipeline_and_feed_the_comparison(monkeypatch, tmp_path):

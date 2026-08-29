@@ -23,6 +23,7 @@ import datetime as _dt
 import hashlib
 import json
 import os
+import shutil
 import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
@@ -33,9 +34,42 @@ __all__ = ["Library", "PanelRef", "default_dir"]
 
 
 def default_dir() -> str:
-    home = (os.environ.get("DECKSCOPE_HOME")
-            or os.path.join(os.path.expanduser("~"), ".deckscope"))
-    return os.path.join(home, "panels")
+    """Where panels live: INSIDE the documented application directory.
+
+    This used to be `~/.deckscope/panels` while everything else documented
+    and used the per-user app dir (%APPDATA%\\DeckScope on Windows, XDG on
+    Unix). An external audit called it correctly: an undocumented second
+    data location, missed by the uninstall instructions — and because
+    integrated deck runs persist specialist reports automatically, the
+    leftover files could reveal a confidential company's market and
+    diligence direction. One documented location now; DECKSCOPE_HOME still
+    overrides for tests and sandboxes, honored by app_dir itself. Panels
+    already written to the legacy path are migrated on first use so nothing
+    silently vanishes — and nothing stays behind in the undocumented spot.
+    """
+    from deckscope.settings import app_dir
+
+    target = os.path.join(str(app_dir()), "panels")
+    legacy = os.path.join(os.path.expanduser("~"), ".deckscope", "panels")
+    if os.path.isdir(legacy) and os.path.abspath(legacy) != os.path.abspath(target):
+        try:
+            os.makedirs(target, exist_ok=True)
+            for name in os.listdir(legacy):
+                src = os.path.join(legacy, name)
+                dst = os.path.join(target, name)
+                if os.path.isfile(src) and not os.path.exists(dst):
+                    # shutil.move, not os.replace: the app dir and the legacy
+                    # home dir can sit on different filesystems, and
+                    # os.replace raises EXDEV across them — which the
+                    # best-effort except would have swallowed, leaving the
+                    # migration silently undone (caught by this change's own
+                    # test before it could ship).
+                    shutil.move(src, dst)
+            if not os.listdir(legacy):
+                os.rmdir(legacy)
+        except OSError:
+            pass  # migration is best-effort; the new location still works
+    return target
 
 
 _SAFE = re.compile(r"[^a-z0-9]+")

@@ -231,9 +231,11 @@ def resolve_city(text: str) -> Place:
 # ------------------------------------------------- counties, fetched live
 
 def _cache_path() -> str:
-    home = (os.environ.get("DECKSCOPE_HOME")
-            or os.path.join(os.path.expanduser("~"), ".deckscope"))
-    return os.path.join(home, "county-fips.json")
+    # The documented app dir, not a second undocumented ~/.deckscope
+    # (external audit finding on persistent-data locations).
+    from deckscope.settings import app_dir
+
+    return os.path.join(str(app_dir()), "county-fips.json")
 
 
 def _load_cache() -> Dict[str, Dict[str, str]]:

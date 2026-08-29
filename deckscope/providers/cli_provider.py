@@ -78,6 +78,24 @@ ENV_ALLOWLIST = (
     "PYTHONIOENCODING",
 )
 
+_ALLOW_UPPER = {n.upper() for n in ENV_ALLOWLIST}
+
+def _allowed(name: str) -> bool:
+    """Case-insensitive membership, because Windows environment names are.
+
+    The list spells it SystemRoot; Python on Windows exposes it as
+    SYSTEMROOT. The case-sensitive check silently dropped it from every
+    child environment, and under Windows/Python 3.9 a child *Python*
+    process then died during interpreter startup ("failed to get random
+    numbers to initialize Python") — the hosted CI job that stayed red
+    after everything else was fixed (external audit finding). The intent
+    of the allowlist (no accidental secret inheritance) is unchanged;
+    only the comparison respects the platform's own rules.
+    """
+    return name.upper() in _ALLOW_UPPER
+
+
+
 
 class CLIProvider(LLMProvider):
     """Zero-key option: shells out to an agent CLI already signed in on this machine."""
@@ -129,7 +147,10 @@ class CLIProvider(LLMProvider):
             return None
         import os
 
-        env = {k: os.environ[k] for k in ENV_ALLOWLIST if k in os.environ}
+        # Same case-insensitive membership as the MCP provider — one rule,
+        # and it iterates the REAL environment so the child receives the
+        # platform's own casing (SYSTEMROOT as Windows spells it).
+        env = {k: v for k, v in os.environ.items() if _allowed(k)}
         env.update(self.config.extra.get("env") or {})
         return env
 

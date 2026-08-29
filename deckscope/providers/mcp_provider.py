@@ -72,6 +72,24 @@ ENV_ALLOWLIST = (
     "PYTHONIOENCODING", "NODE_PATH", "NVM_DIR",
 )
 
+_ALLOW_UPPER = {n.upper() for n in ENV_ALLOWLIST}
+
+def _allowed(name: str) -> bool:
+    """Case-insensitive membership, because Windows environment names are.
+
+    The list spells it SystemRoot; Python on Windows exposes it as
+    SYSTEMROOT. The case-sensitive check silently dropped it from every
+    child environment, and under Windows/Python 3.9 a child *Python*
+    process then died during interpreter startup ("failed to get random
+    numbers to initialize Python") — the hosted CI job that stayed red
+    after everything else was fixed (external audit finding). The intent
+    of the allowlist (no accidental secret inheritance) is unchanged;
+    only the comparison respects the platform's own rules.
+    """
+    return name.upper() in _ALLOW_UPPER
+
+
+
 
 def child_env(extra: Optional[Dict[str, str]] = None) -> Dict[str, str]:
     """The environment an MCP subprocess gets: an allowlist, plus what it was told.
@@ -81,7 +99,7 @@ def child_env(extra: Optional[Dict[str, str]] = None) -> Dict[str, str]:
     That is a deliberate grant of one secret rather than an accidental grant of
     all of them.
     """
-    env = {k: v for k, v in os.environ.items() if k in ENV_ALLOWLIST}
+    env = {k: v for k, v in os.environ.items() if _allowed(k)}
     env.update({str(k): str(v) for k, v in (extra or {}).items()})
     return env
 
