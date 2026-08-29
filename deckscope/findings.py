@@ -78,6 +78,13 @@ class Finding:
     evidence_quality: str = ""
     source_ids: List[str] = field(default_factory=list)
     claim_id: str = ""
+    #: The audit's verdict verbatim ("contradicted" vs "partially-supported").
+    #: Kept because the headline must not call a partial disagreement an
+    #: outright contradiction — a live run opened with "Four claims are
+    #: contradicted by cited evidence" when three of the four were only
+    #: partly supported, an overstatement in the most-read sentence of a
+    #: report built to avoid exactly that.
+    assessment: str = ""
 
     @property
     def is_citable(self) -> bool:
@@ -196,6 +203,7 @@ def collect(comparison: Dict[str, Any],
             "evidence_quality": quality,
             "source_ids": source_ids,
             "claim_id": str(row.get("id") or ""),
+            "assessment": assessment,
         }
         if not base["text"]:
             continue
@@ -377,12 +385,26 @@ def compose_headline(found: Findings, comparison: Dict[str, Any]) -> str:
 
     if grounded:
         n = len(grounded)
+        # The verb must match the verdicts. "Contradicted" for a set that is
+        # mostly partially-supported overstates — in the one sentence every
+        # reader reads.
+        outright = [f for f in grounded if f.assessment == "contradicted"]
+        if len(outright) == n:
+            verb = "contradicted by cited evidence"
+        elif not outright:
+            verb = "only partly supported by cited evidence"
+        else:
+            verb = (f"contested by cited evidence "
+                    f"({_count_word(len(outright))} outright, "
+                    f"{_count_word(n - len(outright))} partly supported)")
         # `delta` says how far the claim sits from the data, which is the most
         # specific thing available. `so_what` is often generic encouragement.
-        lead = _first_sentence(grounded[0].delta or grounded[0].why, 120)
+        # Lead with an outright contradiction when one exists.
+        first = (outright or grounded)[0]
+        lead = _first_sentence(first.delta or first.why, 120)
         parts.append(
-            f"{_count_word(n)} {_plural(n, 'claim is', 'claims are')} contradicted "
-            f"by cited evidence" + (f" — {lead}" if lead else ""))
+            f"{_count_word(n)} {_plural(n, 'claim is', 'claims are')} {verb}"
+            + (f" — {lead}" if lead else ""))
 
     if found.omissions:
         n = len(found.omissions)

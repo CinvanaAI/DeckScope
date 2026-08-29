@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, List
 
 from .common import (ASSESSMENT_WORD, SEVERITY_WORD, alignment_text, as_list,
-                     findings_for, header_block, safe_url, txt)
+                     findings_for, header_block, safe_url, summary_caveat, txt)
 
 
 def build_markdown(result, lens: str) -> str:
@@ -114,6 +114,10 @@ def build_markdown(result, lens: str) -> str:
     # ---------------------------------------------------------- summary
     add("## Summary")
     add("")
+    caveat = summary_caveat(comp.get("summary") or "", deck, comp)
+    if caveat:
+        add(f"> _{caveat}_")
+        add("")
     add(comp.get("summary") or "_No summary produced._")
     add("")
 

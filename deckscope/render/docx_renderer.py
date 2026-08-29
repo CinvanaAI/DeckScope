@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, List
 
 from .common import (ASSESSMENT_WORD, SEVERITY_WORD, alignment_text, as_list,
-                     findings_for, header_block, txt)
+                     findings_for, header_block, txt, summary_caveat)
 
 
 def _hex(color: str) -> Any:
@@ -105,6 +105,11 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
 
         # Summary
         doc.add_heading("Summary", level=1)
+        caveat = summary_caveat(comp.get("summary") or "", result.deck, comp)
+        if caveat:
+            p = doc.add_paragraph()
+            r = p.add_run(caveat)
+            r.font.italic, r.font.size = True, Pt(9)
         for para in (comp.get("summary") or "").split("\n"):
             if para.strip():
                 doc.add_paragraph(para.strip())

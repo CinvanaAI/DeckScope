@@ -295,6 +295,40 @@ def test_dispatch_for_deck_stores_narrates_and_reconciles(monkeypatch, tmp_path)
     assert "Bearing on the claim" in body
 
 
+def test_html_runs_get_an_html_reconciliation(monkeypatch, tmp_path):
+    """A guest's click should land on a document, not raw markdown — when
+    the run produces HTML, the reconciliation matches it (md still written
+    beside it for the terminal reader)."""
+    from marketreport import scoping
+    from marketreport.handoff import Brief
+
+    brief = Brief(market="m", measures=["units"], specialist="market-share",
+                  because="claim under test")
+    monkeypatch.setattr("marketreport.scoping.briefs_from_deck",
+                        lambda deck, provider: ([brief], []))
+    monkeypatch.setattr("marketreport.handoff.run_brief",
+                        lambda b, **kw: {"panels": ["p"], "unknown": [],
+                                         "failed": []})
+
+    class _Ref:
+        id = "ps_h"
+
+    class _FakeLibrary:
+        def save_all(self, panels, market="", place="", request=""):
+            return [_Ref()]
+
+    monkeypatch.setattr("marketreport.library.Library", _FakeLibrary)
+    cfg = _engine_cfg(tmp_path)
+    cfg.output.formats = ["html", "md"]
+
+    out = scoping.dispatch_for_deck({}, cfg)
+    assert out["document"].endswith(".html")
+    body = open(out["document"], encoding="utf-8").read()
+    assert "claim under test" in body and "<!doctype html>" in body
+    assert (tmp_path / "deck_market_reports.md").exists(), (
+        "markdown still written beside the page")
+
+
 def test_one_dead_brief_does_not_sink_the_rest(monkeypatch, tmp_path):
     from marketreport import scoping
     from marketreport.handoff import Brief

@@ -1,6 +1,7 @@
 """Shared helpers and the colour themes every renderer draws from."""
 from __future__ import annotations
 
+import re
 from typing import Any, Dict, List
 
 THEMES: Dict[str, Dict[str, str]] = {
@@ -45,6 +46,72 @@ SEVERITY_WORD = {
     "medium": "partly contradicted",
     "low": "disputed, but thinly evidenced",
 }
+
+
+#: A figure the summary check cares about: a dollar amount, a percentage, or
+#: a multiple. Bare numbers are deliberately not matched — "a 2030 projection"
+#: contains a year, not a figure, and flagging years would teach readers to
+#: ignore the caveat.
+_SUMMARY_FIGURE = re.compile(
+    r"\$\s?\d[\d,]*(?:\.\d+)?\s*(?:[BMKk]\b|billion|million|thousand)?"
+    r"|\b\d[\d,]*(?:\.\d+)?\s*%"
+    r"|\b\d+(?:\.\d+)?\s*[x×]\b")
+
+_CITE_MARK = re.compile(r"\[S\d+\]")
+
+
+def summary_unsourced_figures(summary: str, deck: Any, comp: Any) -> List[str]:
+    """Figures in the summary that exist nowhere the reader can follow.
+
+    The three marks (source ID, "no source", "could not be checked") bind
+    every findings section — and stopped at the Summary, the most-read prose
+    on the page, where a model can still assert "$12B" out of thin air. This
+    closes that gap deterministically. A figure is covered if any of:
+
+    - its sentence carries a citation mark ([S3]) — the reader can follow it;
+    - it appears anywhere in the deck extraction — it is the deck's own
+      number under discussion, attributed by context;
+    - it appears in a claim-audit row that cites sources — it is the
+      evidence's number.
+
+    Anything else is the model's own assertion, and the caveat names it. The
+    check only ever adds a caveat line — it never edits the prose, because a
+    checker rewriting the text it checks is grading its own homework.
+    """
+    import json as _json
+
+    if not summary:
+        return []
+    deck_blob = _json.dumps(deck or {}, ensure_ascii=False).lower()
+    cited_blob = " ".join(
+        f"{row.get('claim', '')} {row.get('market_evidence', '')} "
+        f"{row.get('delta', '')}"
+        for row in ((comp or {}).get("claim_audit") or [])
+        if isinstance(row, dict) and row.get("source_ids")).lower()
+
+    naked: List[str] = []
+    sentences = re.split(r"(?<=[.!?])\s+|\n+", summary)
+    for sentence in sentences:
+        if _CITE_MARK.search(sentence):
+            continue
+        for m in _SUMMARY_FIGURE.finditer(sentence):
+            literal = m.group(0).strip()
+            token = literal.replace("$", "").replace(" ", "").lower()
+            if token and token not in deck_blob and token not in cited_blob:
+                if literal not in naked:
+                    naked.append(literal)
+    return naked
+
+
+def summary_caveat(summary: str, deck: Any, comp: Any) -> str:
+    """The one-line caveat under the Summary heading, or ""."""
+    naked = summary_unsourced_figures(summary, deck, comp)
+    if not naked:
+        return ""
+    shown = ", ".join(naked[:6]) + ("…" if len(naked) > 6 else "")
+    return (f"{len(naked)} figure(s) in this summary — {shown} — appear in "
+            f"neither the deck nor any cited evidence. They are the model's "
+            f"own assertions; treat them accordingly.")
 
 
 def alignment_text(item: Any) -> str:

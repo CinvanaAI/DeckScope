@@ -5,7 +5,7 @@ import html
 from pathlib import Path
 from typing import Any, Dict, List
 
-from .common import (ASSESSMENT_WORD, SEVERITY_WORD, THEMES, alignment_text,
+from .common import (ASSESSMENT_WORD, SEVERITY_WORD, THEMES, alignment_text, summary_caveat,
                      as_list, findings_for, header_block, safe_url,
                      score_color, theme, txt)
 
@@ -331,6 +331,9 @@ a.cite{{background:none;color:var(--ink);border:1px solid var(--line)}}
         add("</ol>")
 
     add('<h2 id="summary">Summary</h2>')
+    caveat = summary_caveat(comp.get("summary") or "", result.deck, comp)
+    if caveat:
+        add(f'<p class="evidence-state thin"><i>{_e(caveat)}</i></p>')
     for para in (comp.get("summary") or "").split("\n"):
         if para.strip():
             add(f"<p>{_e(para.strip())}</p>")

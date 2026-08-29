@@ -1,0 +1,46 @@
+{
+  "market_definition": {"category": "Workflow automation", "boundary_notes": "The category label covers legacy RPA seats, iPaaS, and newer agentic platforms; independent sizing treats these as distinct segments, and rolled-up totals mix them [S1].", "how_analysts_segment_it": ["legacy RPA", "iPaaS", "agentic workflow platforms", "mid-market vs enterprise"]},
+  "sizing": {
+    "tam_estimates": [
+      {"value": "$18-24B (whole category, 2026)", "year": "2026", "source": "Independent composite of 2026 estimates", "methodology": "composite of independent estimates, excluding vendor-sponsored roll-ups", "url": "https://research.example.org/workflow-automation-sizing-2026", "source_ids": ["S1"]},
+      {"value": "$3-5B (serviceable slice for a mid-market agentic tool, today)", "year": "2026", "source": "Same composite, serviceable-slice estimate", "methodology": "bottom-up slice of category spend addressable by mid-market agentic tooling", "url": "https://research.example.org/workflow-automation-sizing-2026", "source_ids": ["S1"]}
+    ],
+    "consensus_view": "The whole category is $18-24B in 2026; $45-50B figures in circulation are 2030 projections that roll RPA, iPaaS and agent platforms into one total [S1]. The slice a mid-market agentic tool can serve today is $3-5B [S1].",
+    "cagr_range": "16-19% annually [S1]",
+    "sizing_confidence": "medium",
+    "why_estimates_diverge": "Larger figures are forward projections that bundle adjacent segments; independent 2026 composites separate them [S1]. Substitution economics also shrink the reachable number relative to headcount-times-ACV arithmetic [S6]."
+  },
+  "demand_signals": {
+    "tailwinds": ["Buyers at the upper price point accept $1,500-2,500/month platform fees [S3]", "Above-median growth is achievable for seed vendors in this segment right now [S5]"],
+    "headwinds": ["Bundled Power Automate agent flows arrive at zero marginal cost inside E5 [S2]", "71% of mid-market ops automation purchases displace an existing line item rather than new budget [S6]"],
+    "buyer_budget_reality": "Overwhelmingly substitution: 71% of surveyed mid-market ops leaders funded automation by displacing an incumbent iPaaS contract or contractor hours [S6]. Evaluations are framed as 'what does this do that Power Automate cannot' [S2].",
+    "adoption_stage": "early-adopters"
+  },
+  "competitive_landscape": {
+    "incumbents": [
+      {"name": "Microsoft Power Automate", "position": "Bundled into E5 at no incremental per-seat cost; the default evaluation baseline for mid-market buyers [S2]", "funding_or_scale": "Platform vendor", "threat_level": "high", "url": "https://enterprise-software-review.example.com/power-automate-e5-bundle", "source_ids": ["S2"]}
+    ],
+    "challengers": [
+      {"name": "Zapier", "position": "SMB long-tail no-code automation; not evidenced in the retrieved set", "funding_or_scale": null, "threat_level": "medium", "url": null, "source_ids": []},
+      {"name": "Make", "position": "SMB long-tail no-code automation; not evidenced in the retrieved set", "funding_or_scale": null, "threat_level": "medium", "url": null, "source_ids": []}
+    ],
+    "adjacent_threats": ["Incumbent iPaaS vendors whose contracts are the line item being displaced [S6]"],
+    "concentration": "consolidating",
+    "differentiation_axes": ["reliability of execution", "human approval/compliance gates", "price against a zero-marginal-cost bundle [S2]"],
+    "saturation": {"funded_competitors_known": 11, "entry_flow": "Two of the eleven vendors tracked in this segment repositioned away from general workflow automation during 2026 after the E5 bundling change [S2] — the flow is out, not in.", "pricing_trend": "Bundling pressure from the platform vendor caps pricing at the mid-market [S2]", "acquisition_activity": "None evidenced in the retrieved set", "source_ids": ["S2"]}
+  },
+  "open_source": {"closest_project": null, "capability_gap": null, "gap_trend": null, "evidence_for_the_gap": "No retrieved source speaks to open source in this category. This assessment is not made rather than guessed.", "what_commercial_still_provides": [], "pricing_pressure": null, "company_relationship_to_oss": "unclear", "strip_mining_risk": null, "notes": "Unassessed — a research gap, stated as such."},
+  "adjacent_markets": [
+    {"market": "iPaaS", "relationship": "substitute", "size_note": "The incumbent contract most often displaced to fund purchases in this category [S6]", "why_it_matters": "The company's revenue must come out of somebody's existing budget line [S6]", "source_ids": ["S6"]}
+  ],
+  "economics": {
+    "typical_pricing": "Median mid-market ACV $19,000, IQR $12,000-31,000; $28,000 is top-quartile and usually implies multi-department deployment or a services component [S3]",
+    "typical_gross_margin": "55-68% once LLM inference is loaded into COGS; 78-85% only when inference is reported below the line [S4]",
+    "typical_cac_payback": "Not evidenced in the retrieved set",
+    "capital_intensity": "medium"
+  },
+  "funding_environment": {"recent_rounds": [], "valuation_norms": "Not evidenced in the retrieved set", "exit_comps": []},
+  "growth_benchmarks": {"median_growth_at_this_stage": "9-12% MoM at $250k-500k ARR; top quartile 15-20% [S5]", "what_separates_durable_growth": "Net revenue retention on the first cohort, which the median company does not disclose until Series A [S5]"},
+  "research_gaps": ["Open-source landscape unassessed — no retrieved source covers it", "No funding-round or valuation evidence retrieved", "CAC payback norms not evidenced", "Zapier/Make positioning asserted by the deck but not independently evidenced in this set"],
+  "summary": "The workflow-automation category is $18-24B in 2026, growing 16-19% annually; the $45-50B figures in circulation are 2030 projections that roll RPA, iPaaS and agent platforms together [S1]. The slice a mid-market agentic tool can serve today is $3-5B [S1]. Demand is real but funded by substitution — 71% of buyers displace an existing line item [S6] — and the evaluation baseline is Microsoft Power Automate, bundled into E5 at zero marginal cost [S2]; two of eleven tracked vendors repositioned away from the segment after that change [S2]. Pricing at a $28,000 ACV is achievable but top-quartile [S3]. Margins depend on where inference sits: 55-68% with inference in COGS versus 78-85% without [S4]. Sustained 18% monthly growth at this ARR would be above the 15-20% top quartile boundary [S5]; the durable-growth discriminator is first-cohort net revenue retention, rarely disclosed at seed [S5]. Open source in this category was not covered by any retrieved source and is left unassessed."
+}

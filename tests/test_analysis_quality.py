@@ -238,6 +238,85 @@ def test_markdown_renders_the_self_check_section():
     assert "Not checkable from what the deck states" in text
 
 
+def test_headline_verb_matches_the_verdict_mix():
+    """A live spool run opened with "Four claims are contradicted by cited
+    evidence" when three of the four were only partially supported — an
+    overstatement in the most-read sentence of a report built to prevent
+    exactly that. The verb now matches the verdicts."""
+    from deckscope.findings import collect
+
+    def audit(*assessments):
+        return {"claim_audit": [
+            {"id": f"C{i}", "claim": f"claim {i}", "assessment": a,
+             "delta": "deck says X. evidence says Y.",
+             "source_ids": ["S1"], "evidence_quality": "moderate"}
+            for i, a in enumerate(assessments, 1)]}
+
+    class _Reg:
+        def stats(self):
+            return {"cited": 2, "total": 2, "quarantined": 0}
+
+    mixed = collect(audit("contradicted", "partially-supported",
+                          "partially-supported"), _Reg())
+    assert "contested by cited evidence (one outright, two partly supported)" \
+        in mixed.headline
+    assert "three claims are contradicted" not in mixed.headline.lower()
+
+    pure = collect(audit("contradicted", "contradicted"), _Reg())
+    assert "contradicted by cited evidence" in pure.headline
+
+    partial = collect(audit("partially-supported"), _Reg())
+    assert "only partly supported by cited evidence" in partial.headline
+
+
+# ------------------------------------------- the summary's naked figures
+
+def test_summary_figure_from_nowhere_is_named():
+    """The three marks bound every findings section and stopped at the
+    Summary — the most-read prose on the page, where a model could still
+    assert "$12M" out of thin air. Now a figure that exists neither in the
+    deck nor in any cited evidence is named in a caveat."""
+    from deckscope.render.common import summary_caveat, summary_unsourced_figures
+
+    deck = {"claims": [{"claim": "The market is $88B"}]}
+    comp = {"claim_audit": [{"claim": "size",
+                             "market_evidence": "estimates cluster at $18-24B",
+                             "source_ids": ["S1"]}]}
+    naked = summary_unsourced_figures(
+        "The company will likely reach $12M ARR and hold 35% share.",
+        deck, comp)
+    assert naked == ["$12M", "35%"]
+    assert "the model's own assertions" in summary_caveat(
+        "It should reach $12M ARR.", deck, comp)
+
+
+def test_summary_covered_figures_raise_no_caveat():
+    """Three escape routes, all legitimate: the deck's own number under
+    discussion, a cited row's number, a sentence carrying its own [S] mark.
+    False positives here would teach readers to ignore the caveat."""
+    from deckscope.render.common import summary_unsourced_figures
+
+    deck = {"claims": [{"claim": "The market is $88B"}],
+            "traction": {"revenue": "$340k ARR"}}
+    comp = {"claim_audit": [{"claim": "size",
+                             "market_evidence": "estimates cluster at $18-24B",
+                             "source_ids": ["S1"]}]}
+    text = ("The deck's $88B is inflated; estimates put it at $18-24B. "
+            "Traction of $340k ARR is real. Churn is 3% [S4].")
+    assert summary_unsourced_figures(text, deck, comp) == []
+
+
+def test_summary_check_ignores_years_and_uncited_audit_rows():
+    from deckscope.render.common import summary_unsourced_figures
+
+    # a year is not a figure
+    assert summary_unsourced_figures("A 2030 projection.", {}, {}) == []
+    # an UNCITED audit row cannot launder a figure into coverage
+    comp = {"claim_audit": [{"claim": "x", "market_evidence": "$5B somewhere",
+                             "source_ids": []}]}
+    assert summary_unsourced_figures("It is a $5B market.", {}, comp) == ["$5B"]
+
+
 # ------------------------------------------------------ the closed loop
 
 def test_reconciliation_document_reads_report_against_claim():

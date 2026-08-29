@@ -155,3 +155,67 @@ def document(entries: Sequence[Entry], *, market: str,
         "deck's number rests on something no independent reader can check._")
     add("")
     return "\n".join(L)
+
+
+def document_html(entries: Sequence[Entry], *, market: str,
+                  definition: str = "", company: str = "") -> str:
+    """The reconciliation as a self-contained page.
+
+    The app hands this file to a guest with one click, and a guest clicking
+    a deliverable should land on a document, not on raw markdown in whatever
+    their machine opens `.md` with. Styled to sit beside the deck report:
+    same font stack, same light/dark behavior, no external assets.
+    """
+    import html as _h
+
+    def e(s: Any) -> str:
+        return _h.escape(str(s if s is not None else ""))
+
+    title = f"What the market reports say about {company or 'this deck'}'s claims"
+    body: List[str] = []
+    add = body.append
+    for i, entry in enumerate(entries, 1):
+        add(f'<section><h2>{i}. The deck\'s claim</h2>'
+            f'<blockquote>{e(entry.claim)}</blockquote>'
+            f'<p class="meta">Checked by the <b>{e(entry.specialist)}</b> report'
+            + (f' ({e(entry.measure_label)})' if entry.measure_label else '')
+            + f' · stored as <code>{e(entry.stored_id)}</code></p>'
+            f'<p><b>What it established:</b> {e(entry.headline)}</p>')
+        if entry.figures:
+            add("<ul>" + "".join(f"<li>{e(f)}</li>" for f in entry.figures)
+                + "</ul>")
+        add(f'<p><b>Bearing on the claim:</b> {e(entry.reading)}</p></section>')
+
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{e(title)}</title><style>
+:root{{--ink:#1A1D21;--muted:#5C6570;--bg:#F7F9FB;--panel:#fff;--line:#DCE1E7;--accent:#2E5C8A}}
+@media(prefers-color-scheme:dark){{:root{{--ink:#E6EAF2;--muted:#9AA5B8;--bg:#12151C;
+--panel:#1B202B;--line:#2A3140;--accent:#7AA2F7}}}}
+body{{margin:0;background:var(--bg);color:var(--ink);
+font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}}
+.wrap{{max-width:820px;margin:0 auto;padding:44px 26px 90px}}
+h1{{font-size:28px;letter-spacing:-.02em;border-bottom:3px solid var(--accent);
+padding-bottom:14px}}
+h2{{font-size:18px;margin:34px 0 8px}}
+blockquote{{margin:8px 0;padding:12px 18px;background:var(--panel);
+border-left:4px solid var(--accent);border-radius:0 8px 8px 0;font-size:16.5px}}
+.meta{{color:var(--muted);font-size:13.5px}}
+code{{background:var(--panel);border:1px solid var(--line);border-radius:5px;
+padding:1px 6px;font-size:13px}}
+ul{{margin:6px 0}}
+footer{{margin-top:40px;color:var(--muted);font-size:13.5px;
+border-top:1px solid var(--line);padding-top:14px;font-style:italic}}
+</style></head><body><div class="wrap">
+<h1>{e(title)}</h1>
+<p>Market as scoped: <b>{e(market)}</b>{(" — " + e(definition)) if definition else ""}</p>
+<p class="meta">Each report below was dispatched to check one specific claim the
+deck makes. The finding is the report's own, with its source IDs; the full
+report, chart and bibliography included, is stored under the ID shown — open it
+with <code>deckscope panels</code> or from the app's &ldquo;Reports you have
+made&rdquo;.</p>
+{"".join(body)}
+<footer>Source IDs refer to each stored report's own bibliography. An
+unestablished finding is a result, not a failure: it means the deck's number
+rests on something no independent reader can check.</footer>
+</div></body></html>"""

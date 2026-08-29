@@ -271,21 +271,34 @@ def dispatch_for_deck(deck: Dict[str, Any], cfg: Any,
     if entries:
         say("  reading the reports back against the deck's claims…")
         company = str(((deck.get("company") or {}).get("name")) or "").strip()
-        text = document(entries, market=briefs[0].market,
-                        definition=briefs[0].definition, company=company)
+        kw = dict(market=briefs[0].market, definition=briefs[0].definition,
+                  company=company)
         out["entries"] = [e.to_dict() for e in entries]
         try:
             from pathlib import Path
+
+            from .reconcile import document_html
 
             out_dir = Path(getattr(getattr(cfg, "output", None), "out_dir",
                                    None) or ".")
             out_dir.mkdir(parents=True, exist_ok=True)
             slug = "".join(ch if ch.isalnum() else "_"
                            for ch in (company or "deck").lower()).strip("_")
-            path = out_dir / f"{slug or 'deck'}_market_reports.md"
-            path.write_text(text, encoding="utf-8")
+            stem = out_dir / f"{slug or 'deck'}_market_reports"
+            path = stem.with_suffix(".md")
+            path.write_text(document(entries, **kw), encoding="utf-8")
             out["document"] = str(path)
             say(f"  wrote {path}")
+            # A guest's click should land on a document, not raw markdown —
+            # when the run produces HTML, the reconciliation matches it.
+            formats = list(getattr(getattr(cfg, "output", None), "formats",
+                                   None) or [])
+            if "html" in formats:
+                html_path = stem.with_suffix(".html")
+                html_path.write_text(document_html(entries, **kw),
+                                     encoding="utf-8")
+                out["document"] = str(html_path)
+                say(f"  wrote {html_path}")
         except OSError as exc:
             # The reconciliation still reached the caller as entries; only
             # the file failed, and the failure is said rather than swallowed.

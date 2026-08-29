@@ -1496,7 +1496,24 @@ function finish(j){
   html += '<div id="filelist"></div>';
 
   const mr = r.market_reports || {};
-  if((mr.stored || []).length){
+  if((mr.entries || []).length){
+    // The loop, visible: each report was dispatched to check one claim, and
+    // the reading of one against the other is the deliverable — not the
+    // stored id. The full reconciliation document is in the file list above.
+    html += `<label>What the market reports say about this deck's claims</label>`;
+    mr.entries.forEach(en => {
+      html += `<div class="file" style="display:block">
+        <p style="margin:0 0 4px"><b>${esc(en.claim)}</b></p>
+        <p class="hint" style="margin:0 0 6px">${esc(en.specialist)} report
+          ${en.measure_label ? '(' + esc(en.measure_label) + ')' : ''} ·
+          ${esc(en.headline)}</p>
+        <p style="margin:0;font-size:13.5px">${esc(en.reading)}</p>
+        <p class="hint" style="margin:6px 0 0">stored as ${esc(en.stored_id)}
+          <button class="ghost" style="padding:3px 9px;font-size:12px"
+                  onclick="jumpPanels()">open</button></p>
+      </div>`;
+    });
+  } else if((mr.stored || []).length){
     html += `<label>Market reports built from this deck's claims</label>
       <p class="hint">${mr.stored.length} report(s) were researched independently and
       stored — find them under &ldquo;Reports you have made&rdquo; below.
