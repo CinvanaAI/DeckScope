@@ -96,8 +96,10 @@ def _job_after(monkeypatch, payload, dispatch=None):
     if dispatch is None:
         def dispatch(deck, cfg, on_event=None):  # noqa: ANN001
             calls.append(deck)
-            return ["ps_test1", "ps_test2"], ["  Scoped to: test market",
-                                              "  stored as ps_test1"]
+            return {"stored": ["ps_test1", "ps_test2"],
+                    "lines": ["  Scoped to: test market",
+                              "  stored as ps_test1"],
+                    "document": None, "entries": []}
     monkeypatch.setattr("marketreport.scoping.dispatch_for_deck", dispatch)
 
     job_id = "t-" + payload.get("deck", "x")[:8]
@@ -139,7 +141,8 @@ def test_scoper_refusal_reaches_the_result(monkeypatch, tmp_path):
     deck.write_text("# Deck", encoding="utf-8")
 
     def refusing(deck_dict, cfg, on_event=None):  # noqa: ANN001
-        return [], ["    note: the scoper could not scope this deck"]
+        return {"stored": [], "document": None, "entries": [],
+                "lines": ["    note: the scoper could not scope this deck"]}
 
     job, _ = _job_after(monkeypatch, {"deck": str(deck), "demo": True,
                                       "market_reports": True},
@@ -244,14 +247,25 @@ def test_panel_run_says_reports_are_not_produced(monkeypatch, tmp_path):
 
 # ----------------------------------------------------------- shared engine
 
-def test_dispatch_for_deck_stores_and_narrates(monkeypatch):
+def _engine_cfg(tmp_path):
+    class _Cfg:
+        provider = type("P", (), {"name": "mock", "model": None,
+                                  "temperature": 0.0})()
+        research = type("R", (), {"name": "none"})()
+        output = type("O", (), {"out_dir": str(tmp_path)})()
+    return _Cfg()
+
+
+def test_dispatch_for_deck_stores_narrates_and_reconciles(monkeypatch, tmp_path):
     """The positive path of the shared engine: briefs run, panels stored,
-    ids returned, progress narrated."""
+    ids returned, progress narrated — and the reports are read back against
+    the claim that dispatched them, in a document beside the outputs."""
     from marketreport import scoping
     from marketreport.handoff import Brief
 
     brief = Brief(market="test market", measures=["units"],
-                  specialist="market-share")
+                  specialist="market-share",
+                  because="the deck claims 40% unit share")
     monkeypatch.setattr("marketreport.scoping.briefs_from_deck",
                         lambda deck, provider: ([brief], []))
     monkeypatch.setattr("marketreport.handoff.run_brief",
@@ -267,18 +281,21 @@ def test_dispatch_for_deck_stores_and_narrates(monkeypatch):
 
     monkeypatch.setattr("marketreport.library.Library", _FakeLibrary)
 
-    class _Cfg:
-        provider = type("P", (), {"name": "mock", "model": None,
-                                  "temperature": 0.0})()
-        research = type("R", (), {"name": "none"})()
+    out = scoping.dispatch_for_deck({}, _engine_cfg(tmp_path))
+    assert out["stored"] == ["ps_fake"]
+    assert any("stored as ps_fake" in ln for ln in out["lines"])
+    assert any("producing market-share" in ln for ln in out["lines"])
+    # The loop is closed: the claim travels into the reconciliation.
+    assert out["entries"] and out["entries"][0]["claim"] == \
+        "the deck claims 40% unit share"
+    assert out["document"] and out["document"].endswith("_market_reports.md")
+    body = open(out["document"], encoding="utf-8").read()
+    assert "the deck claims 40% unit share" in body
+    assert "ps_fake" in body
+    assert "Bearing on the claim" in body
 
-    stored, lines = scoping.dispatch_for_deck({}, _Cfg())
-    assert stored == ["ps_fake"]
-    assert any("stored as ps_fake" in ln for ln in lines)
-    assert any("producing market-share" in ln for ln in lines)
 
-
-def test_one_dead_brief_does_not_sink_the_rest(monkeypatch):
+def test_one_dead_brief_does_not_sink_the_rest(monkeypatch, tmp_path):
     from marketreport import scoping
     from marketreport.handoff import Brief
 
@@ -305,14 +322,9 @@ def test_one_dead_brief_does_not_sink_the_rest(monkeypatch):
 
     monkeypatch.setattr("marketreport.library.Library", _FakeLibrary)
 
-    class _Cfg:
-        provider = type("P", (), {"name": "mock", "model": None,
-                                  "temperature": 0.0})()
-        research = type("R", (), {"name": "none"})()
-
-    stored, lines = scoping.dispatch_for_deck({}, _Cfg())
-    assert stored == ["ps_second"], "the second brief must still produce"
-    assert any("failed: first brief dies" in ln for ln in lines)
+    out = scoping.dispatch_for_deck({}, _engine_cfg(tmp_path))
+    assert out["stored"] == ["ps_second"], "the second brief must still produce"
+    assert any("failed: first brief dies" in ln for ln in out["lines"])
 
 
 def test_mock_demo_summary_makes_no_comps_claim():

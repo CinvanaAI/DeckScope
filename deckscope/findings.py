@@ -286,7 +286,15 @@ def _next_steps(comparison: Dict[str, Any], found: Findings) -> List[str]:
             ordered.append(text)
 
     for finding in found.unverified:
-        ask = f"Establish {finding.text[:90]} — nothing found either way."
+        # The claim goes in quotes because it is a claim, not this sentence's
+        # own grammar. The old template read "Establish The financial
+        # reconciliation software market is $88B — nothing found either way",
+        # which is the kind of sentence that makes a reader stop trusting the
+        # careful ones around it.
+        claim = finding.text.strip().rstrip(".")
+        if len(claim) > 90:
+            claim = claim[:90].rstrip() + "…"
+        ask = f"Verify or refute “{claim}” — the research found nothing either way."
         if ask not in ordered:
             ordered.append(ask)
     return ordered

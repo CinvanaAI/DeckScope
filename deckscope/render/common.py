@@ -110,11 +110,37 @@ def header_block(result, lens: str) -> Dict[str, str]:
     stats = result.stats or {}
     comp = result.comparisons.get(lens, {})
     meta = comp.get("_meta") or {}
+
+    # A verdict needs something outside the deck underneath it. A run that
+    # cited no external source still printed "LEAN NO · confidence: low" —
+    # which is the deck being graded by a model's priors about decks, dressed
+    # as a conclusion. Gated here, in the block every renderer builds from,
+    # so no format can drift into printing one. Keyed on *cited*, not
+    # *retrieved*: evidence the report never used cannot be what its verdict
+    # rests on.
+    verdict = (comp.get("verdict") or {}).get("call", "—")
+    confidence = (comp.get("verdict") or {}).get("confidence", "—")
+    verdict_note = ""
+    cited = 0
+    reg = getattr(result, "registry", None)
+    if reg is not None:
+        try:
+            cited = int((reg.stats() or {}).get("cited", 0))
+        except Exception:  # noqa: BLE001 - a broken registry reads as no evidence
+            cited = 0
+    if cited == 0 and verdict not in ("", "—"):
+        verdict_note = (
+            "No external source is cited anywhere in this run, so the reading "
+            "the model formed is withheld: a verdict from the deck alone would "
+            "be the deck grading itself. The findings above are what stands.")
+        verdict, confidence = "No verdict", "withheld"
+
     return {
         "company": result.company,
         "lens": lens_title(lens),
-        "verdict": (comp.get("verdict") or {}).get("call", "—"),
-        "confidence": (comp.get("verdict") or {}).get("confidence", "—"),
+        "verdict": verdict,
+        "confidence": confidence,
+        "verdict_note": verdict_note,
         # Still computed, because the panel ranks reports by it. It is no longer
         # printed at the top of a report: a weighted average of seven subjective
         # 1-10 scores, shown to three significant figures, is the one number here

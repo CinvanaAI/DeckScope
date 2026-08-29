@@ -2020,10 +2020,13 @@ def _market_reports_for_deck(result: Any, cfg: Any) -> None:
     from marketreport.scoping import dispatch_for_deck
 
     _out("\n─── Market reports " + "─" * 49)
-    stored, _lines = dispatch_for_deck(getattr(result, "deck", None) or {},
-                                       cfg, on_event=_out)
-    if stored:
-        _out("\n  Open them any time:  deckscope panels")
+    outcome = dispatch_for_deck(getattr(result, "deck", None) or {},
+                                cfg, on_event=_out)
+    if outcome.get("document"):
+        _out("\n  Each report is read back against the deck claim it checks:")
+        _out(f"    {outcome['document']}")
+    if outcome.get("stored"):
+        _out("  The full reports:  deckscope panels")
 
 
 def _format_exit_code(result: Any) -> int:

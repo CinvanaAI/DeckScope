@@ -104,6 +104,50 @@ and shows the guest one calm sentence (`DECKSCOPE_RAW_ERRORS=1` for the raw
 traceback). A `run.log` flight recorder beside every run's outputs, and the
 run's cost — seconds, model, tokens — printed on the terminal receipt.
 
+## The quality doctrine
+
+A second planning pass (2026-08-29) graded not the machinery but the answer —
+a finished report read end to end in the investor's chair, against the bar of
+a first-rate diligence memo. The diagnosis in one line: **the computed parts
+were honest and the judgment parts were unbound.** What that reading found,
+and what now binds them:
+
+- "Assessment: Contradicted" rendered directly above "no evidence was
+  supplied." Now: any assessment — supported included — with no citation is
+  downgraded to unverifiable by the validator, with the downgrade printed on
+  the claim. Agreeing with the deck for free is still a verdict with nothing
+  behind it.
+- "LEAN NO · confidence: low" rendered on a run that cited nothing external —
+  the deck graded by a model's priors, dressed as a conclusion. Now: zero
+  cited sources withholds the verdict outright, in the block every renderer
+  builds from, with the reason printed where the verdict would have been.
+- Ten findings read as ten equal dings. Now: contested claims carry
+  **materiality** — fatal, damaging, or cosmetic — answering the one question
+  a list cannot: *does the investment story survive this claim being
+  corrected?* The canonical move: a tenfold TAM overstatement whose own SOM
+  survives the correction costs credibility, not the thesis. Ungraded
+  materiality is dropped, never defaulted — a faked severity is worse than
+  none.
+- The deck's own arithmetic was never checked. Now: `deckscope/consistency.py`
+  runs deterministic cross-checks before anything external is consulted —
+  TAM ≥ SAM ≥ SOM, the growth claim against the plan's implied monthly rate,
+  price × customers against revenue, LTV/CAC as quoted against as computed —
+  and reports conflicts with the arithmetic shown, consistencies as facts,
+  and unrunnable checks with the missing input named. These are the strongest
+  findings in the report because the founder cannot argue with either number:
+  both are theirs. The parser refuses per-seat prices and annual-vs-monthly
+  comparisons rather than manufacture a contradiction.
+- The market reports never came back to the deck. Now: every dispatched
+  report is read back against the claim that dispatched it —
+  `marketreport/reconcile.py` produces one document per run: the claim, what
+  the report established (with its source IDs and stored panel id), and the
+  bearing of one on the other. An unanswered report reconciles too: "nobody
+  publishes this" means the deck's number rests on something no reader can
+  check, which is a finding, not a failure.
+- Investor reports assigned the founders homework. Now the investor lens's
+  actions are the reader's own diligence moves; fixing the deck belongs to
+  the founder lens.
+
 ## Honestly unproven
 
 The three-agent pipeline has not been proven better than a single careful

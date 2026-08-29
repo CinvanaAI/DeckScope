@@ -156,6 +156,19 @@ class Pipeline:
         deck = deck_agent.run(doc, company_hint=cfg.company_hint,
                               max_queries=cfg.research.max_queries)
 
+        # The deck against itself, before anything external is consulted —
+        # deterministic arithmetic over the extracted numbers (TAM≥SAM≥SOM,
+        # growth vs the plan's implied rate, price × customers vs revenue).
+        # Attached inside the extraction so it reaches the comparison model's
+        # prompt and every renderer without a schema change; the deck is its
+        # own source here, cited slide against slide.
+        from .consistency import check_deck
+
+        deck["_consistency"] = check_deck(deck)
+        if deck["_consistency"]["conflicts"]:
+            self._log(f"the deck disagrees with itself in "
+                      f"{deck['_consistency']['conflicts']} place(s)")
+
         market_agent = MarketAnalyst(self.provider, self.researcher,
                                      policy=policy, **kw)
         market = market_agent.run(deck, max_queries=cfg.research.max_queries,

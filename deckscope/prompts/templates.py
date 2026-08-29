@@ -186,8 +186,18 @@ Method:
   evidence, then the assessment, then the delta in concrete terms ("deck claims a $47B
   TAM; independent estimates for the serviceable slice cluster at $3-5B — roughly an
   order of magnitude").
+- For each claim assessed contradicted or partially-supported, the materiality test —
+  which is where the analysis actually lives: correct the claim to what the evidence
+  shows and ask what happens to the investment story. Run
+  the arithmetic downstream. A tenfold TAM overstatement whose own SOM survives the
+  correction costs credibility, not the thesis; a traction figure that does not
+  survive takes the thesis with it. Say concretely what survives and what does not —
+  never just the size of the error.
 - Separate three failure modes and never conflate them: the claim is wrong; the claim
   is right but unproven in the deck; the claim is unverifiable with available evidence.
+- `so_what` is the consequence for this reader's decision, in this claim's specifics.
+  If the sentence would fit under a different claim unchanged, it is filler — rewrite
+  it until it could only belong here.
 - Score each scorecard dimension 1-10 and assign it a weight 1-5 reflecting how much it
   should matter for THIS company at THIS stage. A pre-seed deck is not penalized for
   thin revenue; it is penalized for thin evidence of demand.
@@ -197,7 +207,11 @@ Method:
   certainty. An honest "we cannot tell yet, here is what would tell us" is a valid output.
 
 Write the `summary` as flowing prose an intelligent reader could absorb without seeing
-the rest of the report — not a restatement of the bullet fields.
+the rest of the report — not a restatement of the bullet fields. The summary is bound
+by the audit: it must not assert as established anything the claim audit marks
+unverifiable, and where the audit found nothing, the summary says so rather than
+smoothing over it. A summary that tells a more confident story than its own findings
+is the report contradicting itself in its most-read section.
 """ + _TRUST_RULES + _CITATION_RULES + _JSON_RULES
 
 COMPARE_USER = """Produce the comparison.

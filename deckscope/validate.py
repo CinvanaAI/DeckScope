@@ -18,6 +18,7 @@ from typing import Any, Dict, Iterable, List, Optional, Set
 
 ASSESSMENTS = {"supported", "partially-supported", "contradicted", "unverifiable"}
 EVIDENCE_QUALITY = {"strong", "moderate", "weak", "none"}
+MATERIALITY = {"fatal", "damaging", "cosmetic"}
 CONFIDENCE = {"high", "medium", "low"}
 SEVERITY = {"high", "medium", "low"}
 PRIORITY = {"P0", "P1", "P2"}
@@ -155,6 +156,19 @@ def validate_comparison(data: Dict[str, Any], *, valid_source_ids: Iterable[str]
                 q = "weak"
             row["evidence_quality"] = q
 
+        # Materiality is dropped when unrecognized, not defaulted: a severity
+        # the model never graded, printed as if it had, is a fabricated
+        # judgment — the reader ranks findings by this field.
+        if row.get("materiality") is not None:
+            m = _enum(row.get("materiality"), MATERIALITY)
+            if m is None:
+                rep.note(f"{path}.materiality",
+                         f"{row.get('materiality')!r} unrecognized", "dropped")
+                row.pop("materiality", None)
+                row.pop("materiality_because", None)
+            else:
+                row["materiality"] = m
+
         _check_ids(row, "source_ids", valid, path, rep)
         # A claim asserting strong evidence with no citation is the exact failure
         # the bibliography exists to prevent.
@@ -163,6 +177,23 @@ def validate_comparison(data: Dict[str, Any], *, valid_source_ids: Iterable[str]
                      "claims 'strong' evidence but cites no source",
                      "downgraded to 'weak'")
             row["evidence_quality"] = "weak"
+        # The assessment is a verdict on the claim, and a verdict needs the
+        # evidence that earned it. A live run rendered "Assessment:
+        # Contradicted" directly above "No external evidence was supplied" —
+        # the report converting its own gap into a judgment, which is the one
+        # thing its front page promises it never does. "Supported" is held to
+        # the same bar: agreeing with the deck for free is still a verdict
+        # with nothing behind it. The downgrade is recorded on the row so the
+        # renderer can say what happened instead of silently softening it.
+        if row["assessment"] in ("supported", "partially-supported",
+                                 "contradicted") and not row.get("source_ids"):
+            rep.note(f"{path}.assessment",
+                     f"{row['assessment']!r} cites no source",
+                     "downgraded to 'unverifiable'")
+            row["validation_note"] = (
+                f"the analysis asserted “{row['assessment']}” "
+                f"without citing evidence; shown as unverifiable")
+            row["assessment"] = "unverifiable"
         clean_claims.append(row)
     if "claim_audit" in data:
         data["claim_audit"] = clean_claims

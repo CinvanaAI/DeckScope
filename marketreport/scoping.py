@@ -191,6 +191,7 @@ def briefs_from_deck(deck: Dict[str, Any], provider: Any,
         because = str(row.get("because") or "").strip()
         briefs.append(Brief(
             market=market, place=place, measures=values, specialist=kind,
+            because=because,
             definition=(definition + (f" This report checks: {because}"
                                       if because else "")).strip()))
     return briefs, notes
@@ -210,20 +211,24 @@ def summary(briefs: Sequence[Brief], notes: Sequence[str]) -> str:
 
 
 def dispatch_for_deck(deck: Dict[str, Any], cfg: Any,
-                      on_event: Any = None) -> Tuple[List[str], List[str]]:
-    """Scope a deck and run every brief — the shared engine under the CLI
-    flag and the app checkbox.
+                      on_event: Any = None) -> Dict[str, Any]:
+    """Scope a deck, run every brief, and read the results back against the
+    claims that dispatched them — the shared engine under the CLI flag and
+    the app checkbox.
 
-    Returns `(stored_panel_ids, lines)`, where `lines` is everything a caller
-    should show: the scoping summary, per-brief progress, refusal notes.
-    Extracted from the CLI so the web app cannot grow a second, slightly
-    different copy of the deck→reports handoff — the two-doors-drifting
-    failure, pre-empted at the door-making stage.
+    Returns `{"stored": [panel ids], "lines": [console lines],
+    "document": path-or-None, "entries": [reconciliation dicts]}`. The
+    document is the deliverable: each report's finding set against the deck
+    claim it was sent to check, because a stored report the reader must
+    reconcile themselves is the analysis handed back as homework. Extracted
+    from the CLI so the web app cannot grow a second, slightly different
+    copy of the deck→reports handoff.
     """
     from deckscope.providers import get_provider
     from deckscope.research.registry import get_researcher
     from .handoff import run_brief
     from .library import Library
+    from .reconcile import Entry, document, entry_for
 
     emit = on_event or (lambda *_: None)
     lines: List[str] = []
@@ -237,10 +242,12 @@ def dispatch_for_deck(deck: Dict[str, Any], cfg: Any,
 
     briefs, notes = briefs_from_deck(deck, provider)
     say(summary(briefs, notes))
+    out: Dict[str, Any] = {"stored": [], "lines": lines, "document": None,
+                           "entries": []}
     if not briefs:
-        return [], lines
+        return out
 
-    stored_ids: List[str] = []
+    entries: List[Entry] = []
     library = Library()
     for brief in briefs:
         say(f"  producing {brief.specialist} ({', '.join(brief.measures)})…")
@@ -256,7 +263,31 @@ def dispatch_for_deck(deck: Dict[str, Any], cfg: Any,
         except OSError as exc:
             say(f"  could not store: {exc}")
             continue
-        for ref in stored:
-            stored_ids.append(ref.id)
+        for ref, panel in zip(stored, outcome["panels"]):
+            out["stored"].append(ref.id)
             say(f"  stored as {ref.id}")
-    return stored_ids, lines
+            entries.append(entry_for(brief, panel, ref.id, provider))
+
+    if entries:
+        say("  reading the reports back against the deck's claims…")
+        company = str(((deck.get("company") or {}).get("name")) or "").strip()
+        text = document(entries, market=briefs[0].market,
+                        definition=briefs[0].definition, company=company)
+        out["entries"] = [e.to_dict() for e in entries]
+        try:
+            from pathlib import Path
+
+            out_dir = Path(getattr(getattr(cfg, "output", None), "out_dir",
+                                   None) or ".")
+            out_dir.mkdir(parents=True, exist_ok=True)
+            slug = "".join(ch if ch.isalnum() else "_"
+                           for ch in (company or "deck").lower()).strip("_")
+            path = out_dir / f"{slug or 'deck'}_market_reports.md"
+            path.write_text(text, encoding="utf-8")
+            out["document"] = str(path)
+            say(f"  wrote {path}")
+        except OSError as exc:
+            # The reconciliation still reached the caller as entries; only
+            # the file failed, and the failure is said rather than swallowed.
+            say(f"  could not write the reconciliation document: {exc}")
+    return out

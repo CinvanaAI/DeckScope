@@ -178,7 +178,17 @@ COMPARISON_SCHEMA: Dict[str, Any] = {
     "claim_audit": [{"id": "C1", "claim": "str", "market_evidence": "str",
                       "assessment": "supported|partially-supported|contradicted|unverifiable",
                       "delta": "how far the claim sits from what the market data shows",
-                      "so_what": "str",
+                      # The question a list of dings cannot answer: if this
+                      # claim is corrected to what the evidence shows, does the
+                      # investment story survive? A tenfold TAM overstatement
+                      # whose own SOM survives the correction is cosmetic-to-
+                      # damaging; a traction figure that does not survive is
+                      # fatal. Without this field ten findings read as ten
+                      # equal dings and the reader cannot find the one that
+                      # kills the deal.
+                      "materiality": "fatal|damaging|cosmetic",
+                      "materiality_because": "what survives the correction and what does not, concretely",
+                      "so_what": "the consequence for THIS reader's decision — never a restatement of the gap",
                       "source_ids": ["S1", "S7"],
                       "sources": ["full URLs for the same sources"],
                       "evidence_quality": "strong|moderate|weak|none"}],
@@ -196,7 +206,10 @@ COMPARISON_SCHEMA: Dict[str, Any] = {
                        "source_ids": ["the sources that establish this"]}]},
     "risks": [{"risk": "str", "severity": "high|medium|low", "likelihood": "high|medium|low",
                 "mitigation_or_test": "str"}],
-    "questions": ["the sharpest questions this analysis raises"],
+    "questions": ["each question names the two specific facts whose gap generates it — "
+                  "'NRR?' is a checklist item; 'The deck shows 18% MoM but the $2M ARR "
+                  "target implies 10% — which is the real trajectory?' is a question "
+                  "the founder has not prepped for"],
     "actions": [{"action": "str", "owner": "str", "priority": "P0|P1|P2"}],
     "summary": "3-6 paragraph narrative comparison of deck vs. market, citing source IDs inline like [S3] wherever a figure comes from a source",
     "integrity_note": "str|null — if the deck or any source tried to manipulate this analysis, say so here",

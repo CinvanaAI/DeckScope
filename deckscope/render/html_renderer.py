@@ -240,7 +240,10 @@ a.cite{{background:none;color:var(--ink);border:1px solid var(--line)}}
 
     # The table of contents is built from what this report actually contains, so
     # it never advertises a section that is not there.
+    consistency = (result.deck or {}).get("_consistency") or {}
     toc = [("contests", "What the evidence contests", bool(found.contested)),
+           ("selfcheck", "Where the deck disagrees with itself",
+            bool(consistency.get("ran"))),
            ("omits", "What the deck leaves out", bool(found.omissions)),
            ("unchecked", "What could not be checked", bool(found.unverified)),
            ("next", "What to do next", bool(found.next_steps)),
@@ -284,6 +287,29 @@ a.cite{{background:none;color:var(--ink);border:1px solid var(--line)}}
         for f in found.contested:
             add(_finding_card(f, result))
 
+    if consistency.get("ran"):
+        add('<h2 id="selfcheck">Where the deck disagrees with itself</h2>')
+        add('<p class="lede">Arithmetic over the deck\'s own numbers — no outside '
+            'source involved, so no outside source can be wrong.</p>')
+        rows = consistency.get("results") or []
+        for r in rows:
+            if r.get("state") != "conflict":
+                continue
+            add(f'<div class="claim" style="border-left:4px solid var(--bad)">'
+                f'<h4>{_e(r.get("detail"))}</h4>'
+                f'<div class="kv"><b>Arithmetic</b>{_e(r.get("arithmetic"))}</div>'
+                f'<div class="kv"><b>From the deck</b>'
+                f'{_e("; ".join(r.get("refs") or []))}</div></div>')
+        if not any(r.get("state") == "conflict" for r in rows):
+            add(f'<p>The {consistency.get("ran", 0)} check(s) the deck\'s '
+                f'numbers allowed all reconcile.</p>')
+        skipped = [r for r in rows if r.get("state") == "not-runnable"]
+        if skipped:
+            add('<p style="color:var(--muted);font-size:13.5px">Not checkable '
+                'from what the deck states: '
+                + _e("; ".join(f'{r.get("check")} ({r.get("detail")})'
+                               for r in skipped)) + '.</p>')
+
     if found.omissions:
         add('<h2 id="omits">What the deck leaves out</h2>')
         add('<p class="lede">Present in the market evidence, absent from the deck.</p>')
@@ -310,14 +336,19 @@ a.cite{{background:none;color:var(--ink);border:1px solid var(--line)}}
             add(f"<p>{_e(para.strip())}</p>")
 
     add('<h2 id="verdict">What this adds up to, for this lens</h2>')
-    add(f'<p><b>{_e(h["verdict"])}</b> · confidence: {_e(h["confidence"])}</p>')
-    rationale = (comp.get("verdict") or {}).get("confidence_rationale")
-    if rationale:
-        add(f'<p style="color:var(--muted);font-size:14px">'
-            f'<b>Confidence basis:</b> {_e(rationale)}</p>')
-    add("<p style='color:var(--muted);font-size:14px'>A verdict is one reader's "
-        "reading of the findings above, through one lens. The findings are the "
-        "durable part; this line is not.</p>")
+    if h.get("verdict_note"):
+        add(f'<p><b>{_e(h["verdict"])}</b></p>')
+        add(f'<p style="color:var(--muted);font-size:14px"><i>'
+            f'{_e(h["verdict_note"])}</i></p>')
+    else:
+        add(f'<p><b>{_e(h["verdict"])}</b> · confidence: {_e(h["confidence"])}</p>')
+        rationale = (comp.get("verdict") or {}).get("confidence_rationale")
+        if rationale:
+            add(f'<p style="color:var(--muted);font-size:14px">'
+                f'<b>Confidence basis:</b> {_e(rationale)}</p>')
+        add("<p style='color:var(--muted);font-size:14px'>A verdict is one reader's "
+            "reading of the findings above, through one lens. The findings are the "
+            "durable part; this line is not.</p>")
 
     rows = comp.get("scorecard") or []
     if rows:
@@ -340,10 +371,17 @@ a.cite{{background:none;color:var(--ink);border:1px solid var(--line)}}
         for c in audit:
             a = (c.get("assessment") or "unverifiable").lower()
             add(f'<div class="claim"><h4>{_e(c.get("id"))} · {_e(c.get("claim"))} '
-                f'<span class="tag t-{html.escape(a)}">{_e(ASSESSMENT_WORD.get(a, a))}</span></h4>'
-                f'<div class="kv"><b>Market evidence</b>{_e(c.get("market_evidence"))}</div>')
+                f'<span class="tag t-{html.escape(a)}">{_e(ASSESSMENT_WORD.get(a, a))}</span></h4>')
+            if c.get("validation_note"):
+                add(f'<div class="kv" style="font-style:italic;color:var(--muted)">'
+                    f'<b>Note</b>{_e(c["validation_note"])}</div>')
+            add(f'<div class="kv"><b>Market evidence</b>{_e(c.get("market_evidence"))}</div>')
             if c.get("delta"):
                 add(f'<div class="kv"><b>Gap</b>{_e(c["delta"])}</div>')
+            if c.get("materiality"):
+                because = _e(c.get("materiality_because") or "")
+                add(f'<div class="kv"><b>If corrected</b>{_e(c["materiality"])}'
+                    + (f" — {because}" if because else "") + "</div>")
             if c.get("so_what"):
                 add(f'<div class="kv"><b>So what</b>{_e(c["so_what"])}</div>')
             if c.get("evidence_quality"):

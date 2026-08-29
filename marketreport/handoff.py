@@ -63,6 +63,12 @@ class Brief:
     #: onto every panel so a reader can see the boundary decision that shaped
     #: what they are looking at, which is otherwise invisible downstream.
     definition: str = ""
+    #: The deck claim this report was dispatched to check, verbatim from the
+    #: scoper. Kept as its own field — not parsed back out of `definition` —
+    #: because the reconciliation step reads the finished report against
+    #: exactly this text, and a claim reconstructed by string surgery would
+    #: quietly drift from the claim that was actually decided on.
+    because: str = ""
 
     def __post_init__(self) -> None:
         if not str(self.market).strip():

@@ -683,9 +683,17 @@ def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
 
             log("Scoping the market reports this deck's claims depend on…")
             try:
-                stored, lines = dispatch_for_deck(
+                outcome = dispatch_for_deck(
                     getattr(result, "deck", None) or {}, cfg, on_event=log)
-                reports = {"stored": stored, "notes": lines}
+                reports = {"stored": outcome.get("stored") or [],
+                           "notes": outcome.get("lines") or [],
+                           "document": outcome.get("document"),
+                           "entries": outcome.get("entries") or []}
+                if outcome.get("document"):
+                    # The reconciliation is a deliverable like the deck
+                    # report — listed with the files, openable from the page.
+                    files.append(outcome["document"])
+                    _remember([outcome["document"]])
             except Exception as exc:  # noqa: BLE001 - reports must not sink the deck
                 reports = {"stored": [], "notes": [f"market reports failed: {exc}"]}
                 log(f"Market reports failed: {exc}")

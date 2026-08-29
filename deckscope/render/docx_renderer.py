@@ -109,21 +109,32 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
             if para.strip():
                 doc.add_paragraph(para.strip())
 
-        # Verdict, demoted
+        # Verdict, demoted — and withheld outright when nothing external was
+        # cited (the decision itself lives in header_block, shared by every
+        # renderer).
         doc.add_heading("What this adds up to, for this lens", level=1)
-        p = doc.add_paragraph()
-        r = p.add_run(f"{h['verdict']} · confidence: {h['confidence']}")
-        r.font.bold = True
-        rationale = (comp.get("verdict") or {}).get("confidence_rationale")
-        if rationale:
+        if h.get("verdict_note"):
             p = doc.add_paragraph()
-            r = p.add_run(f"Confidence basis: {rationale}")
+            r = p.add_run(h["verdict"])
+            r.font.bold = True
+            p = doc.add_paragraph()
+            r = p.add_run(h["verdict_note"])
             r.font.italic, r.font.size = True, Pt(9)
-        p = doc.add_paragraph()
-        r = p.add_run("A verdict is one reader's reading of the findings above, "
-                      "through one lens. The findings are the durable part; this "
-                      "line is not.")
-        r.font.italic, r.font.size, r.font.color.rgb = True, Pt(9), _hex(t["muted"])
+        else:
+            p = doc.add_paragraph()
+            r = p.add_run(f"{h['verdict']} · confidence: {h['confidence']}")
+            r.font.bold = True
+            rationale = (comp.get("verdict") or {}).get("confidence_rationale")
+            if rationale:
+                p = doc.add_paragraph()
+                r = p.add_run(f"Confidence basis: {rationale}")
+                r.font.italic, r.font.size = True, Pt(9)
+            p = doc.add_paragraph()
+            r = p.add_run("A verdict is one reader's reading of the findings "
+                          "above, through one lens. The findings are the durable "
+                          "part; this line is not.")
+            r.font.italic, r.font.size, r.font.color.rgb = (
+                True, Pt(9), _hex(t["muted"]))
 
         # Scorecard
         rows = comp.get("scorecard") or []

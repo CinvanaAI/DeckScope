@@ -50,6 +50,38 @@ def build_markdown(result, lens: str) -> str:
                 f"{txt(f.delta or f.why)} {cites}")
         add("")
 
+    # ------------------------------- the deck against its own numbers
+    # Deterministic arithmetic, not model judgment — the strongest findings
+    # in the report because the founder cannot argue with either number:
+    # both are theirs. Rendered even when everything reconciles, since
+    # "checked, consistent" and "could not check" are different facts.
+    consistency = (deck or {}).get("_consistency") or {}
+    conflicts = [r for r in (consistency.get("results") or [])
+                 if r.get("state") == "conflict"]
+    if consistency.get("ran"):
+        add("## Where the deck disagrees with itself")
+        add("")
+        add("Arithmetic over the deck's own numbers — no outside source "
+            "involved, so no outside source can be wrong.")
+        add("")
+        if conflicts:
+            for r in conflicts:
+                add(f"- **{txt(r.get('detail'))}.** {txt(r.get('arithmetic'))}")
+                for ref in (r.get("refs") or []):
+                    add(f"  - {ref}")
+        else:
+            ran = consistency.get("ran", 0)
+            add(f"- The {ran} check(s) the deck's numbers allowed all "
+                f"reconcile.")
+        skipped = [r for r in (consistency.get("results") or [])
+                   if r.get("state") == "not-runnable"]
+        if skipped:
+            add("")
+            add("Not checkable from what the deck states: "
+                + "; ".join(f"{r.get('check')} ({r.get('detail')})"
+                            for r in skipped) + ".")
+        add("")
+
     if found.omissions:
         add("## What the deck leaves out")
         add("")
@@ -88,15 +120,21 @@ def build_markdown(result, lens: str) -> str:
     # ------------------------------------------------- verdict, demoted
     add("## What this adds up to, for this lens")
     add("")
-    add(f"**{h['verdict']}** · confidence: {h['confidence']}")
-    add("")
-    rationale = (comp.get("verdict") or {}).get("confidence_rationale")
-    if rationale:
-        add(f"*Confidence basis: {rationale}*")
+    if h.get("verdict_note"):
+        add(f"**{h['verdict']}**")
         add("")
-    add("A verdict is one reader's reading of the findings above, through one "
-        "lens. The findings are the durable part; this line is not.")
-    add("")
+        add(f"*{h['verdict_note']}*")
+        add("")
+    else:
+        add(f"**{h['verdict']}** · confidence: {h['confidence']}")
+        add("")
+        rationale = (comp.get("verdict") or {}).get("confidence_rationale")
+        if rationale:
+            add(f"*Confidence basis: {rationale}*")
+            add("")
+        add("A verdict is one reader's reading of the findings above, through "
+            "one lens. The findings are the durable part; this line is not.")
+        add("")
 
     # -------------------------------------------------------- scorecard
     rows = comp.get("scorecard") or []
@@ -128,10 +166,18 @@ def build_markdown(result, lens: str) -> str:
             add("")
             add(f"**Assessment:** {verdict}")
             add("")
+            if c.get("validation_note"):
+                add(f"*({c['validation_note']})*")
+                add("")
             add(f"**Market evidence:** {txt(c.get('market_evidence'))}")
             add("")
             if c.get("delta"):
                 add(f"**Gap:** {c['delta']}")
+                add("")
+            if c.get("materiality"):
+                because = txt(c.get("materiality_because"), dash="")
+                add(f"**If corrected:** {c['materiality']}"
+                    + (f" — {because}" if because else ""))
                 add("")
             if c.get("so_what"):
                 add(f"**So what:** {c['so_what']}")

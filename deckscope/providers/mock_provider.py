@@ -529,7 +529,15 @@ _COMPARE = {
          "market_evidence": "The $47B figure is a 2030 vendor-sponsored roll-up spanning iPaaS, RPA, and agents; independent 2026 estimates land at $18-24B, and the mid-market slice at $3-5B.",
          "assessment": "partially-supported",
          "delta": "Roughly 10x overstatement of the addressable denominator.",
-         "so_what": "The $400M SOM survives; the framing does not. Reframe around the $3-5B slice.",
+         "materiality": "damaging",
+         "materiality_because": "Correct the TAM to the $3-5B serviceable slice "
+                                "and the company's own $400M SOM still fits many "
+                                "times over — the thesis survives the correction; "
+                                "the founders' credibility with anyone who checks "
+                                "does not.",
+         "so_what": "Price the round off the $3-5B slice, not the slide. The "
+                    "inflated figure is a judgment signal about the founders, "
+                    "not a valuation input.",
          "source_ids": ["S1", "S2"], "evidence_quality": "moderate",
          "sources": []},
         {"id": "C2", "claim": "More reliable than no-code incumbents",
@@ -543,7 +551,12 @@ _COMPARE = {
         {"id": "C4", "claim": "78% gross margin",
          "market_evidence": "Category norm is 65-80% once inference costs are included.",
          "assessment": "partially-supported", "delta": "Top of range; depends on whether inference is in COGS.",
-         "so_what": "State the COGS definition explicitly.", "sources": []}],
+         "materiality": "cosmetic",
+         "materiality_because": "Even fully loaded, the margin lands inside the "
+                                "category norm — the correction moves a slide, "
+                                "not the decision.",
+         "so_what": "Ask whether inference is in COGS; accept either answer.",
+         "source_ids": ["S1"], "evidence_quality": "weak", "sources": []}],
     "alignment": {
         "where_deck_matches_market": ["Growth rate is at or above seed comps",
                                       "Reliability is genuinely how buyers choose here"],
@@ -1054,7 +1067,7 @@ def _claim_audit_for(prompt: str, strictness: int = 1) -> list:
         if cited:
             quality = "strong" if assessment == "contradicted" else quality
 
-        audit.append({
+        row = {
             "id": f"C{i}", "claim": text,
             "market_evidence": (matched["snippet"][:400] if matched else
                                 "No external evidence was supplied for this run."),
@@ -1062,16 +1075,53 @@ def _claim_audit_for(prompt: str, strictness: int = 1) -> list:
             "delta": "" if assessment == "supported" else
                      (_delta_line(text, matched) if matched else
                       "No evidence was retrieved that speaks to this figure."),
-            "so_what": ("Worth resolving before the number is repeated to anyone "
-                        "who will check it." if assessment == "contradicted" else
-                        "Ask the founder directly; nothing retrieved settles it."
+            "so_what": ("Ask the founder directly; nothing retrieved settles it."
                         if assessment == "unverifiable" else
                         "Consistent with the evidence retrieved."),
             "source_ids": cited,
             "evidence_quality": quality if cited else "none",
             "sources": [matched["url"]] if matched and cited else [],
-        })
+        }
+        if assessment == "contradicted" and cited:
+            # Materiality derived from the same figure arithmetic the verdict
+            # used — a fixture may compute, it may not opine. The ratio is
+            # real; what the fixture cannot know (which downstream numbers
+            # rest on this one) it says a reader must check, rather than
+            # pretending to have checked.
+            ratio = _overstatement_ratio(text, matched)
+            if ratio and ratio >= 1.5:
+                row["materiality"] = "damaging"
+                row["materiality_because"] = (
+                    f"The claimed figure is roughly {ratio:g}× the evidence "
+                    f"range, so correcting it rewrites this slide's "
+                    f"denominator. Whether the thesis survives depends on "
+                    f"which of the deck's other numbers are built on top of "
+                    f"this one — check those against the corrected figure "
+                    f"first.")
+                row["so_what"] = (
+                    "Use the evidence range as the working number and read "
+                    "the gap as a signal about how the deck was assembled.")
+            else:
+                row["so_what"] = ("Worth resolving before the number is "
+                                  "repeated to anyone who will check it.")
+        audit.append(row)
     return audit
+
+
+def _overstatement_ratio(claim_text: str, matched: dict) -> float:
+    """claimed ÷ evidence-midpoint, when both parse in the same unit; else 0."""
+    try:
+        claimed = _figures(claim_text)
+        found = _figures(matched.get("snippet") or "")
+        for c_lo, c_hi, c_unit in claimed:
+            for f_lo, f_hi, f_unit in found:
+                if c_unit and c_unit == f_unit:
+                    mid = (f_lo + (f_hi or f_lo)) / 2.0
+                    if mid > 0 and c_lo > 0:
+                        return round(c_lo / mid, 1)
+        return 0.0
+    except Exception:  # noqa: BLE001 - a fixture must never crash the demo
+        return 0.0
 
 
 #: Phrases that mean the sentence is *disputing* the figure beside it rather

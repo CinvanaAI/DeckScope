@@ -22,7 +22,15 @@ LENS_PROFILES: Dict[Lens, Dict[str, str]] = {
             "The verdict `call` must be one of: STRONG YES, YES WITH CONDITIONS, LEAN NO, PASS. "
             "State the single biggest reason and the single condition that would flip your answer."
         ),
-        "emphasis": "Weight market timing, defensibility, and traction-for-stage most heavily.",
+        "emphasis": (
+            "Weight market timing, defensibility, and traction-for-stage most heavily. "
+            "`actions` are for THIS reader — an investor deciding. Each one is a "
+            "diligence move the reader performs (a number to verify, a reference to "
+            "call, a question to put to the founder, a model to rerun), owner "
+            "'you' or 'diligence'. Telling the founders to fix their deck belongs "
+            "in the founder lens; a live report filed those as this reader's P0s, "
+            "which handed the investment committee someone else's homework."
+        ),
     },
     Lens.FOUNDER: {
         "label": "Founder / self-critique",
