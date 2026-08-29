@@ -167,7 +167,18 @@ def check_deck(deck: Dict[str, Any]) -> Dict[str, Any]:
             target_money, target_months, target_line = money, months, line
             break
     if claimed_rate and revenue_now and target_money and target_months:
-        if target_money > revenue_now > 0:
+        if not target_money > revenue_now > 0:
+            # A milestone at or below current revenue derives no forward rate —
+            # either it is already met or the parse latched onto the wrong
+            # figure. Either way the check must SAY so: the first version
+            # appended nothing on this branch, and a check that silently
+            # vanishes from the results is the exact quiet shortfall this
+            # module's own docstring promises never to produce.
+            results.append(_skipped(
+                "growth vs trajectory",
+                "a revenue milestone above current revenue (the stated "
+                "milestone is not, so no forward rate can be derived)"))
+        else:
             implied = ((target_money / revenue_now) ** (1.0 / target_months)
                        - 1.0) * 100.0
             ratio = max(claimed_rate, implied) / max(min(claimed_rate, implied),

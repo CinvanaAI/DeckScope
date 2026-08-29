@@ -71,7 +71,18 @@ a comparison.
 
 
 def bearing(claim: str, panel: Any, provider: Any) -> str:
-    """One model reading of report-vs-claim, or an honest absence."""
+    """One model reading of report-vs-claim, or an honest absence.
+
+    The audit that matters here: `LLMProvider.complete` takes a LIST of
+    Message objects, not a bare string. The first version passed a string,
+    every real provider raised, the except swallowed it — and every bearing
+    would have been the fallback text, forever, on every real run. The
+    fakes in the tests had the same wrong signature, which is why the tests
+    were green: an author's fake tests the author's assumption. The fakes
+    now enforce the real contract.
+    """
+    from deckscope.providers.base import Message
+
     lines = [f"THE DECK CLAIM THIS REPORT WAS DISPATCHED TO CHECK:\n{claim}",
              "", "WHAT THE REPORT ESTABLISHED:"]
     if getattr(panel, "answered", False):
@@ -82,9 +93,10 @@ def bearing(claim: str, panel: Any, provider: Any) -> str:
         ids = " ".join(f"[{s}]" for s in (getattr(fig, "source_ids", None) or []))
         lines.append(f"- {fig.label}: {fig.value_text} {ids}".rstrip())
     try:
-        text = provider.complete(_BEARING_SYSTEM, "\n".join(lines),
-                                 temperature=0.2)
-        text = (getattr(text, "text", None) or str(text)).strip()
+        out = provider.complete(_BEARING_SYSTEM,
+                                [Message("user", "\n".join(lines))],
+                                temperature=0.2)
+        text = (getattr(out, "text", None) or str(out)).strip()
         return text[:1200] if text else _fallback()
     except Exception:  # noqa: BLE001 - the document must stand without the reading
         return _fallback()

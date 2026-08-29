@@ -82,12 +82,23 @@ def summary_unsourced_figures(summary: str, deck: Any, comp: Any) -> List[str]:
 
     if not summary:
         return []
-    deck_blob = _json.dumps(deck or {}, ensure_ascii=False).lower()
-    cited_blob = " ".join(
+
+    def norm(text: str) -> str:
+        # "$2 million" and "$2M" are the same figure; a coverage check that
+        # treats them as different flags honest prose, and a flagged honest
+        # figure teaches readers to ignore the caveat.
+        text = text.lower()
+        for word, letter in (("billion", "b"), ("million", "m"),
+                             ("thousand", "k")):
+            text = re.sub(rf"\s*{word}", letter, text)
+        return text
+
+    deck_blob = norm(_json.dumps(deck or {}, ensure_ascii=False))
+    cited_blob = norm(" ".join(
         f"{row.get('claim', '')} {row.get('market_evidence', '')} "
         f"{row.get('delta', '')}"
         for row in ((comp or {}).get("claim_audit") or [])
-        if isinstance(row, dict) and row.get("source_ids")).lower()
+        if isinstance(row, dict) and row.get("source_ids")))
 
     naked: List[str] = []
     sentences = re.split(r"(?<=[.!?])\s+|\n+", summary)
@@ -96,7 +107,7 @@ def summary_unsourced_figures(summary: str, deck: Any, comp: Any) -> List[str]:
             continue
         for m in _SUMMARY_FIGURE.finditer(sentence):
             literal = m.group(0).strip()
-            token = literal.replace("$", "").replace(" ", "").lower()
+            token = norm(literal).replace("$", "").replace(" ", "")
             if token and token not in deck_blob and token not in cited_blob:
                 if literal not in naked:
                     naked.append(literal)

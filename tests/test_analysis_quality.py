@@ -190,6 +190,25 @@ def test_per_seat_price_is_not_read_as_a_market():
     assert _money("$2 million") == 2e6
 
 
+def test_every_check_reports_even_when_the_milestone_is_behind():
+    """Defect #17: a milestone at or below current revenue made the growth
+    check append nothing — vanishing from the results entirely, in the
+    module whose docstring promises 'could not check' is always said."""
+    from deckscope.consistency import check_deck
+
+    out = check_deck({
+        "market": {}, "business_model": {},
+        "traction": {"revenue": "$3M ARR", "growth": "18% MoM"},
+        "ask": {"milestones_promised": ["$2M ARR in 18 months"]},
+    })
+    row = next(r for r in out["results"]
+               if r["check"] == "growth vs trajectory")
+    assert row["state"] == "not-runnable"
+    assert "not" in row["detail"], "the reason must be stated"
+    # the invariant behind the fix: all four checks always report something
+    assert len(out["results"]) == 4
+
+
 def test_annual_rate_never_compared_against_monthly_target():
     """A CAGR beside a monthly milestone is not a contradiction — comparing
     them would manufacture one."""
@@ -306,6 +325,20 @@ def test_summary_covered_figures_raise_no_caveat():
     assert summary_unsourced_figures(text, deck, comp) == []
 
 
+def test_spelled_out_units_match_their_abbreviations():
+    """"$2 million" in the summary and "$2M" in the deck are one figure;
+    flagging the spelled form would teach readers to ignore the caveat."""
+    from deckscope.render.common import summary_unsourced_figures
+
+    deck = {"ask": {"milestones_promised": ["$2M ARR within 18 months"]}}
+    assert summary_unsourced_figures(
+        "The $2 million milestone is the credible number.", deck, {}) == []
+    # and the reverse direction
+    deck2 = {"ask": {"milestones_promised": ["$2 million ARR"]}}
+    assert summary_unsourced_figures(
+        "The $2M milestone is the credible number.", deck2, {}) == []
+
+
 def test_summary_check_ignores_years_and_uncited_audit_rows():
     from deckscope.render.common import summary_unsourced_figures
 
@@ -336,7 +369,14 @@ def test_reconciliation_document_reads_report_against_claim():
         problem = ""
 
     class _Provider:
-        def complete(self, system, user, **kw):
+        def complete(self, system, messages, **kw):
+            # Enforce the REAL provider contract: a list of Message objects.
+            # The first fake here took a bare string, matched the bug in the
+            # code, and turned the test green — an author's fake testing the
+            # author's assumption. Never again.
+            assert isinstance(messages, list), "complete() takes List[Message]"
+            user = messages[0].content
+            assert messages[0].role == "user"
             assert "40% unit share" in user, "the claim must reach the reading"
             assert "[S2]" in user, "figures carry their source ids in"
             return "The report's 18% [S2] contradicts the claimed 40%."
@@ -350,6 +390,29 @@ def test_reconciliation_document_reads_report_against_claim():
     assert "Samsung leads units" in text
     assert "ps_x1" in text
     assert "contradicts the claimed 40%" in text
+
+
+def test_bearing_speaks_through_a_real_provider():
+    """Defect #16: bearing() passed a bare string where the provider API
+    takes List[Message]; every real provider raised, the except swallowed
+    it, and every bearing was silently the fallback. This drives the REAL
+    mock provider through the real base-class signature — if the call shape
+    regresses, this fails instead of falling back."""
+    from deckscope.providers import get_provider
+    from marketreport.reconcile import bearing
+
+    class _Panel:
+        answered = True
+        headline = "Samsung leads units"
+        figures = []
+        problem = ""
+
+    provider = get_provider(type("C", (), {"name": "mock", "model": None,
+                                           "temperature": 0.0})())
+    reading = bearing("the deck claims 40% unit share", _Panel(), provider)
+    assert "No reading was produced" not in reading, (
+        "a live provider must produce a reading, not the fallback")
+    assert reading.strip()
 
 
 def test_reconciliation_stands_when_the_reading_model_dies():

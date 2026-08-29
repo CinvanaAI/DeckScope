@@ -87,12 +87,18 @@ its first line rather than listing confident findings. See
 > ignored, so four report types produced identical output, and the offline demo
 > answered a regulation question from five smartphone market-share articles without
 > noticing. There is no reason to assume the rest are cleaner.
-> [tests/test_live_run_defects.py](tests/test_live_run_defects.py) pins every one of
-> them, alongside the harness defects above — fourteen so far, each with the
-> failure it reproduces named in its docstring. The fourteenth arrived the same
-> way as the first thirteen, by running the thing: the forecast trap convicted
-> the report's own *question line* ("Asked: … on whose forecast"), so a growth
-> report was FABRICATED before the model under test said a word.
+> [tests/test_live_run_defects.py](tests/test_live_run_defects.py) and
+> [tests/test_analysis_quality.py](tests/test_analysis_quality.py) pin every one
+> of them, alongside the harness defects above — seventeen so far, each with the
+> failure it reproduces named in its docstring, and every single one found by
+> *using* the product rather than reading it. The recent ones show the pattern:
+> the forecast trap convicted the report's own question line ("Asked: … on whose
+> forecast") — FABRICATED before the model said a word; a live run's headline
+> called four contested claims "contradicted" when three were only partly
+> supported; the reconciliation's reading step passed a bare string where the
+> provider API takes a message list, so on any real provider every reading would
+> silently have been the fallback text — and its tests were green because the
+> fakes made the same wrong assumption as the code.
 >
 > **`deckscope check` exists so the next one does not need me to find it.** It grades
 > report types against cases with known-correct answers planted in real recorded
