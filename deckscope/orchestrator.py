@@ -73,6 +73,11 @@ class AnalysisResult:
                 "opportunity": self.opportunity,
                 "cold_market": self.cold_market,
                 "discovery_delta": self.discovery_delta,
+                # Present whenever the integrated reports pass ran — the JSON
+                # export losing the reconciliation entries while every other
+                # renderer showed them was a self-audit find, and the "raw
+                # data" format is the one a script consumes.
+                "market_reports": self.market_reports,
                 "references": self.registry.to_dict() if self.registry else {}}
 
     def save_json(self, path: str) -> str:
@@ -448,12 +453,22 @@ class Pipeline:
             from marketreport.reconcile import entry_for
 
             entries = []
+
+            def _count(completion: Any) -> None:
+                # The receipt's dict is also result.stats["token_usage"] (same
+                # object), and the "Analysis complete" line prints after this
+                # block — so the readings' cost lands in both.
+                u = getattr(completion, "usage", None) or {}
+                usage["input"] += int(u.get("input", 0) or 0)
+                usage["output"] += int(u.get("output", 0) or 0)
+
             for brief, panels, stored_ids in report_outcomes:
                 for panel, pid in zip(panels,
                                       stored_ids or [""] * len(panels)):
                     entries.append(entry_for(brief, panel,
                                              pid or "(not stored)",
-                                             self.provider).to_dict())
+                                             self.provider,
+                                             on_usage=_count).to_dict())
             result.market_reports = {
                 "stored": [pid for _, _, ids in report_outcomes
                            for pid in ids],

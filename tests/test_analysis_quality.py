@@ -653,3 +653,15 @@ if __name__ == "__main__":  # pragma: no cover
     sys.argv = [sys.argv[0], "--only", Path(__file__).stem]
     runpy.run_path(str(Path(__file__).resolve().parent.parent / "scripts"
                        / "run_tests.py"), run_name="__main__")
+
+
+def test_json_export_carries_the_reconciliation():
+    """to_dict() omitted market_reports — the raw-data format a script
+    consumes silently dropped the reconciliation while every rendered format
+    showed it (self-audit find)."""
+    from deckscope.orchestrator import AnalysisResult
+
+    r = AnalysisResult(market_reports={"stored": ["ps_1"], "entries": [],
+                                       "notes": [], "market": "m",
+                                       "definition": ""})
+    assert r.to_dict()["market_reports"]["stored"] == ["ps_1"]

@@ -70,7 +70,8 @@ a comparison.
 """
 
 
-def bearing(claim: str, panel: Any, provider: Any) -> str:
+def bearing(claim: str, panel: Any, provider: Any,
+            on_usage: Any = None) -> str:
     """One model reading of report-vs-claim, or an honest absence.
 
     The audit that matters here: `LLMProvider.complete` takes a LIST of
@@ -96,6 +97,10 @@ def bearing(claim: str, panel: Any, provider: Any) -> str:
         out = provider.complete(_BEARING_SYSTEM,
                                 [Message("user", "\n".join(lines))],
                                 temperature=0.2)
+        if on_usage is not None:
+            # These calls spend real tokens; a receipt that omits them is
+            # the honesty artifact undercounting (found by self-audit).
+            on_usage(out)
         text = (getattr(out, "text", None) or str(out)).strip()
         return text[:1200] if text else _fallback()
     except Exception:  # noqa: BLE001 - the document must stand without the reading
@@ -108,7 +113,8 @@ def _fallback() -> str:
             "other directly.)")
 
 
-def entry_for(brief: Any, panel: Any, stored_id: str, provider: Any) -> Entry:
+def entry_for(brief: Any, panel: Any, stored_id: str, provider: Any,
+              on_usage: Any = None) -> Entry:
     figures = []
     for fig in list(getattr(panel, "figures", []))[:5]:
         ids = " ".join(f"[{s}]" for s in (getattr(fig, "source_ids", None) or []))
@@ -123,7 +129,7 @@ def entry_for(brief: Any, panel: Any, stored_id: str, provider: Any) -> Entry:
         answered=bool(getattr(panel, "answered", False)),
         figures=figures,
         stored_id=stored_id,
-        reading=bearing(claim, panel, provider),
+        reading=bearing(claim, panel, provider, on_usage=on_usage),
     )
 
 

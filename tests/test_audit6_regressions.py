@@ -131,7 +131,7 @@ def test_the_manual_provider_canonicalizes_before_it_hashes():
     from deckscope.providers.manual_provider import ManualProvider
 
     text = ("Deck source: /sessions/abc/mnt/DeckScope/decks/x.md\n"
-            "Windows: C:\\Users\\von\\deck.pptx\n"
+            "Windows: C:\\Users\\example\\deck.pptx\n"
             "Keep: https://research.example.org/recon-sizing-2026\n"
             "Keep: a ratio 3/4 and a date 2026/08/23")
     canon = ManualProvider.canonicalize(text)

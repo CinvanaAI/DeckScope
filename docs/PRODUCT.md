@@ -51,8 +51,11 @@ decides which market this really is and which yardsticks its claims lean on,
 and the specialists then produce the reports that let a reader check the
 story — one report per measure, each stating on its face what it measures.
 Reports are also reachable directly, second on the page, for the analyst who
-has no deck. Both doors go through the same engine
-(`marketreport.scoping.dispatch_for_deck`), so they cannot drift apart.
+has no deck. Since the consolidation, the deck path runs the reports INSIDE
+the pipeline (one config bit set by both the CLI flag and the app checkbox),
+before the comparison, into one merged registry — and
+`marketreport.scoping.dispatch_for_deck` remains the standalone door for
+reports without a deck run. One engine either way.
 
 ## What the client wants → what exists
 
@@ -96,9 +99,10 @@ does not bullshit.
 
 One shared engine per capability (CLI flag and app checkbox call the same
 function). Refusal over guessing at every boundary. Every defect found in
-live runs is pinned by a regression test before it is fixed — 480+ tests run
-by a dependency-free runner, because the day the suite silently ran 16 of 47
-tests is documented in `scripts/run_tests.py`. A custom linter with a
+live runs is pinned by a regression test before it is fixed, and the full
+suite (900+ tests, both styles) runs under a dependency-free runner whose
+own docstring records the two days it silently under-collected — the exact
+counts live in the runner's output, not in prose that goes stale. A custom linter with a
 name-resolution pass. Crash handling that writes the full story to a file
 and shows the guest one calm sentence (`DECKSCOPE_RAW_ERRORS=1` for the raw
 traceback). A `run.log` flight recorder beside every run's outputs, and the

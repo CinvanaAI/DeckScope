@@ -57,6 +57,8 @@ def default_dir() -> str:
             for name in os.listdir(legacy):
                 src = os.path.join(legacy, name)
                 dst = os.path.join(target, name)
+                # Per-file: one unreadable panel must not strand the rest
+                # in the undocumented location.
                 if os.path.isfile(src) and not os.path.exists(dst):
                     # shutil.move, not os.replace: the app dir and the legacy
                     # home dir can sit on different filesystems, and
@@ -64,7 +66,10 @@ def default_dir() -> str:
                     # best-effort except would have swallowed, leaving the
                     # migration silently undone (caught by this change's own
                     # test before it could ship).
-                    shutil.move(src, dst)
+                    try:
+                        shutil.move(src, dst)
+                    except OSError:
+                        continue
             if not os.listdir(legacy):
                 os.rmdir(legacy)
         except OSError:

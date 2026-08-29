@@ -25,7 +25,7 @@ this branch:
 
 | Check | Result |
 |---|---|
-| Full test suite (canonical runner, both styles) | 937 ran, 0 failed |
+| Full test suite (canonical runner, both styles) | all collected tests pass — the runner prints the function/class split every run |
 | Custom linter (annotation-aware) | clean |
 | `deckscope demo` / `--panel` / `--injected` | exit 0 |
 | Committed reference run, cold cache | replays green |

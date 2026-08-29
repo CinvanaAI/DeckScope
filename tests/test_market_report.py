@@ -16,8 +16,7 @@ from __future__ import annotations
 
 import unittest
 
-import marketreport.agents as _agents   # importing registers them
-assert _agents  # noqa: S101 - the import is the point
+import marketreport.agents  # noqa: F401 - importing registers the agents
 from marketreport.questions import (COMPUTED, STANDING, Answer, AnswerSet,
                                     BY_ID, order)
 from marketreport.report import MarketDefinition, agent_for, build

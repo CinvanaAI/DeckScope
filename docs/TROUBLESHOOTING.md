@@ -188,8 +188,12 @@ review calls, or mix in cheaper models.
 ## The app window
 
 **It doesn't open**
-Go to the URL printed in the terminal, usually `http://127.0.0.1:8765/`. If the port is
-busy DeckScope tries the next twenty; the real one is in the message.
+Go to the FULL URL printed in the terminal — it ends in `?token=…`, and the
+token is required: the bare address (`http://127.0.0.1:8765/`) now answers
+with a short refusal, because the page carries this session's key and is only
+served to whoever holds the launch link. If the port is busy DeckScope tries
+the next twenty; the real one is in the message. Lost the link? Restart with
+`deckscope app` and a fresh one prints.
 
 **"Not set up yet"**
 Run `deckscope setup`, or press **Run the free demo** to see it work without any
