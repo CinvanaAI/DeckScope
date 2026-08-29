@@ -112,6 +112,13 @@ class RunConfig:
     #: committed, shared or cloud-synced by accident.
     cache_dir: Optional[str] = "__default__"
     verbose: bool = True
+    #: Run the scoped specialist market reports INSIDE the pipeline, before
+    #: the comparison, and merge their evidence into the run's registry — so
+    #: the deck verdict is derived from the structured report engine instead
+    #: of the reports arriving as a post-hoc appendage. The external audit
+    #: named this split ("two partially parallel systems") the largest
+    #: product-level gap.
+    market_reports: bool = False
     #: Injection defenses. See deckscope/security/policy.py.
     security: Any = None  # SecurityPolicy; built in __post_init__
 

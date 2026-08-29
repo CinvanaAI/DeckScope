@@ -13,7 +13,31 @@ from ..providers.base import LLMProvider
 
 #: Bump when a prompt or schema changes in a way that invalidates cached output.
 #: Without this, an upgrade silently replays answers produced by the old prompts.
-CACHE_EPOCH = "2"
+def _prompt_epoch() -> str:
+    """The cache epoch, derived from the prompt templates themselves.
+
+    It was a hand-bumped constant ("2"), and the docstring below promised
+    "upgrading DeckScope does not silently replay stale analysis" — a promise
+    that held exactly as long as a human remembered to bump the number. The
+    first prompt change that shipped without a bump served a cached
+    comparison written for the OLD prompt (found while re-driving the
+    committed reference run: the replay sailed through on a warm cache and
+    stalled on a cold one). Hashing the templates module makes forgetting
+    impossible: edit any prompt and every cached answer is invalidated.
+    """
+    import hashlib
+    import inspect
+
+    from ..prompts import templates
+
+    try:
+        source = inspect.getsource(templates)
+    except (OSError, TypeError):  # frozen/bytecode-only installs
+        source = "unversioned"
+    return hashlib.sha256(source.encode("utf-8")).hexdigest()[:12]
+
+
+CACHE_EPOCH = _prompt_epoch()
 
 
 class Agent:

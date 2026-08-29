@@ -148,6 +148,23 @@ and what now binds them:
   actions are the reader's own diligence moves; fixing the deck belongs to
   the founder lens.
 
+## The consolidation (2026-08-29)
+
+An external audit of a fresh clone named the split between the deck pipeline
+and the report engine — "two partially parallel systems" — the largest
+product-level gap, and it was right. The staged consolidation now exists:
+with market reports enabled, the pipeline scopes the reports from the deck's
+claims, runs the specialists BEFORE the comparison, merges their sources
+into the run's single registry under `merge_into`'s remap contract, and
+places their findings into the market artifact the synthesist reads — each
+tagged with the deck claim it was dispatched to check. The verdict is
+derived WITH the structured evidence; the reconciliation document is
+computed once, in memory, and written beside the deck report. The CLI flag
+and the app checkbox both set the same config bit and go through the same
+pipeline. What remains, recorded in BUILD.md Stage 4: mechanically joining
+audit rows to their reports, and shrinking the legacy market pass to the
+boundary work the specialists do not cover.
+
 ## Honestly unproven
 
 The three-agent pipeline has not been proven better than a single careful

@@ -393,6 +393,92 @@ def test_summary_check_ignores_years_and_uncited_audit_rows():
     assert summary_unsourced_figures("It is a $5B market.", {}, comp) == ["$5B"]
 
 
+# --------------------------------------------- one evidence engine
+
+def test_reports_run_inside_the_pipeline_and_feed_the_comparison(monkeypatch, tmp_path):
+    """The external audit's largest product-level gap: the deck pipeline and
+    the report engine were 'two partially parallel systems' — reports ran
+    after render, in their own registry, and the verdict never saw them.
+    With cfg.market_reports the pipeline now runs the scoped reports BEFORE
+    the comparison, merges their sources into the run's one registry (remap
+    applied to the prompt copies), and puts their findings into the market
+    artifact the synthesist reads."""
+    from deckscope import settings
+    from deckscope.orchestrator import Pipeline
+    from marketreport.handoff import Brief
+
+    brief = Brief(market="test market", measures=["units"],
+                  specialist="market-share",
+                  because="the deck claims 40% unit share")
+    monkeypatch.setattr("marketreport.scoping.briefs_from_deck",
+                        lambda deck, provider: ([brief], []))
+
+    class _Fig:
+        label = "Apple unit share"
+        value_text = "18%"
+        source_ids = ["S1"]
+
+    class _Panel:
+        answered = True
+        headline = "Samsung leads units"
+        figures = [_Fig()]
+        measure_label = "share of units"
+        measure = "units"
+        problem = ""
+
+    def fake_run_brief(b, *, registry=None, **kw):
+        # the brief's research registers its source in the SHARED registry,
+        # and building the prompt block is what admits it — the same path a
+        # real specialist run takes.
+        class _R:
+            title = "Tracker page"
+            url = "https://example.org/tracker"
+            snippet = "Apple held 18% of units."
+            published = "2026-06"
+            source_query = "unit share"
+        registry.add_results([_R()], backend="test")
+        registry.prompt_block()
+        return {"panels": [_Panel()], "unknown": [], "failed": []}
+
+    monkeypatch.setattr("marketreport.handoff.run_brief", fake_run_brief)
+
+    class _Ref:
+        id = "ps_int1"
+
+    class _FakeLibrary:
+        def save_all(self, panels, market="", place="", request=""):
+            return [_Ref()]
+
+    monkeypatch.setattr("marketreport.library.Library", _FakeLibrary)
+
+    cfg = settings.settings_to_runconfig({
+        "provider": {"name": "mock"}, "research": {"name": "none"},
+        "market_reports": True,
+        "deck_path": "deckscope/examples/sample_deck.md",
+        "output": {"out_dir": str(tmp_path), "formats": ["md"]}})
+    pipe = Pipeline(cfg)
+    try:
+        result = pipe.run()
+    finally:
+        pipe.close()
+
+    # the findings entered the market artifact the synthesist reads
+    block = result.market.get("specialist_reports")
+    assert block and block[0]["checks_deck_claim"] == \
+        "the deck claims 40% unit share"
+    assert block[0]["finding"] == "Samsung leads units"
+    # the report's source lives in the run's ONE registry, remapped
+    merged_ids = block[0]["figures"][0]["source_ids"]
+    assert merged_ids, "the figure's citation must survive the merge"
+    src = result.registry.find(merged_ids[0])
+    assert src is not None and "example.org/tracker" in src.url, (
+        "the remapped id must resolve in the run's registry")
+    # and the reconciliation is on the result, computed once, in memory
+    assert result.market_reports["stored"] == ["ps_int1"]
+    assert result.market_reports["entries"][0]["claim"] == \
+        "the deck claims 40% unit share"
+
+
 # ------------------------------------------------------ the closed loop
 
 def test_reconciliation_document_reads_report_against_claim():

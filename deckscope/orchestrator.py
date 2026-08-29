@@ -46,6 +46,10 @@ class AnalysisResult:
     #: The market as it looks to an analyst who never saw the deck, and the diff
     #: against the claim-directed view. Empty unless cold discovery was enabled.
     cold_market: Dict[str, Any] = field(default_factory=dict)
+    #: The specialist market reports that ran inside this pipeline (stored
+    #: panel ids, scoper notes, and the per-claim reconciliation entries).
+    #: None when the pass was off; present-but-empty when it ran and refused.
+    market_reports: Optional[Dict[str, Any]] = None
     discovery_delta: Dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -169,11 +173,91 @@ class Pipeline:
             self._log(f"the deck disagrees with itself in "
                       f"{deck['_consistency']['conflicts']} place(s)")
 
+        # ---- Optional: the structured specialist reports, run BEFORE the
+        # comparison so the verdict is derived from them rather than the
+        # reports arriving as a post-hoc appendage. This is the staged
+        # consolidation of the product's two research paths (the split an
+        # external audit named the largest product-level gap): one scoper
+        # reads the deck's claims, the specialists research each one, their
+        # sources merge into the run's single registry below, and their
+        # findings enter the synthesist's prompt as citable evidence.
+        report_outcomes: List[Any] = []
+        report_notes: List[str] = []
+        reports_registry = None
+        if cfg.market_reports:
+            from marketreport.handoff import run_brief
+            from marketreport.library import Library
+            from marketreport.scoping import briefs_from_deck
+            from .sources import SourceRegistry
+
+            self._log("scoping the market reports this deck's claims depend on")
+            briefs, report_notes = briefs_from_deck(deck, self.provider)
+            for note in report_notes:
+                self._log(f"  {note.strip()}")
+            reports_registry = SourceRegistry()
+            shelf = Library()
+            for brief in briefs:
+                self._log(f"  producing {brief.specialist} "
+                          f"({', '.join(brief.measures)})")
+                try:
+                    outcome = run_brief(brief, provider=self.provider,
+                                        researcher=self.researcher,
+                                        registry=reports_registry,
+                                        policy=policy,
+                                        on_event=lambda m: self._log(m))
+                except Exception as exc:  # noqa: BLE001 - one report must not sink the run
+                    report_notes.append(f"{brief.specialist} failed: {exc}")
+                    self._log(f"  {brief.specialist} failed: {exc}")
+                    continue
+                try:
+                    stored = shelf.save_all(outcome["panels"],
+                                            market=brief.market,
+                                            place=brief.place,
+                                            request=brief.market)
+                except OSError as exc:
+                    report_notes.append(f"could not store: {exc}")
+                    stored = []
+                report_outcomes.append((brief, outcome["panels"],
+                                        [r.id for r in stored]))
+
         market_agent = MarketAnalyst(self.provider, self.researcher,
                                      policy=policy, **kw)
         market = market_agent.run(deck, max_queries=cfg.research.max_queries,
                                   max_results=cfg.research.max_results,
                                   corpus=corpus)
+
+        if report_outcomes:
+            # One registry for the run. The stored panels keep their own
+            # bibliographies (they are standalone documents); the COPIES of
+            # their figures entering this run's prompt are re-cited into the
+            # run namespace via the remap, per merge_into's contract.
+            remap = merge_into(market_agent.registry, reports_registry,
+                               note="Retrieved by a specialist market report.")
+            block = []
+            for brief, panels, stored_ids in report_outcomes:
+                for panel, pid in zip(panels, stored_ids or
+                                      [""] * len(panels)):
+                    block.append({
+                        "checks_deck_claim": brief.because or "(unrecorded)",
+                        "specialist": brief.specialist,
+                        "measure": getattr(panel, "measure_label", "")
+                                   or getattr(panel, "measure", ""),
+                        "finding": (panel.headline
+                                    if getattr(panel, "answered", False)
+                                    else "Could not be established: "
+                                         + (getattr(panel, "problem", "")
+                                            or "no reason recorded")),
+                        "figures": [{
+                            "label": f.label, "value": f.value_text,
+                            "source_ids": [remap.get(s, s)
+                                           for s in (f.source_ids or [])],
+                        } for f in list(getattr(panel, "figures", []))[:6]],
+                        "stored_as": pid,
+                    })
+            market["specialist_reports"] = block
+            self._log(f"{len(block)} specialist report(s) merged into the "
+                      f"run's evidence — the comparison sees their findings "
+                      f"and can cite their sources")
 
         comparisons: Dict[str, Dict[str, Any]] = {}
         # Security findings from the optional passes, folded into the run report
@@ -356,6 +440,33 @@ class Pipeline:
         result.stats["references"] = result.registry.stats()
         self._log(f"References: {result.registry.stats()['cited']} cited of "
                   f"{result.registry.stats()['total']} consulted")
+        # The reconciliation entries — each report read back against the deck
+        # claim that dispatched it — computed here where the panels are still
+        # in memory, so the CLI and app render them without re-running a
+        # single search.
+        if report_outcomes:
+            from marketreport.reconcile import entry_for
+
+            entries = []
+            for brief, panels, stored_ids in report_outcomes:
+                for panel, pid in zip(panels,
+                                      stored_ids or [""] * len(panels)):
+                    entries.append(entry_for(brief, panel,
+                                             pid or "(not stored)",
+                                             self.provider).to_dict())
+            result.market_reports = {
+                "stored": [pid for _, _, ids in report_outcomes
+                           for pid in ids],
+                "notes": report_notes,
+                "entries": entries,
+                "market": report_outcomes[0][0].market,
+                "definition": report_outcomes[0][0].definition,
+            }
+        elif cfg.market_reports:
+            result.market_reports = {"stored": [], "notes": report_notes,
+                                     "entries": [], "market": "",
+                                     "definition": ""}
+
         self._log(f"Analysis complete in {result.stats['elapsed_seconds']}s "
                   f"— {usage['input']} tokens in, {usage['output']} out")
         return result

@@ -139,20 +139,30 @@ class _FakePipeline:
         pass
 
 
-def _job_after(monkeypatch, payload, dispatch=None):
-    """Run _run_job with the pipeline stubbed out, return the job dict."""
+def _job_after(monkeypatch, payload, result_reports="default",
+               pipeline=None):
+    """Run _run_job with the pipeline stubbed out, return the job dict.
+
+    The reports now run INSIDE the pipeline; the webapp only reads
+    `result.market_reports`, so the stub result carries what a run would.
+    """
     from deckscope import webapp
 
-    monkeypatch.setattr("deckscope.orchestrator.Pipeline", _FakePipeline)
+    if result_reports == "default":
+        result_reports = {"stored": ["ps_test1", "ps_test2"],
+                          "notes": [], "market": "test market",
+                          "definition": "", "entries": []}
+
+    class _Result(_FakeResult):
+        market_reports = result_reports
+
+    class _Pipeline(_FakePipeline):
+        def run(self):
+            return _Result()
+
+    monkeypatch.setattr("deckscope.orchestrator.Pipeline",
+                        pipeline or _Pipeline)
     calls = []
-    if dispatch is None:
-        def dispatch(deck, cfg, on_event=None):  # noqa: ANN001
-            calls.append(deck)
-            return {"stored": ["ps_test1", "ps_test2"],
-                    "lines": ["  Scoped to: test market",
-                              "  stored as ps_test1"],
-                    "document": None, "entries": []}
-    monkeypatch.setattr("marketreport.scoping.dispatch_for_deck", dispatch)
 
     job_id = "t-" + payload.get("deck", "x")[:8]
     with webapp.JOBS_LOCK:
@@ -168,22 +178,34 @@ def _job_after(monkeypatch, payload, dispatch=None):
             webapp.JOBS.pop(job_id, None)
 
 
-def test_market_reports_checkbox_reaches_the_shared_engine(monkeypatch, tmp_path):
+def test_market_reports_checkbox_sets_the_pipeline_flag(monkeypatch, tmp_path):
+    """The checkbox reaches cfg.market_reports — the reports run INSIDE the
+    pipeline, before the comparison, not as a post-render appendage."""
+    from deckscope import settings
+
     deck = tmp_path / "d.md"
     deck.write_text("# Deck", encoding="utf-8")
-    job, calls = _job_after(monkeypatch, {"deck": str(deck), "demo": True,
-                                          "market_reports": True})
+    seen = {}
+    real = settings.settings_to_runconfig
+
+    def spy(overrides=None):
+        seen.update(overrides or {})
+        return real(overrides)
+
+    monkeypatch.setattr("deckscope.settings.settings_to_runconfig", spy)
+    job, _ = _job_after(monkeypatch, {"deck": str(deck), "demo": True,
+                                      "market_reports": True})
+    assert seen.get("market_reports") is True
     assert job["status"] == "done"
-    assert calls, "dispatch_for_deck was never called for a checked box"
     assert job["result"]["market_reports"]["stored"] == ["ps_test1", "ps_test2"]
 
 
-def test_unchecked_box_calls_nothing(monkeypatch, tmp_path):
+def test_unchecked_box_spends_nothing(monkeypatch, tmp_path):
     deck = tmp_path / "d.md"
     deck.write_text("# Deck", encoding="utf-8")
-    job, calls = _job_after(monkeypatch, {"deck": str(deck), "demo": True})
+    job, _ = _job_after(monkeypatch, {"deck": str(deck), "demo": True},
+                        result_reports=None)
     assert job["status"] == "done"
-    assert not calls, "no checkbox, no research spend"
     assert job["result"]["market_reports"] == {}
 
 
@@ -192,30 +214,35 @@ def test_scoper_refusal_reaches_the_result(monkeypatch, tmp_path):
     deck = tmp_path / "d.md"
     deck.write_text("# Deck", encoding="utf-8")
 
-    def refusing(deck_dict, cfg, on_event=None):  # noqa: ANN001
-        return {"stored": [], "document": None, "entries": [],
-                "lines": ["    note: the scoper could not scope this deck"]}
-
+    refusal = {"stored": [], "entries": [], "market": "", "definition": "",
+               "notes": ["    note: the scoper could not scope this deck"]}
     job, _ = _job_after(monkeypatch, {"deck": str(deck), "demo": True,
                                       "market_reports": True},
-                        dispatch=refusing)
+                        result_reports=refusal)
     mr = job["result"]["market_reports"]
     assert mr["stored"] == []
     assert any("could not scope" in n for n in mr["notes"])
 
 
-def test_dead_specialists_do_not_sink_the_deck_report(monkeypatch, tmp_path):
-    """The deck analysis is already rendered when reports run; a scoping
-    crash must degrade to a note, never to a failed job."""
+def test_reconciliation_write_failure_does_not_sink_the_job(monkeypatch, tmp_path):
+    """The deck analysis is already done when the companion document is
+    written; a writer crash must degrade to a note, never a failed job."""
     deck = tmp_path / "d.md"
     deck.write_text("# Deck", encoding="utf-8")
 
-    def exploding(deck_dict, cfg, on_event=None):  # noqa: ANN001
-        raise RuntimeError("specialist meltdown")
+    def exploding(entries, **kw):
+        raise RuntimeError("writer meltdown")
 
+    monkeypatch.setattr("marketreport.scoping.write_reconciliation", exploding)
+    with_entries = {"stored": ["ps_x"], "notes": [], "market": "m",
+                    "definition": "", "entries": [{
+                        "claim": "c", "specialist": "market-share",
+                        "measure_label": "", "headline": "h",
+                        "answered": True, "figures": [], "stored_id": "ps_x",
+                        "reading": "r"}]}
     job, _ = _job_after(monkeypatch, {"deck": str(deck), "demo": True,
                                       "market_reports": True},
-                        dispatch=exploding)
+                        result_reports=with_entries)
     assert job["status"] == "done", "the deck report survived; the job must too"
     assert any("meltdown" in n for n in job["result"]["market_reports"]["notes"])
 

@@ -209,9 +209,21 @@ the same heading — two artifacts, one label, no way to tell them apart.
 
 ---
 
-## Stage 4 — DeckScope as a consumer (TODO)
+## Stage 4 — DeckScope as a consumer (PART)
 
 Deck analysis becomes: generate the market report, diff the deck against it.
+
+**Staged (2026-08-29):** with `market_reports` on, the pipeline now scopes
+and runs the specialist reports BEFORE the comparison, merges their sources
+into the run's single registry (remap applied per `merge_into`'s contract),
+and hands their findings into the comparison prompt as `specialist_reports`
+— each tagged with the deck claim it was dispatched to check. The verdict is
+derived with them, not despite them, and the per-claim reconciliation is
+computed once, in memory, on the result. What remains for DONE: the claim
+audit rows should be MECHANICALLY joined to their reports via
+`checks_deck_claim` (today the synthesist is instructed to make the join),
+and the lightweight MarketAnalyst pass should shrink to boundary/context
+work the specialists do not cover, rather than researching in parallel.
 
 **Done when:** the claim audit, blind spots and the ask-versus-requirement gap
 are all derived from that diff rather than computed separately.

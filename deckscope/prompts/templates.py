@@ -203,6 +203,12 @@ Method:
   thin revenue; it is penalized for thin evidence of demand.
 - Say what the market shows that the deck never mentions. Blind spots are usually more
   informative than errors.
+- When the market analysis carries `specialist_reports`, treat them as first-class
+  evidence: each is a structured report dispatched to check ONE named deck claim, its
+  figures carry source IDs from this run's bibliography, and `checks_deck_claim` tells
+  you which audit row it belongs to. A claim its report contradicts is contradicted by
+  evidence you can cite; a claim whose report says "could not be established" rests on
+  a number nobody publishes — say so in that claim's audit row.
 - Where the market evidence is weak, lower your confidence rather than raising your
   certainty. An honest "we cannot tell yet, here is what would tell us" is a valid output.
 

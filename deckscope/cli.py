@@ -1919,6 +1919,13 @@ def _run(args: Any) -> int:
         if args.horizon is not None:
             opp["horizon_years"] = args.horizon
         overrides["opportunity"] = opp
+    if getattr(args, "with_market_reports", False):
+        # Integrated, not appended: the pipeline runs the scoped specialist
+        # reports BEFORE the comparison and merges their evidence into the
+        # run's registry, so the verdict is derived from them. The old
+        # post-render dispatch survives only as a fallback for results that
+        # predate the integration.
+        overrides["market_reports"] = True
     prov: Dict[str, Any] = {}
     if args.provider:
         prov["name"] = args.provider
@@ -2007,21 +2014,35 @@ def _run(args: Any) -> int:
 
 
 def _market_reports_for_deck(result: Any, cfg: Any) -> None:
-    """The managing step the client specified at the very start of this project:
+    """Render what the integrated reports pass produced — no re-running.
 
-        "one agent that gets called by a managing agent that decided that
-        this market share data mattered, and since it was generated, it
-        should be a selectable thing the user is able to look at"
-
-    The engine lives in `marketreport.scoping.dispatch_for_deck`, shared with
-    the app's checkbox so the two doors cannot drift; this is only the
-    console dressing.
+    The reports now run INSIDE the pipeline (cfg.market_reports), before the
+    comparison, sharing the run's registry; by the time this prints, the
+    verdict above already used them. This shows the reconciliation and
+    writes its document from the entries the run computed.
     """
-    from marketreport.scoping import dispatch_for_deck
+    from marketreport.scoping import dispatch_for_deck, write_reconciliation
 
     _out("\n─── Market reports " + "─" * 49)
-    outcome = dispatch_for_deck(getattr(result, "deck", None) or {},
-                                cfg, on_event=_out)
+    outcome = getattr(result, "market_reports", None)
+    if outcome is None:
+        # A result produced without the integrated pass (an old result being
+        # re-rendered): fall back to the standalone dispatcher.
+        outcome = dispatch_for_deck(getattr(result, "deck", None) or {},
+                                    cfg, on_event=_out)
+    else:
+        for note in outcome.get("notes") or []:
+            _out(f"  {note.strip()}")
+        if outcome.get("entries"):
+            company = str(((getattr(result, "deck", None) or {})
+                           .get("company") or {}).get("name") or "")
+            path, lines = write_reconciliation(
+                outcome["entries"], market=outcome.get("market", ""),
+                definition=outcome.get("definition", ""),
+                company=company, cfg=cfg)
+            for line in lines:
+                _out(line)
+            outcome["document"] = path
     if outcome.get("document"):
         _out("\n  Each report is read back against the deck claim it checks:")
         _out(f"    {outcome['document']}")

@@ -650,6 +650,14 @@ def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
             # app deliberately does not — a guest tuning exit multiples in a
             # form they do not understand is worse than a stated default.
             overrides["opportunity"] = {"enabled": True}
+        if payload.get("market_reports") and not (payload.get("panel")
+                                                  and len([s for s in
+                                                           payload.get("panel")
+                                                           or [] if s]) >= 2):
+            # Integrated: the pipeline runs the reports BEFORE the comparison
+            # and merges their evidence into the run's registry — same flag,
+            # same engine as the CLI's --with-market-reports.
+            overrides["market_reports"] = True
         if payload.get("research"):
             overrides["research"] = {"name": payload["research"]}
         if payload.get("demo"):
@@ -704,28 +712,36 @@ def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
 
         _remember(files)
 
-        # The managing step, behind the same checkbox the CLI exposes as
-        # --with-market-reports. It runs through the exact function the CLI
-        # uses — marketreport.scoping.dispatch_for_deck — so this door and
-        # that one cannot drift apart. It runs AFTER render on purpose: the
-        # deck report is already safe on disk if a specialist dies.
+        # The reports ran INSIDE the pipeline (cfg.market_reports), before
+        # the comparison — the verdict above already used their evidence.
+        # Here we only write the reconciliation document and surface what
+        # the run produced.
         reports: Dict[str, Any] = {}
-        if payload.get("market_reports"):
-            from marketreport.scoping import dispatch_for_deck
-
-            log("Scoping the market reports this deck's claims depend on…")
+        outcome = getattr(result, "market_reports", None)
+        if outcome is not None:
             try:
-                outcome = dispatch_for_deck(
-                    getattr(result, "deck", None) or {}, cfg, on_event=log)
+                from marketreport.scoping import write_reconciliation
+
                 reports = {"stored": outcome.get("stored") or [],
-                           "notes": outcome.get("lines") or [],
-                           "document": outcome.get("document"),
+                           "notes": outcome.get("notes") or [],
+                           "document": None,
                            "entries": outcome.get("entries") or []}
-                if outcome.get("document"):
-                    # The reconciliation is a deliverable like the deck
-                    # report — listed with the files, openable from the page.
-                    files.append(outcome["document"])
-                    _remember([outcome["document"]])
+                if reports["entries"]:
+                    company = str(((getattr(result, "deck", None) or {})
+                                   .get("company") or {}).get("name") or "")
+                    path, lines = write_reconciliation(
+                        reports["entries"],
+                        market=outcome.get("market", ""),
+                        definition=outcome.get("definition", ""),
+                        company=company, cfg=cfg)
+                    for line in lines:
+                        log(line.strip())
+                    reports["document"] = path
+                    if path:
+                        # A deliverable like the deck report — listed with
+                        # the files, openable from the page.
+                        files.append(path)
+                        _remember([path])
             except Exception as exc:  # noqa: BLE001 - reports must not sink the deck
                 reports = {"stored": [], "notes": [f"market reports failed: {exc}"]}
                 log(f"Market reports failed: {exc}")

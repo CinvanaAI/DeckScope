@@ -271,36 +271,54 @@ def dispatch_for_deck(deck: Dict[str, Any], cfg: Any,
     if entries:
         say("  reading the reports back against the deck's claims…")
         company = str(((deck.get("company") or {}).get("name")) or "").strip()
-        kw = dict(market=briefs[0].market, definition=briefs[0].definition,
-                  company=company)
         out["entries"] = [e.to_dict() for e in entries]
-        try:
-            from pathlib import Path
-
-            from .reconcile import document_html
-
-            out_dir = Path(getattr(getattr(cfg, "output", None), "out_dir",
-                                   None) or ".")
-            out_dir.mkdir(parents=True, exist_ok=True)
-            slug = "".join(ch if ch.isalnum() else "_"
-                           for ch in (company or "deck").lower()).strip("_")
-            stem = out_dir / f"{slug or 'deck'}_market_reports"
-            path = stem.with_suffix(".md")
-            path.write_text(document(entries, **kw), encoding="utf-8")
-            out["document"] = str(path)
-            say(f"  wrote {path}")
-            # A guest's click should land on a document, not raw markdown —
-            # when the run produces HTML, the reconciliation matches it.
-            formats = list(getattr(getattr(cfg, "output", None), "formats",
-                                   None) or [])
-            if "html" in formats:
-                html_path = stem.with_suffix(".html")
-                html_path.write_text(document_html(entries, **kw),
-                                     encoding="utf-8")
-                out["document"] = str(html_path)
-                say(f"  wrote {html_path}")
-        except OSError as exc:
-            # The reconciliation still reached the caller as entries; only
-            # the file failed, and the failure is said rather than swallowed.
-            say(f"  could not write the reconciliation document: {exc}")
+        path, lines_out = write_reconciliation(
+            out["entries"], market=briefs[0].market,
+            definition=briefs[0].definition, company=company, cfg=cfg)
+        for line in lines_out:
+            say(line)
+        out["document"] = path
     return out
+
+
+def write_reconciliation(entries: List[Dict[str, Any]], *, market: str,
+                         definition: str = "", company: str = "",
+                         cfg: Any = None):
+    """Write the reconciliation document(s) for a finished set of entries.
+
+    Shared by the integrated pipeline path, the CLI, and the app — one
+    writer, so the companion document cannot drift between doors. Returns
+    `(path_or_None, console_lines)`; a write failure is a line, never an
+    exception, because the entries already reached the caller.
+    """
+    from pathlib import Path
+
+    from .reconcile import Entry, document, document_html
+
+    objs = [Entry(**e) for e in entries]
+    kw = dict(market=market, definition=definition, company=company)
+    lines: List[str] = []
+    try:
+        out_dir = Path(getattr(getattr(cfg, "output", None), "out_dir",
+                               None) or ".")
+        out_dir.mkdir(parents=True, exist_ok=True)
+        slug = "".join(ch if ch.isalnum() else "_"
+                       for ch in (company or "deck").lower()).strip("_")
+        stem = out_dir / f"{slug or 'deck'}_market_reports"
+        path = stem.with_suffix(".md")
+        path.write_text(document(objs, **kw), encoding="utf-8")
+        result = str(path)
+        lines.append(f"  wrote {path}")
+        # A guest's click should land on a document, not raw markdown —
+        # when the run produces HTML, the reconciliation matches it.
+        formats = list(getattr(getattr(cfg, "output", None), "formats",
+                               None) or [])
+        if "html" in formats:
+            html_path = stem.with_suffix(".html")
+            html_path.write_text(document_html(objs, **kw), encoding="utf-8")
+            result = str(html_path)
+            lines.append(f"  wrote {html_path}")
+        return result, lines
+    except OSError as exc:
+        lines.append(f"  could not write the reconciliation document: {exc}")
+        return None, lines
