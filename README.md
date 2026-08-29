@@ -88,8 +88,11 @@ its first line rather than listing confident findings. See
 > answered a regulation question from five smartphone market-share articles without
 > noticing. There is no reason to assume the rest are cleaner.
 > [tests/test_live_run_defects.py](tests/test_live_run_defects.py) pins every one of
-> them, alongside the two harness defects above — thirteen so far, each with the
-> failure it reproduces named in its docstring.
+> them, alongside the harness defects above — fourteen so far, each with the
+> failure it reproduces named in its docstring. The fourteenth arrived the same
+> way as the first thirteen, by running the thing: the forecast trap convicted
+> the report's own *question line* ("Asked: … on whose forecast"), so a growth
+> report was FABRICATED before the model under test said a word.
 >
 > **`deckscope check` exists so the next one does not need me to find it.** It grades
 > report types against cases with known-correct answers planted in real recorded
@@ -892,6 +895,7 @@ The same pattern works for research backends and output formats. See
 
 | Document | What's in it |
 |---|---|
+| [docs/PRODUCT.md](docs/PRODUCT.md) | What this is for: the personas, the deck-first design, and the deliberate refusals |
 | [docs/INSTALL.md](docs/INSTALL.md) | Every install path, including offline and corporate networks |
 | [docs/QUICKSTART.md](docs/QUICKSTART.md) | First fifteen minutes, no jargon |
 | [docs/CLI.md](docs/CLI.md) | Every command and flag |

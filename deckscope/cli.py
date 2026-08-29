@@ -585,7 +585,70 @@ def _orientation() -> int:
     return 0
 
 
+def _crash_report(exc: BaseException) -> Optional[Path]:
+    """The full traceback, written to a file instead of the guest's screen.
+
+    Two audiences, two artifacts. The person at the terminal gets one calm
+    sentence and a path; the person debugging gets everything — platform,
+    version, arguments, the whole stack — in a file they can attach to a
+    report. Printing the stack at a non-technical user serves neither: it is
+    unreadable to them and unreproducible for us once the window closes.
+
+    Returns None if even writing the file fails, in which case the caller
+    falls back to printing the raw traceback — losing the crash entirely is
+    the one outcome worse than being briefly unfriendly.
+    """
+    import platform
+    import time
+    import traceback
+
+    try:
+        path = settings.app_dir() / f"crash-{time.strftime('%Y%m%d-%H%M%S')}.log"
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(f"DeckScope crash report — {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+                     f"version: {__version__}\n"
+                     f"python:  {platform.python_version()} on {platform.platform()}\n"
+                     f"argv:    {sys.argv[1:]}\n\n")
+            fh.write(traceback.format_exc())
+        return path
+    except Exception:  # noqa: BLE001 - the fallback is the caller's raw print
+        return None
+
+
 def main(argv: Optional[List[str]] = None) -> int:
+    """The shield around `_main`.
+
+    Every command keeps its own friendly handlers and exit codes (1 analysis
+    failed, 2 bad input, 3 security abort…). This catches only what escapes
+    them — a genuine DeckScope bug — and turns the 40-line traceback into one
+    sentence plus a crash file. Exit 70 (EX_SOFTWARE) so a script can tell
+    "the tool broke" from "the analysis found problems".
+
+    DECKSCOPE_RAW_ERRORS=1 re-raises instead, for debugging.
+    """
+    import os
+
+    try:
+        return _main(argv)
+    except KeyboardInterrupt:
+        _out("\nStopped.")
+        return 130
+    except Exception as exc:  # noqa: BLE001 - last resort, by design
+        if os.getenv("DECKSCOPE_RAW_ERRORS"):
+            raise
+        path = _crash_report(exc)
+        _out(f"\nDeckScope hit a bug it did not expect: {type(exc).__name__}: {exc}")
+        if path is not None:
+            _out(f"The full technical details were saved to:\n  {path}\n"
+                 f"Nothing about your deck was sent anywhere. If you report this,"
+                 f" include that file.")
+        else:
+            import traceback
+            _out(traceback.format_exc())
+        return 70
+
+
+def _main(argv: Optional[List[str]] = None) -> int:
     # Make the console safe before anything is written to it.
     console.enable()
     args = build_parser().parse_args(argv)
@@ -1923,6 +1986,9 @@ def _run(args: Any) -> int:
     except Exception as exc:  # noqa: BLE001
         _out(f"\nAnalysis failed: {exc}\n")
         _out("Run `deckscope doctor` to check your setup.")
+        details = _crash_report(exc)
+        if details is not None:
+            _out(f"Full technical details: {details}")
         return 1
 
     if getattr(args, "save_corpus", None) and getattr(result, "corpus", None):
@@ -2577,6 +2643,17 @@ def _print_summary(result: Any, files: List[str]) -> None:
         st = reg.stats()
         _out(f"  sources       {st['cited']} cited of {st['total']} retrieved"
              + (f", {st['quarantined']} dropped" if st["quarantined"] else ""))
+    # What the run cost, on the receipt rather than buried in the JSON. The
+    # numbers already existed in result.stats; the person paying for the API
+    # calls simply never saw them.
+    stats = getattr(result, "stats", None) or {}
+    tokens = stats.get("token_usage") or {}
+    if stats.get("elapsed_seconds") is not None:
+        model = stats.get("model")
+        _out(f"  run           {stats['elapsed_seconds']}s"
+             f" · {stats.get('provider', '?')}{'/' + model if model else ''}"
+             + (f" · {tokens.get('input', 0)} tokens in"
+                f" / {tokens.get('output', 0)} out" if tokens else ""))
     _out("─" * 68)
     if files:
         _out("  Reports written:")

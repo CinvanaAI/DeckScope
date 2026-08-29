@@ -168,6 +168,11 @@ def test_every_rendered_format_leads_with_findings(tmp_path):
     for path in sorted(out.iterdir()):
         if path.suffix == ".json":
             continue
+        if path.name == "run.log":
+            # The flight recorder lands beside the outputs by design; it is a
+            # narration of the run, not a rendered format, and has no findings
+            # to lead with.
+            continue
         text = _readable(path).lower()
         if "contested" not in text and "leaves out" not in text:
             missing.append(path.name)

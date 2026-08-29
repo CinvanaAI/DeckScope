@@ -745,12 +745,20 @@ def test_the_harness_says_when_a_score_measures_the_fixture():
 
 
 def test_check_runs_from_the_command_line():
+    # Both directions of the gate, because each alone can be faked: an
+    # exit-1-always harness looks rigorous, an exit-0-always one looks
+    # healthy. The growth case passes under the mock (honest partial recall,
+    # nothing invented — it used to fail only because the trap convicted the
+    # question preamble); the regulation case genuinely fails on recall.
     result = _cli("check", "--demo", "--only", "growth")
     assert "growth-hearing-aids-worldwide" in result.stdout
     assert "recall" in result.stdout
-    # Non-zero on a failing case, so a gate built on this cannot be satisfied
-    # by a report that invents things confidently.
-    assert result.returncode == 1
+    assert result.returncode == 0, "a passing case must be exit 0"
+
+    failing = _cli("check", "--demo", "--only", "regulation")
+    assert failing.returncode == 1, (
+        "a failing case must be non-zero, so a gate built on this cannot be "
+        "satisfied by a report that invents things confidently")
 
 
 # -------------------------------------------- the harness judged itself
@@ -798,6 +806,26 @@ def test_negation_after_the_claim_does_not_excuse_it():
     assert _asserted(r"will reach", "Units will reach 30 million, not 25.")
     assert not _asserted(r"worldwide",
                          "The $774 figure is US-only, not worldwide.")
+
+
+def test_the_question_line_is_not_an_assertion():
+    """The growth specialist's job description says "on whose forecast", and
+    the rendered panel prints it as "Asked: How fast a market is growing …
+    on whose forecast". The forecast trap convicted that line — the report
+    was FABRICATED before the model under test said anything at all. Same
+    class as the denial bug two tests up, in interrogative form: a question
+    is not a claim. The fix strips only the Asked:/Answered by: preamble
+    from the trap's jurisdiction; headline and findings stay inside it.
+    """
+    from marketreport.cases import suite
+    from marketreport.cases.runner import run_case
+    from deckscope.providers import get_provider
+
+    provider = get_provider(type("C", (), {"name": "mock", "model": None,
+                                           "temperature": 0.0})())
+    result = run_case(suite.GROWTH_WORLDWIDE, provider=provider)
+    assert result.clean, (
+        f"the question preamble convicted the report: {result.fabricated}")
 
 
 def test_the_two_human_read_types_now_have_graded_cases():

@@ -81,6 +81,17 @@ def run_case(case: Case, *, provider: Any,
                       error=f"{type(exc).__name__}: {exc}")
 
     rendered = panel_text(panel)
+    # Traps convict assertions, and the "Asked:" line is not one — it is the
+    # question, phrased by the specialist registry, not by the model under
+    # test. The growth specialist's own job description says "on whose
+    # forecast", which the forecast trap read as a projection: the same
+    # false-conviction class the direction-aware negation fixed for denials,
+    # in interrogative form. Only the question preamble is excluded; the
+    # headline and every finding stay inside the trap's jurisdiction, because
+    # those are claim zones.
+    rendered = "\n".join(
+        line for line in rendered.splitlines()
+        if not line.strip().startswith(("Asked:", "Answered by:")))
     # `must_cite` is checked against the parts of the report that carry source
     # attribution, so a figure quoted in a headline with no citation behind it
     # does not satisfy it.

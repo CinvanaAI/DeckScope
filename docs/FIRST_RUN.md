@@ -48,6 +48,9 @@ deckscope app
 ```
 
 opens a drag-and-drop page in your browser, running entirely on your machine.
+The market-reports flag is a checkbox there, next to one more the CLI calls
+`--opportunity`: what this round would have to return to beat an index fund,
+arithmetic shown.
 
 ## 4. How to read what you get
 
@@ -84,3 +87,10 @@ deckscope models      # which AI backends actually respond right now
 An error message in DeckScope is supposed to name the actual problem and the
 fix. If one sends you somewhere unhelpful, that is a bug in the message —
 please report the exact text.
+
+Two more places answers live. Every run writes a `run.log` next to its
+reports — the full narration of what was searched, fetched, and decided, for
+when a result surprises you an hour later. And if DeckScope itself crashes,
+it prints one sentence and saves the complete technical story to a
+`crash-*.log` file in its settings folder; include that file if you report
+the bug. Nothing in either file is sent anywhere.

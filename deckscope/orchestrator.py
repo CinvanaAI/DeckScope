@@ -343,7 +343,8 @@ class Pipeline:
         result.stats["references"] = result.registry.stats()
         self._log(f"References: {result.registry.stats()['cited']} cited of "
                   f"{result.registry.stats()['total']} consulted")
-        self._log(f"Analysis complete in {result.stats['elapsed_seconds']}s")
+        self._log(f"Analysis complete in {result.stats['elapsed_seconds']}s "
+                  f"— {usage['input']} tokens in, {usage['output']} out")
         return result
 
     # ------------------------------------------------------------------
@@ -384,11 +385,57 @@ class Pipeline:
                 self.provider.close()
             except Exception:  # noqa: BLE001
                 pass
+        if self._run_log not in (None, False):
+            try:
+                self._run_log.close()
+            except Exception:  # noqa: BLE001
+                pass
+            self._run_log = None
 
     def _log(self, message: str, **data: Any) -> None:
         self.on_event(message, data)
         if self.config.verbose:
             _out(f"[deckscope] {message}", flush=True)
+        self._persist(message)
+
+    #: None = not opened yet; False = failed once, stay off; else a file.
+    _run_log: Any = None
+
+    def _persist(self, message: str) -> None:
+        """Append every event to `run.log` beside the outputs.
+
+        The narration is the run's flight recorder — which queries went out,
+        which sources came back, what each agent did, in what order. Console
+        and app both show it live and both lose it: the console scrolls away,
+        the app keeps 400 lines in memory for one session. When a run
+        surprises somebody an hour later, the log is the difference between
+        "what happened?" and an answer.
+
+        Logging must never sink an analysis, so the first OSError turns it
+        off for the rest of the run instead of raising — a full disk should
+        cost the flight recorder, not the flight.
+        """
+        if self._run_log is False:
+            return
+        try:
+            if self._run_log is None:
+                out_dir = Path(self.config.output.out_dir)
+                out_dir.mkdir(parents=True, exist_ok=True)
+                self._run_log = open(out_dir / "run.log", "a", encoding="utf-8")
+                # Local time on purpose, matching the per-line stamps: the
+                # reader of a flight recorder is correlating with their own
+                # wall clock, not with UTC.
+                self._run_log.write(
+                    f"\n=== deckscope run · "
+                    f"{datetime.now().astimezone().isoformat(timespec='seconds')}"
+                    f" · {self.provider.name}"
+                    f"{'/' + self.provider.model if self.provider.model else ''}"
+                    f" ===\n")
+            self._run_log.write(
+                time.strftime("%H:%M:%S ") + message.rstrip() + "\n")
+            self._run_log.flush()
+        except OSError:
+            self._run_log = False
 
 
 def analyze(deck: str, *, lens: "str | Lens | List[Any]" = "investor",
