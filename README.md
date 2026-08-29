@@ -89,9 +89,12 @@ its first line rather than listing confident findings. See
 > noticing. There is no reason to assume the rest are cleaner.
 > [tests/test_live_run_defects.py](tests/test_live_run_defects.py) and
 > [tests/test_analysis_quality.py](tests/test_analysis_quality.py) pin every one
-> of them, alongside the harness defects above — seventeen so far, each with the
+> of them, alongside the harness defects above — nineteen so far, each with the
 > failure it reproduces named in its docstring, and every single one found by
-> *using* the product rather than reading it. The recent ones show the pattern:
+> *using* the product rather than reading it — including two found in the
+> verification tools themselves: the dependency-free runner silently collected
+> 505 of 924 tests, and the prompt-cache epoch failed to invalidate on the
+> first prompt change that actually needed it. The recent ones show the pattern:
 > the forecast trap convicted the report's own question line ("Asked: … on whose
 > forecast") — FABRICATED before the model said a word; a live run's headline
 > called four contested claims "contradicted" when three were only partly
@@ -902,6 +905,7 @@ The same pattern works for research backends and output formats. See
 | Document | What's in it |
 |---|---|
 | [docs/PRODUCT.md](docs/PRODUCT.md) | What this is for: the personas, the deck-first design, and the deliberate refusals |
+| [docs/SYSTEM_AUDIT.md](docs/SYSTEM_AUDIT.md) | The current system audit: security, reliability, quality, and what is honestly still open |
 | [docs/INSTALL.md](docs/INSTALL.md) | Every install path, including offline and corporate networks |
 | [docs/QUICKSTART.md](docs/QUICKSTART.md) | First fifteen minutes, no jargon |
 | [docs/CLI.md](docs/CLI.md) | Every command and flag |
