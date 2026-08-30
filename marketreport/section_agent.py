@@ -173,7 +173,7 @@ def research_section(section: Section, *, subject: str, place: str = "",
     emit = on_event or (lambda *_: None)
     registry = registry if registry is not None else SourceRegistry()
     policy = policy if policy is not None else SecurityPolicy()
-    budget = budget or Budget(max_iterations=10, max_retrievals=24)
+    budget = budget or Budget.scaled(max_iterations=10, max_retrievals=24)
     context = context or {}
 
     where = f"{subject} in {place}" if place else subject

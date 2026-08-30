@@ -257,7 +257,7 @@ Roughly: *(panelists × a single run)* + *(panelists × one review call)* +
 *(panelists × lenses × one revision call)* + *(lenses × one chair call)*.
 
 A three-model panel on one lens costs far more than three single analyses:
-the current fixture measures roughly 12× the single-run input tokens (the
+the current fixture measures roughly 11× the single-run input tokens (the
 table below shows the exact multiple from the last measured run), because
 every review round carries the other panelists' full analyses inside each
 prompt. The
@@ -294,7 +294,7 @@ On all nine shipped evaluation cases, under the built-in mock provider:
 |---|:--:|:--:|:--:|
 | baseline (one prompt) | 0.333 | 0.667 | 0.2× |
 | pipeline (three agents) | 0.333 | 0.588 | 1.0× |
-| panel (three panelists) | 0.196 | 0.800 | 12.7× |
+| panel (three panelists) | 0.196 | 0.800 | 10.7× |
 
 The panel scores *lower* on accuracy and *higher* on citation — it cites what it asserts
 more reliably and gets more of those assertions wrong. **This is the mock**, a

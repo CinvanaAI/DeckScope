@@ -2009,8 +2009,10 @@ def _chat(args: Any) -> int:
                      "Run `deckscope setup` and pick one to use /research.")
                 continue
             try:
+                start = 1 + sum(len(a.get("cards") or []) for a in addenda)
                 addendum = research_addendum(gap, provider=provider,
                                              researcher=researcher,
+                                             aid_start=start,
                                              on_event=lambda m: _out(f"  {m}"))
             except Exception as exc:  # noqa: BLE001
                 _out(f"The research attempt failed: {exc}")

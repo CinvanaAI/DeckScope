@@ -60,6 +60,42 @@ PRODUCED_LOCK = threading.Lock()
 #: DeckScope created, and the "open this file" route must stay restricted to the
 #: latter. Removed when the server stops.
 UPLOADED_FILES: set = set()
+
+
+def _forget_upload(path: str) -> None:
+    """Delete one uploaded deck copy, best effort but never silent.
+
+    The fourth external audit found the retention hole: every deck dragged
+    into the app was copied into uploads/ and NEVER deleted — an
+    undocumented second copy of a confidential document that outlived the
+    run, the server, and the user's deletion of the original. Uploads are
+    working copies: consumed by the run, removed when it ends.
+    """
+    resolved = str(Path(path).resolve()) if path else ""
+    if resolved not in UPLOADED_FILES:
+        return
+    try:
+        Path(resolved).unlink(missing_ok=True)
+    except OSError:
+        return  # locked file on Windows: swept at next server start instead
+    UPLOADED_FILES.discard(resolved)
+
+
+def _sweep_uploads() -> int:
+    """Remove leftover uploads from crashed or killed servers, at startup."""
+    upload_dir = settings.app_dir() / "uploads"
+    removed = 0
+    try:
+        for item in upload_dir.iterdir():
+            if item.is_file():
+                try:
+                    item.unlink()
+                    removed += 1
+                except OSError:
+                    continue
+    except OSError:
+        pass
+    return removed
 UPLOADS_LOCK = threading.Lock()
 
 MAX_BODY_BYTES = 256 * 1024      # a job request is a few hundred bytes
@@ -632,8 +668,11 @@ class Handler(BaseHTTPRequestHandler):
                         {"error": "No search backend is configured, so "
                                   "there is nothing to research with. Run "
                                   "deckscope setup and pick one."}, 400)
+                start = 1 + sum(len(a.get("cards") or [])
+                                for a in addenda_view)
                 addendum = research_addendum(question, provider=provider,
-                                             researcher=researcher)
+                                             researcher=researcher,
+                                             aid_start=start)
                 with JOBS_LOCK:
                     job.setdefault("addenda", []).append(addendum)
                     addenda_view = list(job["addenda"])
@@ -704,6 +743,15 @@ def _remember(paths: List[str]) -> None:
 def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
     with JOBS_LOCK:
         job = JOBS[job_id]
+    try:
+        _run_job_inner(job_id, payload, job)
+    finally:
+        # The uploaded working copy dies with its run, whatever happened in
+        # between — success, crash, or security abort.
+        _forget_upload(str(payload.get("deck") or ""))
+
+
+def _run_job_inner(job_id: str, payload: Dict[str, Any], job) -> None:
 
     def log(message: str, _data: Any = None) -> None:
         with JOBS_LOCK:
@@ -883,6 +931,10 @@ def _reveal(path: str) -> None:
 
 def serve(port: int = 8765, open_browser: bool = True) -> None:
     settings.load_env()
+    swept = _sweep_uploads()
+    if swept:
+        _out(f"Removed {swept} leftover uploaded deck cop"
+             f"{'y' if swept == 1 else 'ies'} from a previous session.")
     for attempt in range(20):
         try:
             httpd = ThreadingHTTPServer(("127.0.0.1", port + attempt), Handler)

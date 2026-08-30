@@ -70,10 +70,10 @@ def test_a_stale_cost_multiple_is_refused(tmp_path):
     root = _tree(tmp_path, "docs/PANEL.md", "docs/FAQ.md")
     faq = root / "docs" / "FAQ.md"
     faq.write_text(faq.read_text(encoding="utf-8").replace(
-        "12× the single-run input tokens",
+        "11× the single-run input tokens",
         "3× the single-run input tokens"), encoding="utf-8")
     problems = check_claims.panel_cost_multiple(root)
-    assert problems and "3×" in problems[0] and "12.7×" in problems[0]
+    assert problems and "3×" in problems[0] and "10.7×" in problems[0]
 
 
 def test_a_missing_measured_table_is_refused(tmp_path):

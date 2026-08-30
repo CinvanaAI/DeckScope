@@ -483,7 +483,7 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     emit = on_event or (lambda *_: None)
     registry = registry if registry is not None else SourceRegistry()
     policy = policy if policy is not None else SecurityPolicy()
-    budget = budget or Budget(max_iterations=spec.iterations,
+    budget = budget or Budget.scaled(max_iterations=spec.iterations,
                               max_retrievals=spec.iterations * 3)
 
     # The measure is the yardstick this run is scoped to, named by whoever

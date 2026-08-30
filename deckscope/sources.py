@@ -537,6 +537,14 @@ def rewrite_citations(obj: Any, local_map: Dict[str, str]) -> Any:
 #: traversals with three different ideas of "the whole report" is how a
 #: dangling citation in an optional section coexisted with a perfect
 #: citation-integrity score.
+#: `market_reports` is deliberately NOT here: its reconciliation entries
+#: cite each STORED panel's local source ids, a different namespace from the
+#: run registry — walking them here would strip valid citations. Their audit
+#: happens at the source instead (marketreport.reconcile.scrub_reading,
+#: against exactly the ids the bearing model was shown), closing the bypass
+#: the fourth external audit demonstrated with a fabricated [S999]. The
+#: specialist figures that DO enter the run's prompt are remapped into the
+#: run namespace inside `market` and audited with it.
 CITATION_SECTIONS = ("market", "comparisons", "opportunity", "discovery_delta",
                      "cold_market")
 

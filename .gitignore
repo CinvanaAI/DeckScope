@@ -6,6 +6,7 @@ dist/
 .venv/
 venv/
 .deckscope_cache/
+.cache/
 deckscope_output/
 deckscope_demo_output/
 deckscope_exchange/

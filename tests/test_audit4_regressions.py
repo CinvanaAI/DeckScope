@@ -307,9 +307,22 @@ def test_analysts_differ_only_where_the_evidence_is_genuinely_ambiguous():
                         mixed.lower(), strictness=1)
     lenient, _ = _assess("Average contract value: $28,000. Gross margin: 78%",
                          mixed.lower(), strictness=0)
-    assert strict == "contradicted"
+    # The fourth audit corrected the old pin here: mixed evidence IS what
+    # "partially-supported" means, at every strictness — stamping
+    # "contradicted" on it manufactured findings in the flagship demo.
+    # Panelists still diverge honestly on the supported threshold below.
+    assert strict == "partially-supported"
     assert lenient == "partially-supported"
-    assert strict != lenient, "ambiguous evidence must admit two readings"
+
+    # The honest divergence between analysts now lives on the SUPPORTED
+    # threshold: purely corroborating evidence for a multi-figure claim is
+    # "supported" to a lenient reader and not yet to a strict one.
+    corroborating = ("an acv of $28,000 is typical for this segment. "
+                     "margins of 78% are the norm for this class of product.")
+    two_figures = "Average contract value: $28,000. Gross margin: 78%"
+    assert (_assess(two_figures, corroborating, 0)[0]
+            != _assess(two_figures, corroborating, 1)[0]), (
+        "ambiguity about sufficiency must still admit two readings")
 
     clear = "independent estimates put the category at $18-24b, not the $45-50b."
     claim = "The market is $47B"

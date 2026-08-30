@@ -171,6 +171,8 @@ def sizing_bottom_up(*, market: MarketDefinition, question: StandingQuestion,
         as_of=str(ECN_YEAR),
         confidence="medium" if not problems else "low", demo=market.demo,
         source_ids=[t.source for r in sizing.rings for t in r.terms if t.sourced],
+        source_urls=[t.source_url for r in sizing.rings for t in r.terms
+                     if t.sourced and getattr(t, "source_url", "")],
         detail={"sizing": sizing.to_dict(), "rings": len(sizing.rings),
                 "arithmetic": [r.arithmetic() for r in sizing.rings],
                 # Operand-level lineage, so the convergence check (Q12) can
@@ -331,14 +333,17 @@ def structure(*, market: MarketDefinition, question: StandingQuestion,
             "protect individual businesses")
 
     conc = from_size_bands(bands)
-    if conc.hhi is None:
+    if conc.basis == "not-identifiable" and not conc.reading:
+        # No usable bands at all — nothing to describe.
         return unanswered(question, conc.because or conc.caveat)
 
-    # HHI alone is close to useless here and the critique was right about it:
-    # every real trade lands far below the threshold and reads
-    # "unconcentrated", and it cannot tell 1,422 sole traders from 1,422 large
-    # firms because it measures share EQUALITY, not scale. So the shape
-    # measures run alongside it and carry the reading when HHI cannot.
+    # Firm concentration is NOT identifiable from establishment counts (an
+    # establishment is a location; one company can own every one of them —
+    # the fourth audit's arithmetic), so this answer no longer carries an
+    # HHI. What CBP does support is establishment-size DISPERSION: density,
+    # scale, and where employment sits — which is also the more informative
+    # description of the fragmented trades this question is usually asked
+    # about.
     national_bands: Dict[str, int] = {}
     if market.demo:
         for band in SIZE_BANDS:
@@ -356,22 +361,30 @@ def structure(*, market: MarketDefinition, question: StandingQuestion,
                  national_bands=national_bands or None,
                  national_population=national_pop or None)
 
-    statement = (f"In {market.geography_label}, {market.label} is "
-                 f"{conc.reading} — {conc.because}. "
-                 f"The largest four hold about "
-                 f"{(conc.cr4 or 0) * 100:.0f}% between them, across "
-                 f"{conc.firms:,} establishments.")
+    if not form.establishments:
+        return unanswered(question, "no usable establishment counts")
+
+    statement = (f"In {market.geography_label}, {market.label} counts "
+                 f"{form.establishments:,} establishments")
     if form.reading:
-        statement += (f" More usefully for a market this fragmented, it is "
-                      f"{form.reading}: {form.because}.")
-    statement += f" Concentration is estimated, not measured: {conc.caveat}"
+        statement += f" and is {form.reading}: {form.because}."
+    else:
+        statement += f" ({form.because})."
+    statement += (f" Firm concentration (HHI, CR4) is not identifiable from "
+                  f"this data: {conc.because}.")
 
     return Answer(
         question_id=question.id, kind=COMPUTED, statement=statement,
-        value=conc.hhi, value_text=f"HHI {conc.hhi:,.0f}", unit="HHI",
+        value=form.average_size,
+        value_text=(f"{form.average_size:.1f} employees/establishment"
+                    if form.average_size is not None else
+                    f"{form.establishments:,} establishments"),
+        unit="employees per establishment",
         as_of=str(CBP_YEAR), confidence="medium", demo=market.demo,
         detail={"concentration": conc.to_dict(), "size_bands": bands,
-                "shape": form.to_dict()})
+                "shape": form.to_dict(),
+                "measures": "establishment-size dispersion; firm "
+                            "concentration not identifiable from CBP"})
 
 
 # ------------------------------------------------------------- Q4 growth
@@ -416,7 +429,9 @@ def growth(*, market: MarketDefinition, question: StandingQuestion,
                    f"{then:,} in "
                    f"{fixtures.PRIOR_YEAR} to {now:,} in {CBP_YEAR}, a "
                    f"compound rate of {cagr * 100:.1f}% a year. This is growth "
-                   f"in the NUMBER OF FIRMS, not in revenue — the two can move "
+                   f"in the NUMBER OF ESTABLISHMENTS — business locations, not "
+                   f"firms (one company can own many), and not revenue — "
+                   f"counts and revenue can move "
                    f"in opposite directions when a market consolidates. "
                    f"({fixtures.DEMO_NOTE})"),
         value=cagr, value_text=f"{cagr * 100:.1f}%/yr", unit="%",
@@ -526,6 +541,8 @@ def economics(*, market: MarketDefinition, question: StandingQuestion,
         value_text=_money(per_establishment.value),
         unit="$ per establishment per year", as_of=per_establishment.as_of,
         confidence="medium", source_ids=[per_establishment.source],
+        source_urls=([per_establishment.source_url]
+                     if getattr(per_establishment, "source_url", "") else []),
         demo=market.demo, detail=detail)
 
 

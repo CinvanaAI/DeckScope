@@ -85,7 +85,9 @@ cfg = RunConfig(
     output=OutputConfig(formats=["html", "xlsx"], out_dir="./reports",
                         theme="midnight"),
     security={"mode": "strict", "min_font_pt": 6.0},
-    cache_dir=".cache",
+    cache_dir="~/.deckscope-example-cache",  # cache holds deck-derived
+    # output — keep it OUT of your repo (a relative ".cache" in a project
+    # directory is one `git add .` away from committing your deck analysis)
     verbose=False,
 )
 

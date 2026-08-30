@@ -198,7 +198,15 @@ DeckScope will not produce a confident-looking market view it cannot support.
 | Reports | `Documents\DeckScope Reports` | `~/Documents/DeckScope Reports` |
 | Cache | `%APPDATA%\DeckScope\cache` | `~/.config/deckscope/cache` |
 | Stored market reports (panels) | `%APPDATA%\DeckScope\panels` | `~/.config/deckscope/panels` |
-| Dataset caches (NAICS, county FIPS) | `%APPDATA%\DeckScope\*.json` | `~/.config/deckscope/*.json` |
+| Uploaded decks (web app, working copies) | `%APPDATA%\DeckScope\uploads` | `~/.config/deckscope/uploads` |
+| Dataset caches | `%APPDATA%\DeckScope\naics-index.json`, `county-fips.json` | `~/.config/deckscope/naics-index.json`, `county-fips.json` |
+| Manual-mode prompt exchange | `%APPDATA%\DeckScope\exchange` | `~/.config/deckscope/exchange` |
+
+**Uploaded decks are working copies and are deleted automatically** —
+when the run that used them finishes, and any leftovers from a crashed
+session at the next app start. Between upload and deletion the copy is
+owner-readable only. If you need the original gone from your machine,
+delete your own copy too; DeckScope only manages its own.
 
 **Stored panels are cleartext.** A deck run with market reports enabled
 persists the specialist reports it produced, and those name the market and

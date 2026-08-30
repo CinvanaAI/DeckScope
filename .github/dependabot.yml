@@ -1,0 +1,12 @@
+# Routine dependency and action updates — the fourth audit noted their
+# absence. PRs, not auto-merges: every bump still passes the full CI gauntlet.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

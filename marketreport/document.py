@@ -148,6 +148,8 @@ def markdown(answers: AnswerSet, *, generated: Optional[str] = None,
         elif answer.source_ids:
             out.append("Sources: "
                        + ", ".join(dict.fromkeys(answer.source_ids)))
+            for url in dict.fromkeys(getattr(answer, "source_urls", []) or []):
+                out.append(f"  - exact request: <{url}>")
         elif not answer.checkable:
             out.append("*Not independently checkable: there is no source to go "
                        "and read.*")

@@ -357,3 +357,102 @@ def test_the_cli_exposes_the_dial():
     args = build_parser().parse_args(
         ["run", "deck.pdf", "--thoroughness", "exhaustive"])
     assert args.thoroughness == "exhaustive"
+
+
+# --------------------------------------- uploaded decks die with their run
+
+def test_the_uploaded_working_copy_is_deleted_when_its_run_ends(tmp_path,
+                                                                monkeypatch):
+    """The fourth audit's retention hole: a deck dragged into the app left a
+    persistent second copy the user was never told about. Uploads are
+    working copies — consumed by the run, removed when it ends, whatever
+    the outcome."""
+    import deckscope.webapp as webapp
+
+    up = tmp_path / "uploads"; up.mkdir()
+    deck = up / "tmpabc.md"
+    deck.write_text("secret deck", encoding="utf-8")
+    webapp.UPLOADED_FILES.add(str(deck.resolve()))
+    webapp._forget_upload(str(deck))
+    assert not deck.exists()
+    assert str(deck.resolve()) not in webapp.UPLOADED_FILES
+
+
+def test_files_the_app_did_not_upload_are_never_deleted(tmp_path):
+    """_forget_upload must only touch its own working copies — a user's own
+    deck path passed via the CLI-style field is not the app's to delete."""
+    import deckscope.webapp as webapp
+
+    theirs = tmp_path / "their_deck.md"
+    theirs.write_text("original", encoding="utf-8")
+    webapp._forget_upload(str(theirs))
+    assert theirs.exists()
+
+
+def test_leftover_uploads_are_swept_at_startup(tmp_path, monkeypatch):
+    import deckscope.webapp as webapp
+
+    home = tmp_path / "home"; (home / "uploads").mkdir(parents=True)
+    (home / "uploads" / "stale1.pdf").write_bytes(b"x")
+    (home / "uploads" / "stale2.md").write_bytes(b"y")
+    monkeypatch.setattr(webapp.settings, "app_dir", lambda: home)
+    assert webapp._sweep_uploads() == 2
+    assert not list((home / "uploads").iterdir())
+
+
+# ------------------------------------------ fourth-audit chat regressions
+
+def test_addendum_numbering_continues_across_the_session():
+    """Two research calls used to both start at A1 — two documents wearing
+    one citation ID."""
+    from deckscope.interrogate import research_addendum
+
+    first = research_addendum("q1", provider=_QueryProvider(["a"]),
+                              researcher=_MiniResearcher([
+                                  _sr("one", "https://one", "x")]))
+    start = 1 + len(first["cards"])
+    second = research_addendum("q2", provider=_QueryProvider(["b"]),
+                               researcher=_MiniResearcher([
+                                   _sr("two", "https://two", "y")]),
+                               aid_start=start)
+    assert [c["aid"] for c in first["cards"]] == ["A1"]
+    assert [c["aid"] for c in second["cards"]] == ["A2"], (
+        "session numbering must be monotonic — a later [A1] citation must "
+        "be unambiguous")
+
+
+def test_gap_queries_survive_the_real_complete_json_contract():
+    """The base complete_json wraps a top-level array as {"items": [...]}.
+    The old isinstance(list) check rejected every real provider's valid
+    reply and silently searched the broad question instead — and the tests
+    passed, because their fake returned what the author assumed. This one
+    drives the REAL base implementation."""
+    from deckscope.interrogate import _gap_queries
+    from deckscope.providers.base import Completion, LLMProvider
+
+    class _Real(LLMProvider):
+        name = "real-contract"
+
+        def complete(self, system, messages, **kw):
+            return Completion(text='["acme competitors 2026", '
+                                   '"acme funding round"]')
+
+    queries = _gap_queries("who competes with acme?", _Real())
+    assert queries == ["acme competitors 2026", "acme funding round"], (
+        f"the wrapped-array contract must be unwrapped, got {queries}")
+
+
+def test_chat_answers_cannot_cite_sources_that_do_not_exist():
+    """The report's reconciliation learned this the hard way ([S999]); the
+    chat gets the same deterministic audit rather than instruction alone."""
+
+    class _Inventor:
+        def complete(self, system, messages, **kw):
+            return Completion(text="Contradicted by [S999] and backed "
+                                   "by [S1].")
+
+    out = answer(_record(), "so is the TAM real?", provider=_Inventor())
+    assert "[S1]" in out
+    assert "[S999]" not in out
+    assert "citation removed" in out
+    assert "chat's citation audit" in out

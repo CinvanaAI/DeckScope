@@ -9,24 +9,31 @@ The measures here are the standard ones, and the thresholds are the ones the US
 antitrust agencies publish, so a reader who disagrees with our reading can
 disagree with the number rather than with our taste.
 
-One honest approximation runs through this module and is labelled everywhere it
-appears. Firm-level revenue is not free — but County Business Patterns publishes
-**establishment counts by employee-size band**, free, by industry and geography.
-Employment is a defensible proxy for share, and a size-band distribution gives a
-concentration estimate that is good enough to distinguish a fragmented trade
-from a duopoly. It is not good enough to quote as a measured HHI, and the code
-says so rather than letting the approximation acquire the authority of the real
-thing.
+One boundary runs through this module, drawn by the fourth external audit's
+arithmetic. County Business Patterns counts **establishments** — physical
+locations — and an establishment may belong to a multi-establishment company.
+One hundred locations in the 1-4 employee band is compatible with one hundred
+independent businesses (firm HHI ~100) and with a single company owning every
+location (firm HHI 10,000). Firm concentration is therefore NOT IDENTIFIABLE
+from CBP size bands — not noisy, not estimated: undetermined by the data. An
+earlier version computed a pseudo-HHI over establishments anyway, labelled it
+an estimate, and let "unconcentrated" flow into barriers and life-cycle;
+the label did not stop the wrong entity's number from acquiring the real
+one's authority. HHI and CR4 are now computed ONLY from actual firm-level
+shares (`from_shares`). What CBP does support — establishment-size
+dispersion, density, scale — lives in `shape()`, named as what it is.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass, field, asdict
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
-#: US DOJ/FTC Horizontal Merger Guidelines thresholds. Quoted rather than
-#: invented so a reader can check the reading against the source.
-HHI_UNCONCENTRATED = 1_500
-HHI_MODERATE = 2_500
+#: US DOJ/FTC 2023 Merger Guidelines (§2.4): below 1,000 unconcentrated,
+#: 1,000-1,800 moderately concentrated, above 1,800 highly concentrated.
+#: The vintage is stated because an earlier version quoted the withdrawn
+#: 2010 thresholds (1,500/2,500) while calling them current.
+HHI_UNCONCENTRATED = 1_000
+HHI_MODERATE = 1_800
 
 #: The conventional reading of a four-firm concentration ratio.
 CR4_COMPETITIVE = 0.40
@@ -98,8 +105,8 @@ def read_hhi(score: Optional[float]) -> Tuple[str, str]:
         return "", ""
     if score < HHI_UNCONCENTRATED:
         return ("unconcentrated",
-                f"HHI {score:,.0f} is below {HHI_UNCONCENTRATED:,}, the US "
-                f"merger-guideline threshold for an unconcentrated market")
+                f"HHI {score:,.0f} is below {HHI_UNCONCENTRATED:,}, the 2023 "
+                f"US merger-guideline threshold for an unconcentrated market")
     if score < HHI_MODERATE:
         return ("moderately concentrated",
                 f"HHI {score:,.0f} falls between {HHI_UNCONCENTRATED:,} and "
@@ -110,46 +117,35 @@ def read_hhi(score: Optional[float]) -> Tuple[str, str]:
 
 
 def from_size_bands(bands: Dict[str, int]) -> Concentration:
-    """Estimate concentration from establishment counts per employee-size band.
+    """Firm concentration from CBP size bands: NOT identifiable — and said so.
 
-    `bands` maps a CBP size label to how many establishments fall in it.
-
-    This is the free route, and it is an estimate. Employment stands in for
-    revenue, every establishment within a band is treated as identical, and the
-    open-ended top band gets a conservative midpoint. It will not give a
-    publishable HHI. It will reliably tell you whether you are looking at
-    twenty thousand small operators or four large ones, which is the question
-    a reader actually has.
+    An earlier version treated every establishment as an independent firm and
+    computed an "estimated" HHI. The fourth external audit did the arithmetic
+    that kills it: 100 establishments in the 1-4 band yields the same CBP row
+    whether they are 100 independent businesses (firm HHI ~100) or one
+    company's 100 locations (firm HHI 10,000). No caveat rescues a number
+    about the wrong entity, so none is produced. The dispersion measures in
+    `shape()` carry what the data DOES support.
     """
-    weights: List[float] = []
-    firms = 0
-    for label, count in (bands or {}).items():
-        midpoint = SIZE_BAND_MIDPOINTS.get(str(label).strip())
-        if midpoint is None or not count:
-            continue
-        firms += int(count)
-        weights.extend([midpoint] * int(count))
-
-    if not weights:
+    total = sum(int(v) for v in (bands or {}).values()
+                if v and str(v).strip())
+    if not total:
         return Concentration(
-            basis="estimated", reading="",
+            basis="not-identifiable", reading="",
             because="no usable size-band data",
             caveat="County Business Patterns suppresses size-band detail for "
                    "small geographies to protect individual businesses")
-
-    total = sum(weights)
-    shares = sorted((w / total for w in weights), reverse=True)
-    score = hhi(shares)
-    reading, because = read_hhi(score)
     return Concentration(
-        hhi=score, cr4=cr(shares, 4), firms=firms, basis="estimated",
-        reading=reading, because=because,
-        shares=[round(s, 6) for s in shares[:10]],
-        caveat="Estimated from establishment counts by employee-size band, not "
-               "from firm revenue. Employment stands in for share and every "
-               "establishment in a band is treated as identical, so this "
-               "separates a fragmented trade from a concentrated one but is not "
-               "a measured HHI.")
+        hhi=None, cr4=None, firms=None, basis="not-identifiable",
+        reading="not identifiable from establishment data",
+        because=(f"County Business Patterns counts {total:,} establishments "
+                 f"— physical locations — and an establishment may belong to "
+                 f"a multi-establishment company. The same counts are "
+                 f"compatible with {total:,} independent businesses and with "
+                 f"one company owning every location, so firm concentration "
+                 f"(HHI, CR4) is undetermined by this data"),
+        caveat="Use the establishment-size dispersion measures instead: they "
+               "describe locations, which is what this data counts.")
 
 
 def from_shares(shares: Sequence[float], *, firms: Optional[int] = None) -> Concentration:

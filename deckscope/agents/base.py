@@ -56,8 +56,12 @@ class Agent:
             # confidential. Best-effort owner-only on POSIX; on Windows the
             # directory inherits the user profile's ACL.
             try:
-                import stat as _stat
-                self.cache_dir.chmod(_stat.S_IRWXU)
+                # The project's helper, not bare chmod: chmod is a no-op
+                # on Windows ACLs, so a custom cache dir full of deck-derived
+                # output was world-inheritable there while the default cache
+                # was locked down (fourth audit).
+                from ..settings import restrict_dir_to_owner
+                restrict_dir_to_owner(self.cache_dir)
             except Exception:  # noqa: BLE001
                 pass
         self.on_event = on_event or (lambda *_: None)

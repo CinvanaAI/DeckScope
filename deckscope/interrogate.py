@@ -235,13 +235,43 @@ def answer(record: Dict[str, Any], question: str, *,
             on_usage(completion.usage)
         except Exception:  # noqa: BLE001 - accounting must not break the answer
             pass
-    return (completion.text or "").strip()
+    valid = {str(s.get("sid", "")).upper() for s in _sources(record)}
+    valid |= {str(c.get("aid", "")).upper()
+              for add in (addenda or []) for c in (add.get("cards") or [])}
+    valid.discard("")
+    return _scrub_citations((completion.text or "").strip(), valid)
+
+
+_CITE = re.compile(r"\[([SA]\d{1,4})\]", re.IGNORECASE)
+
+
+def _scrub_citations(text: str, valid: set) -> str:
+    """Chat answers get the same discipline as the report: a citation to a
+    source that does not exist in this session's namespace is removed and
+    the removal is announced. Instruction alone did not stop the report's
+    reconciliation from inventing [S999]; it does not get to be the only
+    guard here either."""
+    removed: List[str] = []
+
+    def swap(match):
+        sid = match.group(1).upper()
+        if sid in valid:
+            return f"[{sid}]"
+        removed.append(sid)
+        return "[citation removed: no such source in this session]"
+
+    out = _CITE.sub(swap, text or "")
+    if removed:
+        out += ("\n\n(This answer cited " + ", ".join(sorted(set(removed)))
+                + ", which do not exist in this session's record or "
+                  "addenda — removed by the chat's citation audit.)")
+    return out
 
 
 # ---------------------------------------------------- research the gap
 
 def research_addendum(question: str, *, provider: Any, researcher: Any,
-                      policy: Any = None,
+                      policy: Any = None, aid_start: int = 1,
                       on_event: Optional[Callable[[str], None]] = None
                       ) -> Dict[str, Any]:
     """Go and look it up — at the reader's explicit request, into an addendum.
@@ -264,7 +294,11 @@ def research_addendum(question: str, *, provider: Any, researcher: Any,
     corpus = gather(researcher, queries, policy or SecurityPolicy(),
                     max_results=6)
     cards: List[Dict[str, Any]] = []
-    for i, src in enumerate(corpus.registry.citable, 1):
+    # `aid_start` continues the session's numbering. The fourth audit
+    # reproduced the alternative: two research calls both starting at A1,
+    # two different documents wearing one citation ID, and a later [A1]
+    # supporting a statement with whichever source the reader guessed.
+    for i, src in enumerate(corpus.registry.citable, max(1, int(aid_start))):
         cards.append({
             "aid": f"A{i}",
             "title": src.title, "url": src.url,
@@ -288,6 +322,15 @@ def _gap_queries(question: str, provider: Any) -> List[str]:
               "No prose.")
     try:
         raw = provider.complete_json(system, f"Question: {question}")
+        # The base complete_json contract wraps a top-level JSON array as
+        # {"items": [...]} — the fourth audit reproduced the consequence of
+        # checking isinstance(list) alone: every real provider's perfectly
+        # valid reply was rejected and the broad fallback query ran instead,
+        # silently, forever. Accept both shapes, and the tests now exercise
+        # the REAL base implementation rather than a fake that returns what
+        # the author assumed.
+        if isinstance(raw, dict):
+            raw = raw.get("items") or raw.get("queries")
         if isinstance(raw, list):
             queries = [str(q).strip() for q in raw if str(q).strip()][:3]
             if queries:

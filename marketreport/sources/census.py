@@ -108,6 +108,19 @@ def _key() -> str:
     return key
 
 
+def request_url(base: str, params: Dict[str, Any]) -> str:
+    """The exact request, reproducible, minus the secret.
+
+    The fourth audit's provenance finding: the recorded source_url carried
+    only the NAICS parameter, so the link could not reproduce the geography,
+    columns, or size band that actually produced the figure — below the
+    'every figure traceable' standard. Every non-secret parameter now rides
+    in the recorded URL, in the order sent.
+    """
+    clean = {k: v for k, v in params.items() if k != "key"}
+    return f"{base}?{urllib.parse.urlencode(clean)}"
+
+
 def _get(url: str, params: Dict[str, Any], *, timeout: float = 30.0) -> List[List[str]]:
     params = dict(params)
     params["key"] = _key()
@@ -204,8 +217,7 @@ def establishment_count(naics: str, *, state_fips: str = "",
     return Term(
         kind="count", value=float(total), unit="establishments",
         as_of=str(year), source=f"Census County Business Patterns {year}",
-        source_url=(f"{CBP_BASE.format(year=year)}"
-                    f"?{_naics_var('cbp', year)}={naics}"),
+        source_url=request_url(CBP_BASE.format(year=year), params),
         method=MEASURED,
         note=f"NAICS {naics}, {label}"
              + (f", {size_band} employees" if size_band else ""))
@@ -248,8 +260,7 @@ def revenue_per_establishment(naics: str, *, state_fips: str = "",
     return Term(
         kind="value", value=per, unit="$ per establishment per year",
         as_of=str(year), source=f"Economic Census {year}",
-        source_url=(f"{ECN_BASE.format(year=year)}"
-                    f"?{_naics_var('ecn', year)}={naics}"),
+        source_url=request_url(ECN_BASE.format(year=year), params),
         method=MEASURED,
         note="industry average revenue per establishment. This makes the "
              "resulting figure the industry's measured revenue, NOT a "

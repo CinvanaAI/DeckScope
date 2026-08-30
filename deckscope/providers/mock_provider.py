@@ -869,9 +869,20 @@ def _extract_claims(prompt: str, limit: int = 6) -> list:
 
 
 def _research_block(prompt: str) -> str:
-    """The evidence supplied to this call, wherever it appears in the prompt."""
-    for marker in ("RESEARCH MATERIAL", "MARKET ANALYSIS (what the evidence shows)",
-                   "SHARED BIBLIOGRAPHY"):
+    """The RETRIEVED evidence supplied to this call — sources, not analysis.
+
+    The compare prompt fences the bibliography separately from the market
+    analysis, and the distinction is load-bearing for the fixture's claim
+    assessment: the fourth audit's demo review traced a wrong "supported"
+    to the market analysis's own boundary note ("the $47B figure usually
+    spans all three") being read as corroborating evidence — the analysis
+    JSON explaining an overstatement scored as a source endorsing it. The
+    bibliography fence is preferred; the analysis fence remains only as a
+    fallback for prompts that carry no bibliography at all.
+    """
+    for marker in ("BIBLIOGRAPHY (the only sources you may cite)",
+                   "RESEARCH MATERIAL", "SHARED BIBLIOGRAPHY",
+                   "MARKET ANALYSIS (what the evidence shows)"):
         idx = prompt.find(marker)
         if idx != -1:
             return prompt[idx:]
@@ -1160,9 +1171,25 @@ _FIGURE = re.compile(r"(?P<cur>\$)?(?P<lo>\d[\d,]*(?:\.\d+)?)"
 _SCALE = {"B": 1e9, "M": 1e6, "K": 1e3}
 
 
+_BETWEEN = __import__("re").compile(
+    r"between\s+\$?([\d,]+(?:\.\d+)?)\s+and\s+\$?([\d,]+(?:\.\d+)?)",
+    __import__("re").IGNORECASE)
+
+
 def _figures(text: str) -> list:
     """Every figure in `text` as (low, high, unit) in comparable terms."""
     out = []
+    # "between $1,500 and $2,500" is a RANGE. Parsed as two point figures it
+    # matched nothing, so the demo's plausible price fell to "unverifiable"
+    # while the evidence stated the range it sits inside (fourth audit).
+    for m in _BETWEEN.finditer(text or ""):
+        try:
+            lo = float(m.group(1).replace(",", ""))
+            hi = float(m.group(2).replace(",", ""))
+        except ValueError:
+            continue
+        if "$" in m.group(0):
+            out.append((min(lo, hi), max(lo, hi), "money"))
     for m in _FIGURE.finditer(text or ""):
         unit = (m.group("unit") or "").upper()
         currency = bool(m.group("cur"))
@@ -1225,14 +1252,12 @@ def _assess(claim: str, evidence: str, strictness: int = 1) -> tuple:
                         supporting = True
 
     if refuting and supporting:
-        # Genuinely mixed evidence, and this is where analysts legitimately
-        # differ. A strict reader calls it contradicted; a lenient one calls it
-        # partly supported. Seeding *this* is how panelists disagree honestly —
-        # an earlier fixture manufactured disagreement by overwriting a claim's
-        # assessment outright, which fabricated a finding rather than reflecting
-        # a different reading of the same evidence.
-        return ("contradicted" if strictness >= 1 else "partially-supported",
-                "moderate")
+        # Genuinely mixed evidence. The fourth audit's read is right: mixed
+        # is what "partially-supported" MEANS, and stamping "contradicted"
+        # on it manufactured findings in the flagship demo. Panelists still
+        # diverge honestly one branch down, on how much agreement earns
+        # "supported".
+        return "partially-supported", "moderate"
     if refuting:
         return "contradicted", "strong"
     if supporting:

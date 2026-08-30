@@ -166,12 +166,18 @@ STANDING: Tuple[StandingQuestion, ...] = (
         why="IBISWorld has this in every report and no S-1 does, because a "
             "filer would rather not say its market is mature."),
     StandingQuestion(
-        "Q12", "Do the two independent size estimates agree?",
+        "Q12", "Do the two size estimates agree — and what does their "
+               "agreement actually mean, given the operands they share?",
         section="convergence", kind=COMPUTED, agent="convergence",
         needs=("Q2", "Q3"), denied="",
         seen_in=("s-1", "ibisworld"),
-        why="The profession's own advice is to run top-down and bottom-up "
-            "independently and read convergence as a reliability signal. "
+        why="The profession's advice is to run top-down and bottom-up "
+            "separately and read convergence as a reliability signal — but "
+            "an external audit's algebra showed our two estimates share the "
+            "local establishment count as a material operand, so this "
+            "question deliberately does not call them independent: the "
+            "convergence agent reads the operand overlap and says only what "
+            "it supports. "
             "Building the two agents without ever comparing them left the "
             "design's central claim unexercised — two numbers on a page and no "
             "statement about what their relationship means."),
@@ -250,6 +256,12 @@ class Answer:
     kind: str = RETRIEVED
     confidence: str = "low"
     source_ids: List[str] = field(default_factory=list)
+    #: The exact reproducible request URLs (secrets stripped) behind the
+    #: figure, when its sources are API datasets. The fourth audit's
+    #: provenance finding: naming "County Business Patterns 2022" without
+    #: the parameters that scoped the request is a pointer to a library,
+    #: not to the page.
+    source_urls: List[str] = field(default_factory=list)
     #: Set when the question could not be answered. An answered question and an
     #: unanswerable one are different states, and "" is neither.
     unanswered_because: str = ""

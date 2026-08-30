@@ -6,7 +6,7 @@
 DeckScope is free and MIT-licensed. You pay whatever your AI provider charges. A single
 analysis is typically a few cents on a mid-tier model. A three-model panel is
 substantially more than three times that: the current fixture measures roughly
-12× the single-run input tokens, because every review round carries the other
+11× the single-run input tokens, because every review round carries the other
 panelists' full analyses inside each prompt. Treat the panel as an expensive
 advanced mode, and check the cost receipt the terminal prints after every run. Search backends have free tiers that cover
 hundreds of decks.

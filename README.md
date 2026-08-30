@@ -979,7 +979,7 @@ Worth reading before you trust anything it produces.
   |---|:--:|:--:|:--:|
   | baseline (one prompt) | 0.333 | 0.667 | 0.2× |
   | pipeline (three agents) | 0.333 | 0.588 | 1.0× |
-  | panel (three panelists) | 0.196 | 0.800 | 12.7× |
+  | panel (three panelists) | 0.196 | 0.800 | 10.7× |
 
   The pipeline ties the baseline exactly. But the mock is a fixture shipped for offline
   testing, so those are properties of the fixture rather than of any model.

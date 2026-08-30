@@ -190,6 +190,14 @@ class Library:
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temp, path)
+        # Panels persist deck-adjacent research in cleartext; on a shared
+        # Unix machine the process umask could leave them group/world
+        # readable (fourth audit). Owner-only, best effort — the write
+        # itself must never fail over permissions polish.
+        try:
+            os.chmod(path, 0o600)
+        except OSError:
+            pass
         return self._ref(record, path)
 
     def save_all(self, panels: List[Panel], *, market: str = "",

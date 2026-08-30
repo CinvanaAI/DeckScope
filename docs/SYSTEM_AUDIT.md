@@ -51,6 +51,49 @@ finds more stuff" — answered by attacking the *classes*, not instances:
   (suffix, per-pid temp files; verified live); the HTML `_link` escaping
   contract is documented at the function with all six call sites audited.
 
+## Fifth cycle: the fourth external audit, worked (2026-08-30)
+
+The fourth audit's centerpiece was a mathematical identity error: County
+Business Patterns counts ESTABLISHMENTS (locations), an establishment may
+belong to a multi-establishment company, and the same CBP row is compatible
+with firm HHI ~100 and firm HHI 10,000. The pseudo-HHI is gone: firm
+concentration from size bands is now reported as NOT IDENTIFIABLE, the
+structure answer describes establishment-size dispersion (what the data
+counts), barriers and life-cycle no longer consume a number about the wrong
+entity, the HHI thresholds that remain (for real firm shares) are the 2023
+Merger Guidelines' 1,000/1,800 with their vintage stated, and the growth
+answer says ESTABLISHMENTS, not firms.
+
+The other P1s: the reconciliation's model-written readings are now audited
+against each stored report's own id namespace (a fabricated [S999] is
+removed and the removal announced — reproduced from the audit before
+fixing); uploaded decks are working copies deleted when their run ends,
+swept at startup, documented in the storage table, and the claims checker
+now derives the storage inventory from the code so an undocumented write
+location is a red build.
+
+P2s: chat addenda number monotonically across a session and chat answers
+pass a deterministic citation audit against the session's id namespace;
+the gap-query step accepts the real complete_json array contract (tested
+against the actual base implementation, after the audit showed the fake
+had tested the author's assumption); Census source_urls carry every
+non-secret request parameter and render under their figures; the
+thoroughness dial reaches specialist budgets via Budget.scaled; custom
+cache dirs use the real ACL helper, stored panels are chmod 600, and the
+API example no longer parks a confidential cache in the repo; the panel
+cost tables carry the current measured 10.7x with README coupled to
+PANEL.md by the checker; Q12 no longer calls the two sizings independent;
+the flagship demo's comparator gained a period-basis guard and a range
+parser, mixed evidence reads as partially-supported, and the analysis
+JSON can no longer masquerade as retrieved evidence — the demo now calls
+the inflated TAM contradicted, the plausible price supported, and the
+margin claim partly supported, which is what its own corpus says.
+Dependabot and a weekly pip-audit are in place.
+
+Honestly still open from that audit: the model-mediated claim/report join,
+the large-module refactors, live validation of the fixtures-only report
+types, and — as ever — the real-model benchmark re-drive.
+
 ## The third audit's centerpiece: independence was an algebra error
 
 The audit did the arithmetic the convergence agent's own wording skipped.

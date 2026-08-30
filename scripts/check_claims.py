@@ -132,6 +132,20 @@ def panel_cost_multiple(root: Path) -> List[str]:
                 "cost multiple — the prose '12×' now points at nothing"]
     exact = float(measured.group(1))
     problems = []
+    # README repeats the same table; its multiple must be the same number.
+    # The fourth audit caught README saying 12.7x while a fresh eval
+    # measured 10.7x — and this checker passing, because it only coupled
+    # PANEL.md's prose to PANEL.md's table.
+    readme_path = root / "README.md"
+    rm = None
+    if readme_path.is_file():
+        rm = re.search(
+            r"panel \(three panelists\)[^|]*\|[^|]*\|[^|]*\|\s*([\d.]+)×",
+            readme_path.read_text(encoding="utf-8"))
+    if rm and abs(float(rm.group(1)) - exact) > 0.05:
+        problems.append(
+            f"README.md's panel table says {rm.group(1)}× but PANEL.md's "
+            f"measures {exact:g}× — same table, two numbers")
     for name, text in (("PANEL.md", panel), ("FAQ.md", faq)):
         for claim in re.finditer(
                 r"(\d+(?:\.\d+)?)×\s+the\s+single-run\s+input\s+tokens", text):
@@ -234,6 +248,34 @@ def lead_claims_match(root: Path) -> List[str]:
     return problems
 
 
+def storage_inventory_is_complete(root: Path) -> List[str]:
+    """INSTALL.md's storage table claims to be the complete inventory.
+
+    The fourth external audit falsified it: the web app wrote uploaded deck
+    copies to uploads/ and the table did not mention them. This re-derives
+    the inventory from the code — every `app_dir() / "name"` (and the
+    os.path.join spelling) across both packages — and requires each name to
+    appear in INSTALL.md. A new write location without a documentation row
+    is now a red build, not a finding for auditor number five.
+    """
+    pattern1 = re.compile(r'app_dir\(\)\s*/\s*"([^"\.][^"]*)"')
+    pattern2 = re.compile(r'os\.path\.join\(str\(app_dir\(\)\),\s*"([^"]+)"')
+    names = set()
+    for pkg in ("deckscope", "marketreport"):
+        for f in (root / pkg).rglob("*.py"):
+            src = f.read_text(encoding="utf-8", errors="replace")
+            names.update(pattern1.findall(src))
+            names.update(pattern2.findall(src))
+    install = (root / "docs" / "INSTALL.md").read_text(encoding="utf-8")
+    problems = []
+    for name in sorted(names):
+        if name not in install:
+            problems.append(
+                f"the code writes to <app dir>/{name} but docs/INSTALL.md "
+                f"never mentions it — the storage table claims completeness")
+    return problems
+
+
 CHECKS: List[Callable[[Path], List[str]]] = [
     audit_gate_language,
     benchmark_staleness_admitted,
@@ -243,6 +285,7 @@ CHECKS: List[Callable[[Path], List[str]]] = [
     deck_formats_as_documented,
     runner_reports_the_split,
     lead_claims_match,
+    storage_inventory_is_complete,
 ]
 
 

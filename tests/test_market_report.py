@@ -207,15 +207,29 @@ class M4_Concentration(unittest.TestCase):
         self.assertAlmostEqual(0.9, cr([0.4, 0.3, 0.1, 0.1, 0.05, 0.05], 4),
                                places=3)
 
-    def test_size_bands_produce_an_estimate_that_says_it_is_one(self):
-        conc = from_size_bands({"1-4": 5_000, "5-9": 500, "1000+": 1})
-        self.assertEqual("estimated", conc.basis)
-        self.assertIn("not a measured HHI", conc.caveat)
-        self.assertEqual(5_501, conc.firms)
+    def test_size_bands_refuse_to_mint_a_firm_concentration(self):
+        """The fourth audit's arithmetic: 100 establishments in one band is
+        compatible with 100 independent firms (HHI ~100) and with ONE company
+        owning every location (HHI 10,000). Firm concentration is
+        undetermined by CBP data — so no HHI, no CR4, no firm count, and a
+        reading that says why, instead of an "estimate" about the wrong
+        entity."""
+        conc = from_size_bands({"1-4": 100})
+        self.assertIsNone(conc.hhi)
+        self.assertIsNone(conc.cr4)
+        self.assertIsNone(conc.firms)
+        self.assertEqual("not-identifiable", conc.basis)
+        self.assertIn("not identifiable", conc.reading)
+        self.assertIn("multi-establishment company", conc.because)
 
-    def test_a_fragmented_trade_reads_as_fragmented(self):
-        conc = from_size_bands({"1-4": 20_000, "5-9": 3_000})
-        self.assertEqual("unconcentrated", conc.reading)
+    def test_a_fragmented_trade_is_described_by_dispersion_not_hhi(self):
+        """What CBP does support lives in shape(): density, scale, where the
+        employment sits — named as establishment measures."""
+        from marketreport.structure import shape
+
+        form = shape({"1-4": 20_000, "5-9": 3_000})
+        self.assertEqual(23_000, form.establishments)
+        self.assertIn("sole operators", form.reading)
 
     def test_a_concentrated_market_reads_as_concentrated(self):
         conc = from_shares([0.6, 0.3, 0.05, 0.05])
@@ -371,10 +385,14 @@ class M8_DemoReport(unittest.TestCase):
         self.assertTrue(answers.get("Q9").answered, "barriers needs Q5/Q7/Q8")
         self.assertTrue(answers.get("Q10").answered, "lifecycle needs Q4/Q5")
 
-    def test_barriers_read_the_concentration_that_structure_computed(self):
+    def test_barriers_no_longer_cite_a_concentration_nobody_measured(self):
+        """Barriers used to grade off the pseudo-HHI. With firm concentration
+        correctly not-identifiable from CBP, no HHI reason may appear — a
+        grade citing a number about the wrong entity is worse than a grade
+        with one fewer signal."""
         answers = self._demo()
         reasons = " ".join(answers.get("Q9").detail.get("reasons") or [])
-        self.assertIn("HHI", reasons)
+        self.assertNotIn("HHI", reasons)
 
     def test_the_lifecycle_stage_follows_from_the_growth_figure(self):
         answers = self._demo()
@@ -402,9 +420,14 @@ class M8_DemoReport(unittest.TestCase):
     def test_growth_says_which_geography_it_measured(self):
         self.assertIn("county 04013", self._demo().get("Q4").statement)
 
-    def test_growth_says_it_counts_firms_rather_than_revenue(self):
-        """These move in opposite directions when a market consolidates."""
-        self.assertIn("NUMBER OF FIRMS", self._demo().get("Q4").statement)
+    def test_growth_says_it_counts_locations_not_firms_or_revenue(self):
+        """Establishments are locations: one company can own many. The old
+        wording said FIRMS — the same establishment/firm conflation the
+        fourth audit caught in the concentration measure."""
+        statement = self._demo().get("Q4").statement
+        self.assertIn("NUMBER OF ESTABLISHMENTS", statement)
+        self.assertIn("not", statement.lower())
+        self.assertNotIn("NUMBER OF FIRMS", statement)
 
     def test_the_sizing_rings_nest(self):
         answers = self._demo()
@@ -728,3 +751,55 @@ class P90_EveryLoadBearingClaimIsAccountedFor(unittest.TestCase):
         self.assertEqual(tuple(briefs[0].checks_claim_ids), ("C1",))
         self.assertTrue(any("C99" in n and "dropped" in n for n in notes),
                         notes)
+
+
+class P91_TheReconciliationCannotInventCitations(unittest.TestCase):
+    """The fourth audit's bypass: bearing() runs after the run's citation
+    audit and outside its traversal, so a fabricated [S999] rode into the
+    reconciliation document unchecked. The scrub closes it at the source,
+    against the panel's own id namespace."""
+
+    def test_a_fabricated_citation_is_removed_and_announced(self):
+        from marketreport.reconcile import scrub_reading
+
+        out = scrub_reading("The claim is contradicted by 18% [S999].",
+                            {"S1", "S2"})
+        self.assertNotIn("[S999]", out)
+        self.assertIn("citation removed", out)
+        self.assertIn("S999", out)
+        self.assertIn("removed by the reconciliation audit", out)
+
+    def test_a_valid_citation_survives_case_insensitively(self):
+        from marketreport.reconcile import scrub_reading
+
+        out = scrub_reading("Supported by [s2] and [S1].", {"S1", "S2"})
+        self.assertIn("[S2]", out)
+        self.assertIn("[S1]", out)
+        self.assertNotIn("citation removed", out)
+
+    def test_entry_for_scrubs_through_the_production_path(self):
+        from marketreport.handoff import Brief
+        from marketreport.reconcile import entry_for
+
+        class _Fig:
+            label = "size"
+            value_text = "$1B"
+            source_ids = ["S1"]
+
+        class _Panel:
+            answered = True
+            headline = "h"
+            figures = [_Fig()]
+            measure_label = "revenue"
+
+        class _P:
+            def complete(self, system, messages, **kw):
+                from deckscope.providers.base import Completion
+                return Completion(text="Contradicted [S999], supported [S1].")
+
+        entry = entry_for(Brief(market="m", measures=["retail"],
+                                specialist="market-size", because="TAM is X"),
+                          _Panel(), "stored-1", _P())
+        self.assertIn("[S1]", entry.reading)
+        self.assertNotIn("[S999]", entry.reading)
+        self.assertIn("citation removed", entry.reading)

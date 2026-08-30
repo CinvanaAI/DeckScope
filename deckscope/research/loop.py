@@ -88,6 +88,22 @@ class Budget:
     retrievals: int = 0
     started: float = field(default_factory=time.time)
 
+    @classmethod
+    def scaled(cls, *, max_iterations: int, max_retrievals: int,
+               **kw: Any) -> "Budget":
+        """A budget whose DECLARED baselines still honour the dial.
+
+        The fourth audit's scope finding: specialists pass explicit caps,
+        explicit values are (correctly) never overridden by the dial — so
+        quick/standard/exhaustive silently skipped the two limits that
+        matter most. A specialist's iteration count is a baseline for its
+        kind of work, not a user decision, so it scales; a value a CALLER
+        computed on purpose still uses Budget(...) directly and stays put.
+        """
+        factor = _scale()
+        return cls(max_iterations=max(1, int(max_iterations * factor)),
+                   max_retrievals=max(1, int(max_retrievals * factor)), **kw)
+
     @property
     def spent(self) -> bool:
         return (self.iterations >= self.max_iterations

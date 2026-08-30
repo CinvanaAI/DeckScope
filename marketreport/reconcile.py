@@ -70,6 +70,38 @@ a comparison.
 """
 
 
+_CITE = __import__("re").compile(r"\[(S\d{1,4}|A\d{1,4})\]",
+                                 __import__("re").IGNORECASE)
+
+
+def scrub_reading(text: str, allowed: set) -> str:
+    """Remove citations the reading invented — the fourth audit's bypass.
+
+    bearing() is model output produced AFTER the run's citation audit and
+    outside its traversal, so a fabricated [S999] used to ride into the
+    reconciliation document unchecked — the one class of text the product
+    promises cannot exist. The valid namespace here is the panel's own ids,
+    exactly the ones shown in the prompt; anything else is removed and the
+    removal is announced, matching the run-level audit's strip semantics.
+    """
+    removed = []
+
+    def swap(match):
+        sid = match.group(1).upper()
+        if sid in allowed:
+            return f"[{sid}]"
+        removed.append(sid)
+        return "[citation removed: not in this report's evidence]"
+
+    out = _CITE.sub(swap, text or "")
+    if removed:
+        out += ("\n(The reading cited "
+                + ", ".join(sorted(set(removed)))
+                + ", which are not in this report's evidence — removed by "
+                  "the reconciliation audit.)")
+    return out
+
+
 def bearing(claim: str, panel: Any, provider: Any,
             on_usage: Any = None) -> str:
     """One model reading of report-vs-claim, or an honest absence.
@@ -120,6 +152,9 @@ def entry_for(brief: Any, panel: Any, stored_id: str, provider: Any,
         ids = " ".join(f"[{s}]" for s in (getattr(fig, "source_ids", None) or []))
         figures.append(f"{fig.label}: {fig.value_text} {ids}".rstrip())
     claim = brief.because or f"(the scoper recorded no specific claim; the report covers {brief.market})"
+    allowed = {str(s).upper()
+               for fig in list(getattr(panel, "figures", []))
+               for s in (getattr(fig, "source_ids", None) or [])}
     return Entry(
         claim=claim,
         specialist=brief.specialist,
@@ -129,7 +164,8 @@ def entry_for(brief: Any, panel: Any, stored_id: str, provider: Any,
         answered=bool(getattr(panel, "answered", False)),
         figures=figures,
         stored_id=stored_id,
-        reading=bearing(claim, panel, provider, on_usage=on_usage),
+        reading=scrub_reading(
+            bearing(claim, panel, provider, on_usage=on_usage), allowed),
     )
 
 
