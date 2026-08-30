@@ -16,6 +16,41 @@ hostile-reviewer passes. The standing rule, unchanged:
 | f98bf23 | **13 of 14 green** — all nine OS/Python combos, eval, core install, clean wheel, MCP handshake passed; lint red on 3 findings in one test file (shadowed `os` imports) |
 | this branch | those 3 fixed, plus 5 more of the same shape found by the widened sweep (2 in production); hosted run pending |
 
+## Fourth cycle: self-audit, class-level fixes (2026-08-30)
+
+The client's question — "every time we bring this to an external auditor, it just
+finds more stuff" — answered by attacking the *classes*, not instances:
+
+- **Claims checker in CI** (`scripts/check_claims.py`): eight documented
+  claims re-derived from the tree on every run — gate language against the
+  standing rule (its first run caught this very document saying "the gates
+  pass" below a table saying "hosted run pending"), benchmark staleness
+  admission coupled to the CI flag, panels-under-app-dir re-derived by
+  import, the panel cost multiple against the measured table, MCP surface
+  parity, first-run format promises against the loader, the runner's
+  collection-split line, pyproject/README lead alignment. Each check is
+  tested to fire on its seeded drift, and a crashing check is a failure.
+- **Request-contract tests** (`tests/test_request_contracts.py`): the
+  NAICS2022 class generalized. The four search backends had zero tests;
+  now the endpoint, credential location (header vs body, exact name), and
+  vendor parameter names are pinned at the transport seam for tavily,
+  serper, brave, exa, and the Anthropic/OpenAI adapters — plus a
+  cross-cutting check that no credential ever rides in a URL.
+- **Live canary** (`.github/workflows/canary.yml`, weekly + on demand):
+  drives the shipped census.py against the real API — the half no hermetic
+  test can cover, where NAICS2022 actually lived. Needs the free
+  CENSUS_API_KEY repo secret; without it the canary fails loudly rather
+  than skipping, because a canary that cannot fly must not show green.
+- **Bugs may no longer wear the honest-limit costume**: an exception
+  escaping a deterministic report agent now renders as "a DEFECT in
+  DeckScope, not a limit of the evidence — {type}: …" on the page (the
+  build() docstring's own warning, finally enforced at its last gap);
+  section failures name the exception type so a TypeError cannot read as
+  an outage; the deterministic cross-checks say DEFECT instead of "did
+  not run". Concurrent panel saves in the same second no longer overwrite
+  (suffix, per-pid temp files; verified live); the HTML `_link` escaping
+  contract is documented at the function with all six call sites audited.
+
 ## The third audit's centerpiece: independence was an algebra error
 
 The audit did the arithmetic the convergence agent's own wording skipped.
@@ -154,9 +189,10 @@ registry; merges follow the remap contract.
 
 The external audit called `dbf8d4d` "a strong, ambitious alpha — not a
 release-ready diligence product," principally because its own gates did not
-pass and its two engines were parallel. On this branch the gates pass —
-all of them, including the ones that were lying — the engines share one
-evidence path, the demo tells the truth, the localhost boundary is closed,
+pass and its two engines were parallel. On this branch every local gate is
+green — including the ones that were lying — and the hosted run is pending;
+the CI history table above is the record that decides it. The engines share
+one evidence path, the demo tells the truth, the localhost boundary is closed,
 and the benchmark admits its own staleness rather than implying currency.
 What stands between this and "release-ready" is no longer engineering
 hygiene; it is external validation spend: one real-model benchmark re-drive

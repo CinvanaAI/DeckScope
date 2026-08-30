@@ -772,3 +772,28 @@ def test_census_request_params_carry_the_mapped_variable(monkeypatch):
     assert "NAICS2022" in captured["ecnbasic"], captured["ecnbasic"]
     assert "NAICS2017" not in captured["ecnbasic"]
     assert "NAICS2017" in captured["cbp"], captured["cbp"]
+
+
+def test_an_agent_bug_is_labelled_a_defect_not_an_evidence_limit(monkeypatch):
+    """A KeyError from a buggy agent used to render as "the agent failed:
+    'x'" — indistinguishable at a glance from an honest data gap, letting a
+    programming error acquire the credibility of a stated limit (the exact
+    laundering the external audit's broad-except concern names). It must say
+    DEFECT, on the page."""
+    import marketreport.agents  # noqa: F401
+    import marketreport.report as report
+    from marketreport.report import MarketDefinition, build
+
+    def buggy(**kw):
+        raise KeyError("x")
+
+    monkeypatch.setattr(report, "_AGENTS",
+                        {**report._AGENTS, "sizing-td": buggy})
+    answers = build(MarketDefinition(label="Landscaping", naics="561730",
+                                     state_fips="04", demo=True),
+                    on_event=lambda m: None)
+    q2 = answers.get("Q2")
+    assert not q2.answered
+    assert "DEFECT in DeckScope" in q2.unanswered_because
+    assert "KeyError" in q2.unanswered_because
+    assert "not a limit of the evidence" in q2.unanswered_because

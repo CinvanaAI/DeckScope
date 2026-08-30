@@ -660,8 +660,12 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
             extra = spec.check(findings=established, panel=panel,
                                market=market, place=place)
         except Exception as exc:  # noqa: BLE001
-            extra = {"caveats": [f"the {spec.name} cross-checks did not run: "
-                                 f"{exc}"]}
+            # The cross-checks are deterministic arithmetic — no model, no
+            # network. An exception here is a DEFECT, and "did not run"
+            # would let it read as an ordinary limitation.
+            extra = {"caveats": [f"DEFECT in DeckScope: the {spec.name} "
+                                 f"cross-checks raised "
+                                 f"{type(exc).__name__}: {exc}"]}
         panel.figures.extend(extra.get("figures") or [])
         panel.caveats.extend(extra.get("caveats") or [])
 

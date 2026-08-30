@@ -189,8 +189,8 @@ def build(market: MarketDefinition, *,
                         panel = ask(spec, market)
                     except Exception as exc:  # noqa: BLE001
                         panel = None
-                        emit(f"  {question.id}: the {spec.name} specialist "
-                             f"failed: {exc}")
+                        emit(f"  {question.id}: DEFECT — the {spec.name} "
+                             f"specialist raised {type(exc).__name__}: {exc}")
                     asked[spec.name] = panel
                     if panel is not None and getattr(panel, "answered", False):
                         answers.panels.append(panel)
@@ -218,7 +218,19 @@ def build(market: MarketDefinition, *,
         try:
             answer = agent(market=market, question=question, seen=visible)
         except Exception as exc:  # noqa: BLE001 - one bad agent must not end the run
-            answer = unanswered(question, f"the {question.agent} agent failed: {exc}")
+            # A bug must not wear the honest-limit costume. Expected data
+            # gaps raise Unavailable and are handled inside the agents; an
+            # exception reaching HERE is a programming error, and rendering
+            # it as a plain "could not be established" would let a defect
+            # pass as a limit of the evidence — the exact laundering the
+            # build() docstring warns about. Say which it is, on the page.
+            emit(f"  {question.id}: DEFECT — the {question.agent} agent "
+                 f"raised {type(exc).__name__}: {exc}")
+            answer = unanswered(
+                question,
+                f"a DEFECT in DeckScope, not a limit of the evidence — the "
+                f"{question.agent} agent raised {type(exc).__name__}: "
+                f"{str(exc)[:200]}. Please report it")
 
         # Demo taints everything downstream of it. A barriers grade derived from
         # demo concentration is a demo answer, and reporting it as live would

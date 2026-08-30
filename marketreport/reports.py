@@ -504,8 +504,12 @@ def build_report(report: ReportType, subject: str, *, place: str = "",
                                 context=context, report=report,
                                 on_event=emit)
         except Exception as exc:  # noqa: BLE001 - one bad section is not a run
+            # Name the exception type: "failed: ProviderError(...)" is an
+            # outage the reader can shrug at; "failed: TypeError(...)" is a
+            # bug in DeckScope, and the reader deserves the discriminator.
             panel = unanswered(spec.title,
-                               f"the {spec.key} section failed: {exc}",
+                               f"the {spec.key} section failed — "
+                               f"{type(exc).__name__}: {exc}",
                                agent=spec.key)
         panel.agent = spec.key
         if missing and panel.answered:

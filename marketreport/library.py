@@ -169,9 +169,22 @@ class Library:
             "request": request,
             "panel": panel.to_dict(),
         }
-        body = json.dumps(record, indent=1, ensure_ascii=False, default=str)
         path = os.path.join(self.directory, f"{panel_id}.json")
-        temp = path + ".tmp"
+        # The id hashes question|agent|measure|timestamp-to-the-SECOND, so two
+        # concurrent jobs asking the same question in the same second collide —
+        # and os.replace would then silently overwrite the first panel with
+        # the second under one id: two artifacts, one label, no way to tell
+        # which one somebody is holding (the exact failure this library's
+        # docstring promises to prevent). Never overwrite: suffix instead.
+        n = 2
+        while os.path.exists(path):
+            panel_id = f"{self._id_for(panel, market, place)}-{n}"
+            path = os.path.join(self.directory, f"{panel_id}.json")
+            n += 1
+        record["id"] = panel_id
+        body = json.dumps(record, indent=1, ensure_ascii=False, default=str)
+        # Per-writer temp name — a shared `path + ".tmp"` was its own race.
+        temp = f"{path}.{os.getpid()}.tmp"
         with open(temp, "w", encoding="utf-8") as handle:
             handle.write(body)
             handle.flush()

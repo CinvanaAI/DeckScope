@@ -1,0 +1,37 @@
+name: Live canary
+
+# The per-commit gates are hermetic on purpose — and hermeticity is exactly
+# how the NAICS2022 defect survived every test: the real endpoint's schema
+# moved and no stub noticed. This workflow is the counterpart: once a week
+# (and on demand) it drives the shipped Census code path against the live
+# API and fails if a request this build sends is no longer accepted.
+#
+# A red run here means the outside world moved (or is down) — it does not
+# block merges, it files the news.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  census:
+    name: Census requests still accepted live
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.4.0
+        with:
+          python-version: "3.11"
+      - run: pip install -e .
+      - name: Drive the shipped census.py against the live API
+        env:
+          # Required: census.py refuses keyless requests by design. Without
+          # this secret the canary fails loudly rather than skipping —
+          # a canary that cannot fly must not show green.
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+        run: python scripts/census_canary.py

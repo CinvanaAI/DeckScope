@@ -20,6 +20,12 @@ def _link(url: Any, label: str) -> str:
     `safe_url` drops anything that is not http(s)/mailto. Rendering the label as
     plain text in that case is better than emitting <a href="">, which would
     silently reload the report when clicked.
+
+    CONTRACT: `label` must arrive ALREADY ESCAPED (_e/html.escape at the call
+    site). Every current caller honors this; a new caller that passes raw
+    web-controlled text (a source title, a model-named company) would open an
+    XSS hole in a report the user opens in their own browser. Audited
+    2026-08-30: all six call sites escape at the leaf.
     """
     href = safe_url(url)
     if not href:

@@ -274,6 +274,13 @@ jobs:
           python-version: "3.11"
       - run: pip install ruff==0.8.6  # pinned: unpinned CI lint drifts; rules are pinned in pyproject too
       - run: ruff check .
+      # Documented claims re-derived from the tree: cost multiples, storage
+      # locations, gate language, surface parity. Three audits found this
+      # drift class by hand; this makes it a red build instead.
+      - name: Documented claims must match the code
+        run: |
+          pip install -e .
+          python scripts/check_claims.py
 
   mcp:
     name: MCP server handshake
