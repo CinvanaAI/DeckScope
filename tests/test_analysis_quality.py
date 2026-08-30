@@ -665,3 +665,110 @@ def test_json_export_carries_the_reconciliation():
                                        "notes": [], "market": "m",
                                        "definition": ""})
     assert r.to_dict()["market_reports"]["stored"] == ["ps_1"]
+
+
+# ------------------------------------- independence is an operand property
+
+def _q12(td_ops, bu_ops):
+    """Run the convergence agent on two agreeing sizes with given lineage."""
+    import marketreport.agents  # noqa: F401 - registers the agents
+    from marketreport.questions import RETRIEVED, Answer, BY_ID
+    from marketreport.report import agent_for, MarketDefinition
+
+    def size(qid, value, ops):
+        detail = {"material_operands": ops} if ops is not None else {}
+        return Answer(question_id=qid, kind=RETRIEVED, statement="s",
+                      value=value, value_text=f"${value:,.0f}", unit="USD",
+                      detail=detail)
+
+    return agent_for("convergence")(
+        market=MarketDefinition(label="m", demo=True),
+        question=BY_ID["Q12"],
+        seen={"Q2": size("Q2", 548_900_000, td_ops),
+              "Q3": size("Q3", 571_600_000, bu_ops)})
+
+
+def test_shared_operands_forbid_the_corroboration_claim():
+    """External audit's algebra: top-down = avg × nat_est × (local/nat_est)
+    cancels to avg × local_est — the same local count the bottom-up uses.
+    Agreement between figures sharing a material operand is a sensitivity
+    check between the differing inputs, and the report must say so instead
+    of claiming 'genuine corroboration'. An error in the shared operand
+    moves both figures identically and can never surface in Q12."""
+    a = _q12(["establishments:local:CBP2022", "avg_revenue:national:ECN2022"],
+             ["establishments:local:CBP2022", "avg_revenue:state:ECN2022"])
+    assert "not independent corroboration" in a.statement
+    assert "sensitivity check" in a.statement
+    assert "genuine corroboration" not in a.statement
+    assert a.confidence == "medium", "shared operands cap the confidence"
+
+
+def test_disjoint_operands_earn_the_corroboration_claim():
+    a = _q12(["published_total:national:ECN2022"],
+             ["customers:local:survey2026", "spend:annual:study2026"])
+    assert "genuine corroboration" in a.statement
+    assert a.confidence == "high"
+
+
+def test_missing_lineage_forfeits_rather_than_assumes():
+    """No operand lineage recorded → independence unknown → corroboration is
+    not claimed on an assumption. Refusal over guessing, again."""
+    a = _q12(None, ["establishments:local:CBP2022"])
+    assert "cannot be established" in a.statement
+    assert "genuine corroboration" not in a.statement
+
+
+def test_the_demo_q12_is_honest_about_the_shared_count():
+    """End to end through build(): the shipped demo's own Q12 must carry the
+    sensitivity framing, since its two figures demonstrably share the local
+    establishment count."""
+    import marketreport.agents  # noqa: F401
+    from marketreport.report import MarketDefinition, build
+
+    answers = build(MarketDefinition(label="Landscaping", naics="561730",
+                                     state_fips="04", demo=True),
+                    on_event=lambda m: None)
+    q12 = answers.get("Q12")
+    assert "not independent corroboration" in q12.statement
+    # and both sizing answers actually carry their lineage
+    for qid in ("Q2", "Q3"):
+        ops = (answers.get(qid).detail or {}).get("material_operands")
+        assert ops, f"{qid} must record operand lineage"
+    shared = set((answers.get("Q2").detail or {})["material_operands"]) & \
+        set((answers.get("Q3").detail or {})["material_operands"])
+    assert any("establishments" in o for o in shared)
+
+
+def test_census_classification_variable_matches_the_dataset_vintage():
+    """The 2022 Economic Census exposes NAICS2022; 2022 CBP exposes
+    NAICS2017. Sending NAICS2017 to both meant every live Economic Census
+    request asked for a variable the endpoint does not have — invisible to
+    the tests because they stub the HTTP layer and so validate arithmetic,
+    never the parameter NAME (external audit finding)."""
+    from marketreport.sources.census import _naics_var
+
+    assert _naics_var("ecn", 2022) == "NAICS2022"
+    assert _naics_var("ecn", 2017) == "NAICS2017"
+    assert _naics_var("cbp", 2022) == "NAICS2017"
+    assert _naics_var("cbp", 2023) == "NAICS2017"
+
+
+def test_census_request_params_carry_the_mapped_variable(monkeypatch):
+    """Through the real request-building code: the ECN call must send
+    NAICS2022 and the CBP call NAICS2017, verified at the parameter level
+    the stubbed tests never reached."""
+    import marketreport.sources.census as census
+
+    captured = {}
+
+    def fake_get(base, params):
+        captured[base.split("/")[-1]] = dict(params)
+        return [["NAME", "RCPTOT", "ESTAB", "EMP", "PAYANN"],
+                ["X", "1000", "10", "50", "500"]]
+
+    monkeypatch.setattr(census, "_get", fake_get)
+    census.revenue_per_establishment("561730", year=2022)
+    census.establishment_count("561730", year=2022)
+    assert "NAICS2022" in captured["ecnbasic"], captured["ecnbasic"]
+    assert "NAICS2017" not in captured["ecnbasic"]
+    assert "NAICS2017" in captured["cbp"], captured["cbp"]

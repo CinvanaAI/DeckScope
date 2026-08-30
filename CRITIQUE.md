@@ -224,7 +224,7 @@ It just cannot yet support very much.
   question a reader is asking.
 - **Q6 competitors and Q8 regulation are fixtures only.** EDGAR full-text search
   and state licensing registries are the two free routes; neither is wired.
-- **No HTML or PDF for the market report.** Text and JSON only, while the deck
+- **No direct PDF for the market report.** HTML now exists (the app serves it and the reconciliation ships as a styled page); PDF still does not, while the deck
   report has eight renderers built around `AnswerSet`'s predecessor.
 - **`classify()` is regex over prose.** Fine as a guard that fails permissive.
   Not a basis for anything decided.

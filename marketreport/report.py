@@ -7,10 +7,15 @@ back, and then checks its own completeness.
 Two things it deliberately does not do.
 
 **It does not let the two sizing agents see each other.** Q2 (top-down) and Q3
-(bottom-up) are the same question asked twice by design — the profession's own
-advice is to run both independently and read convergence as a reliability
-signal. If either could see the other's answer it would anchor on it, and the
-signal would be manufactured rather than observed.
+(bottom-up) are the same question asked twice by design. Blind execution
+prevents one figure anchoring the other — but an external audit's algebra
+showed that blindness alone does not buy independence: the two estimates
+share the local establishment count as a material operand, so their
+convergence is a sensitivity check between the national and state
+per-establishment averages, not independent corroboration. Each answer now
+records its operand lineage, and the convergence agent (Q12) reads the
+overlap and says only what the operands support. See sizing_top_down's
+docstring in agents.py for the cancellation.
 
 **It does not treat an unanswered question as an absent section.** Every question
 produces an `Answer`; an unanswerable one carries the reason. A report with a
@@ -316,12 +321,18 @@ def _gaps(answers: AnswerSet) -> Answer:
 @register("convergence")
 def _convergence_agent(*, market: MarketDefinition, question: StandingQuestion,
                        seen: Dict[str, Optional[Answer]]) -> Answer:
-    """Compare the two independent size estimates.
+    """Compare the two size estimates — honestly about what agreement proves.
 
-    The reason both were built. Two methods that never see each other's work
-    and then agree is evidence; two that diverge is a finding about where the
-    local market departs from the national average. Averaging them would throw
-    away the only thing their independence bought.
+    Blind execution prevents one figure anchoring the other, but an external
+    audit did the algebra this agent's old wording skipped: both estimates
+    can share material operands (today they share the local establishment
+    count), and shared operands make agreement a SENSITIVITY CHECK between
+    the remaining differing inputs, not independent corroboration. An error
+    in a shared operand moves both figures identically and can never surface
+    here. So this agent reads the operand lineage recorded on each answer
+    and lets the overlap decide what agreement is allowed to mean. No
+    lineage recorded reads as "unknown", which forfeits the corroboration
+    claim rather than assuming it.
 
     Uses the shared three-way comparison, so a pair that measures different
     things comes back INCOMPARABLE and settles nothing rather than being read
@@ -336,12 +347,46 @@ def _convergence_agent(*, market: MarketDefinition, question: StandingQuestion,
     lines = [f"top-down:   {top_down.value_text}",
              f"bottom-up:  {bottom_up.value_text}"]
 
+    ops_td = set((top_down.detail or {}).get("material_operands") or [])
+    ops_bu = set((bottom_up.detail or {}).get("material_operands") or [])
+    shared = sorted(ops_td & ops_bu)
+    lineage_known = bool(ops_td and ops_bu)
+
     if verdict == "agree":
-        statement = (
-            f"The two methods agree ({because}). They were run independently "
-            f"and neither saw the other, so agreement here is genuine "
-            f"corroboration rather than one figure anchoring the other.")
-        confidence = "high"
+        if shared:
+            named = ", ".join(sorted({
+                o.split(":")[0].replace("_", " ") for o in shared}))
+            differing = sorted((ops_td | ops_bu) - (ops_td & ops_bu))
+            scopes = sorted({o.split(":")[1] for o in differing
+                             if o.count(":") >= 1})
+            diff_named = (" vs the ".join(scopes) + " per-establishment "
+                          "average") if len(scopes) == 2 else (
+                ", ".join(o.replace(":", " ") for o in differing)
+                or "the remaining inputs")
+            diff_named = "the " + diff_named if len(scopes) == 2 else diff_named
+            statement = (
+                f"The two figures agree ({because}) — but they share a "
+                f"material operand ({named}), so this agreement is a "
+                f"sensitivity check between {diff_named}, not independent "
+                f"corroboration. An error in the shared operand would move "
+                f"both figures identically and never show here. Treat the "
+                f"agreement as: the national and state per-establishment "
+                f"averages are close for this industry.")
+            confidence = "medium"
+        elif not lineage_known:
+            statement = (
+                f"The two figures agree ({because}), but at least one "
+                f"records no operand lineage, so whether they are "
+                f"independent cannot be established — and corroboration is "
+                f"not claimed on an assumption.")
+            confidence = "medium"
+        else:
+            statement = (
+                f"The two methods agree ({because}). They were run "
+                f"independently, neither saw the other, and their recorded "
+                f"operands are disjoint — so agreement here is genuine "
+                f"corroboration rather than one figure anchoring the other.")
+            confidence = "high"
     elif verdict == "disagree":
         ratio = (max(top_down.value or 0, bottom_up.value or 0)
                  / max(min(top_down.value or 0, bottom_up.value or 0), 1))

@@ -25,7 +25,6 @@ def _prompt_epoch() -> str:
     stalled on a cold one). Hashing the templates module makes forgetting
     impossible: edit any prompt and every cached answer is invalidated.
     """
-    import hashlib
     import inspect
 
     from ..prompts import templates

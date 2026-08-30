@@ -93,6 +93,14 @@ TOOLS: List[Dict[str, Any]] = [
                              "enum": ["strict", "balanced", "permissive", "off"],
                              "description": "Injection-screening posture. Default: balanced"},
                 "provider": {"type": "string", "description": "Override the AI backend"},
+                "market_reports": {
+                    "type": "boolean",
+                    "description": (
+                        "Also run the scoped specialist market reports INSIDE "
+                        "the pipeline, before the comparison — same engine as "
+                        "the CLI's --with-market-reports and the app checkbox. "
+                        "Costs several extra research runs; the reconciliation "
+                        "entries come back in the result.")},
                 "model": {"type": "string", "description": "Override the model"},
             },
             "required": [],
@@ -185,6 +193,11 @@ def _analyze(args: Dict[str, Any]) -> str:
         overrides["output"]["out_dir"] = args["out_dir"]
     if args.get("research"):
         overrides["research"] = {"name": args["research"]}
+    if args.get("market_reports"):
+        # The same RunConfig bit as the CLI flag and the app checkbox — the
+        # MCP surface was the one door that could not ask for the reports
+        # (external audit's surface-alignment finding).
+        overrides["market_reports"] = True
     prov = {k: args[k2] for k, k2 in (("name", "provider"), ("model", "model"))
             if args.get(k2)}
     if prov:
@@ -203,6 +216,7 @@ def _analyze(args: Dict[str, Any]) -> str:
     reg = result.registry
     payload = {
         "company": result.company,
+        "market_reports": result.market_reports,
         "files": files,
         "security": {"risk": (result.security or {}).get("overall_risk"),
                      "summary": (result.security or {}).get("summary")},

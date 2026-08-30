@@ -173,28 +173,47 @@ def sizing_bottom_up(*, market: MarketDefinition, question: StandingQuestion,
         source_ids=[t.source for r in sizing.rings for t in r.terms if t.sourced],
         detail={"sizing": sizing.to_dict(), "rings": len(sizing.rings),
                 "arithmetic": [r.arithmetic() for r in sizing.rings],
+                # Operand-level lineage, so the convergence check (Q12) can
+                # tell independent evidence from correlated arithmetic. The
+                # focus ring multiplies the LOCAL establishment count by a
+                # per-establishment average whose scope depends on which
+                # rings resolved.
+                "material_operands": sorted({
+                    f"establishments:local:CBP{CBP_YEAR}",
+                    ("avg_revenue:state:ECN%d" % ECN_YEAR)
+                    if len(sizing.rings) > 1 else
+                    ("avg_revenue:national:ECN%d" % ECN_YEAR)}),
                 "problems": problems})
 
 
 @register("sizing-td")
 def sizing_top_down(*, market: MarketDefinition, question: StandingQuestion,
                     seen: Dict[str, Optional[Answer]]) -> Answer:
-    """Start from a published national aggregate and narrow to the geography.
+    """Start from a national aggregate and narrow to the geography.
 
-    The Economic Census publishes total receipts for a NAICS code nationally.
-    Narrowing that by the geography's share of establishments is a genuine
-    top-down path: it begins with an aggregate somebody else published and
-    apportions it, which is what top-down means.
+    **What this figure honestly is — an external audit did the algebra.** The
+    national total here is CONSTRUCTED as per-establishment average x national
+    establishment count, and apportioning by the local share of establishments
+    cancels the national count straight back out:
 
-    It is NOT the bottom-up figure by another route, and the difference is the
-    point. Bottom-up multiplies a local count by a local average. This one
-    assumes the local average matches the national one — so the two diverge
-    exactly where local establishments are bigger or smaller than typical, and
-    that divergence is information rather than an error to reconcile.
+        avg x national_est x (local_est / national_est)  =  avg x local_est
 
-    This agent never sees the bottom-up answer. `report.build` hands each agent
-    only the answers its question declares it needs, and Q2 declares none but
-    Q1, so the independence is structural rather than requested.
+    So this figure is the local establishment count times the NATIONAL
+    per-establishment average, and the bottom-up figure is the same local
+    count times the STATE average. They share a material operand — the local
+    count — and their comparison is therefore a national-vs-state average
+    sensitivity check, NOT independent corroboration. The convergence agent
+    (Q12) reads the operand lineage recorded on both answers and says exactly
+    that; an earlier version of this docstring claimed the opposite, and the
+    claim did not survive the algebra.
+
+    Blind execution (this agent never sees the bottom-up answer) still
+    prevents conversational anchoring; it cannot make shared operands
+    independent. A directly PUBLISHED national receipts total would improve
+    this — the average would drop out of the lineage — but apportionment by
+    establishments would still share the local count. Genuine independence
+    needs a second method with disjoint operands (e.g. customers x
+    independently sourced spend), which is future work recorded in BUILD.md.
     """
     if market.demo:
         national_receipts = (fixtures.revenue(market.naics, "")
@@ -237,10 +256,14 @@ def sizing_top_down(*, market: MarketDefinition, question: StandingQuestion,
     statement = (f"Starting from the {_money(national_receipts)} national total "
                  f"for {market.label} and apportioning it by "
                  f"{market.geography_label}'s {share * 100:.2f}% share of "
-                 f"establishments gives {_money(size)}. This assumes the "
-                 f"average establishment here is the same size as the national "
-                 f"average — where it is not, this figure and the bottom-up one "
-                 f"will differ, and that difference is the useful part.")
+                 f"establishments gives {_money(size)}. Because the national "
+                 f"total is itself built from a per-establishment average, "
+                 f"this reduces to the local establishment count times the "
+                 f"national average — so where it differs from the bottom-up "
+                 f"figure, the difference measures how local establishments "
+                 f"depart from national size, and where the two agree, that "
+                 f"is a sensitivity check on the averages, not independent "
+                 f"corroboration (the local count is shared).")
     if market.demo:
         statement += f" ({fixtures.DEMO_NOTE})"
 
@@ -252,6 +275,12 @@ def sizing_top_down(*, market: MarketDefinition, question: StandingQuestion,
         detail={"national_receipts": national_receipts,
                 "national_establishments": national_estabs,
                 "local_establishments": local_estabs,
+                # After cancellation, the material operands are the local
+                # count and the NATIONAL average — the national count drops
+                # out of the algebra (see this agent's docstring).
+                "material_operands": sorted({
+                    f"establishments:local:CBP{CBP_YEAR}",
+                    f"avg_revenue:national:ECN{ECN_YEAR}"}),
                 "establishment_share": share,
                 "assumption": "local establishments are of national average size",
                 "demo": market.demo})

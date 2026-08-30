@@ -2297,7 +2297,6 @@ def _as_run_args(args: Any, member: str) -> Any:
     values on top. Reading the defaults from the parser rather than hardcoding
     them means a new `run` flag cannot silently break this path.
     """
-    import argparse
 
     defaults = vars(build_parser().parse_args(["run", str(args.deck)]))
     merged = argparse.Namespace(**defaults)

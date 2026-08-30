@@ -256,7 +256,11 @@ deckscope panel deck.pdf
 Roughly: *(panelists × a single run)* + *(panelists × one review call)* +
 *(panelists × lenses × one revision call)* + *(lenses × one chair call)*.
 
-A three-model panel on one lens is about five to six times a single analysis. The
+A three-model panel on one lens costs far more than three single analyses:
+the current fixture measures roughly 12× the single-run input tokens (the
+table below shows the exact multiple from the last measured run), because
+every review round carries the other panelists' full analyses inside each
+prompt. The
 independent round runs in parallel, so wall-clock time is closer to a single run plus two
 sequential rounds.
 

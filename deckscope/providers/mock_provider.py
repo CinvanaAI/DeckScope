@@ -259,7 +259,6 @@ class MockProvider(LLMProvider):
         Deterministic but not identical across panelists, so the tally has
         something real to work with in tests.
         """
-        import re
 
         seen = []
         for label in re.findall(r"Panelist [A-H]", prompt):

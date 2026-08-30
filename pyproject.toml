@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "deckscope"
 version = "0.0.0.dev0"   # unreleased; see README
-description = "An agentic framework that analyzes a pitch deck, researches its market, and compares the two."
+description = "Evidence-first market reports and pitch-deck analysis: every figure traceable to its source, every unknown stated."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"

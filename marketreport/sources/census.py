@@ -34,6 +34,27 @@ from ..sizing import MEASURED, Term
 CBP_BASE = "https://api.census.gov/data/{year}/cbp"
 ECN_BASE = "https://api.census.gov/data/{year}/ecnbasic"
 
+
+def _naics_var(dataset: str, year: int) -> str:
+    """The classification variable a Census dataset+vintage actually exposes.
+
+    They differ, and the difference broke the live path: the 2022 Economic
+    Census publishes `NAICS2022`, while 2022 County Business Patterns still
+    publishes `NAICS2017` — and this module sent NAICS2017 to both, so every
+    live Economic Census request was asking for a variable the endpoint does
+    not have (external audit finding, verified against the published variable
+    schemas; the tests replace the HTTP layer, which is why they could not
+    catch a wrong parameter NAME). The mapping is explicit per dataset and
+    vintage so the next vintage bump is a deliberate edit here, not a silent
+    drift — and the variable used is recorded in each Term's provenance so a
+    reader can see which classification system a number was pulled under.
+    """
+    if dataset == "ecn":
+        return "NAICS2022" if year >= 2022 else "NAICS2017"
+    # CBP adopted NAICS2017 with the 2017 vintage and, per the published 2022
+    # and 2023 schemas, still exposes NAICS2017.
+    return "NAICS2017"
+
 #: The Census API began rejecting keyless requests. Every call now needs one.
 #: It is free and issued immediately at the URL below, but it IS a setup step
 #: and pretending otherwise would make first run fail mysteriously.
@@ -42,6 +63,12 @@ KEY_SIGNUP = "https://api.census.gov/data/key_signup.html"
 
 #: Most recent vintages known to exist. Bumping these is a deliberate act — a
 #: silent bump would change every number in every report with no record of why.
+# CBP 2023 exists at the API; 2022 is used DELIBERATELY so the establishment
+# counts and the Economic Census receipts describe the same year — mixing a
+# 2023 count with 2022 receipts would put two vintages inside one
+# multiplication with nothing on the page saying so. The tradeoff (fresher
+# counts vs. same-vintage arithmetic) is a choice, and choices belong in
+# provenance: every Term already carries its as_of year.
 CBP_YEAR = 2022
 ECN_YEAR = 2022
 
@@ -151,7 +178,8 @@ def establishment_count(naics: str, *, state_fips: str = "",
 
     for_clause, in_clause = _geography(state_fips, county_fips)
     params: Dict[str, Any] = {
-        "get": "NAME,ESTAB,EMP,PAYANN", "NAICS2017": naics, "for": for_clause}
+        "get": "NAME,ESTAB,EMP,PAYANN", _naics_var("cbp", year): naics,
+        "for": for_clause}
     if in_clause:
         params["in"] = in_clause
     if size_band:
@@ -176,7 +204,8 @@ def establishment_count(naics: str, *, state_fips: str = "",
     return Term(
         kind="count", value=float(total), unit="establishments",
         as_of=str(year), source=f"Census County Business Patterns {year}",
-        source_url=f"{CBP_BASE.format(year=year)}?NAICS2017={naics}",
+        source_url=(f"{CBP_BASE.format(year=year)}"
+                    f"?{_naics_var('cbp', year)}={naics}"),
         method=MEASURED,
         note=f"NAICS {naics}, {label}"
              + (f", {size_band} employees" if size_band else ""))
@@ -196,7 +225,8 @@ def revenue_per_establishment(naics: str, *, state_fips: str = "",
 
     for_clause, in_clause = _geography(state_fips)
     params: Dict[str, Any] = {
-        "get": "NAME,RCPTOT,ESTAB", "NAICS2017": naics, "for": for_clause}
+        "get": "NAME,RCPTOT,ESTAB", _naics_var("ecn", year): naics,
+        "for": for_clause}
     if in_clause:
         params["in"] = in_clause
 
@@ -218,7 +248,8 @@ def revenue_per_establishment(naics: str, *, state_fips: str = "",
     return Term(
         kind="value", value=per, unit="$ per establishment per year",
         as_of=str(year), source=f"Economic Census {year}",
-        source_url=f"{ECN_BASE.format(year=year)}?NAICS2017={naics}",
+        source_url=(f"{ECN_BASE.format(year=year)}"
+                    f"?{_naics_var('ecn', year)}={naics}"),
         method=MEASURED,
         note="industry average revenue per establishment. This makes the "
              "resulting figure the industry's measured revenue, NOT a "

@@ -375,7 +375,6 @@ def test_codex_global_flags_precede_the_exec_subcommand():
 
 def test_reasoning_models_get_max_completion_tokens_and_a_developer_role():
     """`max_tokens` and a `system` message are both rejected by the o-series."""
-    import os
 
     from deckscope.config import ProviderConfig
     from deckscope.providers.openai_provider import OpenAIProvider
@@ -417,7 +416,6 @@ def test_reasoning_models_get_max_completion_tokens_and_a_developer_role():
 
 
 def test_retired_openai_models_are_named_rather_than_404ing():
-    import os
 
     from deckscope.config import ProviderConfig
     from deckscope.providers.base import ProviderError

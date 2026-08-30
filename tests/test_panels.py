@@ -446,7 +446,6 @@ class P9_TheChartIsDrawn(unittest.TestCase):
 
     def test_the_svg_is_well_formed(self):
         import xml.etree.ElementTree as ET
-        import re
 
         from marketreport.panel_render import panel_html
 
@@ -455,7 +454,6 @@ class P9_TheChartIsDrawn(unittest.TestCase):
             ET.fromstring(svg)
 
     def test_no_arc_carries_a_broken_coordinate(self):
-        import re
 
         from marketreport.panel_render import panel_html
 
