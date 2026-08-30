@@ -146,3 +146,17 @@ def test_the_no_evidence_note_adds_the_fix_instead_of_repeating_the_headline():
     assert "No external evidence was retrieved" in found.headline
     assert "deckscope setup" in found.evidence_state
     assert "checked against anything outside the deck" not in found.evidence_state
+
+
+def test_the_wizard_offers_every_setup_the_registry_ships():
+    """The user asked: 'wasn't it supposed to offer MCP and CLI and local
+    models, not just an Anthropic key?' The registry shipped seven backends;
+    the wizard menu offered six of them — MCP existed, registered, documented,
+    and unreachable through setup. The menu must cover the registry."""
+    from deckscope.wizard import PROVIDER_MENU
+
+    offered = {key for key, _, _ in PROVIDER_MENU}
+    for expected in ("anthropic", "openai", "gemini", "cli",
+                     "openai_compatible", "openrouter", "mcp",
+                     "manual", "mock"):
+        assert expected in offered, f"wizard menu is missing {expected}"

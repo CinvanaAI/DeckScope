@@ -152,6 +152,9 @@ PROVIDER_MENU: List[Tuple[str, str, str]] = [
      "but needs a capable machine."),
     ("openrouter", "OpenRouter (many models, one key)",
      "One key, access to Claude, GPT, Gemini and open models."),
+    ("mcp", "An MCP server you already run",
+     "Route DeckScope's prompts through a Model Context Protocol server over "
+     "stdio — yours, or any server exposing a completion tool. No new key."),
     ("manual", "No AI account — I'll copy and paste",
      "DeckScope writes each prompt to a file; you paste it into whatever chat AI "
      "you already use and paste the answer back. Slow, but free."),
@@ -279,6 +282,24 @@ def run_wizard(reconfigure: bool = False) -> Dict[str, Any]:
         cfg["provider"]["model"] = preset
         if preset == "ollama":
             prov_extra["ollama_model"] = ask("Which Ollama model?", "llama3.1:8b")
+
+    if provider == "mcp":
+        _out()
+        say("DeckScope will launch your MCP server as a subprocess and speak "
+            "MCP over stdio. Give the command exactly as you would run it in "
+            "a terminal (e.g. `npx -y my-mcp-server` or `python -m myserver`).")
+        import shlex
+        raw_cmd = ask("Server command", "npx -y my-mcp-server")
+        prov_extra["command"] = shlex.split(raw_cmd)
+        say("Two ways a server can answer: `sampling` (the MCP sampling API — "
+            "the default, works with servers that proxy a model) or a named "
+            "tool that takes a prompt and returns text.")
+        mode = ask("Mode (sampling, or a tool name)", "sampling").strip()
+        if mode and mode != "sampling":
+            prov_extra["mode"] = "tool"
+            prov_extra["tool_name"] = mode
+        say(dim("   The same block works in config.yaml: provider: {name: mcp, "
+                "extra: {command: [...]}} — see docs/PROVIDERS.md."))
 
     if provider == "manual":
         _out()
