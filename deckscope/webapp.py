@@ -244,6 +244,10 @@ class Handler(BaseHTTPRequestHandler):
                 job = dict(job) if job else None
             if not job:
                 return self._json({"error": "no such job"}, 404)
+            # The full run record stays server-side for /api/ask; polling
+            # clients get a flag, not the multi-hundred-KB payload.
+            job["can_ask"] = bool(job.pop("record", None))
+            job.pop("chat_provider", None)
             return self._json(job)
 
         return self._send(404, b"Not found")
@@ -311,6 +315,8 @@ class Handler(BaseHTTPRequestHandler):
 
         if route.path == "/api/run":
             return self._run(payload)
+        if route.path == "/api/ask":
+            return self._ask_report(payload)
         if route.path == "/api/models/select":
             return self._select_models(payload)
         if route.path == "/api/models/check":
@@ -571,6 +577,54 @@ class Handler(BaseHTTPRequestHandler):
             "related": [r.to_dict() for r in shelf.related(panel_id)],
         })
 
+    def _ask_report(self, payload: Dict[str, Any]) -> None:
+        """Grounded Q&A about a finished run — the record, nothing else.
+
+        The grounding contract lives in deckscope/interrogate.py: answers
+        come from the run record, cite its source IDs, and say plainly when
+        the record does not contain the answer. The chat reuses the same
+        provider configuration the run used, so a demo run chats against
+        the mock and a real run chats against the real model.
+        """
+        from .interrogate import answer as _answer
+        from .providers.base import Message, ProviderError, WaitingForAnswer
+        from .providers.registry import get_provider
+
+        job_id = str(payload.get("job") or "")
+        with JOBS_LOCK:
+            job = JOBS.get(job_id)
+            record = job.get("record") if job else None
+            chat_provider = job.get("chat_provider") if job else None
+            status = job.get("status") if job else None
+        if job is None or status != "done":
+            return self._json({"error": "That analysis is not available to "
+                                        "ask about."}, 404)
+        if not record:
+            return self._json({"error": "This run kept no record to ask "
+                                        "about (panel runs are not "
+                                        "chat-enabled yet)."}, 400)
+        question = str(payload.get("question") or "").strip()[:4000]
+        if not question:
+            return self._json({"error": "Ask a question."}, 400)
+        history = []
+        for turn in (payload.get("history") or [])[-12:]:
+            if isinstance(turn, dict) and turn.get("role") in ("user",
+                                                               "assistant"):
+                history.append(Message(str(turn["role"]),
+                                       str(turn.get("content") or "")[:8000]))
+        try:
+            overrides = ({"provider": chat_provider} if chat_provider else {})
+            provider = get_provider(
+                settings.settings_to_runconfig(overrides).provider)
+            reply = _answer(record, question, provider=provider,
+                            history=history)
+        except WaitingForAnswer as exc:
+            return self._json({"error": f"Waiting on a spooled answer: "
+                                        f"{exc}"}, 409)
+        except ProviderError as exc:
+            return self._json({"error": f"The AI provider failed: {exc}"}, 502)
+        return self._json({"answer": reply})
+
     def _run(self, payload: Dict[str, Any]) -> None:
         deck = (payload.get("deck") or "").strip().strip('"')
         if not deck and not payload.get("demo"):
@@ -747,6 +801,14 @@ def _run_job(job_id: str, payload: Dict[str, Any]) -> None:
                 log(f"Market reports failed: {exc}")
 
         reg = getattr(result, "registry", None)
+        # Kept server-side for /api/ask — the reader's follow-up questions
+        # ("where did S3 come from?", "go deeper on competition") are
+        # answered from this record and nothing else.
+        try:
+            job["record"] = result.to_dict()
+            job["chat_provider"] = overrides.get("provider")
+        except Exception:  # noqa: BLE001 - chat is optional, the report is not
+            job["record"] = None
         job.update({
             "status": "done", "files": files,
             "result": {
@@ -1587,7 +1649,22 @@ function finish(j){
   html += `<p class="hint" style="margin-top:18px">AI-generated analysis, not investment
     advice. Every figure is traceable to the References section of the report — check it
     before relying on it.</p>`;
+  if(j.can_ask){
+    html += `<label style="margin-top:18px">Ask about this report</label>
+      <p class="hint" style="margin:2px 0 8px">Answers come only from this run's
+      record — sources are cited by their [S#] IDs, and &ldquo;the run didn't
+      establish that&rdquo; is a real answer. Try &ldquo;where is S1
+      from?&rdquo; or &ldquo;go deeper on the competition section&rdquo;.</p>
+      <div id="chatlog" style="max-height:340px;overflow:auto"></div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input id="chatq" style="flex:1" placeholder="Ask a question about the report…">
+        <button id="chatgo" class="ghost" onclick="askSend()">Ask</button>
+      </div>`;
+  }
   $('#done').innerHTML = html; $('#done').classList.remove('hidden');
+  CHAT = {job: j.id, history: []};
+  const q = $('#chatq');
+  if(q) q.addEventListener('keydown', e => { if(e.key === 'Enter') askSend(); });
 
   // Build the file rows in the DOM rather than by string concatenation, so a
   // filename containing quotes or markup can never become executable markup.
@@ -1616,6 +1693,50 @@ function jumpPanels(){
   loadPanels();
   const card = document.getElementById('panels-card');
   if(card) card.scrollIntoView({behavior:'smooth'});
+}
+
+let CHAT = {job: null, history: []};
+
+function chatBubble(role, text){
+  // DOM nodes, not string concatenation — an answer quoting deck content
+  // must never become markup (the same rule as the file list above).
+  const log = $('#chatlog');
+  const row = document.createElement('div');
+  row.className = 'file';
+  row.style.display = 'block';
+  const who = document.createElement('p');
+  who.className = 'hint'; who.style.margin = '0 0 4px';
+  who.textContent = role === 'user' ? 'You' : 'DeckScope';
+  const body = document.createElement('p');
+  body.style.margin = '0'; body.style.whiteSpace = 'pre-wrap';
+  body.style.fontSize = '13.5px';
+  body.textContent = text;
+  row.appendChild(who); row.appendChild(body);
+  log.appendChild(row); log.scrollTop = 1e9;
+  return body;
+}
+
+async function askSend(){
+  const input = $('#chatq'), btn = $('#chatgo');
+  const question = (input.value || '').trim();
+  if(!question || !CHAT.job) return;
+  input.value = ''; btn.disabled = true; input.disabled = true;
+  chatBubble('user', question);
+  const pending = chatBubble('assistant', 'Thinking…');
+  try{
+    const res = await api('/api/ask', {method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({job: CHAT.job, question,
+                            history: CHAT.history.slice(-12)})});
+    const d = await res.json();
+    if(d.error){ pending.textContent = d.error; }
+    else{
+      pending.textContent = d.answer;
+      CHAT.history.push({role:'user', content: question});
+      CHAT.history.push({role:'assistant', content: d.answer});
+    }
+  }catch(e){ pending.textContent = 'That did not work: ' + e; }
+  btn.disabled = false; input.disabled = false; input.focus();
 }
 
 function openFile(p){

@@ -133,6 +133,16 @@ def build_parser() -> argparse.ArgumentParser:
     app.add_argument("--no-browser", action="store_true",
                      help="Don't open a browser automatically")
 
+    chat = sub.add_parser(
+        "chat", help="Chat with the AI about a finished report, grounded in "
+                     "its run record")
+    chat.add_argument("record", help="The *_full.json a run wrote "
+                                     "(add `json` to --format to get one)")
+    chat.add_argument("--question", "-Q", default=None,
+                      help="Ask one question and exit (default: interactive)")
+    chat.add_argument("--provider", default=None, help="Override the AI backend")
+    chat.add_argument("--model", default=None, help="Override the model")
+
     demo = sub.add_parser("demo", help="Run a full sample analysis with no AI or key")
     demo.add_argument("--format", "-f", nargs="+", default=["html", "md"])
     demo.add_argument("--lens", "-l", nargs="+", default=["investor"])
@@ -701,6 +711,9 @@ def _main(argv: Optional[List[str]] = None) -> int:
 
     if cmd == "run":
         return _run(args)
+
+    if cmd == "chat":
+        return _chat(args)
 
     if cmd == "panel":
         return _panel(args)
@@ -1887,6 +1900,91 @@ def _all_local(cfg: Any) -> bool:
     from .tiering import is_local
     return all(is_local(c) for c in
                filter(None, [cfg.provider, getattr(cfg, "extract_provider", None)]))
+
+
+def _chat(args: Any) -> int:
+    """Chat about a finished report, answered only from its own record.
+
+    The reader's natural post-report questions — "where did that figure
+    come from?", "go deeper on the competitive section" — are usually
+    answerable from the run record without new research. The grounding
+    contract lives in deckscope/interrogate.py; this is just the terminal
+    around it.
+    """
+    from .interrogate import answer, load_record
+    from .providers.base import Message
+    from .providers.registry import get_provider
+
+    try:
+        record = load_record(args.record)
+    except FileNotFoundError:
+        _out(f"Couldn't find that file: {args.record}")
+        return 2
+    except (ValueError, OSError) as exc:
+        _out(str(exc))
+        return 2
+
+    overrides: Dict[str, Any] = {}
+    prov: Dict[str, Any] = {}
+    if args.provider:
+        prov["name"] = args.provider
+    if args.model:
+        prov["model"] = args.model
+    if prov:
+        overrides["provider"] = prov
+    if not settings.is_configured() and not args.provider:
+        _out("DeckScope isn't set up yet. Run:  deckscope setup")
+        return 1
+    cfg = settings.settings_to_runconfig(overrides)
+    provider = get_provider(cfg.provider)
+
+    company = ((record.get("deck") or {}).get("company") or {}).get("name") \
+        or "this report"
+    usage = {"in": 0, "out": 0}
+
+    def count(u: Any) -> None:
+        usage["in"] += int((u or {}).get("input_tokens")
+                           or (u or {}).get("prompt_tokens") or 0)
+        usage["out"] += int((u or {}).get("output_tokens")
+                            or (u or {}).get("completion_tokens") or 0)
+
+    def one(question: str, history: List[Message]) -> str:
+        try:
+            return answer(record, question, provider=provider,
+                          history=history, on_usage=count)
+        except WaitingForAnswer as exc:
+            raise SystemExit(f"\nWaiting on a spooled answer:\n{exc}") from None
+        except ProviderError as exc:
+            raise SystemExit(f"\nThe AI provider failed: {exc}\n"
+                             f"Run `deckscope doctor` to check your "
+                             f"connections.") from None
+
+    if args.question:
+        _out(one(args.question, []))
+        return 0
+
+    _out(f"Ask about {company}. Answers come only from this run's record — "
+         f"sources are cited by their [S#] IDs, and \"the run didn't "
+         f"establish that\" is a real answer. Type `exit` to leave.\n")
+    history: List[Message] = []
+    while True:
+        try:
+            question = input("ask> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            _out("")
+            break
+        if not question:
+            continue
+        if question.lower() in {"exit", "quit", "q"}:
+            break
+        reply = one(question, history)
+        _out(f"\n{reply}\n")
+        history.append(Message("user", question))
+        history.append(Message("assistant", reply))
+        del history[:-12]  # keep the last six exchanges; the record re-grounds every turn
+    if usage["in"] or usage["out"]:
+        _out(f"({usage['in']} tokens in, {usage['out']} out this chat)")
+    return 0
 
 
 def _run(args: Any) -> int:

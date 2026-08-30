@@ -297,6 +297,22 @@ deckscope run deck.pdf --lens all --research tavily --security strict
 deckscope run https://example.com/deck.pdf --company "Acme Flow"
 ```
 
+**Then ask questions about it.** Every run keeps a full record — the
+bibliography with the exact snippet each source contributed, every claim's
+audit row, the arithmetic checks. `deckscope chat` opens a conversation
+grounded in that record and nothing else: answers cite the run's own [S#]
+source IDs, "where is S3 from?" is answered straight from the bibliography
+without a model call, and "the run didn't establish that" is a real answer
+rather than an improvised one. The web app shows the same chat under every
+finished report.
+
+```bash
+deckscope run deck.pdf --format html json     # json writes the record
+deckscope chat deck_analysis/acme_flow_full.json
+ask> where did the market size figure come from?
+ask> go deeper on the competition section
+```
+
 **Or never touch a terminal:**
 
 ```bash
