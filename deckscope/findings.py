@@ -291,8 +291,23 @@ def _next_steps(comparison: Dict[str, Any], found: Findings) -> List[str]:
     for question in (comparison.get("questions") or []):
         text = str(question or "").strip()
         if text and text not in ordered:
-            ordered.append(text)
+            # Questions are for the founder meeting; without the prefix they
+            # rendered as numbered to-dos indistinguishable from diligence
+            # actions (seen in a live run's 18-item list).
+            ordered.append(f"Ask the founder: {text}")
 
+    # A live self-driven run produced an 18-item wall here: five actions,
+    # five founder questions, then EVERY unverified claim restated as its own
+    # "Verify or refute" step — duplicating the "What could not be checked"
+    # section printed two screens up. Three or more unverified claims now
+    # collapse into one step that points at that section; the per-claim
+    # sentence survives for the short case, where it genuinely helps.
+    if len(found.unverified) >= 3:
+        ordered.append(
+            f"Verify or refute the {len(found.unverified)} claims listed "
+            f"under \u201cWhat could not be checked\u201d — the research found "
+            f"nothing either way on any of them.")
+        return ordered
     for finding in found.unverified:
         # The claim goes in quotes because it is a claim, not this sentence's
         # own grammar. The old template read "Establish The financial
@@ -326,9 +341,13 @@ def _evidence_state(found: Findings, registry: Optional[Any]) -> tuple:
 
     grounded = found.counts.get("contested_with_evidence", 0)
     if total == 0:
-        return ("No external sources were retrieved for this run, so nothing below "
-                "was checked against anything outside the deck. Treat every point "
-                "as a question to investigate rather than a finding.",
+        # The headline above this line already says nothing was tested (it
+        # leads with the caveat unconditionally). Repeating the same sentence
+        # in italics directly underneath — which a live self-driven run showed
+        # this doing — teaches the reader to skim the report's two most
+        # important lines. Say the thing the headline does not: what to do.
+        return ("To test these claims against real sources, configure a "
+                "research backend (`deckscope setup`) and re-run.",
                 True, "none_retrieved")
     if grounded == 0 and found.contested:
         return (f"{total} source(s) were retrieved, but none of the contested points "
@@ -440,6 +459,13 @@ def compose_headline(found: Findings, comparison: Dict[str, Any]) -> str:
     sentence = _join(parts)
     if found.next_steps:
         n = len(found.next_steps)
+        # The collapsed "verify N claims" step is one LINE standing for N
+        # questions; the headline counts the questions, not the lines. The
+        # fix that shortened the list must not also shrink the reported
+        # workload (its first suite run did exactly that: "One question to
+        # resolve" above six unresolved claims).
+        if len(found.unverified) >= 3:
+            n += len(found.unverified) - 1
         # New sentence, so the count word is capitalised here. `_count_word` is
         # lowercase because it is usually mid-clause.
         count = _count_word(min(n, 9))

@@ -14,6 +14,15 @@ class ProviderError(RuntimeError):
     """Raised when a backend cannot be reached or refuses the request."""
 
 
+class WaitingForAnswer(ProviderError):
+    """The manual provider's designed pause: a prompt is spooled and no
+    answer has appeared yet. NOT a defect — the caller resumes by answering
+    the spool and re-running. Distinguished from ProviderError so the CLI
+    can exit calmly instead of writing a crash report for the workflow the
+    provider exists to enable (a live agent-driven run was told the app
+    crashed three times while everything worked as designed)."""
+
+
 @dataclass
 class Message:
     role: str  # "user" | "assistant"

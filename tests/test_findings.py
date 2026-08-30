@@ -104,7 +104,11 @@ def test_unverifiable_claims_become_next_steps_not_strikes():
 
     assert found.counts["contested"] == 0
     assert found.counts["unverified"] == 6
-    assert len(found.next_steps) >= 6
+    # Three or more unverified claims collapse into ONE next step pointing at
+    # the "What could not be checked" section — a live run showed the
+    # per-claim version rebuilding that whole section as an 18-item wall.
+    verify = [s for s in found.next_steps if "Verify or refute" in s]
+    assert len(verify) == 1 and "6 claims" in verify[0]
     assert "could be confirmed or refuted" in found.headline
     assert found.headline.startswith("None of the deck's")
     # And the trailing clause starts a new sentence, so it capitalises.
@@ -172,7 +176,8 @@ def test_next_steps_put_p0_actions_before_questions():
     found = collect(comp, FakeRegistry(total=4, cited=2))
     assert found.next_steps[0] == "Do the P0 thing"
     assert found.next_steps[1] == "Do the P1 thing"
-    assert "A question" in found.next_steps
+    # Questions carry their owner so they stop rendering as anonymous to-dos.
+    assert "Ask the founder: A question" in found.next_steps
 
 
 def test_an_empty_comparison_does_not_crash_or_invent():

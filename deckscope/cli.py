@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from .console import out as _out
+from .providers.base import ProviderError, WaitingForAnswer
 from . import __version__, console, settings
 from .config import ALL_LENSES
 
@@ -1599,7 +1600,7 @@ def _research(args: Any) -> int:
         from .config import load_config
         cfg = load_config(args.config, **overrides)
     else:
-        if not settings.is_configured():
+        if not settings.is_configured() and not getattr(args, "provider", None):
             _out("DeckScope isn't set up yet. Run:  deckscope setup\n"
                  "Or watch the loop work with no setup at all:  "
                  "deckscope research <deck> --demo")
@@ -1950,7 +1951,13 @@ def _run(args: Any) -> int:
         from .config import load_config
         cfg = load_config(args.config, **overrides)
     else:
-        if not settings.is_configured():
+        # An explicit --provider on the command line answers the same
+        # question DECKSCOPE_PROVIDER answers in the environment, and
+        # is_configured's own docstring calls refusing the env var the bug.
+        # Refusing the flag was the identical bug one layer up: a live run
+        # of `deckscope run <deck> --provider manual` was sent to the
+        # seven-question wizard to state what it had just stated.
+        if not settings.is_configured() and not getattr(args, "provider", None):
             _out("DeckScope isn't set up yet. Run:  deckscope setup\n")
             _out("Or try it with no setup at all:   deckscope demo")
             return 1
@@ -1986,6 +1993,21 @@ def _run(args: Any) -> int:
     except FileNotFoundError as exc:
         _out(f"\nCouldn't find that file: {exc}\n")
         return 2
+    except WaitingForAnswer as exc:
+        # The manual provider's designed pause — an agent or person still
+        # owes the spool an answer. A live self-driven run hit this three
+        # times and was told each time that DeckScope crashed (crash file,
+        # `doctor` advice) while the workflow was proceeding exactly as
+        # designed. Exit 75 (EX_TEMPFAIL): try again after answering.
+        _out(f"\nWaiting on a spooled answer:\n{exc}\n")
+        return 75
+    except ProviderError as exc:
+        # A provider that cannot be reached or refuses the request is an
+        # environment problem, not a DeckScope bug — `doctor` is the right
+        # advice, a crash report is not.
+        _out(f"\nThe AI provider failed: {exc}\n")
+        _out("Run `deckscope doctor` to check your connections.")
+        return 1
     except Exception as exc:  # noqa: BLE001
         _out(f"\nAnalysis failed: {exc}\n")
         _out("Run `deckscope doctor` to check your setup.")

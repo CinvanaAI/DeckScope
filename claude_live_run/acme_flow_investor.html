@@ -1,0 +1,339 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Acme Flow — Deck vs. Market</title><style>
+:root{--accent:#2E5C8A;--ink:#1A1D21;--muted:#5C6570;--bg:#FFFFFF;
+--panel:#F4F6F8;--line:#DCE1E7;--good:#2E7D5B;--warn:#B07A2B;--bad:#B3402F;
+--radius:10px}
+@media(prefers-color-scheme:dark){:root{
+--accent:#7AA2F7;--ink:#E6EAF2;--muted:#9AA5B8;--bg:#12151C;
+--panel:#1B202B;--line:#2A3140;--good:#6FCF97;
+--warn:#E0B25C;--bad:#E57373}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.wrap{max-width:1180px;margin:0 auto;padding:44px 28px 96px;
+display:grid;grid-template-columns:210px minmax(0,1fr);gap:52px;align-items:start}
+.main{min-width:0}
+header{grid-column:1/-1;border-bottom:3px solid var(--accent);padding-bottom:22px;margin-bottom:8px}
+.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:11.5px;color:var(--muted);font-weight:700}
+h1{font-size:37px;line-height:1.12;margin:10px 0 4px;letter-spacing:-.025em;font-weight:700}
+h2{font-size:21px;margin:46px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line);
+letter-spacing:-.01em;scroll-margin-top:20px}
+h3{font-size:16.5px;margin:26px 0 8px}
+p{margin:10px 0}
+.lede{color:var(--muted);font-size:14.5px}
+
+/* --- table of contents ------------------------------------------------ */
+nav.toc{position:sticky;top:28px;font-size:13.5px;line-height:1.5}
+nav.toc .t{text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;
+color:var(--muted);font-weight:700;margin-bottom:10px}
+nav.toc a{display:block;padding:5px 0 5px 12px;color:var(--muted);text-decoration:none;
+border-left:2px solid var(--line);transition:color .15s,border-color .15s}
+nav.toc a:hover{color:var(--accent);border-left-color:var(--accent)}
+
+/* --- the headline ----------------------------------------------------- */
+.headline{font-size:20.5px;line-height:1.48;background:var(--panel);
+border-left:4px solid var(--accent);padding:20px 24px;border-radius:0 var(--radius) var(--radius) 0;
+margin:26px 0 10px;font-weight:520;letter-spacing:-.005em}
+.evidence-state{color:var(--muted);font-size:13.5px;margin:0 0 22px;padding-left:2px}
+.evidence-state.thin{color:var(--warn);font-weight:600}
+
+/* --- at a glance ------------------------------------------------------ */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;margin:20px 0 8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:13px 15px}
+.stat .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.stat .v{font-size:23px;font-weight:700;margin-top:3px;line-height:1.1;letter-spacing:-.02em}
+
+/* --- findings: provenance is the visual language ----------------------
+   A finding backed by a source you can open looks solid: full-weight border in
+   the severity colour. A finding with nothing behind it is drawn provisionally
+   — dashed, muted, and labelled — because that is exactly what it is. The
+   design carries the epistemics rather than decorating them. */
+.find{border:1px solid var(--line);border-left:4px solid var(--muted);
+border-radius:0 var(--radius) var(--radius) 0;padding:15px 18px;margin:11px 0;
+background:var(--panel);transition:border-color .15s}
+.find.sourced.sev-high{border-left-color:var(--bad)}
+.find.sourced.sev-medium{border-left-color:var(--warn)}
+.find.sourced.sev-low{border-left-color:var(--muted)}
+.find.unsourced{border-style:dashed;border-left-style:dashed;
+border-left-color:var(--line);background:transparent}
+.find .claim-text{font-weight:650;font-size:15.5px;letter-spacing:-.005em}
+.find .why{color:var(--muted);font-size:14px;margin-top:5px}
+.find .foot{margin-top:9px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.badge{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;
+text-transform:uppercase;padding:3px 9px;border-radius:20px;
+border:1px solid var(--line);color:var(--muted)}
+.badge.high{color:var(--bad);border-color:var(--bad)}
+.badge.medium{color:var(--warn);border-color:var(--warn)}
+.badge.nosource{color:var(--muted);border-style:dashed}
+a.cite{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;
+border-radius:20px;background:var(--accent);color:var(--bg);text-decoration:none;
+letter-spacing:.02em;transition:opacity .15s}
+a.cite:hover{opacity:.78}
+
+/* --- next steps ------------------------------------------------------- */
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:14px 0}
+ol.steps li{counter-increment:s;position:relative;padding:9px 0 9px 42px;
+border-bottom:1px solid var(--line)}
+ol.steps li:last-child{border-bottom:0}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:9px;
+width:25px;height:25px;border-radius:50%;background:var(--accent);color:var(--bg);
+font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+tbody tr:hover{background:var(--panel)}
+.tw{overflow-x:auto}
+.bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;min-width:80px;margin-top:6px}
+.bar span{display:block;height:100%;border-radius:4px}
+.claim{border:1px solid var(--line);border-radius:var(--radius);padding:17px 19px;
+margin:13px 0;background:var(--panel)}
+.claim h4{margin:0 0 10px;font-size:15.5px}
+.tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;
+text-transform:uppercase;padding:3px 9px;border-radius:20px;color:#fff}
+.t-supported{background:var(--good)}.t-partially-supported{background:var(--warn)}
+.t-contradicted{background:var(--bad)}.t-unverifiable{background:var(--muted)}
+.kv{margin:8px 0}.kv b{color:var(--muted);font-weight:700;font-size:12px;
+text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px}
+ul{padding-left:20px}li{margin:5px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px}
+.sev-high{color:var(--bad);font-weight:650}.sev-medium{color:var(--warn);font-weight:650}
+.sev-low{color:var(--good);font-weight:650}
+/* A clicked citation lands on its source row and says so — otherwise the
+   reader arrives at a table and has to hunt for the line they asked for. */
+tr[id]{scroll-margin-top:70px}
+tr:target{background:var(--panel);outline:2px solid var(--accent);outline-offset:-2px}
+tr:target td:first-child{font-weight:800}
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);
+font-size:12.5px;color:var(--muted)}
+details{margin:14px 0}summary{cursor:pointer;color:var(--accent);font-weight:600}
+a{color:var(--accent)}
+@media(max-width:940px){
+.wrap{grid-template-columns:1fr;gap:0;padding:32px 20px 72px}
+nav.toc{display:none}h1{font-size:30px}.headline{font-size:18px;padding:16px 18px}
+.cols{grid-template-columns:1fr}}
+@media print{
+.wrap{max-width:none;padding:0;display:block}nav.toc{display:none}
+h2{page-break-after:avoid}.claim,.find{page-break-inside:avoid}
+a.cite{background:none;color:var(--ink);border:1px solid var(--line)}
+.find.unsourced{border-style:solid}}
+</style></head><body><div class="wrap">
+<header>
+<div class="eyebrow">Investor / diligence view</div>
+<h1>Acme Flow</h1>
+<div class="lede">Pitch deck claims measured against market evidence</div>
+</header>
+<nav class="toc"><div class="t">On this page</div>
+<a href="#selfcheck">Where the deck disagrees with itself</a>
+<a href="#omits">What the deck leaves out</a>
+<a href="#unchecked">What could not be checked</a>
+<a href="#next">What to do next</a>
+<a href="#summary">Summary</a>
+<a href="#verdict">This lens&#x27;s read</a>
+<a href="#scorecard">Scorecard</a>
+<a href="#audit">Claim-by-claim</a>
+<a href="#risks">Risks</a>
+<a href="#market">Market evidence</a>
+<a href="#refs">References</a>
+</nav>
+<div class="main">
+<div class="headline">No external evidence was retrieved, so nothing here was tested against anything outside the deck. Three apparent gaps stand out — treat all of it as questions to investigate, not findings.</div>
+<p class="evidence-state thin">To test these claims against real sources, configure a research backend (`deckscope setup`) and re-run.</p>
+<div class="grid">
+<div class="stat"><div class="k">Claims examined</div><div class="v">9</div></div>
+<div class="stat"><div class="k">Contested</div><div class="v">0</div></div>
+<div class="stat"><div class="k">Omissions</div><div class="v">3</div></div>
+<div class="stat"><div class="k">Unresolved</div><div class="v">9</div></div>
+<div class="stat"><div class="k">Sources</div><div class="v">0</div></div>
+</div>
+<h2 id="selfcheck">Where the deck disagrees with itself</h2>
+<p class="lede">Arithmetic over the deck's own numbers — no outside source involved, so no outside source can be wrong.</p>
+<div class="claim" style="border-left:4px solid var(--bad)"><h4>the deck&#x27;s own plan does not expect the headline growth rate to hold</h4><div class="kv"><b>Arithmetic</b>reaching $2M from $340k in 18 months implies 10.3%/month; the deck claims 18%/month</div><div class="kv"><b>From the deck</b>growth: &#x27;18% month-over-month growth, four months running&#x27;; milestone: &#x27;$2M ARR within 18 months&#x27;</div></div>
+<p style="color:var(--muted);font-size:13.5px">Not checkable from what the deck states: LTV/CAC as stated vs computed (needs both an LTV and a CAC as dollar figures, which the deck does not state plainly).</p>
+<h2 id="omits">What the deck leaves out</h2>
+<p class="lede">Present in the market evidence, absent from the deck.</p>
+<div class="find unsourced sev-low"><div class="claim-text">Microsoft Power Automate and the platform-bundle threat are never mentioned</div><div class="why">The most likely way this company loses is not a better startup but a good-enough feature inside a suite the buyer already pays for</div><div class="foot"></div></div>
+<div class="find unsourced sev-low"><div class="claim-text">Open source (n8n and peers) is absent from the deck</div><div class="why">A credible free self-hosted alternative caps the platform fee a technical mid-market buyer will accept, and it is the obvious third comparison after Zapier and Make</div><div class="foot"></div></div>
+<div class="find unsourced sev-low"><div class="claim-text">No retention metric of any kind appears</div><div class="why">For a workflow product, retention IS the moat evidence - its absence is louder than any claim the deck does make</div><div class="foot"></div></div>
+<h2 id="unchecked">What could not be checked</h2>
+<p class="lede">Neither confirmed nor refuted by the evidence retrieved. These are research tasks, <b>not</b> marks against the company — an analysis must not turn its own gaps into a verdict.</p>
+<div class="find unsourced sev-low"><div class="claim-text">The workflow automation market is $47B, growing at 23% CAGR</div><div class="why">Cannot be measured in this run; the boundary question (aggregate vs serviceable segment) could move the relevant figure by an order of magnitude.</div><div class="foot"></div></div>
+<div class="find unsourced sev-low"><div class="claim-text">SAM: $6B (mid-market North America); SOM: $400M</div><div class="why">Unknown - no method to compare against.</div><div class="foot"></div></div>
+<div class="find unsourced sev-low"><div class="claim-text">$340k ARR; 18% month-over-month growth, four months running</div><div class="why">The deck&#x27;s own $2M-in-18-months milestone implies 10.3%/month - the plan already assumes the headline rate roughly halves.</div><div class="foot"></div></div>
+<div class="find unsourced sev-low"><div class="claim-text">11 paying customers, 3 converted from design partners; $1.2M pipeline</div><div class="why">Unknown - the deck names no customer that could be called.</div><div class="foot"></div></div>
+<div class="find unsourced sev-low"><div class="claim-text">Average contract value: $28,000; gross margin: 78%</div><div class="why">ACV internally consistent; margin unassessable without the usage-cost assumption.</div><div class="foot"></div></div>
+<div class="find unsourced sev-low"><div class="claim-text">Proprietary execution graph - our core technical moat</div><div class="why">Unknown - the claim as stated is unfalsifiable.</div><div class="foot"></div></div>
+<div class="find unsourced sev-low"><div class="claim-text">We are more reliable than no-code and cheaper than enterprise RPA</div><div class="why">Both halves unmeasured as stated.</div><div class="foot"></div></div>
+<div class="find unsourced sev-low"><div class="claim-text">Milestone: $2M ARR within 18 months</div><div class="why">The milestone is achievable at a growth rate 40% below the one the traction slide advertises - the plan is more conservative than the pitch.</div><div class="foot"></div></div>
+<div class="find unsourced sev-low"><div class="claim-text">We interviewed 14 ops leaders. All 14 described the same failure mode.</div><div class="why">Not measurable.</div><div class="foot"></div></div>
+<h2 id="next">What to do next</h2><ol class="steps">
+<li>Reconstruct the SOM bottom-up (mid-market NA segment count x realistic win rate x $28k ACV) before the partner meeting</li>
+<li>Pull the monthly revenue ledger and customer-level cohort data; separate design-partner conversions from cold-won revenue</li>
+<li>Call three customer references, including at least one that evaluated Power Automate or Workato in the same process</li>
+<li>Run a technical architecture session on the execution graph&#x27;s replicability</li>
+<li>Re-run this analysis with a live research backend so the market claims can actually be tested - this run had zero external sources</li>
+<li>Ask the founder: The deck shows 18% MoM but the $2M ARR target implies 10.3% - which trajectory is the company actually planning around, and why is the valuation justified by the other one?</li>
+<li>Ask the founder: Slide 8 names Zapier and Make but not Workato, Power Automate, or n8n - who do you actually see in deals against this exact buyer, and what is your win rate?</li>
+<li>Ask the founder: What is net revenue retention on the 8 customers who were not design partners, and how many of the 11 have renewed at least once?</li>
+<li>Ask the founder: What specifically about the execution graph could Workato or Microsoft not replicate in two quarters - and if the answer is &#x27;moving fast&#x27;, what is the moat at Series A?</li>
+<li>Ask the founder: The 22-month runway claim: at what monthly burn, from what current cash?</li>
+<li>Verify or refute the 9 claims listed under “What could not be checked” — the research found nothing either way on any of them.</li>
+</ol>
+<h2 id="summary">Summary</h2>
+<p class="evidence-state thin"><i>1 figure(s) in this summary — 70x — appear in neither the deck nor any cited evidence. They are the model&#x27;s own assertions; treat them accordingly.</i></p>
+<p>Acme Flow pitches an agentic workflow runtime for mid-market back offices: an LLM planner proposes steps, deterministic executors run them, and anything risky pauses for human approval. The problem is real, the architecture is a sensible answer to the trust objection that slows this category, and the traction - $340k ARR across 11 paying customers at a $28k ACV that reconciles arithmetically with the revenue claim - is respectable for seed. This report must be read with its own limitation in front: no external research ran in this cycle, so every market figure in the deck remains untested rather than tested-and-passed.</p>
+<p>The deck&#x27;s most important tension is internal, and it required no outside data to find. The traction slide advertises 18% month-over-month growth; the milestone slide promises $2M ARR within 18 months, which from $340k implies 10.3% per month compound. The company&#x27;s own plan assumes its headline growth rate roughly halves. Neither number is dishonest, but the $24M post-money valuation - roughly 70x current ARR - is only defensible on the aggressive number, while the plan is built on the modest one. Which figure the founders actually believe is the first question of the meeting, and the answer prices the round.</p>
+<p>The second finding is a silence. The competition slide names Zapier and Make - the segment&#x27;s cheapest tools - and gestures at an unnamed &#x27;enterprise RPA&#x27; for the price anchor. It never mentions Workato or Tray, which sell to exactly this buyer; never mentions Microsoft Power Automate, the default automation inside the suite most mid-market companies already license; and never mentions open-source n8n, the free alternative a technical ops team would evaluate first. The most probable losing scenario for this company is not a better startup but a good-enough bundle, and the deck does not engage with it at all. Relatedly, no retention metric of any kind appears - for a workflow product, retention is the moat evidence, and its absence says more than the &#x27;proprietary execution graph&#x27; claim, which arrives with no patent, benchmark, or switching-cost support.</p>
+<p>On the market itself, the $47B/23% headline is quoted with no source or boundary. The label &#x27;workflow automation&#x27; spans no-code tools, integration platforms, and RPA, and an aggregate of those is not the market a seed-stage mid-market runtime can serve. None of this could be verified in this run, and the claim audit marks it accordingly; the deck&#x27;s smaller numbers - the $6B SAM and $400M SOM - arrive with no derivation either, and they are what the fund-return math would actually rest on.</p>
+<p>The call is LEAN NO at these terms, with low confidence because this cycle ran without external evidence. What would flip it: a revenue ledger showing the growth is real and cold-won rather than design-partner conversion, retention data consistent with workflows that stick, and a credible answer on why the approval-gate wedge survives a Power Automate bundle. Those three things exist or they do not; a first meeting and one diligence cycle with live research would settle all of them.</p>
+<h2 id="verdict">What this adds up to, for this lens</h2>
+<p><b>No verdict</b></p>
+<p style="color:var(--muted);font-size:14px"><i>No external source is cited anywhere in this run, so the reading the model formed is withheld: a verdict from the deck alone would be the deck grading itself. The findings above are what stands.</i></p>
+<h2 id="scorecard">Scorecard</h2>
+<p style='color:var(--muted);font-size:14px'>Per-dimension, each with its reasoning. There is deliberately no headline total: a weighted average of seven subjective scores is the one figure here that cannot be traced to a source.</p>
+<div class='tw'><table><tr><th>Dimension</th><th style='width:120px'>Score</th><th>Weight</th><th>Why</th></tr>
+<tr><td><b>Market size &amp; timing</b></td><td><b>5</b>/10<div class="bar"><span style="width:50.0%;background:#B07A2B"></span></div></td><td>5</td><td>The pain is real and the timing argument (LLM planners finally make judgment-adjacent automation feasible) is plausible, but the $47B/23% figures arrive with no methodology and could describe an aggregate three times broader than the serviceable segment. Unverified in this run.</td></tr>
+<tr><td><b>Competitive position</b></td><td><b>3</b>/10<div class="bar"><span style="width:30.0%;background:#B3402F"></span></div></td><td>5</td><td>The competition slide compares only against the cheapest tools (Zapier, Make) and an unnamed &#x27;enterprise RPA&#x27;. It omits Workato, Power Automate, and open-source n8n - the actual mid-market alternatives. Omitting every incumbent that sells to your exact buyer is the deck&#x27;s most informative silence.</td></tr>
+<tr><td><b>Product &amp; moat</b></td><td><b>4</b>/10<div class="bar"><span style="width:40.0%;background:#B3402F"></span></div></td><td>4</td><td>The architecture (LLM planner, deterministic executors, risk-gated approvals) is a sensible answer to the trust objection. But &#x27;proprietary execution graph&#x27; is asserted, not evidenced, and the planner layer is being commoditized from upstream by the model vendors themselves.</td></tr>
+<tr><td><b>Business model</b></td><td><b>6</b>/10<div class="bar"><span style="width:60.0%;background:#B07A2B"></span></div></td><td>3</td><td>$2k/month plus usage with $28k ACV is credible mid-market pricing, and 11 x $28k reconciles with stated ARR. The 78% gross margin at beta scale with LLM inference in COGS needs its assumptions shown.</td></tr>
+<tr><td><b>Traction vs. stage</b></td><td><b>6</b>/10<div class="bar"><span style="width:60.0%;background:#B07A2B"></span></div></td><td>5</td><td>$340k ARR with 11 paying customers, 3 converted from design partners, is respectable seed traction. But there is no retention figure of any kind, and the deck&#x27;s own milestone quietly assumes growth halves: $340k to $2M in 18 months is 10.3%/month against the claimed 18%.</td></tr>
+<tr><td><b>Team</b></td><td><b>4</b>/10<div class="bar"><span style="width:40.0%;background:#B3402F"></span></div></td><td>4</td><td>Two-line backgrounds with no named employers, no prior exits, no notable advisors. Nothing disqualifying, and nothing evidenced. For a $24M post, the team slide carries unusually little.</td></tr>
+<tr><td><b>Ask &amp; plan</b></td><td><b>5</b>/10<div class="bar"><span style="width:50.0%;background:#B07A2B"></span></div></td><td>3</td><td>$4M at $24M post is roughly 70x current ARR - rich, defensible only if the growth rate holds, which the deck&#x27;s own milestone does not assume. The 22-month runway claim has no burn figure behind it.</td></tr>
+</table></div>
+<h2 id="audit">Claim-by-claim audit</h2>
+<div class="claim"><h4>C1 · The workflow automation market is $47B, growing at 23% CAGR <span class="tag t-unverifiable">Unverifiable</span></h4>
+<div class="kv"><b>Market evidence</b>No external evidence was available in this run. The figure is plausible as a broad aggregate spanning no-code, iPaaS, and RPA - which is precisely the problem: the deck does not say which market it is quoting.</div>
+<div class="kv"><b>Gap</b>Cannot be measured in this run; the boundary question (aggregate vs serviceable segment) could move the relevant figure by an order of magnitude.</div>
+<div class="kv"><b>If corrected</b>damaging — If $47B is a three-segment aggregate, the deck&#x27;s own $6B SAM and $400M SOM may still survive on their own - but a fund sizing the outcome on the headline number would be sizing the wrong market.</div>
+<div class="kv"><b>So what</b>Do not price this round off the TAM slide. The SOM is the only number small enough to be checkable, and diligence should reconstruct it bottom-up before the partner meeting.</div>
+<div class="kv"><b>Evidence quality</b>none</div>
+<div class="kv"><b>Sources</b><i style="color:var(--muted)">none cited — this assessment rests on no source</i></div>
+</div>
+<div class="claim"><h4>C2 · SAM: $6B (mid-market North America); SOM: $400M <span class="tag t-unverifiable">Unverifiable</span></h4>
+<div class="kv"><b>Market evidence</b>No derivation given in the deck and no external evidence available in this run.</div>
+<div class="kv"><b>Gap</b>Unknown - no method to compare against.</div>
+<div class="kv"><b>If corrected</b>damaging — The SOM is what the $2M ARR milestone and the fund-return math actually rest on; if it is invented, the thesis has no floor under it.</div>
+<div class="kv"><b>So what</b>Ask the founder for the SOM arithmetic in the first meeting - segment count, win rate, ACV. Whether they have one is itself the signal.</div>
+<div class="kv"><b>Evidence quality</b>none</div>
+<div class="kv"><b>Sources</b><i style="color:var(--muted)">none cited — this assessment rests on no source</i></div>
+</div>
+<div class="claim"><h4>C3 · $340k ARR; 18% month-over-month growth, four months running <span class="tag t-unverifiable">Unverifiable</span></h4>
+<div class="kv"><b>Market evidence</b>Internally consistent with 11 customers at $28k ACV. Externally unverified - no revenue data, no references in this run.</div>
+<div class="kv"><b>Gap</b>The deck&#x27;s own $2M-in-18-months milestone implies 10.3%/month - the plan already assumes the headline rate roughly halves.</div>
+<div class="kv"><b>If corrected</b>damaging — If 18% is real and durable, the valuation defends itself; if the durable rate is the plan&#x27;s implied 10%, this is an ordinary seed company at a premium price. The deck contains both numbers and does not reconcile them.</div>
+<div class="kv"><b>So what</b>Pull the monthly revenue ledger in diligence. Four months of 18% off a design-partner conversion base is momentum, not yet a trajectory.</div>
+<div class="kv"><b>Evidence quality</b>none</div>
+<div class="kv"><b>Sources</b><i style="color:var(--muted)">none cited — this assessment rests on no source</i></div>
+</div>
+<div class="claim"><h4>C4 · 11 paying customers, 3 converted from design partners; $1.2M pipeline <span class="tag t-unverifiable">Unverifiable</span></h4>
+<div class="kv"><b>Market evidence</b>No external verification available; no logos or references named in the deck to check.</div>
+<div class="kv"><b>Gap</b>Unknown - the deck names no customer that could be called.</div>
+<div class="kv"><b>If corrected</b>damaging — Pipeline without stage definitions or logos is a soft number; if the $1.2M is mostly unqualified, the growth story loses its forward evidence.</div>
+<div class="kv"><b>So what</b>Request three reference customers and the pipeline by stage. This is the cheapest fatal-or-fine test available on this deck.</div>
+<div class="kv"><b>Evidence quality</b>none</div>
+<div class="kv"><b>Sources</b><i style="color:var(--muted)">none cited — this assessment rests on no source</i></div>
+</div>
+<div class="claim"><h4>C5 · Average contract value: $28,000; gross margin: 78% <span class="tag t-unverifiable">Unverifiable</span></h4>
+<div class="kv"><b>Market evidence</b>ACV reconciles with stated ARR and customer count. The margin claim has no cost breakdown behind it, and agentic products carry real inference COGS.</div>
+<div class="kv"><b>Gap</b>ACV internally consistent; margin unassessable without the usage-cost assumption.</div>
+<div class="kv"><b>If corrected</b>cosmetic — Even if the true margin is ten points lower, the seed thesis survives; the number matters at Series A, not here.</div>
+<div class="kv"><b>So what</b>Ask for the COGS line, mostly to test whether the founders know it.</div>
+<div class="kv"><b>Evidence quality</b>none</div>
+<div class="kv"><b>Sources</b><i style="color:var(--muted)">none cited — this assessment rests on no source</i></div>
+</div>
+<div class="claim"><h4>C6 · Proprietary execution graph - our core technical moat <span class="tag t-unverifiable">Unverifiable</span></h4>
+<div class="kv"><b>Market evidence</b>Asserted with no evidence in the deck; no external material in this run to test defensibility against Workato, Power Automate, or open-source runtimes adding LLM planners.</div>
+<div class="kv"><b>Gap</b>Unknown - the claim as stated is unfalsifiable.</div>
+<div class="kv"><b>If corrected</b>damaging — In a category where distribution beats capability, an unevidenced technical moat is the difference between a product and a feature. If the moat is not real, the absorption scenario is the base case.</div>
+<div class="kv"><b>So what</b>Have a technical partner take the architecture session: what specifically cannot Workato or Power Automate replicate in two quarters, and why?</div>
+<div class="kv"><b>Evidence quality</b>none</div>
+<div class="kv"><b>Sources</b><i style="color:var(--muted)">none cited — this assessment rests on no source</i></div>
+</div>
+<div class="claim"><h4>C7 · We are more reliable than no-code and cheaper than enterprise RPA <span class="tag t-unverifiable">Unverifiable</span></h4>
+<div class="kv"><b>Market evidence</b>No benchmark, price point, or named RPA comparison in the deck; no external pricing data in this run.</div>
+<div class="kv"><b>Gap</b>Both halves unmeasured as stated.</div>
+<div class="kv"><b>If corrected</b>cosmetic — Positioning prose; the thesis does not rest on it, though the omission of the actual mid-market competitors it implies does matter (see blind spots).</div>
+<div class="kv"><b>So what</b>Skip the claim; interrogate the omission instead.</div>
+<div class="kv"><b>Evidence quality</b>none</div>
+<div class="kv"><b>Sources</b><i style="color:var(--muted)">none cited — this assessment rests on no source</i></div>
+</div>
+<div class="claim"><h4>C8 · Milestone: $2M ARR within 18 months <span class="tag t-unverifiable">Unverifiable</span></h4>
+<div class="kv"><b>Market evidence</b>Arithmetic against the deck&#x27;s own current ARR: implies 10.3%/month compound, versus the 18%/month claimed as current.</div>
+<div class="kv"><b>Gap</b>The milestone is achievable at a growth rate 40% below the one the traction slide advertises - the plan is more conservative than the pitch.</div>
+<div class="kv"><b>If corrected</b>cosmetic — A conservative milestone is not a defect; the tension only matters because the valuation is being justified by the aggressive number while the plan is built on the modest one.</div>
+<div class="kv"><b>So what</b>Put the two numbers side by side in the meeting and ask which one the company actually believes. The answer prices the round.</div>
+<div class="kv"><b>Evidence quality</b>none</div>
+<div class="kv"><b>Sources</b><i style="color:var(--muted)">none cited — this assessment rests on no source</i></div>
+</div>
+<div class="claim"><h4>C9 · We interviewed 14 ops leaders. All 14 described the same failure mode. <span class="tag t-unverifiable">Unverifiable</span></h4>
+<div class="kv"><b>Market evidence</b>Self-run sample, unverifiable by construction; the underlying pain it describes is consistent with how this category is widely discussed.</div>
+<div class="kv"><b>Gap</b>Not measurable.</div>
+<div class="kv"><b>If corrected</b>cosmetic — Standard founder discovery evidence; it neither carries nor endangers the thesis.</div>
+<div class="kv"><b>So what</b>None - spend diligence time elsewhere.</div>
+<div class="kv"><b>Evidence quality</b>none</div>
+<div class="kv"><b>Sources</b><i style="color:var(--muted)">none cited — this assessment rests on no source</i></div>
+</div>
+<h2>Alignment</h2><div class='cols'>
+<div class="panel"><h3 style="margin-top:0">Deck matches the market</h3><ul><li>The problem statement matches the widely-reported failure mode of brittle no-code automation at mid-market scale</li><li>$28k ACV and $2k/month platform pricing sit inside mid-market automation norms</li><li>The human-approval-gate design responds to the real trust objection that slows agentic adoption</li></ul></div>
+<div class="panel"><h3 style="margin-top:0">Deck overstates</h3><ul><li>The TAM is quoted without a boundary, and the category label spans segments the company cannot serve</li><li>The headline 18% MoM growth is advertised while the deck&#x27;s own milestone plans for roughly 10%</li><li>&#x27;Core technical moat&#x27; is asserted for an architecture pattern the whole category is converging on</li></ul></div>
+<div class="panel"><h3 style="margin-top:0">Deck understates</h3><ul><li>The genuine wedge - governed, auditable approvals as a first-class product - is arguably more defensible than the execution-graph claim the deck leads with, and the deck undersells it</li></ul></div>
+<div class="panel"><h3 style="margin-top:0">Blind spots</h3><ul><li>Microsoft Power Automate and the platform-bundle threat are never mentioned — The most likely way this company loses is not a better startup but a good-enough feature inside a suite the buyer already pays for</li><li>Open source (n8n and peers) is absent from the deck — A credible free self-hosted alternative caps the platform fee a technical mid-market buyer will accept, and it is the obvious third comparison after Zapier and Make</li><li>No retention metric of any kind appears — For a workflow product, retention IS the moat evidence - its absence is louder than any claim the deck does make</li></ul></div>
+</div>
+<h2 id="risks">Risks</h2>
+<div class='tw'><table><tr><th>Risk</th><th>Severity</th><th>Likelihood</th><th>Test or mitigation</th></tr>
+<tr><td>Platform absorption: Microsoft, Zapier, or Workato ships good-enough agentic approvals onto an existing customer base</td><td class='sev-high'>high</td><td>high</td><td>Technical session on what is genuinely hard to replicate; check whether Acme Flow wins deals where Power Automate was evaluated</td></tr>
+<tr><td>Growth durability: 18% MoM off 11 customers, partly design-partner conversions, does not extrapolate</td><td class='sev-high'>high</td><td>medium</td><td>Monthly ledger review plus cohort retention; re-underwrite at the plan&#x27;s implied 10%/month</td></tr>
+<tr><td>Valuation: ~70x ARR leaves no room for the growth rate to be the modest one</td><td class='sev-medium'>medium</td><td>medium</td><td>Price against the 10%/month case, not the 18% case</td></tr>
+<tr><td>Inference COGS erode the claimed 78% margin as usage scales</td><td class='sev-medium'>medium</td><td>medium</td><td>COGS breakdown with the usage-pricing pass-through mechanics</td></tr>
+</table></div>
+<h2>Who does what</h2><div class='tw'><table><tr><th style='width:80px'>Priority</th><th>Action</th><th style='width:160px'>Owner</th></tr>
+<tr><td><b>P0</b></td><td>Reconstruct the SOM bottom-up (mid-market NA segment count x realistic win rate x $28k ACV) before the partner meeting</td><td>diligence</td></tr>
+<tr><td><b>P0</b></td><td>Pull the monthly revenue ledger and customer-level cohort data; separate design-partner conversions from cold-won revenue</td><td>diligence</td></tr>
+<tr><td><b>P0</b></td><td>Call three customer references, including at least one that evaluated Power Automate or Workato in the same process</td><td>you</td></tr>
+<tr><td><b>P1</b></td><td>Run a technical architecture session on the execution graph&#x27;s replicability</td><td>diligence</td></tr>
+<tr><td><b>P1</b></td><td>Re-run this analysis with a live research backend so the market claims can actually be tested - this run had zero external sources</td><td>diligence</td></tr>
+</table></div>
+<h2 id="market">Annex A — What the market evidence shows</h2>
+<div class="grid">
+<div class="stat"><div class="k">Consensus sizing</div><div class="v" style="font-size:15px">No external evidence was supplied for this run, so no market-size figure can be stated here. From category knowledge: published estimates for &#x27;workflow automation&#x27; diverge widely because vendors and analysts draw the boundary differently (no-code only, iPaaS included, RPA included). The deck&#x27;s $47B is plausible as a broad aggregate and unverifiable as stated; whether it describes the market Acme Flow can sell into depends entirely on segmentation the deck does not give.</div></div>
+<div class="stat"><div class="k">CAGR range</div><div class="v" style="font-size:15px">not stated - no sourced material available in this run</div></div>
+<div class="stat"><div class="k">Sizing confidence</div><div class="v" style="font-size:15px">low</div></div>
+</div>
+<h3>Incumbents</h3><div class='tw'><table><tr><th>Company</th><th>Position</th><th>Scale</th><th>Threat</th></tr>
+<tr><td><b>Microsoft Power Automate</b></td><td>Default automation inside the Microsoft estate most mid-market companies already license; bundling distribution no startup can match</td><td>Platform vendor</td><td class='sev-high'>high</td></tr>
+<tr><td><b>Workato</b></td><td>The mid-market/enterprise iPaaS incumbent selling to exactly the ops and finance-ops buyer this deck names</td><td>Late-stage private</td><td class='sev-high'>high</td></tr>
+<tr><td><b>Zapier</b></td><td>SMB long-tail leader moving up-market and shipping agentic features onto a massive installed base</td><td>Large private, bootstrapped-then-funded</td><td class='sev-medium'>medium</td></tr>
+<tr><td><b>UiPath</b></td><td>Enterprise RPA leader; the unnamed &#x27;enterprise RPA&#x27; in the deck&#x27;s price comparison; sells down-market when pressured</td><td>Public company</td><td class='sev-medium'>medium</td></tr>
+<tr><td><b>Make (Celonis-owned)</b></td><td>Visual automation for SMB/mid-market, the deck&#x27;s other named comparison</td><td>Acquired by Celonis</td><td class='sev-medium'>medium</td></tr>
+</table></div>
+<h3>Challengers</h3><div class='tw'><table><tr><th>Company</th><th>Position</th><th>Scale</th><th>Threat</th></tr>
+<tr><td><b>n8n</b></td><td>Open-source workflow automation with strong developer adoption and an agentic roadmap; the free alternative a technical ops team reaches for</td><td>Venture-backed open core</td><td class='sev-high'>high</td></tr>
+<tr><td><b>Temporal</b></td><td>Durable-execution runtime - the engineering-grade answer to &#x27;workflows that do not silently break&#x27;, open core</td><td>Venture-backed</td><td class='sev-medium'>medium</td></tr>
+<tr><td><b>Agentic-automation seed cohort</b></td><td>A steady stream of 2024-2026 startups selling &#x27;LLM planner + deterministic execution + human approval&#x27; - the same wedge as this deck, which is itself a data point</td><td>Seed to Series A, numerous</td><td class='sev-high'>high</td></tr>
+</table></div>
+<h3>What could not be verified</h3><ul><li>NO WEB RESEARCH WAS PERFORMED FOR THIS RUN - every statement above is from the model&#x27;s training knowledge, has a cutoff date, and cites nothing. The deck&#x27;s $47B/23% figures, current funding rounds, current pricing, and the present state of every named competitor are all unverified here.</li><li>The $6B SAM and $400M SOM cannot be assessed even qualitatively without the derivation the deck does not give</li><li>Funded-competitor count in the agentic-automation wedge left null rather than guessed</li></ul>
+<h2>Annex B — What the deck claims</h2><div class='tw'><table>
+<tr><th style='width:180px'>Problem</th><td>Ops teams at mid-market companies stitch together brittle no-code automations. When one breaks, nobody notices until a customer complains.</td></tr>
+<tr><th style='width:180px'>Solution</th><td>An agentic workflow runtime with human approval gates.</td></tr>
+<tr><th style='width:180px'>TAM claimed</th><td>$47B (unstated)</td></tr>
+<tr><th style='width:180px'>SAM / SOM</th><td>$6B (mid-market North America) / $400M</td></tr>
+<tr><th style='width:180px'>Revenue</th><td>$340k ARR</td></tr>
+<tr><th style='width:180px'>Growth</th><td>18% month-over-month growth, four months running</td></tr>
+<tr><th style='width:180px'>Customers</th><td>11 paying customers, 3 converted from design partners</td></tr>
+<tr><th style='width:180px'>Retention</th><td>—</td></tr>
+<tr><th style='width:180px'>Competitors named</th><td>Zapier, Make</td></tr>
+<tr><th style='width:180px'>Ask</th><td>$4M seed at $24M post</td></tr>
+</table></div>
+
+<h2>Market structure</h2><h3>Saturation</h3><div class='grid'><div class='stat'><div class='k'>Funded competitors</div><div class='v' style='font-size:15px'>—</div></div><div class='stat'><div class='k'>New entrants</div><div class='v' style='font-size:15px'>accelerating</div></div><div class='stat'><div class='k'>Pricing</div><div class='v' style='font-size:15px'>unknown</div></div><div class='stat'><div class='k'>Lifecycle stage</div><div class='v' style='font-size:15px'>growth</div></div><div class='stat'><div class='k'>Room to enter</div><div class='v' style='font-size:15px'>crowded but differentiable</div></div></div><p><b>Consolidation:</b> Category knowledge suggests active consolidation in adjacent segments (RPA and iPaaS acquisitions across recent years); nothing current can be cited from this run&#x27;s material</p><p style='color:var(--muted)'>The agentic-automation wedge is young enough that no winner is settled, but it is being entered simultaneously by well-funded startups, every incumbent segment, and the model vendors. Differentiation is possible on reliability and governance; it is not possible on being early. Assessment is from training knowledge - no run-supplied evidence, hence the null count and unknown pricing direction rather than guesses.</p><h3>Is this a product or a feature?</h3><div class='panel' style='border-left:4px solid var(--warn)'><b style='color:var(--warn)'>CONTESTED</b> · horizon 2-3 years · confidence medium<p style='margin-bottom:0'>Categories are regularly built out by startups, proven useful, and then bundled into a platform that already owns the customer. When that happens the market stops existing separately.</p></div><div class='tw'><table><tr><th>Could absorb it</th><th>Mechanism</th><th>Already visible</th></tr><tr><td><b>Microsoft</b><br><span style='color:var(--muted);font-size:13px'>Owns the mid-market suite, the identity layer, and Power Automate; an agentic planner with approval gates is a natural Copilot extension to what it already ships</span></td><td>bundle into an existing suite</td><td>Power Automate already ships AI-builder/agentic features; Copilot is being threaded through the back-office suite - category knowledge, not run-supplied evidence</td></tr><tr><td><b>Zapier / Workato</b><br><span style='color:var(--muted);font-size:13px'>Own the connector catalogs and the customer relationships; adding an LLM planner to an existing execution engine is cheaper than building the engine under a planner</span></td><td>bundle into an existing suite</td><td>Both have shipped AI/agent features onto their platforms - category knowledge</td></tr><tr><td><b>Foundation-model vendors</b><br><span style='color:var(--muted);font-size:13px'>Shipping agent runtimes and computer-use natively; the planner half of this product is their core competency</span></td><td>model-vendor native feature</td><td>Native agentic tooling and orchestration SDKs shipped across 2024-2026 - category knowledge</td></tr></table></div><h4>Precedents</h4><div class='tw'><table><tr><th>Category</th><th>Absorbed by</th><th>How long</th><th>Why comparable</th></tr><tr><td>RPA down-market</td><td>Microsoft (Power Automate, via Softomotive acquisition)</td><td>Roughly 2-4 years from category proof to bundle pressure</td><td>Same buyer, same &#x27;automate the back office&#x27; promise, absorbed by the vendor who already owned the desktop and the license agreement</td></tr></table></div><p><b>What would keep this a standalone market</b></p><ul><li>Workflow depth: if Acme Flow&#x27;s execution graphs accumulate business logic that is genuinely painful to migrate, switching costs defend it</li><li>A governance/audit posture strong enough that regulated mid-market buyers treat it as a system of record for approvals</li><li>Connector long-tail quality in verticals the platforms under-serve</li></ul><h3>Open source, and what it predicts</h3><div class='panel' style='border-left:4px solid var(--warn)'><b style='color:var(--warn)'>Bundling risk from commoditization: ELEVATED</b><p style='margin-bottom:0'>n8n is approaching parity. Capability is ceasing to be the differentiator, which is the point at which the ground starts moving. What remains — compliance depth, data effects, workflow entrenchment — is slow and expensive to reproduce, which is where companies in commoditizing categories actually survive.</p></div><div class='tw'><table><tr><th>Project</th><th>Maturity</th><th>Governance</th><th>Adoption</th></tr><tr><td><b>n8n</b></td><td>production-ready</td><td>single-vendor</td><td>One of the most-starred automation projects on GitHub with a large self-hosting community - category knowledge, no run-supplied citation</td></tr><tr><td><b>Temporal</b></td><td>production-ready</td><td>single-vendor</td><td>Widely adopted durable-execution engine among engineering teams</td></tr><tr><td><b>Apache Airflow / Prefect / Dagster</b></td><td>production-ready</td><td>foundation</td><td>Standard data-orchestration tooling; adjacent rather than direct</td></tr></table></div><h4>What commercial products still provide once open source arrives</h4><p style='color:var(--muted);font-size:14px'>This is what decides the outcome. Parity only matters to the extent that what is left can be cheaply reproduced by a platform vendor that already owns the customer.</p><div class='tw'><table><tr><th>Capability</th><th>Kind</th><th>Hard to replicate?</th></tr><tr><td>Hosted operations, SLAs, and support for a non-technical ops buyer</td><td>operational</td><td class='sev-high'>no</td></tr><tr><td>Governed approval workflow with audit trail as a first-class product</td><td>workflow-depth</td><td class='sev-low'>yes</td></tr><tr><td>Connector breadth for mid-market SaaS</td><td>integrations</td><td class='sev-high'>no</td></tr></table></div><div class='panel' style='border-left:4px solid var(--warn)'>Raised one level because the capability gap is narrowing rather than holding.</div><div class='panel' style='border-left:4px solid var(--warn)'>Pricing pressure from the free alternative is already significant, which usually precedes bundling rather than following it.</div><h3>Adjacent markets</h3><div class='tw'><table><tr><th>Market</th><th>Relationship</th><th>Why it matters</th></tr><tr><td><b>iPaaS / integration platforms</b></td><td>converging with this one</td><td>Workato and peers sell to the identical buyer; agentic features are converging the categories, so Acme Flow competes here whether it plans to or not</td></tr><tr><td><b>RPA / intelligent automation</b></td><td>substitute</td><td>The deck prices against it (&#x27;cheaper than enterprise RPA&#x27;); RPA vendors selling down-market erase the price gap</td></tr><tr><td><b>AI agent platforms / model-vendor tooling</b></td><td>upstream</td><td>The planner layer is being commoditized from upstream; the durable value has to live in execution, governance, and connectors</td></tr></table></div>
+
+<h2 id="refs">References</h2><div class='panel'>No external sources were retrieved (research backend: <code>none</code>). Every statement above rests on the model's training knowledge and on the deck itself, and is therefore unverified.</div>
+<h2>Input integrity screen</h2><div class='panel' style='border-left:4px solid var(--good)'><b style='color:var(--good)'>Overall risk: CLEAN</b> <span style='color:var(--muted)'>· mode <code>balanced</code></span><p style='margin-bottom:0'>The pitch deck and every web source were screened for content written to influence the AI rather than inform a human reader — hidden text, invisible characters, fake system messages, instructions to change the verdict. Nothing was found.</p></div>
+<footer>Generated by DeckScope
+on 2026-08-30T19:53:51+00:00 · model manual / human-in-the-loop · research none (0 sources).<br>
+AI-generated analysis. Verify every figure before relying on it. Not investment advice.
+</footer></div></div></body></html>

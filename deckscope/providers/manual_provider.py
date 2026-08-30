@@ -41,7 +41,7 @@ from typing import Optional
 
 from ..config import ProviderConfig
 from ..console import out as _out
-from .base import Completion, LLMProvider, ProviderError
+from .base import Completion, LLMProvider, ProviderError, WaitingForAnswer
 
 
 def _env_flag(name: str) -> Optional[bool]:
@@ -150,7 +150,7 @@ class ManualProvider(LLMProvider):
                     return rfile.read_text(encoding="utf-8")
                 continue
             time.sleep(self.poll)
-        raise ProviderError(
+        raise WaitingForAnswer(
             f"No answer appeared for {pfile.name} within {self.timeout:.0f}s.\n"
             f"  prompt : {pfile}\n"
             f"  answer : {rfile}\n"

@@ -174,3 +174,31 @@ def test_the_control_case_rules_out_walking_away_from_an_honest_deck():
     assert any("supported" in [a.lower() for a in e.assessment]
                for e in control.expect.claims), (
         "the control's real teeth are its claim expectations")
+
+
+# ------------------------------------------------- the suite watches itself
+
+def test_the_collected_test_count_never_silently_drops():
+    """A file overwrite this cycle silently destroyed 53 committed tests —
+    same filename, new content — and the only tell was the summary count
+    dipping from 964 to 918. File count stayed at 40, everything green.
+    This floor makes that class of loss a red build: raising it is a
+    one-line change made on purpose; lowering it means explaining which
+    tests died and why.
+    """
+    from pathlib import Path
+    import ast
+    root = Path(__file__).resolve().parent
+    total = 0
+    for f in sorted(root.glob("test_*.py")):
+        tree = ast.parse(f.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) \
+                    and node.name.startswith("test"):
+                total += 1
+    FLOOR = 970
+    assert total >= FLOOR, (
+        f"only {total} test functions found across tests/ — the committed "
+        f"floor is {FLOOR}. If tests were removed deliberately, lower the "
+        f"floor in the same commit and say why; if not, a file was "
+        f"clobbered.")
