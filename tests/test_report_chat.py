@@ -209,3 +209,151 @@ def test_asking_about_an_unknown_job_is_a_polite_404(monkeypatch):
             assert exc.code == 404
     finally:
         httpd.shutdown()
+
+
+# ------------------------------------------- research the gap, on request
+
+class _MiniResearcher:
+    name = "mini"
+
+    def __init__(self, results):
+        self._results = results
+
+    def search_many(self, queries, max_results=8):
+        return list(self._results)
+
+    def search(self, query, max_results=8):
+        return list(self._results)
+
+
+def _sr(title, url, snippet):
+    from deckscope.research.base import SearchResult
+    return SearchResult(title, url, snippet, None, "q")
+
+
+class _QueryProvider:
+    def __init__(self, queries=None, boom=False):
+        self._q, self._boom = queries, boom
+
+    def complete_json(self, system, user, **kw):
+        if self._boom:
+            raise RuntimeError("no model")
+        return self._q
+
+
+def test_researched_sources_become_a_ids_and_never_s_ids():
+    """Mid-chat research lands in an addendum with its own A-numbered ids,
+    fenced apart from the run's S-ids — two evidence generations that must
+    never blur."""
+    from deckscope.interrogate import addenda_block, research_addendum
+
+    add = research_addendum(
+        "who competes with Acme?",
+        provider=_QueryProvider(["acme competitors 2026"]),
+        researcher=_MiniResearcher([
+            _sr("Competitor roundup", "https://example.org/comp", "Zapier..."),
+            _sr("Analyst note", "https://example.org/note", "Workato...")]))
+    assert [c["aid"] for c in add["cards"]] == ["A1", "A2"]
+    assert add["queries"] == ["acme competitors 2026"]
+    block = addenda_block([add])
+    assert "SESSION ADDENDA" in block
+    assert "never as S-ids" in block
+    assert "https://example.org/comp" in block
+
+
+def test_gap_queries_fall_back_to_the_verbatim_question():
+    from deckscope.interrogate import _gap_queries
+
+    assert _gap_queries("  how big is it?  ",
+                        _QueryProvider(boom=True)) == ["how big is it?"]
+
+
+def test_addenda_reach_the_model_and_the_record_stays_untouched():
+    from deckscope.interrogate import answer
+    import copy
+
+    rec = _record()
+    before = copy.deepcopy(rec)
+    fake = _FakeProvider()
+    answer(rec, "so who competes?", provider=fake,
+           addenda=[{"question": "competitors", "queries": ["q"],
+                     "cards": [{"aid": "A1", "title": "t",
+                                "url": "https://example.org/a",
+                                "snippet": "s"}],
+                     "failures": [], "quarantined": 0}])
+    system, _ = fake.calls[0]
+    assert "SESSION ADDENDA" in system
+    assert "https://example.org/a" in system
+    assert rec == before, "research must never mutate the original record"
+
+
+def test_an_empty_addendum_says_so_in_the_prompt():
+    from deckscope.interrogate import addenda_block
+
+    block = addenda_block([{"question": "x", "queries": ["x"], "cards": [],
+                            "failures": [{"query": "x", "error": "403"}],
+                            "quarantined": 0}])
+    assert "nothing usable came back" in block
+    assert "about the network, not the market" in block
+
+
+def test_asking_with_research_but_no_backend_is_a_polite_400():
+    """The agent can only go out if a search backend exists; without one the
+    answer is the fix, not a crash."""
+    import deckscope.webapp as webapp
+    from http.server import ThreadingHTTPServer
+
+    job_id = "researchjob1"
+    with webapp.JOBS_LOCK:
+        webapp.JOBS[job_id] = {"id": job_id, "status": "done", "log": [],
+                               "files": [], "result": {}, "error": None,
+                               "started": 1e12, "record": _record(),
+                               "chat_provider": {"name": "mock"}}
+    httpd = ThreadingHTTPServer(("127.0.0.1", 0), webapp.Handler)
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    port = httpd.server_address[1]
+    try:
+        ask = urllib.request.Request(
+            f"http://127.0.0.1:{port}/api/ask",
+            data=json.dumps({"job": job_id, "research": True,
+                             "question": "go deeper on competitors"}).encode(),
+            headers={"X-DeckScope-Token": webapp.SESSION_TOKEN,
+                     "Content-Type": "application/json"})
+        try:
+            urllib.request.urlopen(ask, timeout=30)
+            raise AssertionError("expected 400 without a search backend")
+        except urllib.error.HTTPError as exc:
+            assert exc.code == 400
+            body = json.loads(exc.read())
+            assert "deckscope setup" in body["error"]
+    finally:
+        httpd.shutdown()
+        with webapp.JOBS_LOCK:
+            webapp.JOBS.pop(job_id, None)
+
+
+# ------------------------------------------------- the thoroughness dial
+
+def test_the_budget_scales_with_the_thoroughness_dial(monkeypatch):
+    from deckscope.research.loop import Budget
+
+    monkeypatch.delenv("DECKSCOPE_THOROUGHNESS", raising=False)
+    assert Budget().max_iterations == 24
+    monkeypatch.setenv("DECKSCOPE_THOROUGHNESS", "quick")
+    assert Budget().max_iterations == 12
+    monkeypatch.setenv("DECKSCOPE_THOROUGHNESS", "exhaustive")
+    b = Budget()
+    assert b.max_iterations == 60 and b.max_retrievals == 100
+    monkeypatch.setenv("DECKSCOPE_THOROUGHNESS", "nonsense")
+    assert Budget().max_iterations == 24, "an unknown setting is standard"
+    monkeypatch.setenv("DECKSCOPE_THOROUGHNESS", "quick")
+    assert Budget(max_iterations=99).max_iterations == 99, (
+        "the dial adjusts defaults; it does not override decisions")
+
+
+def test_the_cli_exposes_the_dial():
+    from deckscope.cli import build_parser
+
+    args = build_parser().parse_args(
+        ["run", "deck.pdf", "--thoroughness", "exhaustive"])
+    assert args.thoroughness == "exhaustive"

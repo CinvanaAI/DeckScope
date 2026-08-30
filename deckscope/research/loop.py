@@ -47,15 +47,42 @@ from .metrics import answers, classify
 from .questions import (CONFIRMED, CONTESTED, UNANSWERABLE, QuestionQueue)
 
 
+#: The thoroughness dial: how long the loop keeps hunting before the
+#: budget, rather than the evidence, ends a question. `quick` is a sighting
+#: pass; `exhaustive` is for when the reader has decided the answer is worth
+#: real spend. Selected by DECKSCOPE_THOROUGHNESS (the CLI --thoroughness
+#: flag sets it), read at Budget construction so it reaches every loop in
+#: the process without threading a parameter through six call sites — the
+#: same environment-as-configuration layer DECKSCOPE_PROVIDER already uses.
+THOROUGHNESS = {
+    "quick": 0.5,
+    "standard": 1.0,
+    "exhaustive": 2.5,
+}
+
+
+def _scale() -> float:
+    import os
+
+    name = (os.getenv("DECKSCOPE_THOROUGHNESS") or "standard").strip().lower()
+    return THOROUGHNESS.get(name, 1.0)
+
+
 @dataclass
 class Budget:
-    """What the loop is allowed to spend. Checked before every iteration."""
+    """What the loop is allowed to spend. Checked before every iteration.
 
-    max_iterations: int = 24
-    max_retrievals: int = 40
-    max_seconds: float = 600.0
+    The defaults scale with the thoroughness dial; an explicitly passed
+    value is used as given — the dial adjusts defaults, it does not
+    override decisions.
+    """
+
+    max_iterations: int = field(default_factory=lambda: int(24 * _scale()))
+    max_retrievals: int = field(default_factory=lambda: int(40 * _scale()))
+    max_seconds: float = field(default_factory=lambda: 600.0 * _scale())
     #: Retrieval attempts on one question before it is declared unanswerable.
-    max_attempts_per_question: int = 3
+    max_attempts_per_question: int = field(
+        default_factory=lambda: max(2, int(3 * _scale())))
 
     iterations: int = 0
     retrievals: int = 0

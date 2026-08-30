@@ -67,7 +67,12 @@ Rules — these are what make your answers worth having:
 6. Be direct and concrete. Short answers for lookups; thorough answers when
    the reader asks you to go deeper on something the record is rich in.
 
-You cannot run new research from this chat, and you must not pretend to."""
+You cannot run research yourself, and you must not pretend to. When the
+reader has commissioned mid-chat research, its results appear below as
+SESSION ADDENDA with A-numbered sources — cite those as [A1], [A2], keep
+them clearly apart from the original run's S-ids, and if the addendum came
+back empty, say that the search found nothing rather than papering over
+it."""
 
 
 def load_record(path: str | Path) -> Dict[str, Any]:
@@ -208,12 +213,21 @@ def briefing(record: Dict[str, Any], budget: int = BRIEFING_BUDGET) -> str:
 
 def answer(record: Dict[str, Any], question: str, *,
            provider: Any, history: Optional[List[Message]] = None,
-           on_usage: Optional[Callable[[Any], None]] = None) -> str:
-    """One grounded answer. Raises ProviderError if the backend fails."""
+           on_usage: Optional[Callable[[Any], None]] = None,
+           addenda: Optional[List[Dict[str, Any]]] = None) -> str:
+    """One grounded answer. Raises ProviderError if the backend fails.
+
+    `addenda` are session research results (see research_addendum): fresh,
+    screened sources the reader asked for mid-chat, fenced apart from the
+    record and cited as A-ids so the two evidence generations never blur.
+    """
     shortcut = provenance_shortcut(record, question)
     if shortcut is not None:
         return shortcut
     system = SYSTEM + "\n\n--- THE RUN RECORD ---\n" + briefing(record)
+    extra = addenda_block(addenda or [])
+    if extra:
+        system += "\n\n" + extra
     messages = list(history or []) + [Message("user", question)]
     completion = provider.complete(system, messages, temperature=0.2)
     if on_usage is not None and getattr(completion, "usage", None) is not None:
@@ -222,3 +236,83 @@ def answer(record: Dict[str, Any], question: str, *,
         except Exception:  # noqa: BLE001 - accounting must not break the answer
             pass
     return (completion.text or "").strip()
+
+
+# ---------------------------------------------------- research the gap
+
+def research_addendum(question: str, *, provider: Any, researcher: Any,
+                      policy: Any = None,
+                      on_event: Optional[Callable[[str], None]] = None
+                      ) -> Dict[str, Any]:
+    """Go and look it up — at the reader's explicit request, into an addendum.
+
+    The chat is read-only against the record by design: a report that
+    rewrites itself while you question it stops being something two people
+    can both cite. This is the agentic complement: when the record lacks the
+    answer and the reader says "research it", the same screened retrieval
+    path the pipeline uses (gather(): register, screen, quarantine, hash)
+    runs on THIS question, and what comes back lands in a clearly separated
+    addendum — sources labeled A1, A2… so they can never masquerade as the
+    original run's S-ids. The original record is never touched.
+    """
+    from .corpus import gather
+    from .security.policy import SecurityPolicy
+
+    emit = on_event or (lambda *_: None)
+    queries = _gap_queries(question, provider)
+    emit(f"researching: {'; '.join(queries)}")
+    corpus = gather(researcher, queries, policy or SecurityPolicy(),
+                    max_results=6)
+    cards: List[Dict[str, Any]] = []
+    for i, src in enumerate(corpus.registry.citable, 1):
+        cards.append({
+            "aid": f"A{i}",
+            "title": src.title, "url": src.url,
+            "snippet": (src.snippet or "")[:700],
+            "retrieved": getattr(src, "retrieved_at", "") or "",
+        })
+    emit(f"{len(cards)} source(s) admitted, "
+         f"{len(corpus.registry.quarantined)} quarantined, "
+         f"{len(corpus.failures)} query failure(s)")
+    return {"question": question, "queries": queries, "cards": cards,
+            "failures": list(corpus.failures),
+            "quarantined": len(corpus.registry.quarantined)}
+
+
+def _gap_queries(question: str, provider: Any) -> List[str]:
+    """Two or three search queries for one gap. Model-written when possible,
+    with the verbatim question as the deterministic fallback."""
+    system = ("You turn one research question into search queries. "
+              "Return a JSON array of strings only — 2 or 3 short, "
+              "specific web search queries a skeptical analyst would run. "
+              "No prose.")
+    try:
+        raw = provider.complete_json(system, f"Question: {question}")
+        if isinstance(raw, list):
+            queries = [str(q).strip() for q in raw if str(q).strip()][:3]
+            if queries:
+                return queries
+    except Exception:  # noqa: BLE001 - the fallback query is always available
+        pass
+    return [question.strip()]
+
+
+def addenda_block(addenda: List[Dict[str, Any]]) -> str:
+    """Session addenda rendered for the grounding prompt, clearly fenced."""
+    if not addenda:
+        return ""
+    parts = ["== SESSION ADDENDA — researched during this chat at the "
+             "reader's request. These sources are NOT part of the original "
+             "run; cite them as [A1], [A2]… and never as S-ids. =="]
+    for add in addenda:
+        parts.append(f"Researched: {add.get('question', '')!r}")
+        for card in add.get("cards", []):
+            parts.append(json.dumps(card, ensure_ascii=False))
+        if add.get("failures"):
+            parts.append(f"({len(add['failures'])} quer(ies) failed — "
+                         f"absence of a result there is about the network, "
+                         f"not the market)")
+        if not add.get("cards"):
+            parts.append("(nothing usable came back — say so rather than "
+                         "papering over it)")
+    return "\n".join(parts)

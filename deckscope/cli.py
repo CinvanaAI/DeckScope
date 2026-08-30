@@ -172,6 +172,12 @@ def build_parser() -> argparse.ArgumentParser:
                      choices=["strict", "balanced", "permissive", "off"])
     run.add_argument("--theme", default=None, choices=["slate", "midnight", "paper"])
     run.add_argument("--max-queries", type=int, default=None)
+    run.add_argument("--thoroughness", default=None,
+                     choices=["quick", "standard", "exhaustive"],
+                     help="How long the research loops keep hunting before "
+                          "the budget ends a question. quick=half, "
+                          "exhaustive=2.5x; what stayed open is always "
+                          "reported either way")
     run.add_argument("--no-cache", action="store_true")
     run.add_argument("--quiet", "-q", action="store_true")
     run.add_argument("--cold-discovery", action="store_true",
@@ -1948,10 +1954,13 @@ def _chat(args: Any) -> int:
         usage["out"] += int((u or {}).get("output_tokens")
                             or (u or {}).get("completion_tokens") or 0)
 
+    addenda: List[Dict[str, Any]] = []
+
     def one(question: str, history: List[Message]) -> str:
         try:
             return answer(record, question, provider=provider,
-                          history=history, on_usage=count)
+                          history=history, on_usage=count,
+                          addenda=addenda)
         except WaitingForAnswer as exc:
             raise SystemExit(f"\nWaiting on a spooled answer:\n{exc}") from None
         except ProviderError as exc:
@@ -1965,7 +1974,10 @@ def _chat(args: Any) -> int:
 
     _out(f"Ask about {company}. Answers come only from this run's record — "
          f"sources are cited by their [S#] IDs, and \"the run didn't "
-         f"establish that\" is a real answer. Type `exit` to leave.\n")
+         f"establish that\" is a real answer.\n"
+         f"`/research <question>` sends the agent out to look something up "
+         f"now; results join the chat as A-numbered sources and the "
+         f"original record is never modified. Type `exit` to leave.\n")
     history: List[Message] = []
     while True:
         try:
@@ -1977,6 +1989,39 @@ def _chat(args: Any) -> int:
             continue
         if question.lower() in {"exit", "quit", "q"}:
             break
+        if question.lower().startswith("/research"):
+            gap = question[len("/research"):].strip()
+            if not gap:
+                _out("Give it a question: /research who competes with X?")
+                continue
+            from .interrogate import research_addendum
+            from .research.registry import get_researcher
+
+            try:
+                researcher = get_researcher(cfg.research, provider)
+            except Exception as exc:  # noqa: BLE001 - no backend is a user answer
+                _out(f"No research backend is available: {exc}\n"
+                     f"Run `deckscope setup` and pick one (Tavily's free "
+                     f"tier works).")
+                continue
+            if getattr(researcher, "name", "") == "none":
+                _out("This setup has no search backend (research: none). "
+                     "Run `deckscope setup` and pick one to use /research.")
+                continue
+            try:
+                addendum = research_addendum(gap, provider=provider,
+                                             researcher=researcher,
+                                             on_event=lambda m: _out(f"  {m}"))
+            except Exception as exc:  # noqa: BLE001
+                _out(f"The research attempt failed: {exc}")
+                continue
+            addenda.append(addendum)
+            reply = one(gap, history)
+            _out(f"\n{reply}\n")
+            history.append(Message("user", gap))
+            history.append(Message("assistant", reply))
+            del history[:-12]
+            continue
         reply = one(question, history)
         _out(f"\n{reply}\n")
         history.append(Message("user", question))
@@ -1987,7 +2032,18 @@ def _chat(args: Any) -> int:
     return 0
 
 
+def _apply_thoroughness(args: Any) -> None:
+    """The dial travels as environment so it reaches every Budget() in the
+    process — market reports, specialists, and the deck pipeline alike."""
+    import os
+
+    if getattr(args, "thoroughness", None):
+        os.environ["DECKSCOPE_THOROUGHNESS"] = args.thoroughness
+        _out(f"thoroughness: {args.thoroughness}")
+
+
 def _run(args: Any) -> int:
+    _apply_thoroughness(args)
     from .orchestrator import Pipeline
     from .security.report import SecurityAbort
 

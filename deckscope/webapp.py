@@ -614,16 +614,42 @@ class Handler(BaseHTTPRequestHandler):
                                        str(turn.get("content") or "")[:8000]))
         try:
             overrides = ({"provider": chat_provider} if chat_provider else {})
-            provider = get_provider(
-                settings.settings_to_runconfig(overrides).provider)
+            cfg = settings.settings_to_runconfig(overrides)
+            provider = get_provider(cfg.provider)
+            with JOBS_LOCK:
+                addenda = job.setdefault("addenda", [])
+                addenda_view = list(addenda)
+            if payload.get("research"):
+                # The reader sent the agent out mid-chat. Same screened
+                # retrieval path as the pipeline; results become A-numbered
+                # addenda kept on the job, never written into the record.
+                from .interrogate import research_addendum
+                from .research.registry import get_researcher
+
+                researcher = get_researcher(cfg.research, provider)
+                if getattr(researcher, "name", "") == "none":
+                    return self._json(
+                        {"error": "No search backend is configured, so "
+                                  "there is nothing to research with. Run "
+                                  "deckscope setup and pick one."}, 400)
+                addendum = research_addendum(question, provider=provider,
+                                             researcher=researcher)
+                with JOBS_LOCK:
+                    job.setdefault("addenda", []).append(addendum)
+                    addenda_view = list(job["addenda"])
             reply = _answer(record, question, provider=provider,
-                            history=history)
+                            history=history, addenda=addenda_view)
         except WaitingForAnswer as exc:
             return self._json({"error": f"Waiting on a spooled answer: "
                                         f"{exc}"}, 409)
         except ProviderError as exc:
             return self._json({"error": f"The AI provider failed: {exc}"}, 502)
-        return self._json({"answer": reply})
+        out: Dict[str, Any] = {"answer": reply}
+        if payload.get("research"):
+            out["researched"] = {"queries": addendum.get("queries", []),
+                                 "sources": len(addendum.get("cards", [])),
+                                 "quarantined": addendum.get("quarantined", 0)}
+        return self._json(out)
 
     def _run(self, payload: Dict[str, Any]) -> None:
         deck = (payload.get("deck") or "").strip().strip('"')
@@ -1659,6 +1685,8 @@ function finish(j){
       <div style="display:flex;gap:8px;margin-top:8px">
         <input id="chatq" style="flex:1" placeholder="Ask a question about the report…">
         <button id="chatgo" class="ghost" onclick="askSend()">Ask</button>
+        <button id="chatresearch" class="ghost" onclick="askSend(true)"
+                title="Send the agent to the web for this question; results join the chat as new A-numbered sources. The report itself is never modified.">Ask + research</button>
       </div>`;
   }
   $('#done').innerHTML = html; $('#done').classList.remove('hidden');
@@ -1716,27 +1744,36 @@ function chatBubble(role, text){
   return body;
 }
 
-async function askSend(){
-  const input = $('#chatq'), btn = $('#chatgo');
+async function askSend(research){
+  const input = $('#chatq'), btn = $('#chatgo'), rbtn = $('#chatresearch');
   const question = (input.value || '').trim();
   if(!question || !CHAT.job) return;
   input.value = ''; btn.disabled = true; input.disabled = true;
-  chatBubble('user', question);
-  const pending = chatBubble('assistant', 'Thinking…');
+  if(rbtn) rbtn.disabled = true;
+  chatBubble('user', question + (research ? '  (+ research)' : ''));
+  const pending = chatBubble('assistant',
+                             research ? 'Researching, then answering…' : 'Thinking…');
   try{
     const res = await api('/api/ask', {method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({job: CHAT.job, question,
+      body: JSON.stringify({job: CHAT.job, question, research: !!research,
                             history: CHAT.history.slice(-12)})});
     const d = await res.json();
     if(d.error){ pending.textContent = d.error; }
     else{
-      pending.textContent = d.answer;
+      let text = d.answer;
+      if(d.researched){
+        text += '\n\n[researched now: ' + d.researched.sources + ' new source(s)'
+              + (d.researched.quarantined ? ', ' + d.researched.quarantined + ' quarantined' : '')
+              + ' — cited above as A#]';
+      }
+      pending.textContent = text;
       CHAT.history.push({role:'user', content: question});
       CHAT.history.push({role:'assistant', content: d.answer});
     }
   }catch(e){ pending.textContent = 'That did not work: ' + e; }
-  btn.disabled = false; input.disabled = false; input.focus();
+  btn.disabled = false; input.disabled = false;
+  if(rbtn) rbtn.disabled = false; input.focus();
 }
 
 function openFile(p){
