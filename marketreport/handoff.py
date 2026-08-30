@@ -69,6 +69,11 @@ class Brief:
     #: exactly this text, and a claim reconstructed by string surgery would
     #: quietly drift from the claim that was actually decided on.
     because: str = ""
+    #: IDs of the deck claims (C1, C2...) this report checks, validated
+    #: against the deck's own claim list by the scoper. This is what makes
+    #: claim coverage COMPUTABLE: with only the free-text `because`, a
+    #: load-bearing claim the scoper never mentioned vanished traceless.
+    checks_claim_ids: Sequence[str] = ()
 
     def __post_init__(self) -> None:
         if not str(self.market).strip():

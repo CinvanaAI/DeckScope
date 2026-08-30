@@ -56,7 +56,11 @@ Return ONE JSON object and nothing else:
  "reports": [
    {"type": "<one from the menu below>",
     "values": ["<values from that type's own list>"],
-    "because": "which deck claim this report lets a reader check"}]}
+    "because": "which deck claim this report lets a reader check",
+    "checks_claim_ids": ["the bracketed IDs (C1, C2...) from the claim list
+                          that this report checks. Every ID you cover is
+                          accounted for; every checkable one you skip is
+                          reported as skipped"]}]}
 
 Rules that matter more than completeness:
 
@@ -110,11 +114,17 @@ def _deck_block(deck: Dict[str, Any]) -> str:
         f"Deck's own category: {market.get('category', 'not stated')}"
         + (f" / {market['sub_category']}" if market.get("sub_category") else ""),
         f"Claimed TAM: {market.get('tam_claimed', 'not stated')}",
-        "Load-bearing claims:",
+        "Claims (cite these IDs in checks_claim_ids):",
     ]
+    # High AND medium load-bearing claims, each with its ID. The old block
+    # sent high-only claims with no IDs, so the scoper could not say which
+    # claim a report checked, medium claims were invisible to it entirely,
+    # and a claim it skipped left no trace to account for.
     for claim in claims:
-        if str(claim.get("load_bearing", "")).lower() in ("high", "true"):
-            lines.append(f"  [{claim.get('type', '?')}] "
+        load = str(claim.get("load_bearing", "")).lower()
+        if load in ("high", "true", "medium"):
+            lines.append(f"  [{claim.get('id', '?')}]"
+                         f"[{claim.get('type', '?')}][{load}] "
                          f"{str(claim.get('claim', ''))[:140]}")
     return fence("\n".join(lines), "DECK")
 
@@ -189,9 +199,19 @@ def briefs_from_deck(deck: Dict[str, Any], provider: Any,
             notes.append(f"{kind}: no usable values; skipped")
             continue
         because = str(row.get("because") or "").strip()
+        known_ids = {str(c.get("id")) for c in (deck.get("claims") or [])
+                     if isinstance(c, dict) and c.get("id")}
+        ids = []
+        for cid in (row.get("checks_claim_ids") or []):
+            cid = str(cid).strip().upper()
+            if cid in known_ids:
+                ids.append(cid)
+            elif cid:
+                notes.append(f"{kind}: claims to check {cid!r}, which is not "
+                             f"a claim ID in this deck; dropped")
         briefs.append(Brief(
             market=market, place=place, measures=values, specialist=kind,
-            because=because,
+            because=because, checks_claim_ids=tuple(ids),
             definition=(definition + (f" This report checks: {because}"
                                       if because else "")).strip()))
     return briefs, notes
@@ -322,3 +342,70 @@ def write_reconciliation(entries: List[Dict[str, Any]], *, market: str,
     except OSError as exc:
         lines.append(f"  could not write the reconciliation document: {exc}")
         return None, lines
+
+
+#: Claim types a market report CAN check against public evidence. The rest
+#: (traction, team, private financials...) live behind the company's own
+#: door: no specialist can retrieve them, and saying so beats implying a
+#: research run could have. The deck audit still examines those claims —
+#: coverage here is only about what got independently researched.
+PUBLICLY_CHECKABLE = {"market-size", "growth", "competition", "regulatory"}
+
+
+def claim_coverage(deck: Dict[str, Any],
+                   briefs: Sequence["Brief"]) -> List[Dict[str, str]]:
+    """Every load-bearing claim, accounted for: checked, uncheckable, or
+    SKIPPED.
+
+    The row that earns this function its place is the last kind. Before it,
+    a checkable load-bearing claim the scoper ignored simply never appeared
+    anywhere: the report suite looked complete because nothing recorded
+    what completeness would have required. Now the skip is a line a reader
+    (and the reconciliation document) sees.
+    """
+    covered: Dict[str, List[str]] = {}
+    for brief in briefs:
+        for cid in getattr(brief, "checks_claim_ids", ()) or ():
+            covered.setdefault(cid, []).append(brief.specialist)
+
+    rows: List[Dict[str, str]] = []
+    for claim in (deck.get("claims") or []):
+        if not isinstance(claim, dict):
+            continue
+        load = str(claim.get("load_bearing", "")).lower()
+        if load not in ("high", "true", "medium"):
+            continue
+        cid = str(claim.get("id") or "?")
+        kind = str(claim.get("type") or "").lower()
+        text = str(claim.get("claim") or "")[:140]
+        if cid in covered:
+            rows.append({"id": cid, "claim": text, "load": load,
+                         "status": "checked",
+                         "note": "dispatched to: "
+                                 + ", ".join(sorted(set(covered[cid])))})
+        elif kind not in PUBLICLY_CHECKABLE:
+            rows.append({"id": cid, "claim": text, "load": load,
+                         "status": "uncheckable",
+                         "note": f"a {kind or 'private-evidence'} claim — no "
+                                 f"public evidence stream can check it; it "
+                                 f"stays with the deck audit and diligence"})
+        else:
+            rows.append({"id": cid, "claim": text, "load": load,
+                         "status": "skipped",
+                         "note": "checkable in principle but no report was "
+                                 "dispatched for it — a coverage gap, not a "
+                                 "judgment"})
+    return rows
+
+
+def coverage_notes(rows: Sequence[Dict[str, str]]) -> List[str]:
+    """The coverage table as note lines, skips first and loudest."""
+    out: List[str] = []
+    skipped = [r for r in rows if r["status"] == "skipped"]
+    for r in skipped:
+        out.append(f"NOT COVERED: [{r['id']}] {r['claim']!r} — {r['note']}")
+    checked = sum(1 for r in rows if r["status"] == "checked")
+    unable = sum(1 for r in rows if r["status"] == "uncheckable")
+    out.append(f"claim coverage: {checked} checked by reports, "
+               f"{unable} not publicly checkable, {len(skipped)} skipped")
+    return out

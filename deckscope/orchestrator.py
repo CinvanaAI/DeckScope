@@ -195,8 +195,16 @@ class Pipeline:
             from marketreport.scoping import briefs_from_deck
             from .sources import SourceRegistry
 
+            from marketreport.scoping import claim_coverage, coverage_notes
+
             self._log("scoping the market reports this deck's claims depend on")
             briefs, report_notes = briefs_from_deck(deck, self.provider)
+            # Every load-bearing claim accounted for — dispatched, declared
+            # not publicly checkable, or VISIBLY skipped. The skip line is
+            # the point: a suite of reports used to look complete because
+            # nothing recorded what completeness would have required.
+            coverage = claim_coverage(deck, briefs)
+            report_notes.extend(coverage_notes(coverage))
             for note in report_notes:
                 self._log(f"  {note.strip()}")
             reports_registry = SourceRegistry()
@@ -260,6 +268,7 @@ class Pipeline:
                         "stored_as": pid,
                     })
             market["specialist_reports"] = block
+            market["claim_coverage"] = coverage
             self._log(f"{len(block)} specialist report(s) merged into the "
                       f"run's evidence — the comparison sees their findings "
                       f"and can cite their sources")

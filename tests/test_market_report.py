@@ -652,3 +652,79 @@ class M10_CritiqueFixes(unittest.TestCase):
         detail = self._demo().get("Q5").detail
         self.assertIn("shape", detail)
         self.assertIsNotNone(detail["shape"]["average_size"])
+
+
+class P90_EveryLoadBearingClaimIsAccountedFor(unittest.TestCase):
+    """The scoper's dispatch decisions are now auditable per claim.
+
+    Before this, a checkable load-bearing claim the scoper ignored left no
+    trace: the report suite looked complete because nothing recorded what
+    completeness required. Coverage rows make the three outcomes explicit —
+    checked, not publicly checkable, or skipped — and the skip is loud.
+    """
+
+    def _deck(self):
+        return {"claims": [
+            {"id": "C1", "claim": "The market is $47B", "type": "market-size",
+             "load_bearing": "high"},
+            {"id": "C2", "claim": "$340k ARR", "type": "traction",
+             "load_bearing": "high"},
+            {"id": "C3", "claim": "We beat Zapier on reliability",
+             "type": "competition", "load_bearing": "medium"},
+            {"id": "C4", "claim": "Team of 7", "type": "team",
+             "load_bearing": "low"},
+        ]}
+
+    def _brief(self, ids):
+        from marketreport.handoff import Brief
+        return Brief(market="workflow automation", measures=["revenue"],
+                     specialist="market-size", checks_claim_ids=tuple(ids))
+
+    def test_checked_uncheckable_and_skipped_are_three_different_rows(self):
+        from marketreport.scoping import claim_coverage
+
+        rows = {r["id"]: r for r in
+                claim_coverage(self._deck(), [self._brief(["C1"])])}
+        self.assertEqual(rows["C1"]["status"], "checked")
+        self.assertIn("market-size", rows["C1"]["note"])
+        self.assertEqual(rows["C2"]["status"], "uncheckable",
+                         "traction is private evidence - a market report "
+                         "cannot check it and must not imply it could")
+        self.assertEqual(rows["C3"]["status"], "skipped",
+                         "competition IS publicly checkable; not dispatching "
+                         "a report for it is a coverage gap to report")
+        self.assertNotIn("C4", rows, "low load-bearing claims are not owed "
+                                     "a report")
+
+    def test_the_skip_is_the_loudest_note(self):
+        from marketreport.scoping import claim_coverage, coverage_notes
+
+        notes = coverage_notes(
+            claim_coverage(self._deck(), [self._brief(["C1"])]))
+        self.assertTrue(notes[0].startswith("NOT COVERED: [C3]"))
+        self.assertIn("1 checked by reports, 1 not publicly checkable, "
+                      "1 skipped", notes[-1])
+
+    def test_the_scoper_prompt_carries_claim_ids_and_medium_claims(self):
+        from marketreport.scoping import _deck_block
+
+        block = _deck_block(self._deck())
+        self.assertIn("[C1][market-size][high]", block)
+        self.assertIn("[C3][competition][medium]", block)
+        self.assertNotIn("Team of 7", block)
+
+    def test_invented_claim_ids_are_dropped_with_a_note(self):
+        from marketreport.scoping import briefs_from_deck
+
+        class _P:
+            def complete_json(self, *a, **kw):
+                return {"market": "workflow automation",
+                        "reports": [{"type": "market-size",
+                                     "values": ["retail"],
+                                     "because": "checks the TAM",
+                                     "checks_claim_ids": ["C1", "C99"]}]}
+
+        briefs, notes = briefs_from_deck(self._deck(), _P())
+        self.assertEqual(tuple(briefs[0].checks_claim_ids), ("C1",))
+        self.assertTrue(any("C99" in n and "dropped" in n for n in notes),
+                        notes)
