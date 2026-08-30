@@ -6,7 +6,9 @@ from typing import Any, Dict
 
 from ..config import Lens
 from ..prompts.lenses import lens_block
-from ..prompts.templates import COMPARE_SYSTEM, COMPARE_USER
+from ..prompts.templates import (ADVISOR_SYSTEM, ADVISOR_USER,
+                                 COMPARE_SYSTEM, COMPARE_USER)
+from ..providers.base import Message
 from ..schemas import COMPARISON_SCHEMA, coerce, schema_block, scorecard_total
 from ..validate import validate_comparison
 from .base import Agent
@@ -73,3 +75,23 @@ class ComparisonSynthesist(Agent):
         self.emit(f"{len(audit)} claim(s) examined, {contested} contested, "
                   f"{cited} citing a source")
         return result
+
+    def advise(self, comparison: Dict[str, Any], *,
+               evidence_state: str = "") -> str:
+        """The partner's read: labelled judgment, printed beside the audit.
+
+        A separate call, AFTER validation, fed the finished comparison — so
+        the advisor reasons from the audited record and its opinions can
+        never leak back into the audit. It may go beyond the sources (that
+        is its job); the prompt binds it to belief language for beliefs and
+        forbids it contradicting the audit's honesty marks. The renderers
+        fence it under an explicit 'judgment, not evidence' label.
+        """
+        slim = {k: v for k, v in comparison.items() if k != "_meta"}
+        user = ADVISOR_USER.format(
+            evidence_state=evidence_state or "not stated",
+            comparison_json=json.dumps(slim, indent=1)[:60_000])
+        completion = self.provider.complete(
+            ADVISOR_SYSTEM, [Message("user", user)], temperature=0.5)
+        self.track(completion)
+        return (completion.text or "").strip()

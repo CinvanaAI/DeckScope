@@ -95,6 +95,23 @@ class MockProvider(LLMProvider):
             body = json.dumps(_shape_for(joined))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
+        if "partner across the table" in system:
+            body = (
+                "My read: the machine above is honest about a deck that is "
+                "itself fairly honest — the numbers reconcile, the growth "
+                "tension is the founders under-promising rather than "
+                "over-claiming, and the real risk lives in the silences. I "
+                "suspect the omitted competitors are omitted because the "
+                "founders have not yet lost a deal to them, which is a "
+                "seed-stage answer, not a bad one.\n\n"
+                "What I'd do: take the meeting; price off the plan's implied "
+                "growth, not the headline.\n"
+                "The bet: governed approvals become the system of record for "
+                "mid-market automation before the platforms bundle it.\n"
+                "What would change my mind: one lost-to-Power-Automate "
+                "reference call, or churn in the design-partner cohort.")
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "concluding an investment analysis that somebody else researched" in system:
             allowed = self._available_sids(joined)
             body = json.dumps(self._clamp_citations(_judgment_for(joined), allowed))

@@ -797,3 +797,72 @@ def test_an_agent_bug_is_labelled_a_defect_not_an_evidence_limit(monkeypatch):
     assert "DEFECT in DeckScope" in q2.unanswered_because
     assert "KeyError" in q2.unanswered_because
     assert "not a limit of the evidence" in q2.unanswered_because
+
+
+# ------------------------------------------------- the advisor's read
+
+def test_the_advisor_prompt_binds_opinion_to_the_audit():
+    """Opinion beside the evidence, never wearing its badge. The prompt
+    must grant the freedom (reason beyond sources, commit to a view) and
+    bind it (no contradicting the audit, belief language for beliefs)."""
+    from deckscope.prompts.templates import ADVISOR_SYSTEM
+
+    assert "Never contradict the audit" in ADVISOR_SYSTEM
+    assert "belief language" in ADVISOR_SYSTEM.lower()
+    assert "Commit" in ADVISOR_SYSTEM
+    assert "What I'd do:" in ADVISOR_SYSTEM
+    assert "What would change my mind:" in ADVISOR_SYSTEM
+
+
+def test_advise_feeds_the_validated_comparison_not_the_raw_one():
+    """The advisor runs AFTER validation, from the audited record, so its
+    opinions can never leak back into the audit."""
+    from deckscope.agents.synthesis_agent import ComparisonSynthesist
+    from deckscope.providers.base import Completion
+
+    calls = []
+
+    class _P:
+        def complete(self, system, messages, **kw):
+            calls.append((system, messages))
+            return Completion(text="  the read  ",
+                              usage={"input": 3, "output": 2})
+
+    synth = ComparisonSynthesist.__new__(ComparisonSynthesist)
+    synth.provider = _P()
+    synth.usage = {"input": 0, "output": 0}
+    synth.calls = 0
+    comp = {"headline": "h", "claim_audit": [{"id": "C1"}],
+            "_meta": {"secret": "internals"}}
+    out = synth.advise(comp, evidence_state="6 sources retrieved")
+    assert out == "the read"
+    system, messages = calls[0]
+    assert "partner across the table" in system
+    assert "6 sources retrieved" in messages[0].content
+    assert "internals" not in messages[0].content, (
+        "_meta stays out of the advisor's view")
+    assert synth.usage == {"input": 3, "output": 2}
+
+
+def test_the_rendered_frame_is_deterministic_and_loud(tmp_path):
+    """The 'judgment, not evidence' fence is the renderer's own text — a
+    model cannot soften it — and the audited summary always comes first."""
+    import os
+    import subprocess
+    import sys
+
+    out = tmp_path / "demo"
+    env = {**os.environ, "DECKSCOPE_HOME": str(tmp_path / "home"),
+           "PYTHONDONTWRITEBYTECODE": "1"}
+    subprocess.run([sys.executable, "-m", "deckscope", "demo",
+                    "--format", "md", "--out", str(out)],
+                   capture_output=True, env=env, timeout=300)
+    md = list(out.glob("*_investor.md"))
+    assert md, "the demo produced no investor report"
+    text = md[0].read_text(encoding="utf-8")
+    assert "## The advisor's read — judgment, not evidence" in text
+    assert "one analyst's opinion" in text
+    idx_summary = text.index("## Summary")
+    idx_advisor = text.index("## The advisor's read")
+    assert idx_advisor > idx_summary, (
+        "the audited summary comes first; the opinion follows it")

@@ -344,6 +344,20 @@ a.cite{{background:none;color:var(--ink);border:1px solid var(--line)}}
         if para.strip():
             add(f"<p>{_e(para.strip())}</p>")
 
+    if (comp.get("advisor_read") or "").strip():
+        add('<h2 id="advisor">The advisor\'s read — judgment, not evidence</h2>')
+        frame = ("Everything above this line is audited against the run's "
+                 "evidence. This section is one analyst's opinion, written "
+                 "after reading it — allowed to reason beyond the record, "
+                 "required to say when it does.")
+        if found.evidence_too_thin:
+            frame += (" This run retrieved no cited evidence, so the read "
+                      "rests on the deck and the model's priors alone.")
+        add(f'<p class="evidence-state thin"><i>{_e(frame)}</i></p>')
+        for para in comp["advisor_read"].split("\n"):
+            if para.strip():
+                add(f"<p>{_e(para.strip())}</p>")
+
     add('<h2 id="verdict">What this adds up to, for this lens</h2>')
     if h.get("verdict_note"):
         add(f'<p><b>{_e(h["verdict"])}</b></p>')

@@ -381,6 +381,22 @@ class Pipeline:
             comparisons[lens.value] = synth.run(deck, market, lens=lens,
                                                 valid_source_ids=valid_ids,
                                                 sources_block=sources_block)
+            # The partner's read: a SEPARATE call, after validation, fed the
+            # audited comparison — labelled judgment that renders fenced,
+            # so opinion sits beside the evidence without wearing its badge.
+            try:
+                stats = (market_agent.registry.stats()
+                         if getattr(market_agent, "registry", None) else {})
+                total = int(stats.get("total") or 0)
+                ev = (f"{total} external source(s) were retrieved and "
+                      f"screened for this run" if total else
+                      "NO external sources were retrieved — this read rests "
+                      "on the deck and the model's priors alone, and must "
+                      "say so")
+                comparisons[lens.value]["advisor_read"] = synth.advise(
+                    comparisons[lens.value], evidence_state=ev)
+            except Exception as exc:  # noqa: BLE001 - advice is optional; the audit is not
+                self._log(f"advisor read skipped: {exc}")
 
         usage = {"input": 0, "output": 0}
         for agent in (deck_agent, market_agent, synth):

@@ -121,6 +121,26 @@ def build_markdown(result, lens: str) -> str:
     add(comp.get("summary") or "_No summary produced._")
     add("")
 
+    # ------------------------------------------- the advisor's read
+    # Opinion beside the evidence, never wearing its badge: everything above
+    # is audited; this is one analyst's committed point of view, printed
+    # under a frame that says exactly that. The frame is the renderer's —
+    # deterministic — so no model output can soften it.
+    if (comp.get("advisor_read") or "").strip():
+        add("## The advisor's read — judgment, not evidence")
+        add("")
+        frame = ("Everything above this line is audited against the run's "
+                 "evidence. This section is one analyst's opinion, written "
+                 "after reading it — allowed to reason beyond the record, "
+                 "required to say when it does.")
+        if found.evidence_too_thin:
+            frame += (" This run retrieved no cited evidence, so the read "
+                      "rests on the deck and the model's priors alone.")
+        add(f"> _{frame}_")
+        add("")
+        add(comp["advisor_read"].strip())
+        add("")
+
     # ------------------------------------------------- verdict, demoted
     add("## What this adds up to, for this lens")
     add("")
