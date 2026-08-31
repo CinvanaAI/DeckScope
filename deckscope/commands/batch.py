@@ -220,6 +220,8 @@ def command(args: Any) -> int:
                 cfg.research.name = "none"
             cfg.__post_init__()
             result = Pipeline(cfg, provider=provider).run()
+            if nda:
+                result.privacy = {"local_only": True, "source": "nda"}
             deck_out.mkdir(parents=True, exist_ok=True)
             for fmt in formats:
                 render_fmt(fmt, result, deck_out, slug)

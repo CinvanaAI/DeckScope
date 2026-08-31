@@ -201,6 +201,7 @@ DeckScope will not produce a confident-looking market view it cannot support.
 | Uploaded decks (web app, working copies) | `%APPDATA%\DeckScope\uploads` | `~/.config/deckscope/uploads` |
 | Dataset caches | `%APPDATA%\DeckScope\naics-index.json`, `county-fips.json` | `~/.config/deckscope/naics-index.json`, `county-fips.json` |
 | Manual-mode prompt exchange | `%APPDATA%\DeckScope\exchange` | `~/.config/deckscope/exchange` |
+| Verified connector plugins (manifest, code, `.verified` marker) | `%APPDATA%\DeckScope\plugins` | `~/.config/deckscope/plugins` |
 
 **Uploaded decks are working copies and are deleted automatically** —
 when the run that used them finishes, and any leftovers from a crashed

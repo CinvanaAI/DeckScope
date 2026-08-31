@@ -165,6 +165,25 @@ def _series_of(finding: Any, panel: Panel) -> Optional[str]:
     return None
 
 
+def _stated_basis(finding: Any) -> Optional[str]:
+    """The basis a finding's own words declare, or None.
+
+    Checked against the basis dimension's cue vocabulary — a statement
+    that names exactly one basis ("...of global smartphone SHIPMENTS")
+    declares it; a statement naming none, or more than one, declares
+    nothing, and nothing is not a license to compare.
+    """
+    from .dimensions import get as get_dimension
+
+    axis = get_dimension("basis")
+    if axis is None:
+        return None
+    text = str(getattr(finding, "statement", "") or "").lower()
+    hits = {opt.key for opt in axis.options
+            if any(cue in text for cue in opt.cues)}
+    return hits.pop() if len(hits) == 1 else None
+
+
 def _disagreements(findings: Sequence[Any], panel: Panel) -> List[str]:
     """Two sources measuring the same thing and reporting different numbers.
 
@@ -218,7 +237,20 @@ def _disagreements(findings: Sequence[Any], panel: Panel) -> List[str]:
 
             series_left, series_right = (_series_of(left, panel),
                                          _series_of(right, panel))
-            if series_left != series_right:
+            if series_left is None or series_right is None:
+                # Neither finding made it into a rendered series, so the
+                # panel cannot vouch for their yardsticks. The eighth
+                # external audit caught None == None passing this gate:
+                # Apple's 20% OF SHIPMENTS and 49% OF REVENUE were called
+                # "two sources disagreeing" when they answer different
+                # questions. Unknown basis means INCOMPARABLE — the one
+                # exception is both statements declaring the same basis in
+                # words, which _stated_basis checks against the axis.
+                b_left = _stated_basis(left)
+                b_right = _stated_basis(right)
+                if b_left is None or b_left != b_right:
+                    continue
+            elif series_left != series_right:
                 continue        # different yardsticks — that IS the finding
 
             try:
@@ -644,9 +676,14 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     # anyone asks.
     title = spec.job.capitalize()
     if measure is not None:
-        axis = get_dimension(spec.dimension)
-        joiner = axis.label if axis is not None else "measured as"
-        title = f"{title} — {joiner} {measure.label}"
+        # The measure REPLACES the generic job in the title rather than
+        # being appended to it. The generic job enumerates every basis
+        # ("by units and by revenue"), so an appended scope produced a
+        # title that led with the wrong words — and the opener, reading
+        # the title, asked unit-shipment questions for a revenue report
+        # (eighth external audit). The full rewritten job still travels in
+        # `brief`; the title is the scope, stated first and alone.
+        title = f"{measure.label.capitalize()} — {measure.counts}"
     brief = Section(key=spec.name, title=title,
                     brief=job, refuse=refuse, sources=sources_hint)
     try:

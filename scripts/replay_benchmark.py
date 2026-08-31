@@ -157,6 +157,8 @@ def main() -> int:
         encoding="utf-8", errors="replace")
 
     failed = False
+    replayed_ok = 0
+    excused = 0
     for bundle in bundles:
         print(f"\n=== {bundle.name}")
         problems = verify_identity(bundle)
@@ -165,15 +167,34 @@ def main() -> int:
         if not problems and not args.identity_only:
             problems = replay(bundle)
             print(f"  replay:   {'ok' if not problems else str(len(problems)) + ' problem(s)'}")
+            if not problems:
+                replayed_ok += 1
         for line in problems:
             print(f"    ! {line}")
         if problems and not identity_broken and args.stale_ok and stale_admitted:
             print("  stale-ok: prompt drift excused — benchmarks/README.md "
                   "admits the staleness. Re-drive the benchmark to make the "
                   "numbers current again.")
+            excused += 1
             continue
         failed = failed or bool(problems)
-    print("\nFAILED" if failed else "\nAll bundles verified.")
+    # The eighth external audit read "All bundles verified" over a run in
+    # which zero behavioral replays succeeded and every drift was excused.
+    # The summary now states exactly which guarantee was checked: artifact
+    # identity always; behavior only when a replay actually ran green.
+    if failed:
+        print("\nFAILED")
+    elif excused and not replayed_ok:
+        print(f"\nHistorical benchmark artifacts intact; behavioral replay: "
+              f"0 of {len(bundles)} (prompts have drifted; staleness is "
+              f"admitted in benchmarks/README.md). This run proves the "
+              f"artifacts, not the current pipeline's numbers.")
+    elif excused:
+        print(f"\nArtifacts intact; {replayed_ok} of {len(bundles)} "
+              f"bundle(s) replayed behaviorally, {excused} excused as "
+              f"admitted-stale.")
+    else:
+        print("\nAll bundles verified — identity and behavioral replay.")
     return 1 if failed else 0
 
 

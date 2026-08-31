@@ -56,8 +56,24 @@ def researcher_class(name: str) -> Type[Researcher]:
     _bootstrap()
     key = (name or "").strip().lower()
     if key not in _REGISTRY:
+        # Verified connector plugins are the fallback namespace: a backend
+        # the operator installed and the conformance harness approved. The
+        # loader refuses anything unverified or edited-since-verification,
+        # so an unknown name either resolves to approved code or fails
+        # with the exact remedy.
+        from ..plugins import PluginError, load_researcher_class
+
+        try:
+            cls = load_researcher_class(key)
+        except PluginError as exc:
+            raise ValueError(str(exc)) from exc
+        if cls is not None:
+            register_researcher(cls, name=key)
+            return _REGISTRY[key]
         raise ValueError(f"Unknown research backend {name!r}. "
-                         f"Available: {', '.join(list_researchers())}, auto")
+                         f"Available: {', '.join(list_researchers())}, auto "
+                         f"— or a verified plugin name (deckscope plugins "
+                         f"list)")
     return _REGISTRY[key]
 
 

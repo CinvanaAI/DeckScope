@@ -296,6 +296,50 @@ generic and sits upstream of the research-loop, evidence-design and
 mode-comparison pins, so this is an investigation, not a patch; it must
 not be closed by teaching the fixture the test answers.
 
+## The spine: one engine, declared verticals, verified connectors
+
+The owner's mandate (2026-08-31): the engine is the identity; document
+types are verticals riding on it. The inversion is not a refactor
+project — each flywheel feature forces its slice of the structure as a
+load-bearing requirement, in this order.
+
+Status (2026-08-31): **1 and 2 are DONE** — the plugin contract,
+harness, and `connect` verb ship (test_plugins.py); verticals are typed
+declarations with coupling tests and a refusing intake
+(test_verticals.py), and TWO new verticals ride the engine end to end,
+free and keyless: grants (NSF/NIH/USAspending/PubMed, the absence cap)
+and nonprofits (ProPublica 990 extract, the self-filing law), both
+loudly UNGRADED until the harness holds them to an answer key. **3 is
+the open edge**: thin report sections do not yet name the connector
+that would sharpen them, and no run re-fires after `connect`. The
+grants/nonprofits evidence contracts are watched weekly by
+scripts/evidence_canary.py alongside the Census canary.
+
+1. **Verified connectors** — the plugin contract made explicit: a
+   manifest (name, declared hosts, needs_key), a deterministic
+   conformance harness that gates loading (interface tests, AST safety
+   scan, declared-host egress check), a user plugins directory loaded
+   only with consent, and a `connect` verb that drives a coding-agent
+   CLI to WRITE a connector against the contract. Generated code is
+   model output: never trusted, always verified.
+2. **Typed vertical declarations** — a vertical is data (claim
+   vocabulary, publicly-checkable mapping, lenses, evidence homes,
+   report types, fixtures, graded status), registered like report types
+   are. The deck vertical is extracted first with its behavior pinned
+   unchanged; a generic `analyze` intake classifies a document against
+   the declared verticals and configures the run. An intake that cannot
+   match refuses and names the nearest vertical; a model-proposed
+   vertical ships behind a flag and is loudly marked ungraded.
+3. **The flywheel** — a thin report section names the paid or licensed
+   source that would sharpen it; `connect` builds and verifies the
+   connector for access the operator already holds; the run re-fires
+   and the slot fills. The floor is free public data; the ceiling is
+   the operator's access; the honesty rules are constant at every level.
+
+Free-first is a standing rule: every shipped vertical must be fully
+exercisable at zero cost (public no-key APIs, recorded fixtures, the
+offline mock). Paid sources are upgrade slots, never prerequisites.
+
 ## Architecture directions accepted from the seventh audit (open)
 
 Named as the right long-term shape; each is real work, none is closed:
@@ -305,8 +349,14 @@ an NDA/local-only switch in the web app; typed question intent
 (subject/intent/metric) replacing keyword routing; and consolidating the
 deck orchestrator, research loop, and market-report framework around one
 run model with market report / panel / batch / improve as configurations
-of it. The subject-mask router fix, the engine NDA gate, and the shared
-safe_cell are the tactical layer of these, already shipped.
+of it. The tactical layer keeps growing ahead of the gateway — the
+subject-mask router fix, the engine NDA gate, shared safe_cell (now in
+all three exporters), persisted record privacy inherited by chat and
+improve, and the deterministic consensus adjudicator are all shipped —
+and each new call site that needs one of these individually is another
+argument for the single boundary. The eighth audit added one more typed
+truth to carry end to end: measurement identity on every quantitative
+finding, from query through reading, shaping, figures and charts.
 
 ## Standing constraints
 

@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, List
 
 from ..console import out as _out
-from .common import ASSESSMENT_WORD, as_list, score_color, theme as get_theme, txt
+from .common import ASSESSMENT_WORD, as_list, score_color, theme as get_theme, txt, safe_cell
 
 
 def _e(v: Any) -> str:
@@ -782,11 +782,14 @@ def _panel_xlsx(result, out_dir: Path, base: str) -> str:
     def sheet(title, headers, rows, widths, first=False):
         ws = wb.active if first else wb.create_sheet()
         ws.title = title[:31]
-        ws.append(headers)
+        # Every cell through the shared sanitizer — the eighth external
+        # audit found this exporter still writing raw model-derived text
+        # after the main renderer and batch were fixed. One chokepoint.
+        ws.append([safe_cell(h) for h in headers])
         for cell in ws[1]:
             cell.font, cell.fill, cell.alignment = head_font, head_fill, wrap
         for r in rows:
-            ws.append([txt(v, "") for v in r])
+            ws.append([safe_cell(txt(v, "")) for v in r])
         for i, w in enumerate(widths, 1):
             ws.column_dimensions[get_column_letter(i)].width = w
         for row in ws.iter_rows(min_row=2):

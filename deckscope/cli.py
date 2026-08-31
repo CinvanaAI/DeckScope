@@ -142,6 +142,11 @@ def build_parser() -> argparse.ArgumentParser:
                       help="Ask one question and exit (default: interactive)")
     chat.add_argument("--provider", default=None, help="Override the AI backend")
     chat.add_argument("--model", default=None, help="Override the model")
+    chat.add_argument("--allow-hosted", dest="allow_hosted",
+                      action="store_true",
+                      help="Deliberately chat about a local-only (NDA) "
+                           "record with a hosted model — the record's "
+                           "content WILL leave this machine")
 
     demo = sub.add_parser("demo", help="Run a full sample analysis with no AI or key")
     demo.add_argument("--format", "-f", nargs="+", default=["html", "md"])
@@ -330,6 +335,48 @@ def build_parser() -> argparse.ArgumentParser:
                        help="Refuse non-local models and disable web "
                             "research — inbound decks must not leave "
                             "this machine")
+
+    analyze_p = sub.add_parser(
+        "analyze",
+        help="The generic front door: classify a document against the "
+             "declared verticals and run the right scrutiny")
+    analyze_p.add_argument("file", help="Any document with claims in it")
+    analyze_p.add_argument("--vertical", default=None,
+                           help="Skip intake and force a declared vertical")
+    analyze_p.add_argument("--propose", action="store_true",
+                           help="On no match, write a typed declaration "
+                                "draft for a NEW vertical (review + "
+                                "register before anything runs)")
+    analyze_p.add_argument("--no-model", dest="no_model", action="store_true",
+                           help="Intake by cue arithmetic only — never "
+                                "consult the model")
+    analyze_p.add_argument("--provider", help="AI backend")
+    analyze_p.add_argument("--config", help="Config file")
+    analyze_p.add_argument("--out", help="Output folder")
+    analyze_p.add_argument("--nda", action="store_true",
+                           help="Passed through to the dispatched vertical")
+    analyze_p.add_argument("--demo", action="store_true",
+                           help="Run the dispatched vertical on its "
+                                "recorded evidence with the offline mock "
+                                "— no key, no network")
+
+    plugins_p = sub.add_parser(
+        "plugins",
+        help="Verified connectors: list, verify against the conformance "
+             "harness, or scaffold one for a coding agent to write")
+    plugins_sub = plugins_p.add_subparsers(dest="plugins_cmd")
+    plugins_sub.add_parser("list", help="Installed plugins and their "
+                                        "verification state")
+    pv = plugins_sub.add_parser(
+        "verify", help="Run the conformance harness; only a clean pass "
+                       "lets the plugin load")
+    pv.add_argument("name", help="Plugin name (or a directory path)")
+    pv.add_argument("--live", action="store_true",
+                    help="Also run one live health_check")
+    pc = plugins_sub.add_parser(
+        "connect", help="Scaffold a connector + work order for a coding "
+                        "agent (Claude Code, Codex, ...)")
+    pc.add_argument("service", help="Service name, e.g. counterpoint")
 
     improve = sub.add_parser(
         "improve",
@@ -822,6 +869,14 @@ def _main(argv: Optional[List[str]] = None) -> int:
     if cmd == "improve":
         from .commands.improve import command as _improve_cmd
         return _improve_cmd(args)
+
+    if cmd == "plugins":
+        from .commands.plugins_cmd import command as _plugins_cmd
+        return _plugins_cmd(args)
+
+    if cmd == "analyze":
+        from .commands.analyze import command as _analyze_cmd
+        return _analyze_cmd(args)
 
     if cmd == "size":
         _out("Note: 'deckscope size' has been retired — it was a subset of "
@@ -2072,6 +2127,20 @@ def _chat(args: Any) -> int:
         _out("DeckScope isn't set up yet. Run:  deckscope setup")
         return 1
     cfg = settings.settings_to_runconfig(overrides)
+
+    privacy = record.get("privacy") or {}
+    if privacy.get("local_only"):
+        from .tiering import is_local
+
+        if not is_local(cfg.provider) and not getattr(
+                args, "allow_hosted", False):
+            _out("This record was produced under NDA mode and is marked "
+                 "local-only. The configured chat model "
+                 f"('{cfg.provider.name}') is hosted, and chatting sends "
+                 "the record's deck extraction and evidence to it.\n"
+                 "Use a local model, or pass --allow-hosted to override "
+                 "deliberately.")
+            return 4
     provider = get_provider(cfg.provider)
 
     company = ((record.get("deck") or {}).get("company") or {}).get("name") \
@@ -2268,6 +2337,7 @@ def _run(args: Any) -> int:
         cfg.research.name = "none"
 
     _warn_if_stub(cfg, demo=bool(getattr(args, "demo", False)))
+    nda_stamp = bool(getattr(args, "nda", False))
     mode = getattr(args, "mode", "pipeline")
     replay = None
     if getattr(args, "corpus", None):
@@ -2282,12 +2352,24 @@ def _run(args: Any) -> int:
     try:
         if mode == "baseline":
             result, files = _run_baseline(cfg, corpus=replay)
+            if nda_stamp:
+                result.privacy = {"local_only": True, "source": "nda"}
         elif mode == "both":
+            if nda_stamp:
+                # `both` runs two full analyses for a cost comparison — not
+                # a workflow for a confidential deck. Refusing beats
+                # stamping records a comparison harness then re-reads.
+                _out("--nda with --mode both is refused: the comparison "
+                     "harness is not a confidential workflow. Run "
+                     "--mode pipeline.")
+                return 2
             return _run_both(cfg)
         else:
             pipe = Pipeline(cfg)
             try:
                 result = pipe.run(corpus=replay)
+                if nda_stamp:
+                    result.privacy = {"local_only": True, "source": "nda"}
                 files = pipe.render(result)
             finally:
                 pipe.close()
@@ -2768,6 +2850,10 @@ def _print_panel_summary(result: Any, files: List[str]) -> None:
               f"({v.get('agreement', '—')}, {v.get('confidence', '—')} confidence)")
         if cons.get("headline"):
             _out(f"           {cons['headline'][:96]}")
+        rec = cons.get("chair_recommendation") or {}
+        if rec.get("call"):
+            _out(f"           chair recommended {rec['call']} — overruled "
+                 f"by the recorded vote above")
         for mv in m.get("movement") or []:
             moved = ("→ " + str(mv.get("verdict_after"))
                      if mv.get("verdict_before") != mv.get("verdict_after")

@@ -1,0 +1,14 @@
+{
+  "_capture": {
+    "url": "https://api.nsf.gov/services/v1/awards.json?keyword=smartphone&rpp=3",
+    "retrieved": "2026-08-31",
+    "method": "GET, no auth",
+    "note": "Selected scalar fields transcribed from the live response; the full response carries long abstractText fields not retained here. Every row is independently re-verifiable by fetching /services/v1/awards/{id}.json. The API silently dropped an explicit printFields parameter on this call — backends must tolerate the full default field set.",
+    "observed_total_count": 770
+  },
+  "awards": [
+    {"id": "2614938", "title": "Electronic Confinement, Dielectric Perturbations, and Stability Mechanisms in Weyl Semimetals for Nanoscale Interconnects", "awardeeName": "Arizona State University", "fundsObligatedAmt": "430000", "estimatedTotalAmt": "430000", "startDate": "10/15/2026", "expDate": "09/30/2029", "agency": "NSF", "transType": "Standard Grant", "fundProgramName": "EPMQD: Electronic, Photonic, M", "piFirstName": "Seth", "piLastName": "Tongay", "dirAbbr": "ENG"},
+    {"id": "2548357", "title": "REU Site: Frontier Technologies for Biometrics and Authentication", "awardeeName": "SUNY at Buffalo", "fundsObligatedAmt": "450000", "estimatedTotalAmt": "450000", "startDate": "10/01/2026", "expDate": "09/30/2029", "agency": "NSF", "transType": "Standard Grant", "fundProgramName": "RSCH EXPER FOR UNDERGRAD SITES", "piFirstName": "Wenyao", "piLastName": "Xu", "dirAbbr": "CSE"},
+    {"id": "2613364", "title": "Personalizing Observational Astronomy: A Tiered Low-Cost Telescope Approach to Active Learning Across Undergraduate Astronomy Courses", "awardeeName": "University of Georgia Research Foundation Inc", "fundsObligatedAmt": "399895", "estimatedTotalAmt": "399895", "startDate": "10/01/2026", "expDate": "09/30/2029", "agency": "NSF", "transType": "Standard Grant", "fundProgramName": "IUSE", "piFirstName": "Inseok", "piLastName": "Song", "dirAbbr": "EDU"}
+  ]
+}

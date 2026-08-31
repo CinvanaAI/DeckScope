@@ -461,6 +461,19 @@ def command(args: Any) -> int:
         except (OSError, ValueError) as e:
             _err(f"Could not read the saved run: {e}")
             return 2
+        rec_privacy = rec.get("privacy") or {}
+        if rec_privacy.get("local_only"):
+            from ..tiering import is_local as _isl
+
+            for label, pc in (("model", cfg.provider),
+                              ("extraction model", cfg.extract_provider)):
+                if pc is not None and not _isl(pc):
+                    _err("This record was produced under NDA mode and is "
+                         f"marked local-only; the configured {label} "
+                         f"('{pc.name}') is hosted. Use a local model — "
+                         "the record's confidentiality does not expire "
+                         "when the run ends.")
+                    return 4
         comparisons = rec.get("comparisons") or {}
         if lens not in comparisons and comparisons:
             lens = next(iter(comparisons))

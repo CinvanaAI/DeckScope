@@ -164,7 +164,7 @@ jobs:
       # committed answers through the evaluator offline: no model is called, so
       # it runs here, and a prompt that this build no longer generates is a
       # cache miss that fails rather than a mismatch nobody notices.
-      - name: Committed benchmarks must still replay
+      - name: Benchmark artifacts intact (behavioral replay only when prompts match; staleness must be admitted)
         run: python scripts/replay_benchmark.py --all --stale-ok
         # --stale-ok excuses PROMPT DRIFT only while benchmarks/README.md
         # admits it in a STALE notice; artifact corruption still fails.

@@ -402,3 +402,166 @@ the overlapping engines around one run model. Recorded in BUILD.md.
 Board: all 48 test files green (full sweep), lint clean 198 files (new
 duplicate-assignment rule included), claims checker holds (10 checks),
 demo / panel / improve / report demos all exit 0, identity sweep clean.
+
+---
+
+# Eighth external audit worked (fresh audit of 4a5b1af — 2026-08-31)
+
+The first audit of a commit with all prior cycles in it, and it found the
+seams: places where one subsystem hands STRUCTURED MEANING to another and
+the receiver was free to drop it.
+
+**P0 — the chair out-voted the panel.** Live repro: panelists voted 2-1
+for YES WITH CONDITIONS, the deterministic metrics computed the modal
+verdict correctly, and the chair published LEAN NO as "majority" with a
+rationale claiming two of three panelists made its call. The consensus is
+now adjudicated in code (`_adjudicate_consensus`): `agreement` always
+comes from the computed metrics; when the vote has a winner, the
+published call IS the modal call; a chair that disagrees keeps its
+judgment as a labeled `chair_recommendation` that "does not override";
+and the recorded vote rides on the verdict so a reader can check the
+arithmetic. The mock chair deliberately keeps its wayward call so the
+demo shows the adjudicator firing — and its claim table now names every
+panelist (it had been presenting a two-panelist table as a three-model
+synthesis). The summary prints the overruling.
+
+**P1 — the revenue report asked unit questions.** The scoped title
+APPENDED the measure to the generic mixed-basis job, so the opener read
+"…by units and by revenue — share of revenue" and asked shipment
+questions; the demo masked it because the recorded researcher returns
+every page for every query. The title now REPLACES the generic job
+("Share of revenue — the money customers spent…"), and the mock opener
+branches on the measure-leading head before any generic keyword.
+
+**P1 — unknown basis meant "same basis".** Two unrendered findings both
+got `None` from `_series_of`, and `None == None` passed the same-
+yardstick gate — Apple's 20% OF SHIPMENTS vs 49% OF REVENUE published as
+"two sources disagree". Unknown is now INCOMPARABLE: a pair with any
+unknown series identity is compared only when both statements declare
+the same basis in their own words (`_stated_basis`, cue-checked against
+the basis dimension).
+
+**P1 — confidentiality did not survive the run.** A deck analyzed under
+--nda could later be `deckscope chat`-ed to a hosted provider, because
+the record carried no memory of the promise. `AnalysisResult.privacy`
+now persists ({"local_only": true, "source": "nda"}), run/batch stamp
+it, chat refuses a hosted provider on a local-only record (exit 4)
+unless `--allow-hosted` is passed deliberately, improve --from-run
+refuses the same way with no flag able to bypass, and --nda with --mode
+both is refused outright (a comparison harness is not a confidential
+workflow). The one-gateway architecture direction stands in BUILD.md.
+
+**Also:** the panel workbook now routes every cell through the shared
+`safe_cell` (the third exporter to need it — the gateway argument in
+miniature); a cli-provider with a CUSTOM command never inherits its
+preset's local trust (a command may proxy anything); the benchmark
+replay's summary states exactly which guarantee it checked — "All
+bundles verified" is reserved for identity AND behavioral replay, and a
+run where every drift was excused now says "This run proves the
+artifacts, not the current pipeline's numbers", with the CI step renamed
+and the README's "re-scores them offline in CI" corrected to match.
+
+The canary workflow has `workflow_dispatch` and no recorded runs yet —
+it needs one manual trigger from the Actions tab to produce its first
+live evidence.
+
+Board: all 50 test files green (full sweep, 15 new in
+test_audit10_regressions.py), lint clean 199 files, claims checker
+holds, demo / panel / improve / report demos exit 0, identity sweep
+clean.
+
+# The engine build (internal cycle — 2026-08-31)
+
+Owner's mandate: build the engine identity for real — verified
+connectors, typed verticals, and two new report verticals chosen from
+the five named free-data candidates (grants and nonprofits, alongside
+the existing deck), at product standard, free-first, with agents that
+perform roles rather than scripted lookups. Worked as six gated phases;
+every phase's claims were grounded before its code was written.
+
+**Phase 0 — the API record.** Every external claim the new verticals
+rest on was captured live before use: ProPublica Nonprofit Explorer v2,
+NSF Award Search v1, PubMed E-utilities, USAspending v2 reference
+endpoints (recorded/phase0/, verbatim responses with provenance and
+quirks). The ProPublica transcription was verified by 990 component
+arithmetic — all twelve fiscal years reconcile to the dollar — before
+anything was built on it. NIH RePORTER is POST-only and the capture
+environment could not POST; the client's docstring says exactly that,
+and the weekly canary now performs the live POST rather than anyone
+pretending it was captured.
+
+**Phases 1–3 — identity, connectors, typed intake.** README/BUILD/GOALS
+lead with the engine; the plugin contract (manifest + sha256-bound
+verification marker + AST safety scan + declared-host egress + the
+no-key-must-raise law) gates every connector the `connect` verb has a
+coding agent write; verticals are frozen declarations with coupling
+tests pinning every field to real code, and `deckscope analyze` shows
+its cue arithmetic, refuses ties, consults the configured model only to
+choose among declared verticals, and writes --propose drafts that are
+loudly ungraded ("Nothing runs from a draft").
+
+**Phase 4 — grants.** Three roles: Grant Analyst (model) extracts typed
+claims; the Funding Record Checker (deterministic agent) plans which of
+NSF / NIH / USAspending / PubMed each checkable claim requires, runs
+the plan, registers every hit as a citable primary source with a real
+per-award URL, and records outages as outages; the Grants Synthesist
+(model) compares under the standard schema and citation audit. The
+vertical's law: **the absence cap** — an absence claim is never
+"supported"; the ceiling is partially-supported with coverage shown
+("a floor, not a census"), while a contradicted absence claim stands,
+because counterexamples are proof. The run produces a standard
+AnalysisResult, so memo/fix-it/chat/improve work on it unchanged —
+the engine thesis, cashed.
+
+**Phase 5 — nonprofits.** The structurally new claim class: the
+subject's own filings are public, so claims about the organization
+itself are checkable by arithmetic. The Filing Record Checker resolves
+the organization (document EIN wins, and a bare 9-digit run needs
+EIN/tax-ID wording nearby; otherwise only an unambiguous search top
+hit; otherwise refuse to attribute), pulls the IRS extract, reconciles
+each dollar claim against the filed figure with the fiscal basis
+labeled on every number (tax_prd 202306 is the year ENDING 06/2023),
+and volunteers what the filings show that the document omits — the
+demo's recorded Feeding America extract shows a $16.8M operating
+deficit the sample brief never mentions. **The self-filing law**: where
+the reconciliation computed a verdict, it overwrites the synthesist's —
+including its commentary, so no row argues with itself — and stamps the
+evidence strong, because the subject's sworn filing is the strongest
+class this engine holds. Refusal over derivation: program-expense
+ratios and individual pay are not in the extract, so those claims are
+refused with the filing PDF cited, never approximated. Tolerance is
+precision-aware: "$2.8 billion" is held to its own half-ULP, so a true
+claim inside its own rounding is never called contradicted.
+
+**The hostile pass on the build's own output** found and fixed, before
+any external eyes: a claim-audit row that argued with itself (law
+overwrote the verdict but not the commentary); deck vocabulary on
+non-deck reports ("Ask the founder" on a nonprofit report, a TAM/SAM
+annex of dashes, "Deck vs. Market" framing) — fixed by a per-vertical
+vocabulary in the findings spine (deck output byte-compatible); a
+footer that read "? / ? (0 sources)" while References counted 2 —
+runners now populate stats; headline garble from noun-phrase blind
+spots ("the deck omits No prior-support section"); IRS filings listed
+at "unknown" reliability; and the --nda skip being reported to the
+synthesist as "no checkable claims" instead of the truth (skipped for
+privacy).
+
+Honestly open, named here rather than discovered later: the HTML and
+DOCX renderers still speak deck vocabulary — they are unreachable from
+the vertical runners (which render markdown+json), and the memo is a
+deliberately IC-shaped artifact, but running those paths on a grants or
+nonprofits record will wear the deck's clothes until they get the same
+vocabulary pass. Both new verticals are UNGRADED — no answer-key case
+in the evaluation harness yet — and every report they emit says so.
+The nonprofits sample is a labeled fictional donor brief about a real
+organization whose real filings the demo replays; the brief's claims
+are deliberately offset so the checker has something to catch, and the
+file's provenance note states all of this.
+
+Board: all 54 test files green — 1138 tests (712 functions + 426 class
+methods) under scripts/run_tests.py — lint statute clean, claims
+checker holds, deck/grants/nonprofits demos exit 0, identity sweep
+clean. This sandbox could not install pytest (no package index), so the
+board ran under the repo's canonical zero-dependency runner; the hosted
+CI run for the commit remains the status of record, per the standing
+rule at the top of this document.

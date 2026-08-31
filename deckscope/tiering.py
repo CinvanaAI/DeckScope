@@ -134,7 +134,13 @@ def is_local(provider: ProviderConfig) -> bool:
     if name in ("mock", "manual"):
         return True
     if name == "cli":
-        preset = str((provider.extra or {}).get("preset", "")).strip().lower()
+        extra = provider.extra or {}
+        preset = str(extra.get("preset", "")).strip().lower()
+        # A custom command may proxy anything, whatever preset it claims
+        # (eighth external audit): the preset earns local trust only when
+        # the preset's own command is what actually runs.
+        if str(extra.get("command", "") or "").strip():
+            return False
         return preset in LOCAL_CLI_PRESETS
     if name == "openai_compatible":
         return _is_loopback_url(provider.base_url or "")

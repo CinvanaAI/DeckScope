@@ -51,6 +51,13 @@ class AnalysisResult:
     #: None when the pass was off; present-but-empty when it ran and refused.
     market_reports: Optional[Dict[str, Any]] = None
     discovery_delta: Dict[str, Any] = field(default_factory=dict)
+    #: Confidentiality state the run was produced under. Set by the NDA
+    #: gates ({"local_only": True, "source": "nda"}); None otherwise. The
+    #: eighth external audit showed why it must PERSIST: a deck analyzed
+    #: safely under --nda with a local model could later be `deckscope
+    #: chat`-ed straight to a hosted provider, because the record carried
+    #: no memory of the promise it was made under.
+    privacy: Optional[Dict[str, Any]] = None
 
     @property
     def company(self) -> str:
@@ -78,6 +85,7 @@ class AnalysisResult:
                 # renderer showed them was a self-audit find, and the "raw
                 # data" format is the one a script consumes.
                 "market_reports": self.market_reports,
+                "privacy": self.privacy,
                 "references": self.registry.to_dict() if self.registry else {}}
 
     def save_json(self, path: str) -> str:

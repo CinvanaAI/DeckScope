@@ -256,4 +256,14 @@ def findings_for(result, lens: str):
     from ..findings import collect
 
     return collect(result.comparisons.get(lens, {}),
-                   getattr(result, "registry", None))
+                   getattr(result, "registry", None),
+                   vertical=result_vertical(result))
+
+
+def result_vertical(result) -> str:
+    """Which vertical produced a result — 'deck' when unstated, since
+    every result predating typed verticals is a deck analysis."""
+    cfg = getattr(result, "config", None)
+    if isinstance(cfg, dict):
+        return str(cfg.get("vertical") or "deck")
+    return "deck"

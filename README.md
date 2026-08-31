@@ -1,9 +1,18 @@
 # DeckScope
 
-**Market reports where every figure is traceable to the source it came from — and
-pitch decks read against that evidence.**
+**An evidence engine for documents that make claims. A pitch deck, a market
+question — claims go in, and every one comes back checked against public
+sources: every figure traceable to where it came from, every market report
+scoped before it is researched, every unknown named instead of papered over.**
 
-Two halves, and they share one engine.
+The engine is the product; each document type is a *vertical* riding on it.
+Four verticals ship today — **pitch deck diligence**, **scoped market
+reports**, **grant/SBIR proposal review**, and a **nonprofit filings
+check** — and everything below them is shared: one source registry, one
+citation audit, one refusal discipline, one set of typed measurement rules.
+A claim the evidence contradicts is corrected with the source shown; a claim
+only the author can know is asked, not judged; a section with no evidence
+says NOT ESTABLISHED in place of a confident guess.
 
 **Market reports.** Ask what share of a market a company holds, how large it is, or
 what rules govern it, and get a report back with the chart, the numbers, the sources
@@ -33,6 +42,29 @@ The headline is assembled in Python from those counts, not written by a model, s
 cannot claim more than the evidence holds. A run that retrieved no sources says so in
 its first line rather than listing confident findings. See
 [deckscope/findings.py](deckscope/findings.py).
+
+**Grant proposals and nonprofit documents.** `deckscope analyze <file>` reads any
+document, shows its cue arithmetic, routes it to the vertical it matches — or
+refuses, with the scores shown — and runs that vertical's own pipeline. Both new
+verticals run **free, keyless, end to end**:
+
+- **Grants** checks a proposal's novelty, publication, and market-need claims
+  against NSF Award Search, NIH RePORTER, USAspending, and PubMed. An absence
+  claim ("no one has funded this") is *capped* — searchable, never provable —
+  with the databases and hit counts shown.
+- **Nonprofits** reconciles a funding appeal's financial claims against the
+  organization's own IRS Form 990 extract (via ProPublica), fiscal basis
+  labeled on every figure. The *self-filing law*: where the filed number
+  disagrees with the claim, arithmetic overrules the model — and ratios the
+  extract cannot compute are refused with the filing PDF cited, never
+  approximated.
+
+```bash
+deckscope analyze proposal.md --demo      # try either vertical offline, free
+```
+
+Both are **ungraded**: no known-correct case in the evaluation harness holds
+their reports to an answer key yet, and every report they produce says so.
 
 > ### Status: unreleased, and honest about it
 >
@@ -466,6 +498,34 @@ deckscope formats          # list them with descriptions
 ```
 
 More in **[docs/OUTPUTS.md](docs/OUTPUTS.md)**.
+
+---
+
+## Verified connectors — bring the access you already pay for
+
+Public data is the floor; whatever you're licensed for is the ceiling. When
+a report section comes back thin it names the paid source that would sharpen
+it, and if you hold that access, a connector brings it into the evidence
+pipeline — registered, cited, and audited like every other source.
+
+No tool ships every integration, so DeckScope publishes the contract and
+lets a coding agent write the connector:
+
+```bash
+deckscope plugins connect counterpoint    # scaffold + WORK_ORDER.md
+cd <plugins dir>/counterpoint && claude "Complete this per WORK_ORDER.md"
+deckscope plugins verify counterpoint     # the gate — nothing loads without it
+deckscope run deck.pdf --research counterpoint
+```
+
+Agent-written code is model output, so it is never trusted, only verified:
+the conformance harness checks the manifest, statically scans the code (no
+subprocess/sockets/eval/file writes, https only, every contacted host
+declared, no hardcoded credentials, keys read only from the named env var),
+and proves the one behavior this product cannot forgive — a connector must
+**refuse without credentials, never improvise results**. A clean pass writes
+a hash-bound `.verified` marker; any edit afterward invalidates it. Under
+`--nda`, plugins are excluded with all research, automatically.
 
 ---
 
@@ -1066,9 +1126,13 @@ Worth reading before you trust anything it produces.
   > [`benchmarks/README.md`](benchmarks/README.md). Re-driving the benchmark
   > against current prompts is the top open validation item.
 
-  Every prompt and answer is committed under [`benchmarks/`](benchmarks/), and
-  `python scripts/replay_benchmark.py --all` re-scores them offline in CI — so these
-  numbers stop describing the code the moment the code moves.
+  Every prompt and answer is committed under [`benchmarks/`](benchmarks/).
+  `python scripts/replay_benchmark.py --all` verifies the artifacts in CI —
+  and because the prompts have since drifted, CI currently proves the
+  artifacts are intact and the staleness is admitted, not that today's
+  pipeline reproduces these numbers. The replay says exactly which of the
+  two it checked. These numbers stopped describing the code the moment the
+  code moved; re-driving them is the top open validation item.
 
   **The pipeline's single failure is the interesting part.** On `anchored_category` it
   named *LangSmith*, a real product in that category which appears in neither the deck

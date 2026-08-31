@@ -9,6 +9,9 @@ from .common import (ASSESSMENT_WORD, SEVERITY_WORD, alignment_text, as_list,
 
 
 def build_markdown(result, lens: str) -> str:
+    from ..findings import vocab_for
+    from .common import result_vertical
+
     comp = result.comparisons.get(lens, {})
     deck, market = result.deck, result.market
     h = header_block(result, lens)
@@ -17,7 +20,17 @@ def build_markdown(result, lens: str) -> str:
 
     found = findings_for(result, lens)
 
-    add(f"# {h['company']} — Deck vs. Market Analysis")
+    # The words that name the document, its author, and its evidence
+    # universe are the vertical's, not the renderer's — a nonprofit
+    # report that says "ask the founder" is wearing the deck's clothes.
+    vertical = result_vertical(result)
+    v = vocab_for(vertical)
+    doc, subject, ev_word = v["doc"], v["subject"], v["evidence"]
+
+    doc_kind = {"grants": "Proposal vs. Funding Record",
+                "nonprofits": "Claims vs. Filed Record"}.get(
+        vertical, "Deck vs. Market Analysis")
+    add(f"# {h['company']} — {doc_kind}")
     add("")
     add(f"**{h['lens']}**")
     add("")
@@ -39,9 +52,9 @@ def build_markdown(result, lens: str) -> str:
     if found.contested:
         add("## What the evidence contests")
         add("")
-        add("Claims the deck makes that retrieved evidence pushes back on. "
-            "Sourced items link to the bibliography; unsourced ones are readings, "
-            "not findings.")
+        add(f"Claims the {doc} makes that retrieved evidence pushes back "
+            "on. Sourced items link to the bibliography; unsourced ones "
+            "are readings, not findings.")
         add("")
         for f in found.contested:
             cites = (" ".join(f"[{s}]" for s in f.source_ids)
@@ -83,9 +96,9 @@ def build_markdown(result, lens: str) -> str:
         add("")
 
     if found.omissions:
-        add("## What the deck leaves out")
+        add(f"## What the {doc} leaves out")
         add("")
-        add("Present in the market evidence, absent from the deck.")
+        add(f"Present in the retrieved evidence, absent from the {doc}.")
         add("")
         for f in found.omissions:
             cites = (" ".join(f"[{s}]" for s in f.source_ids) if f.source_ids
@@ -96,8 +109,9 @@ def build_markdown(result, lens: str) -> str:
     if found.unverified:
         add("## What could not be checked")
         add("")
-        add("Neither confirmed nor refuted by the evidence retrieved. These are "
-            "research tasks, **not** marks against the company — an analysis must "
+        add(f"Neither confirmed nor refuted by the evidence retrieved. "
+            f"These are research tasks, **not** marks against the "
+            f"{subject} — an analysis must "
             "not convert its own gaps into a negative signal.")
         add("")
         for f in found.unverified:
@@ -134,8 +148,8 @@ def build_markdown(result, lens: str) -> str:
                  "after reading it — allowed to reason beyond the record, "
                  "required to say when it does.")
         if found.evidence_too_thin:
-            frame += (" This run retrieved no cited evidence, so the read "
-                      "rests on the deck and the model's priors alone.")
+            frame += (f" This run retrieved no cited evidence, so the read "
+                      f"rests on the {doc} and the model's priors alone.")
         add(f"> _{frame}_")
         add("")
         add(comp["advisor_read"].strip())
@@ -182,8 +196,11 @@ def build_markdown(result, lens: str) -> str:
     if audit:
         add("## Claim-by-claim audit")
         add("")
-        add("Each claim the deck makes, set against what the market evidence shows.")
+        add(f"Each claim the {doc} makes, set against what the retrieved "
+            "evidence shows.")
         add("")
+        ev_label = ("Market evidence" if vertical == "deck"
+                    else f"Evidence ({ev_word})")
         for c in audit:
             verdict = ASSESSMENT_WORD.get(c.get("assessment", ""), txt(c.get("assessment")))
             add(f"### {txt(c.get('id'))} · {txt(c.get('claim'))}")
@@ -193,7 +210,7 @@ def build_markdown(result, lens: str) -> str:
             if c.get("validation_note"):
                 add(f"*({c['validation_note']})*")
                 add("")
-            add(f"**Market evidence:** {txt(c.get('market_evidence'))}")
+            add(f"**{ev_label}:** {txt(c.get('market_evidence'))}")
             add("")
             if c.get("delta"):
                 add(f"**Gap:** {c['delta']}")
@@ -228,13 +245,14 @@ def build_markdown(result, lens: str) -> str:
     # --------------------------------------------------------- alignment
     align = comp.get("alignment") or {}
     if any(align.values()):
-        add("## Where the deck and the market agree — and don't")
+        add(f"## Where the {doc} and {ev_word} agree — and don't")
         add("")
+        cap = doc[0].upper() + doc[1:]
         for key, title in [
-            ("where_deck_matches_market", "Deck matches the market"),
-            ("where_deck_overstates", "Deck overstates"),
-            ("where_deck_understates", "Deck understates"),
-            ("blind_spots", "Blind spots the deck never addresses"),
+            ("where_deck_matches_market", f"{cap} matches {ev_word}"),
+            ("where_deck_overstates", f"{cap} overstates"),
+            ("where_deck_understates", f"{cap} understates"),
+            ("blind_spots", f"Blind spots the {doc} never addresses"),
         ]:
             items = as_list(align.get(key))
             if items:
@@ -271,17 +289,30 @@ def build_markdown(result, lens: str) -> str:
         add("")
 
     # ----------------------------------------------------- market annex
-    add("---")
-    add("")
-    add("## Annex A — What the market evidence shows")
-    add("")
+    # A non-deck vertical whose market payload has no sizing or landscape
+    # data skips the annex instead of printing a scaffold of dashes — an
+    # empty TAM table on a nonprofit report is furniture from the wrong
+    # room. The deck path renders it unconditionally, as it always has.
+    _annex_keys = ("sizing", "market_definition", "competitive_landscape",
+                   "funding_activity", "research_gaps")
+    render_annex_a = (vertical == "deck"
+                      or any(market.get(k) for k in _annex_keys))
     sizing = market.get("sizing") or {}
-    add(f"**Category:** {txt((market.get('market_definition') or {}).get('category'))}")
-    add("")
-    add(f"**Consensus sizing view:** {txt(sizing.get('consensus_view'))}  ")
-    add(f"**CAGR range:** {txt(sizing.get('cagr_range'))}  ")
-    add(f"**Confidence in sizing:** {txt(sizing.get('sizing_confidence'))}")
-    add("")
+    if render_annex_a:
+        add("---")
+        add("")
+        add("## Annex A — What the market evidence shows")
+        add("")
+        add(f"**Category:** "
+            f"{txt((market.get('market_definition') or {}).get('category'))}")
+        add("")
+        add(f"**Consensus sizing view:** {txt(sizing.get('consensus_view'))}  ")
+        add(f"**CAGR range:** {txt(sizing.get('cagr_range'))}  ")
+        add(f"**Confidence in sizing:** "
+            f"{txt(sizing.get('sizing_confidence'))}")
+        add("")
+    # Every section below gates on its own data, so a non-deck vertical
+    # simply contributes nothing here.
     ests = sizing.get("tam_estimates") or []
     if ests:
         add("| Estimate | Year | Methodology | Source |")
@@ -368,28 +399,44 @@ def build_markdown(result, lens: str) -> str:
     # ------------------------------------------------------- deck annex
     add("---")
     add("")
-    add("## Annex B — What the deck claims")
+    add(f"## Annex B — What the {doc} claims")
     add("")
-    co, mk, tr, ask = (deck.get("company") or {}, deck.get("market") or {},
-                       deck.get("traction") or {}, deck.get("ask") or {})
-    add(f"**{txt(co.get('name'))}** — {txt(co.get('one_liner'))}  ")
-    add(f"Stage: {txt(co.get('stage'))} · Founded: {txt(co.get('founded'))} · "
-        f"Location: {txt(co.get('location'))}")
-    add("")
-    add("| Field | Deck says |")
-    add("|---|---|")
-    add(f"| Problem | {txt((deck.get('problem') or {}).get('statement'))} |")
-    add(f"| Solution | {txt((deck.get('solution') or {}).get('description'))} |")
-    add(f"| TAM claimed | {txt(mk.get('tam_claimed'))} ({txt(mk.get('tam_methodology'))}) |")
-    add(f"| SAM / SOM | {txt(mk.get('sam_claimed'))} / {txt(mk.get('som_claimed'))} |")
-    add(f"| Growth claimed | {txt(mk.get('growth_rate_claimed'))} |")
-    add(f"| Revenue | {txt(tr.get('revenue'))} |")
-    add(f"| Growth | {txt(tr.get('growth'))} |")
-    add(f"| Customers | {txt(tr.get('customers'))} |")
-    add(f"| Retention | {txt(tr.get('retention'))} |")
-    add(f"| Competitors named | {txt((deck.get('competition') or {}).get('named_competitors'))} |")
-    add(f"| Ask | {txt(ask.get('amount'))} at {txt(ask.get('valuation'))} |")
-    add("")
+    if vertical != "deck":
+        # The deck's TAM/traction/ask table is the wrong shape for a
+        # proposal or a donor document; the extracted claims ARE the
+        # annex for those.
+        co2 = deck.get("company") or {}
+        add(f"**{txt(co2.get('name'))}** — {txt(co2.get('one_liner'), dash='')}")
+        add("")
+        add("| ID | Type | Claim |")
+        add("|---|---|---|")
+        for c in (deck.get("claims") or []):
+            add(f"| {txt(c.get('id'))} | {txt(c.get('type'))} | "
+                f"{txt(c.get('claim'))} |")
+        add("")
+    if vertical == "deck":
+        co, mk, tr, ask = (deck.get("company") or {},
+                           deck.get("market") or {},
+                           deck.get("traction") or {},
+                           deck.get("ask") or {})
+        add(f"**{txt(co.get('name'))}** — {txt(co.get('one_liner'))}  ")
+        add(f"Stage: {txt(co.get('stage'))} · Founded: {txt(co.get('founded'))} · "
+            f"Location: {txt(co.get('location'))}")
+        add("")
+        add("| Field | Deck says |")
+        add("|---|---|")
+        add(f"| Problem | {txt((deck.get('problem') or {}).get('statement'))} |")
+        add(f"| Solution | {txt((deck.get('solution') or {}).get('description'))} |")
+        add(f"| TAM claimed | {txt(mk.get('tam_claimed'))} ({txt(mk.get('tam_methodology'))}) |")
+        add(f"| SAM / SOM | {txt(mk.get('sam_claimed'))} / {txt(mk.get('som_claimed'))} |")
+        add(f"| Growth claimed | {txt(mk.get('growth_rate_claimed'))} |")
+        add(f"| Revenue | {txt(tr.get('revenue'))} |")
+        add(f"| Growth | {txt(tr.get('growth'))} |")
+        add(f"| Customers | {txt(tr.get('customers'))} |")
+        add(f"| Retention | {txt(tr.get('retention'))} |")
+        add(f"| Competitors named | {txt((deck.get('competition') or {}).get('named_competitors'))} |")
+        add(f"| Ask | {txt(ask.get('amount'))} at {txt(ask.get('valuation'))} |")
+        add("")
 
     dq = deck.get("deck_quality") or {}
     if any(dq.values()):
@@ -432,7 +479,7 @@ def build_markdown(result, lens: str) -> str:
     add("")
     add(f"*Generated by DeckScope · "
         f"{h['model']} · {h['research']}. AI-generated analysis: verify every figure "
-        f"before relying on it. Not investment advice.*")
+        f"before relying on it. {v['disclaimer']}*")
     return "\n".join(L)
 
 

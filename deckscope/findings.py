@@ -121,10 +121,17 @@ class Findings:
     #: other means research worked and the analysis ignored it.
     evidence_reason: str = "ok"
     counts: Dict[str, int] = field(default_factory=dict)
+    #: Which vertical's vocabulary the sentences are written in.
+    vertical: str = "deck"
+
+    @property
+    def vocab(self) -> Dict[str, str]:
+        return vocab_for(self.vertical)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "headline": self.headline,
+            "vertical": self.vertical,
             "contested": [f.to_dict() for f in self.contested],
             "omissions": [f.to_dict() for f in self.omissions],
             "unverified": [f.to_dict() for f in self.unverified],
@@ -179,15 +186,43 @@ def _count_word(n: int) -> str:
             6: "six", 7: "seven", 8: "eight", 9: "nine"}.get(n, str(n))
 
 
+#: Audience vocabulary per vertical. The findings spine writes the
+#: sentences every renderer repeats, so the words that name the document,
+#: its author, and its evidence universe live here, once — a grants
+#: report that says "ask the founder" about an SBIR applicant, or a
+#: nonprofit report titled around "the deck", is wearing another
+#: vertical's clothes (the wrong-basis-headline class, applied to nouns).
+VOCAB: Dict[str, Dict[str, str]] = {
+    "deck": {"doc": "deck", "author": "founder", "subject": "company",
+             "evidence": "the market",
+             "disclaimer": "Not investment advice."},
+    "grants": {"doc": "proposal", "author": "applicant",
+               "subject": "applicant", "evidence": "the funding record",
+               "disclaimer": "Not funding or legal advice."},
+    "nonprofits": {"doc": "document", "author": "organization",
+                   "subject": "organization",
+                   "evidence": "the filed record",
+                   "disclaimer": "Not financial or giving advice."},
+}
+
+
+def vocab_for(vertical: str) -> Dict[str, str]:
+    """The vocabulary for a vertical; unknown verticals speak the deck's
+    dialect rather than crashing, since the words are presentation."""
+    return VOCAB.get(vertical or "deck", VOCAB["deck"])
+
+
 def collect(comparison: Dict[str, Any],
-            registry: Optional[Any] = None) -> Findings:
+            registry: Optional[Any] = None,
+            vertical: str = "deck") -> Findings:
     """Turn one lens's comparison into the four answers.
 
     `registry` is optional and used only to describe how much evidence the whole
     analysis rested on. Its absence weakens the evidence statement; it never
-    changes a finding.
+    changes a finding. `vertical` picks the vocabulary the sentences are
+    written in — the findings themselves are vertical-blind.
     """
-    out = Findings()
+    out = Findings(vertical=vertical or "deck")
     audit = comparison.get("claim_audit") or []
 
     for row in audit:
@@ -242,7 +277,7 @@ def collect(comparison: Dict[str, Any],
             continue
         out.omissions.append(Finding(
             kind="omission", text=text,
-            why=why or "The deck does not mention this.",
+            why=why or f"The {out.vocab['doc']} does not mention this.",
             source_ids=source_ids,
             # An omission is only "high" when evidence establishes it matters.
             # Promoting an unsourced assertion to a headline finding is how the
@@ -291,10 +326,10 @@ def _next_steps(comparison: Dict[str, Any], found: Findings) -> List[str]:
     for question in (comparison.get("questions") or []):
         text = str(question or "").strip()
         if text and text not in ordered:
-            # Questions are for the founder meeting; without the prefix they
+            # Questions are for the author meeting; without the prefix they
             # rendered as numbered to-dos indistinguishable from diligence
             # actions (seen in a live run's 18-item list).
-            ordered.append(f"Ask the founder: {text}")
+            ordered.append(f"Ask the {found.vocab['author']}: {text}")
 
     # A live self-driven run produced an 18-item wall here: five actions,
     # five founder questions, then EVERY unverified claim restated as its own
@@ -351,7 +386,8 @@ def _evidence_state(found: Findings, registry: Optional[Any]) -> tuple:
                 True, "none_retrieved")
     if grounded == 0 and found.contested:
         return (f"{total} source(s) were retrieved, but none of the contested points "
-                f"below cites one. They are readings of the deck, not findings "
+                f"below cites one. They are readings of the "
+                f"{found.vocab['doc']}, not findings "
                 f"against evidence.", True, "none_cited")
     return (f"{grounded} of {len(found.contested)} contested "
             f"{_plural(len(found.contested), 'point cites', 'points cite')} "
@@ -381,7 +417,8 @@ def compose_headline(found: Findings, comparison: Dict[str, Any]) -> str:
         if found.contested:
             n = len(found.contested)
             observed.append(f"{_count_word(n)} {_plural(n, 'claim reads', 'claims read')} "
-                            f"as overstated against the deck's own internals")
+                            f"as overstated against the "
+                            f"{found.vocab['doc']}'s own internals")
         if found.omissions:
             n = len(found.omissions)
             observed.append(f"{_count_word(n)} apparent "
@@ -394,8 +431,9 @@ def compose_headline(found: Findings, comparison: Dict[str, Any]) -> str:
             lead = ("Evidence was retrieved, but none of the points below cites "
                     "any of it, so nothing here has been tested against a source.")
         else:
-            lead = ("No external evidence was retrieved, so nothing here was "
-                    "tested against anything outside the deck.")
+            lead = (f"No external evidence was retrieved, so nothing here "
+                    f"was tested against anything outside the "
+                    f"{found.vocab['doc']}.")
         if not observed:
             return f"{lead} This report contains questions, not findings."
         joined = _join(observed)
@@ -428,7 +466,7 @@ def compose_headline(found: Findings, comparison: Dict[str, Any]) -> str:
     if found.omissions:
         n = len(found.omissions)
         first = _first_sentence(found.omissions[0].text, 110)
-        parts.append(f"the deck omits {first}"
+        parts.append(f"the {found.vocab['doc']} omits {first}"
                      + (f" and {n - 1} other {_plural(n - 1, 'gap', 'gaps')}"
                         if n > 1 else ""))
 
@@ -442,17 +480,19 @@ def compose_headline(found: Findings, comparison: Dict[str, Any]) -> str:
             # The only thing to report is that nothing could be established.
             # That is a statement about the evidence, not about the company.
             examined = found.counts.get("claims_examined", n)
-            parts.append(f"none of the deck's {examined} examined claims could be "
+            parts.append(f"none of the {found.vocab['doc']}'s {examined} "
+                         f"examined claims could be "
                          f"confirmed or refuted with the evidence retrieved")
 
     if not parts:
         holds = found.counts.get("holds", 0)
         if holds:
-            return (f"Nothing in this deck was contradicted by the evidence "
-                    f"retrieved: {holds} of "
+            return (f"Nothing in this {found.vocab['doc']} was contradicted "
+                    f"by the evidence retrieved: {holds} of "
                     f"{found.counts.get('claims_examined', holds)} claims examined "
                     f"held up. An absence of contradictions is not proof — read "
-                    f"the open questions before concluding the deck is sound.")
+                    f"the open questions before concluding the "
+                    f"{found.vocab['doc']} is sound.")
         return ("No claims could be assessed against the evidence retrieved for "
                 "this run.")
 

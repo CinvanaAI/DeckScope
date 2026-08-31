@@ -82,6 +82,26 @@ class MockProvider(LLMProvider):
             body = json.dumps(_deck_extraction(joined))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
+        if "Grant Analyst" in system:
+            body = json.dumps(_grant_extraction(joined))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
+        if "Grants Synthesist" in system:
+            allowed = self._available_sids(joined)
+            body = json.dumps(self._clamp_citations(
+                _grant_comparison(joined), allowed))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
+        if "Nonprofit Analyst" in system:
+            body = json.dumps(_nonprofit_extraction(joined))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
+        if "Nonprofits Synthesist" in system:
+            allowed = self._available_sids(joined)
+            body = json.dumps(self._clamp_citations(
+                _nonprofit_comparison(joined), allowed))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "Deck Reviser" in system:
             allowed = self._available_sids(joined)
             body = json.dumps(self._clamp_citations(_revision(), allowed))
@@ -225,15 +245,23 @@ class MockProvider(LLMProvider):
             out["claim_consensus"] = [{
                 "id": row.get("id"),
                 "claim": row.get("claim"),
+                # Every surviving panelist appears in a panel-wide table.
+                # The eighth audit caught this fixture presenting a
+                # two-panelist table as the synthesis of a three-model panel.
                 "assessments": {"Panelist A": row.get("assessment"),
-                                "Panelist B": row.get("assessment")},
+                                "Panelist B": row.get("assessment"),
+                                "Panelist C": row.get("assessment")},
                 "consensus": row.get("assessment"),
                 "confidence": row.get("evidence_quality") or "medium",
                 "source_ids": list(row.get("source_ids") or []),
                 "note": row.get("so_what") or "",
             } for row in audit]
-            # The panel's call has to match the analysis it just summarised, or
-            # the consensus disagrees with its own claim rows.
+            # The mock chair deliberately publishes ITS OWN verdict rather
+            # than the vote — the realistic failure a model chair commits
+            # (and did, in the eighth audit's live repro). The deterministic
+            # adjudicator in ensemble.py is what corrects it, and the demo
+            # exists to show that correction firing, not a chair that never
+            # errs.
             verdict = out.setdefault("consensus_verdict", {})
             verdict["call"] = self._compare(prompt).get("verdict", {}).get("call")
         return out
@@ -1998,6 +2026,25 @@ def _open_for(prompt: str) -> dict:
     subject = (_SUBJECT.search(prompt) or [None, "this market"])[1]
     title = (_SECTION.search(prompt) or [None, ""])[1].lower()
 
+    head = title[:44]
+    if "revenue" in head and "unit" not in head:
+        rows = [
+            (f"{subject} revenue share by vendor latest quarter", "competitors"),
+            (f"total {subject} market revenue latest quarter", "sizing"),
+            (f"{subject} average selling price by vendor", "economics"),
+        ]
+        return {"questions": [{"text": q, "beat": b, "weight": "high"}
+                              for q, b in rows]}
+    if ("unit" in head or "shipment" in head or "sold or shipped" in head)             and "revenue" not in head:
+        rows = [
+            (f"{subject} unit shipments market share by vendor latest quarter",
+             "competitors"),
+            (f"how many units of {subject} were sold in the latest quarter",
+             "sizing"),
+            (f"{subject} vendor ranking by shipments", "competitors"),
+        ]
+        return {"questions": [{"text": q, "beat": b, "weight": "high"}
+                              for q, b in rows]}
     if "which market" in title or "boundary" in title:
         rows = [
             (f"what does the {subject} market include and exclude",
@@ -2118,3 +2165,248 @@ def _revision() -> dict:
              "standard": "a percentage with the cohort table behind it; "
                          "'strong' is not a number"}],
     }
+
+
+def _grant_extraction(prompt: str) -> dict:
+    """Stand in for the Grant Analyst. Reads the proposal it is given —
+    the fixture-maturity rule: a mock held to a lower standard than the
+    model it replaces is not standing in for it."""
+    m = re.search(r"BEGIN PROPOSAL[^\n]*\n(.*?)END PROPOSAL", prompt,
+                  re.S)
+    body = m.group(1) if m else prompt
+    # Paragraph-join so a wrapped sentence is one claim, and drop the
+    # authored-sample provenance note — a disclaimer is not a claim.
+    paragraphs = []
+    for block in re.split(r"\n\s*\n", body):
+        joined = " ".join(ln.strip() for ln in block.splitlines()
+                          if ln.strip())
+        if joined and not joined.startswith("*("):
+            paragraphs.append(joined)
+    lines = paragraphs
+    # The H1 is the applicant line wherever screening left it; only an
+    # H1, never a section heading like "## Specific Aims".
+    h1 = re.search(r"^#\s+([^#\n].+)$", body, re.M)
+    title = h1.group(1).strip() if h1 else "the applicant"
+    claims, cid = [], 0
+
+    def add(text, ctype, load="high"):
+        nonlocal cid
+        cid += 1
+        claims.append({"id": f"C{cid}", "claim": text[:220], "type": ctype,
+                       "load_bearing": load,
+                       "verifiability": ("publicly-verifiable"
+                                         if ctype in ("novelty",
+                                                      "publications",
+                                                      "market-need")
+                                         else "founder-only")})
+
+    absence = ("no one has", "no prior", "no existing", "first to",
+               "no nsf", "no federal", "unprecedented", "never been")
+    for ln in lines:
+        ln = re.sub(r"^#+ [^A-Z]*[A-Za-z ]{0,40}?(?=[A-Z][a-z]+ )", "", ln
+                    ).strip() if ln.startswith("#") else ln
+        low = ln.lower()
+        if any(cue in low for cue in absence):
+            add(ln, "novelty")
+        elif "publish" in low or "papers" in low or "peer-review" in low:
+            add(ln, "publications")
+        elif low.startswith("budget") or "$" in ln and "request" in low:
+            add(ln, "budget", "medium")
+        elif "pi " in low or "principal investigator" in low:
+            add(ln, "team-record", "medium")
+        elif "market" in low and any(c.isdigit() for c in ln):
+            add(ln, "market-need")
+    if not claims:
+        add("The proposal makes its case without checkable claims.",
+            "feasibility", "low")
+    topic = " ".join(w for w in re.findall(r"[a-zA-Z-]{4,}", title)[:4])
+    return {"company": {"name": title[:80]},
+            "market": {"category": topic or "the proposed field"},
+            "claims": claims,
+            "research_agenda": {"search_queries": [
+                f"{topic} federal funding awards",
+                f"{topic} prior research publications"]}}
+
+
+def _grant_comparison(prompt: str) -> dict:
+    """Stand in for the Grants Synthesist: reads the claims and the
+    funding-record counts actually present in the prompt."""
+    claims = re.findall(r"- \[(C\d+)\] \((\w[\w-]*)\) (.+)", prompt)
+    totals = re.findall(r"- (\w+) '([^']*)': (\d+) total hit", prompt)
+    sids = sorted({f"S{n}" for n in re.findall(r"^\[S(\d+)\]", prompt,
+                                               re.M)},
+                  key=lambda s: int(s[1:]))
+    first = sids[0] if sids else ""
+    audit = []
+    for cid, ctype, text in claims:
+        row = {"id": cid, "claim": text.strip(), "type": ctype,
+               "materiality": "damaging", "source_ids": [],
+               "assessment": "unverifiable",
+               "so_what": "only the applicant can settle this",
+               "delta": ""}
+        if ctype == "novelty" and totals:
+            src, query, total = totals[0]
+            row["assessment"] = "contradicted"
+            row["market_evidence"] = (
+                f"{src.upper()} returned {total} award(s) matching "
+                f"{query!r} — funded work in this area exists")
+            row["delta"] = (f"claimed absence vs {total} recorded "
+                            f"award(s)")
+            row["source_ids"] = [first] if first else []
+            row["materiality"] = "fatal"
+            row["so_what"] = ("a reviewer will find these awards in one "
+                              "search; the novelty framing fails first "
+                              "contact")
+        elif ctype == "publications" and first:
+            row["assessment"] = "partially-supported"
+            row["market_evidence"] = ("indexed records exist; counts and "
+                                      "attribution need the applicant's "
+                                      "list")
+            row["source_ids"] = [first]
+        audit.append(row)
+    return {"headline": ("The proposal's novelty framing does not survive "
+                         "the public funding record"
+                         if any(r["assessment"] == "contradicted"
+                                for r in audit)
+                         else "The record neither confirms nor contradicts "
+                              "the proposal's central claims"),
+            "verdict": {"call": "REVISE BEFORE SUBMISSION",
+                        "confidence": "medium",
+                        "confidence_rationale": "the record checks are "
+                                                "narrow but decisive"},
+            "claim_audit": audit,
+            "alignment": {"blind_spots": [
+                {"what": "a prior-support section addressing the "
+                         "adjacent funded work",
+                 "why_it_matters": "reviewers check RePORTER and NSF "
+                                   "search before the first page — "
+                                   "address the record before they do"}]},
+            "questions": ["Which of the awards in the record is closest "
+                          "to this aim, and what distinguishes yours?",
+                          "What is the team's own publication list for "
+                          "the last five years?"]}
+
+
+def _nonprofit_extraction(prompt: str) -> dict:
+    """Stand in for the Nonprofit Analyst. Reads the document it is
+    given — sentence-level, because a nonprofit brief packs several
+    distinct financial claims into one paragraph."""
+    m = re.search(r"BEGIN DOCUMENT[^\n]*\n(.*?)END DOCUMENT", prompt,
+                  re.S)
+    body = m.group(1) if m else prompt
+    sentences = []
+    for block in re.split(r"\n\s*\n", body):
+        joined = " ".join(ln.strip() for ln in block.splitlines()
+                          if ln.strip())
+        if not joined or joined.startswith("*(") or joined.startswith("#"):
+            continue
+        sentences.extend(s.strip() for s in
+                         re.split(r"(?<=[.!?])\s+", joined) if s.strip())
+    h1 = re.search(r"^#\s+([^#\n].+)$", body, re.M)
+    title = h1.group(1).strip() if h1 else "the organization"
+    # "Donor Brief: Feeding America (EIN 36-3673599)" → the org name.
+    name = re.sub(r"^[^:]{0,40}:\s*", "", title)
+    name = re.sub(r"\s*\(EIN[^)]*\)\s*$", "", name).strip() or title
+
+    claims, cid = [], 0
+
+    def add(text, ctype):
+        nonlocal cid
+        cid += 1
+        claims.append({
+            "id": f"C{cid}", "claim": text[:220], "type": ctype,
+            "load_bearing": "high",
+            "verifiability": ("publicly-verifiable"
+                              if ctype in ("financials", "compensation",
+                                           "fundraising")
+                              else "organization-only")})
+
+    for s in sentences:
+        if len(claims) >= 8:
+            break
+        low = s.lower()
+        if "of every dollar" in low or "to programs" in low:
+            add(s, "program-ratio")
+        elif (any(c in low for c in ("compensation", "salary"))
+              and any(c in low for c in ("ceo", "chief executive",
+                                         "officer"))):
+            add(s, "compensation")
+        elif "$" in s or "doubled" in low or "tripled" in low:
+            add(s, "financials")
+        elif any(c in low for c in ("serve", "meals", "people facing")):
+            add(s, "impact")
+    if not claims:
+        add("The document makes its case without checkable claims.",
+            "governance")
+    return {"company": {"name": name[:80]},
+            "market": {"category": "charitable giving"},
+            "claims": claims,
+            "research_agenda": {"search_queries": [
+                f"{name} form 990 filings"]}}
+
+
+def _nonprofit_comparison(prompt: str) -> dict:
+    """Stand in for the Nonprofits Synthesist — including the failure
+    mode the self-filing law exists for: like a diplomatic model, it
+    SOFTENS the reconciliation (contradicted → 'partially-supported',
+    not-computable → 'supported'). The deterministic law downstream
+    overrules it, which is exactly what the demo should demonstrate.
+    The demo's honesty lives in the pipeline's guarantee, not in the
+    mock's good behavior."""
+    claims = re.findall(r"- \[(C\d+)\] \((\w[\w-]*)\) (.+)", prompt)
+    recon = {}
+    checker_notes = []
+    for mm in re.finditer(
+            r"- \[(C\d+|checker)\] ([\w-]+): (.+?)"
+            r"(?:\s\(sources:\s([^)]+)\))?$", prompt, re.M):
+        cid, status, because, srcs = mm.groups()
+        entry = {"status": status, "because": because,
+                 "sids": [s.strip() for s in (srcs or "").split(",")
+                          if s.strip()]}
+        if cid == "checker":
+            checker_notes.append(entry)
+        else:
+            recon[cid] = entry
+    audit = []
+    for cid, ctype, text in claims:
+        row = {"id": cid, "claim": text.strip(), "type": ctype,
+               "materiality": "damaging", "source_ids": [],
+               "assessment": "unverifiable",
+               "so_what": "the filings do not measure this",
+               "delta": ""}
+        rec = recon.get(cid)
+        if rec:
+            row["market_evidence"] = rec["because"]
+            row["source_ids"] = rec["sids"]
+            if rec["status"] == "matched":
+                row["assessment"] = "supported"
+                row["so_what"] = "the filed figure agrees"
+            elif rec["status"] == "contradicted":
+                # The softening the law must catch.
+                row["assessment"] = "partially-supported"
+                row["so_what"] = ("directionally consistent with the "
+                                  "filings, if generously read")
+            elif rec["status"] == "not-computable":
+                # The naive read the law must catch.
+                row["assessment"] = "supported"
+                row["so_what"] = "widely reported and plausible"
+        audit.append(row)
+    blind = [{"what": "an operating deficit in the latest filing",
+              "why_it_matters": n["because"],
+              "source_ids": n["sids"]} for n in checker_notes[:1]]
+    return {"headline": ("The brief's financial picture mostly tracks "
+                         "the filings, with points of divergence"),
+            "verdict": {"call": "RECONCILE BEFORE RELYING ON THIS BRIEF",
+                        "confidence": "medium",
+                        "confidence_rationale": "the filings are the "
+                                                "organization's own "
+                                                "sworn record"},
+            "claim_audit": audit,
+            "alignment": {"blind_spots": blind or [
+                {"what": "No filing-year basis stated",
+                 "why_it_matters": "a June fiscal year is not a "
+                                   "calendar year"}]},
+            "questions": ["Which fiscal year does each figure describe, "
+                          "on the organization's June fiscal basis?",
+                          "What does Part IX of the full Form 990 show "
+                          "for program-service expenses?"]}

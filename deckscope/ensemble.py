@@ -783,6 +783,10 @@ class Panel:
                                    "validation": chair_validation.to_dict(),
                                    "citation_audit": (chair_audit.to_dict()
                                                       if chair_audit else None)}
+                report = _adjudicate_consensus(
+                    report,
+                    (result.metrics.get(lens, {}) or {}).get("verdict") or {},
+                    self._log)
                 result.consensus[lens] = report
                 self._log(f"  [{lens}] consensus: "
                           f"{(report.get('consensus_verdict') or {}).get('call', '—')} "
@@ -911,6 +915,54 @@ def measure_agreement(working: List[Panelist], lens: str) -> Dict[str, Any]:
              "error": c["revision_error"]}
             for c in changed if c.get("revision_failed")],
     }
+
+
+def _adjudicate_consensus(report: Dict[str, Any], vote: Dict[str, Any],
+                          log: Callable[[str], None]) -> Dict[str, Any]:
+    """The vote is arithmetic; the chair is a model. On WHO WON, arithmetic
+    wins.
+
+    The eighth external audit reproduced the failure this exists to stop:
+    panelists voted 2-1 for one call, the deterministic metrics computed
+    the modal verdict correctly, and the chair published the OPPOSITE call
+    as "majority" with a rationale claiming two of three panelists had made
+    it. The chair's synthesis is the most-read artifact of the most
+    expensive mode; it does not get to out-vote the recorded vote.
+
+    So: `agreement` is always the computed one; when the vote has a winner
+    (majority or unanimous), the published call IS the modal call; a chair
+    that recommends something different keeps its judgment — visibly, as
+    `chair_recommendation` — but never as the panel's voice. The recorded
+    vote rides on the verdict so a reader can check the arithmetic.
+    """
+    cv = dict(report.get("consensus_verdict") or {})
+    modal = vote.get("modal")
+    agreement = vote.get("agreement")
+    if agreement:
+        cv["agreement"] = agreement
+    if modal and str(agreement).lower() in ("unanimous", "majority"):
+        chair_call = str(cv.get("call") or "").strip()
+        if chair_call and chair_call.upper() != str(modal).upper():
+            report["chair_recommendation"] = {
+                "call": chair_call,
+                "rationale": str(cv.get("rationale") or ""),
+                "note": "The chair's own judgment. It differs from the "
+                        "panel's recorded vote and does not override it.",
+            }
+            cv["call"] = str(modal)
+            cv["rationale"] = (
+                f"The recorded vote: {vote.get('distribution')}. The "
+                f"published call follows the vote. The chair recommended "
+                f"'{chair_call}' instead — reported separately as the "
+                f"chair's recommendation, not the panel's consensus.")
+            log(f"  chair overruled by the vote: chair said '{chair_call}', "
+                f"the panel voted {vote.get('distribution')} — publishing "
+                f"'{modal}'")
+    cv["vote"] = {"distribution": vote.get("distribution"),
+                  "modal": modal,
+                  "per_panelist": vote.get("per_panelist")}
+    report["consensus_verdict"] = cv
+    return report
 
 
 # ================================================================ helpers

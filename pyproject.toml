@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "deckscope"
 version = "0.0.0.dev0"   # unreleased; see README
-description = "Evidence-first market reports and pitch-deck analysis: every figure traceable to its source, every unknown stated."
+description = "An evidence engine for documents that make claims - pitch deck diligence and scoped market reports as verticals: every figure traceable to its source, every unknown stated."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"

@@ -8,6 +8,20 @@ what the market report must contain lives in
 
 ## The product
 
+**An evidence engine: hand it a document that makes claims, and get back
+the claims checked against public sources, the unknowns named, and the
+questions that remain — with every figure traceable.** The sections below
+describe the two verticals that proved the engine: the market report an
+investment bank produces once at enormous cost, and the pitch deck read
+against that evidence. New verticals are declarations over the same
+engine, not new systems — and two more now ride it end to end, free and
+keyless: grant/SBIR proposals against the federal funding record, and
+nonprofit documents against the organization's own IRS filings. Both
+are ungraded until the evaluation harness holds them to an answer key,
+and say so in every report.
+
+## The first vertical pair
+
 **Produce, on demand, for any market, the document an investment bank produces
 once — at enormous cost — when a company goes public.**
 
