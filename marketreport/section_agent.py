@@ -195,7 +195,8 @@ def research_section(section: Section, *, subject: str, place: str = "",
     loop = ResearchLoop(
         researcher=researcher, registry=registry, queue=queue,
         findings=findings, reader=make_reader(provider, on_usage=on_usage),
-        policy=policy, budget=budget, framing=framing or {}, on_event=emit)
+        policy=policy, budget=budget, framing=framing or {},
+        subject=subject, on_event=emit)
     run = loop.run()
     established = list(findings.findings)
 

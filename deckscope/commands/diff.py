@@ -248,7 +248,7 @@ def command(args: Any) -> int:
                or (extractions[0].get("company") or {}).get("name") or "")
 
     body = render_diff(d, Path(old_path).name, Path(new_path).name, company)
-    out_dir = Path(getattr(args, "out", None) or "deckscope_out")
+    out_dir = Path(getattr(args, "out", None) or "deckscope_output")
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / f"{Path(new_path).stem}_diff.md"
     out.write_text(body, encoding="utf-8")

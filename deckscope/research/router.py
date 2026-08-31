@@ -104,14 +104,28 @@ RULES: List[Tuple[str, str, Optional[str], str]] = [
 _COMPILED = [(re.compile(p, re.I), k, b, why) for p, k, b, why in RULES]
 
 
-def classify(text: str, *, params: Optional[Dict[str, Any]] = None) -> Route:
+def classify(text: str, *, params: Optional[Dict[str, Any]] = None,
+             subject: str = "") -> Route:
     """Route a question by its shape. Falls back to search, which is honest.
 
     Search is the fallback rather than the default: everything with a better
     home should have been claimed by a rule above, and anything that reaches the
     bottom genuinely is a qualitative question.
+
+    `subject` is the market the whole run is about, and it is MASKED before
+    the rules run: the words inside a market's own name describe the market,
+    not the question's intent. Without this, every question about "revenue
+    cycle management" matched the filing rule on the word `revenue` and
+    went to EDGAR — regulation questions, cost questions, sizing questions,
+    all of them — and came back as "no backend could answer this", which
+    reads as an absent fact rather than the misrouting it was (seventh
+    external audit).
     """
     question = (text or "").strip()
+    subject = (subject or "").strip()
+    if subject and len(subject) > 3:
+        question = re.sub(re.escape(subject), " ", question,
+                          flags=re.I).strip()
     for pattern, kind, backend, why in _COMPILED:
         if pattern.search(question):
             return Route(kind=kind, backend=backend, because=why,

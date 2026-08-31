@@ -91,6 +91,25 @@ def run_research(*, extraction: Dict[str, Any], provider: Any, researcher: Any,
     registry = registry or SourceRegistry()
     plan = plan or ModelPlan.single(getattr(provider, "config", None) or provider)
     guard = guard or NDAGuard(enabled=False)
+    if guard.enabled:
+        # The library gate. The CLI refuses a hosted model before calling
+        # here, but "the CLI checks" is documentation, not enforcement — the
+        # sixth external audit drove this path with a hosted provider and a
+        # frozen corpus and watched the reader send deck-derived content
+        # out. Every model-facing call in this engine goes through
+        # `provider`, so the engine itself refuses a non-local one, before
+        # the deck, a question, or a corpus snippet reaches anything.
+        from ..tiering import NDAViolation, is_local
+
+        pcfg = getattr(provider, "config", None)
+        if pcfg is None or not is_local(pcfg):
+            raise NDAViolation(
+                "NDA mode: the connected model "
+                f"('{getattr(provider, 'name', 'unknown')}') is not local, "
+                "and every stage of this analysis sends deck-derived "
+                "content to it. Nothing was sent. Connect a local model "
+                "(for example ollama, or the manual spool) or turn NDA "
+                "mode off.")
     # Every model call in this engine reports through one callback, so the
     # cost of a run is measured rather than estimated. A mode compared on
     # quality without its real token count is half an answer.
@@ -151,6 +170,8 @@ def run_research(*, extraction: Dict[str, Any], provider: Any, researcher: Any,
         reader=make_reader(provider, on_usage=track), policy=policy, budget=budget or Budget(),
         dataset_fixtures=dataset_fixtures,
         framing=primary.params() if primary else {},
+        subject=(getattr(primary, "label", "") if primary else
+                 str(((extraction.get("market") or {}).get("category")) or "")),
         on_event=emit)
     research = loop.run()
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, List
 
-from .common import as_list, findings_for, txt
+from .common import as_list, findings_for, txt, safe_cell
 
 
 def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) -> List[str]:
@@ -25,11 +25,11 @@ def render(result, out_dir: Path, base: str, theme: str = "slate", **kw: Any) ->
               first: bool = False):
         ws = wb.active if first else wb.create_sheet()
         ws.title = title[:31]
-        ws.append(headers)
+        ws.append([safe_cell(h) for h in headers])
         for c in ws[1]:
             c.font, c.fill, c.alignment = head_font, head_fill, wrap
         for r in rows:
-            ws.append([txt(v, "") for v in r])
+            ws.append([safe_cell(txt(v, "")) for v in r])
         for i, w in enumerate(widths, 1):
             ws.column_dimensions[get_column_letter(i)].width = w
         for row in ws.iter_rows(min_row=2):

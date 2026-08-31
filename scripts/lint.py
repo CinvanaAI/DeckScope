@@ -343,6 +343,26 @@ def check(path: Path) -> List[Problem]:
                 found.append((path, b.lineno,
                               "multiple statements on one line (E702)"))
 
+    # A module-level constant assigned twice (ruff F811's assignment half).
+    # The sixth external audit found the deck-revision prompts appended to
+    # templates.py under names the panel's prompts already owned — the
+    # second assignment silently won at import time and every panel
+    # revision broke with a KeyError. Only plain `NAME = ...` at module
+    # scope counts: re-binding inside try/except fallbacks lives in
+    # conditional blocks and is untouched.
+    seen_toplevel: dict = {}
+    for stmt in tree.body:
+        if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 \
+                and isinstance(stmt.targets[0], ast.Name):
+            name = stmt.targets[0].id
+            if name in seen_toplevel:
+                found.append((path, stmt.lineno,
+                              f"'{name}' assigned twice at module level "
+                              f"(first at line {seen_toplevel[name]}) — "
+                              "the second silently wins at import"))
+            else:
+                seen_toplevel[name] = stmt.lineno
+
     for line, message in _undefined(tree):
         if not _skipped(text, line):
             found.append((path, line, message))

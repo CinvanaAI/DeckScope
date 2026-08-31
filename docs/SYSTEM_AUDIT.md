@@ -288,3 +288,117 @@ and the benchmark admits its own staleness rather than implying currency.
 What stands between this and "release-ready" is no longer engineering
 hygiene; it is external validation spend: one real-model benchmark re-drive
 and the blind comparison the build plan already describes.
+
+---
+
+# Sixth external audit worked (safety/privacy — 2026-08-31)
+
+A privacy-focused audit of commit `2fa082e`: repository and full history
+scanned (gitleaks, filenames, identities — nothing leaked, no rewrite
+needed), then runtime leakage probed. Verdict accepted in full: no
+published secret, but two real ways NDA mode could still send
+deck-derived content to a hosted model.
+
+**Critical — the NDA gate was CLI-deep, not engine-deep.** The library
+path (`run_research` driven directly, with a frozen corpus) refused web
+research and then handed deck-derived questions and corpus snippets to a
+hosted provider anyway — reproduced by the auditor with one outbound call
+containing a planted confidential claim. The engine now refuses at its
+own front door: under an enabled guard it raises `NDAViolation` before
+the first provider call unless the provider's own config parses as local
+(`tiering.is_local`); a provider with no config is refused, because
+unknown locality is not trusted locality. "The CLI checks" was
+documentation; this is enforcement.
+
+**High — `improve --nda` checked one provider while the pipeline used
+two.** A local main model with a hosted `extract_provider` passed the
+gate and sent the complete deck to the hosted extractor. Both providers
+are now validated, fail-closed, before anything is read. `batch` gained
+the same `--nda` (both providers, research forced off) — a folder of
+inbound decks is exactly where confidential material lives, and it had
+no confidential mode at all.
+
+**The regression the audit caught in CI.** The deck-revision prompts were
+appended to `templates.py` under names the panel's revision prompts
+already owned (`REVISE_SYSTEM`/`REVISE_USER`); the second assignment won
+at import and panel revision died with `KeyError('brief')`. The root
+process failure is recorded here deliberately: after the append, the
+post-change test runs were selected bites that did not include the panel
+files, so a green board was reported from a red tree. Fixes: the deck
+prompts are `DECK_REVISE_*`; the linter now fails any module-level name
+assigned twice (the whole class, not the instance); and the sweep before
+a commit is the full suite, not bites.
+
+Also fixed: spreadsheet formula injection in the batch table
+(`neutralize_cell` — a deck named `=HYPERLINK(...)` becomes inert text in
+both xlsx and csv); `.gitignore` now covers `deckscope_out/` and
+`deck_analysis/`, the directories the new commands actually default to;
+crash reports redact the home directory from argv and traceback and open
+with a review-before-sharing warning.
+
+Board after the cycle: all 47 test files green (full sweep), lint clean,
+claims checker holds, demo / improve-demo / panel-demo exit 0, identity
+sweep clean.
+
+---
+
+# Seventh external audit worked (fresh product audit — 2026-08-31)
+
+A full independent audit of `2fa082e` — the commit BEFORE the sixth
+cycle's fixes landed, so four of its findings (prompt collision, engine
+NDA, improve's extraction provider, batch cell injection, gitignore,
+crash argv) confirmed work already done. The rest was new, and the
+biggest was a release-blocker.
+
+**The wrong-basis chimera.** A revenue-scoped market-share report kept a
+units series, drew the units chart, and stamped "(share of revenue)"
+onto the units leader — Samsung crowned on a basis where the corpus's
+own figures put Apple at 49%. Root cause was a three-part relay:
+`_off_basis` only *caveated* (a warning under a wrong chart does not
+compete with the chart), `_stamp` appended the requested basis to a
+headline built before validation, and the mock shaper's `or groups`
+fallback substituted whatever basis existed. All three are gone: basis
+is now ENFORCED — off-basis series, slices, and figures are excluded
+with a caveat naming where they belong; a panel left with nothing
+on-basis is honestly unanswered ("the sources reached publish the other
+basis"); the headline is rebuilt from the retained series' top slice
+when the crowned leader was excluded; and the stamp runs only after
+enforcement. The mock now honors the job's "measured strictly as"
+declaration and refuses to substitute.
+
+**Panel silent degradation, the half the sixth cycle missed.** The
+prompt collision was already fixed, but the swallow remained: a failed
+revision was a soft `revision_error` while the summary still counted the
+review's CLAIMED position changes — an expensive panel whose central
+phase did nothing reported "3 position(s) changed" and exited 0. Now: a
+claimed change counts only when the revision was actually applied,
+`revision_failures` is a first-class metric, the round log says
+"REVISION FAILED" instead of "held its original position", the summary
+prints each failure, and the panel exits 6 (ran, incomplete) when any
+revision failed.
+
+**Router subject masking.** First-match keyword routing sent every
+question about "revenue cycle management" to EDGAR because the market's
+NAME contains "revenue". The subject is now masked out of the question
+before the rules run — the words in a market's name describe the market,
+not the question's intent. The auditor's full recommendation (typed
+intent routing) stands as the architectural direction in BUILD.md.
+
+Also: `safe_cell` is one shared implementation applied by the main
+workbook renderer AND batch (the sixth cycle fixed batch only); the
+app's and README's privacy sentences now disclose deck-derived search
+queries going to the search service; `run` gained the same fail-closed
+`--nda` as improve/batch/diff; the four new commands default to the
+gitignored `deckscope_output`; the run help's "scores the same" claim
+is reworded to match the README's honest framing, and a new claims-
+checker rule fails any quality claim in cli.py that does not name its
+evaluation.
+
+Accepted as standing architecture directions, not closed: one central
+outbound-policy gateway wrapping every provider and search call; an NDA
+switch in the web app; typed question intent for routing; consolidating
+the overlapping engines around one run model. Recorded in BUILD.md.
+
+Board: all 48 test files green (full sweep), lint clean 198 files (new
+duplicate-assignment rule included), claims checker holds (10 checks),
+demo / panel / improve / report demos all exit 0, identity sweep clean.

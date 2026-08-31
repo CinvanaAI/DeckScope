@@ -706,6 +706,8 @@ class Panel:
                     me.record_revision(lens, revised)
             except Exception as exc:  # noqa: BLE001
                 me.review.setdefault("revision_error", f"{type(exc).__name__}: {exc}")
+                self._log(f"  {me.name}: revision FAILED "
+                          f"({type(exc).__name__}: {exc})")
             finally:
                 try:
                     provider.close()
@@ -714,6 +716,12 @@ class Panel:
 
         _fanout(one, working, self.parallel)
         for p in working:
+            if p.review.get("revision_error"):
+                self._log(f"  {p.name}: REVISION FAILED — "
+                          f"{p.review['revision_error']}. Its original "
+                          f"position stands and is scored as unrevised; "
+                          f"its review concessions moved nothing.")
+                continue
             if not p.revised:
                 self._log(f"  {p.name}: held its original position")
                 continue
@@ -856,7 +864,16 @@ def measure_agreement(working: List[Panelist], lens: str) -> Dict[str, Any]:
         row["id"] = f"K{i}"          # panel-level key, distinct from local C-IDs
 
     changed = [{"panelist": p.label, "name": p.name,
-                "changes": len(p.review.get("position_changes") or []),
+                # A change CLAIMED in review counts only if the revision was
+                # actually applied. The seventh external audit watched every
+                # revision fail (soft revision_error) while the summary still
+                # reported positions changed — review concessions are
+                # intentions, and an intention that never produced a revised
+                # analysis moved nothing.
+                "changes": (len(p.review.get("position_changes") or [])
+                            if getattr(p, "revised", None) else 0),
+                "revision_failed": bool(p.review.get("revision_error")),
+                "revision_error": str(p.review.get("revision_error") or ""),
                 "held": len(p.review.get("positions_held") or []),
                 "score_before": _score_of(p.result.comparisons.get(lens, {})),  # type: ignore[union-attr]
                 "score_after": _score_of(p.final(lens)),
@@ -889,6 +906,10 @@ def measure_agreement(working: List[Panelist], lens: str) -> Dict[str, Any]:
         },
         "movement": changed,
         "total_position_changes": sum(c["changes"] for c in changed),
+        "revision_failures": [
+            {"panelist": c["panelist"], "name": c["name"],
+             "error": c["revision_error"]}
+            for c in changed if c.get("revision_failed")],
     }
 
 

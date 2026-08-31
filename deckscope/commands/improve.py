@@ -364,7 +364,7 @@ def write_pptx(rev: Dict[str, Any], path: Path) -> Optional[Path]:
 
 def _reviser(provider, cache_dir, verbose):
     from ..agents.base import Agent
-    from ..prompts.templates import REVISE_SYSTEM, REVISE_USER
+    from ..prompts.templates import DECK_REVISE_SYSTEM, DECK_REVISE_USER
     from ..schemas import REVISION_SCHEMA, coerce, schema_block
 
     class DeckReviser(Agent):
@@ -372,13 +372,13 @@ def _reviser(provider, cache_dir, verbose):
         label = "Deck Reviser"
 
         def run(self, brief: str, deck_text: str) -> Dict[str, Any]:
-            user = REVISE_USER.format(
+            user = DECK_REVISE_USER.format(
                 schema=schema_block(REVISION_SCHEMA, "DeckRevision"),
                 brief=brief, deck_text=deck_text[:60_000])
             self.emit("rebuilding the deck against the audit")
             result = self.cached_json(
                 self.cache_key(brief=brief, deck=deck_text[:60_000]),
-                lambda: self.complete_json(REVISE_SYSTEM, user))
+                lambda: self.complete_json(DECK_REVISE_SYSTEM, user))
             return coerce(result, REVISION_SCHEMA)
 
     return DeckReviser(provider, cache_dir=cache_dir, verbose=verbose)
@@ -435,13 +435,21 @@ def command(args: Any) -> int:
             cfg.research.name = "none"
         cfg.__post_init__()
 
-    if nda and not is_local(cfg.provider):
-        _err(f"--nda refused: the configured model ('{cfg.provider.name}') "
-             "is not local, and improve sends the deck and the audit to "
-             "it. Use a local model or drop --nda.")
-        return 4
+    if nda:
+        # BOTH providers: the pipeline sends the full deck to
+        # `extract_provider` when one is configured (sixth external audit —
+        # a local main model with a hosted extraction model passed the old
+        # single-provider check and shipped the deck out anyway).
+        for label, pc in (("model", cfg.provider),
+                          ("extraction model", cfg.extract_provider)):
+            if pc is not None and not is_local(pc):
+                _err(f"--nda refused: the configured {label} "
+                     f"('{pc.name}') is not local, and improve sends the "
+                     "deck and the audit to it. Use a local model or drop "
+                     "--nda.")
+                return 4
 
-    out_dir = Path(getattr(args, "out", None) or "deckscope_out")
+    out_dir = Path(getattr(args, "out", None) or "deckscope_output")
     out_dir.mkdir(parents=True, exist_ok=True)
     slug = deck_path.stem
 

@@ -396,13 +396,22 @@ def _stamp(panel: Panel, measure: Any) -> None:
 
 
 def _off_basis(panel: Panel, measure: Any, axis: Any = None) -> None:
-    """Flag figures that read as a measure this report is not on.
+    """REMOVE material that reads as a measure this report is not on.
 
-    Cue matching, and openly so — it catches a source that announced its own
-    basis in words, which is the common case and the only one detectable from
-    text. It cannot catch a bare number silently on the wrong footing; nothing
-    can, which is why the report is scoped before the search rather than
-    filtered after it.
+    The seventh external audit demonstrated why a warning is not enough: a
+    revenue-scoped report kept a units series, drew the units chart, and
+    stamped "(share of revenue)" onto a headline the units data produced —
+    Samsung led the chart while the corpus's own revenue figures had Apple
+    at 49%. A caveat under a wrong chart does not compete with the chart.
+    So the scope is enforced: an off-basis series or figure is excluded,
+    the exclusion is stated (with where that material belongs), and a panel
+    left with nothing on its own basis says so instead of answering.
+
+    Cue matching, and openly so — it catches a source that announced its
+    own basis in words, which is the common case and the only one
+    detectable from text. It cannot catch a bare number silently on the
+    wrong footing; nothing can, which is why the report is scoped before
+    the search rather than filtered after it.
     """
     lookup = axis.get if axis is not None else (lambda k: None)
     suspects = [m for m in (lookup(k) for k in measure.confusable_with)
@@ -411,21 +420,82 @@ def _off_basis(panel: Panel, measure: Any, axis: Any = None) -> None:
         return
 
     mine = set(measure.cues)
+
+    def reads_as_other(text: str):
+        low = text.lower()
+        if any(cue in low for cue in mine):
+            return None
+        for other in suspects:
+            if any(cue in low for cue in other.cues):
+                return other
+        return None
+
+    kept_series = []
     for series in panel.series:
-        for slice_ in series.slices:
-            text = f"{series.label} {series.measure} {slice_.label}".lower()
-            if any(cue in text for cue in mine):
-                continue
-            for other in suspects:
-                if any(cue in text for cue in other.cues):
+        other = reads_as_other(f"{series.label} {series.measure}")
+        if other is None:
+            # Series is on-basis (or silent); screen its slices.
+            kept_slices = []
+            for slice_ in series.slices:
+                s_other = reads_as_other(
+                    f"{series.label} {series.measure} {slice_.label}")
+                if s_other is None:
+                    kept_slices.append(slice_)
+                else:
                     panel.caveats.append(
-                        f"'{slice_.label}' in the {series.label.lower()} "
-                        f"series reads as {other.label}, but this report is "
-                        f"{measure.label}. Those measure different "
-                        f"populations. Check it against its source before "
-                        f"relying on it, or read the {other.label} report "
-                        f"instead.")
-                    break
+                        f"Excluded: '{slice_.label}' read as "
+                        f"{s_other.label}, and this report is strictly "
+                        f"{measure.label} — it belongs in the "
+                        f"{s_other.label} report.")
+            series.slices = kept_slices
+            if kept_slices:
+                kept_series.append(series)
+        else:
+            panel.caveats.append(
+                f"Excluded: the '{series.label}' series read as "
+                f"{other.label}, and this report is strictly "
+                f"{measure.label}. Those measure different populations "
+                f"and can name different leaders — see the "
+                f"{other.label} report for that series.")
+    panel.series = kept_series
+
+    kept_figures = []
+    for fig in panel.figures:
+        other = reads_as_other(
+            f"{getattr(fig, 'label', '')} {getattr(fig, 'value_text', '')}")
+        if other is None:
+            kept_figures.append(fig)
+        else:
+            panel.caveats.append(
+                f"Excluded: '{getattr(fig, 'label', '')}' read as "
+                f"{other.label}, not {measure.label}.")
+    panel.figures = kept_figures
+
+    # The headline must be derivable from what SURVIVED. If nothing did,
+    # the honest answer is no answer; if the named leader no longer appears
+    # anywhere on-basis, the headline is rebuilt from the retained series.
+    if not panel.series and not panel.figures:
+        # `answered` derives from headline+problem; clearing one and setting
+        # the other makes this panel honestly unanswered.
+        panel.headline = ""
+        others = ", ".join(sorted({m.label for m in suspects}))
+        panel.problem = (
+            f"every figure the research produced read as {others} rather "
+            f"than {measure.label}. The sources reached publish the other "
+            f"basis for this market; ask for that report, or supply a "
+            f"{measure.label} source.")
+        return
+
+    head = (panel.headline or "").lower()
+    top = max((s2 for s in panel.series for s2 in s.slices),
+              key=lambda x: (getattr(x, "value", 0) or 0), default=None)
+    if head and top is not None:
+        leader_word = (top.label.split() or [""])[0].lower()
+        if leader_word and leader_word not in head:
+            # The headline named a leader the surviving on-basis data does
+            # not crown — it was derived from what was excluded. Rebuild it
+            # from the retained series' top slice.
+            panel.headline = f"{top.label} leads this market"
 
 
 def _or_list(keys: Sequence[str], axis: Any = None) -> str:
@@ -597,7 +667,8 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
     loop = ResearchLoop(
         researcher=researcher, registry=registry, queue=queue,
         findings=findings, reader=make_reader(provider, on_usage=on_usage),
-        policy=policy, budget=budget, framing=framing or {}, on_event=emit)
+        policy=policy, budget=budget, framing=framing or {},
+        subject=market, on_event=emit)
     run = loop.run()
 
     established = list(findings.findings)
@@ -642,14 +713,15 @@ def run_specialist(spec: Specialist, *, market: str, place: str = "",
         return panel
 
     panel = build_panel(question_text, established, shaped, agent=spec.name)
-    _stamp(panel, measure)
 
     # An off-basis figure is the specific corruption this split exists to
     # stop, and it is invisible once drawn: a chart labelled "share of units"
-    # carrying a revenue number looks exactly like a correct chart. Checked
-    # rather than instructed, because instruction is advisory.
+    # carrying a revenue number looks exactly like a correct chart. ENFORCED
+    # before the measure is stamped, so the basis suffix can never be
+    # appended to a headline the wrong-basis data produced (seventh audit).
     if measure is not None:
         _off_basis(panel, measure, get_dimension(spec.dimension))
+    _stamp(panel, measure)
 
     note = EVIDENCE_NOTES.get(spec.evidence)
     if note:

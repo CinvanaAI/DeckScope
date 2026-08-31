@@ -1826,8 +1826,20 @@ def _shape_for(prompt: str) -> dict:
     # section of a report — including "which market is this", which is a
     # definitional question and has no chart at all.
     job = (_JOB.search(prompt) or [None, ""])[1].lower()
-    wants_units = "ships or sells the most" in job or "units" in job[:60]
-    wants_revenue = "takes the most money" in job or "revenue" in job[:60]
+    # The specialist rewrites the job as "measured strictly as <label>"
+    # when a measure scopes the report; that declaration is authoritative.
+    # The old first-60-characters keyword race matched "units" in a job
+    # whose declared measure was revenue (seventh external audit).
+    declared = re.search(r"measured strictly as ([a-z ]+?)(?:\s*[—,-]|$)",
+                         job, re.I | re.M)
+    declared_label = (declared.group(1).strip().lower() if declared else "")
+    if "revenue" in declared_label:
+        wants_units, wants_revenue = False, True
+    elif "unit" in declared_label:
+        wants_units, wants_revenue = True, False
+    else:
+        wants_units = "ships or sells the most" in job or "units" in job[:60]
+        wants_revenue = "takes the most money" in job or "revenue" in job[:60]
     definitional = ("include and exclude" in job or "inside this market" in job
                     or "what market is meant" in job)
     if definitional:
@@ -1912,10 +1924,25 @@ def _shape_for(prompt: str) -> dict:
             unique.append(row)
         groups[name] = unique
 
-    if wants_units:
-        groups = {k: v for k, v in groups.items() if k == "Units"} or groups
-    elif wants_revenue:
-        groups = {k: v for k, v in groups.items() if k == "Revenue"} or groups
+    if wants_units or wants_revenue:
+        wanted = "Units" if wants_units else "Revenue"
+        scoped = {k: v for k, v in groups.items() if k == wanted}
+        if not scoped and groups:
+            # The honest answer when only the other basis exists: no
+            # series, and a caveat saying which report has the data. The
+            # old code fell back to whatever groups existed — which is how
+            # a revenue report drew a units chart and crowned the units
+            # leader "(share of revenue)" (seventh external audit).
+            have = ", ".join(sorted(groups))
+            return {"headline": "", "form": "table", "series": [],
+                    "figures": [{"label": row["statement"][:48],
+                                 "finding_id": row["id"]}
+                                for row in leftovers[:4]],
+                    "caveats": [
+                        f"The sources retrieved publish {have.lower()} "
+                        f"share, not {wanted.lower()} share — nothing here "
+                        f"is on this report's basis."]}
+        groups = scoped
 
     series = []
     for name, members in list(groups.items())[:2]:

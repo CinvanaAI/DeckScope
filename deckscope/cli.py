@@ -212,10 +212,15 @@ def build_parser() -> argparse.ArgumentParser:
                      help="pipeline = three isolated agents, and the only mode "
                           "that produces the standalone market analysis "
                           "(saturation, absorption risk, open-source landscape); "
-                          "baseline = one prompt, ~1/6 the input tokens, and "
-                          "scores the same on every measured dimension; "
+                          "baseline = one prompt, ~1/6 the input tokens; in "
+                          "the recorded offline evaluation the two tie, and "
+                          "the last real-model benchmark is stale — see the "
+                          "README's honest-evaluation section; "
                           "both = run each and compare")
     run.add_argument("--config", default=None, help="Use a specific config file")
+    run.add_argument("--nda", action="store_true",
+                     help="Refuse non-local models and disable web research "
+                          "— the deck must not leave this machine")
 
     panel = sub.add_parser(
         "panel",
@@ -321,6 +326,10 @@ def build_parser() -> argparse.ArgumentParser:
     batch.add_argument("--format", action="append",
                        help="Per-deck output format(s); repeatable "
                             "(default: markdown)")
+    batch.add_argument("--nda", action="store_true",
+                       help="Refuse non-local models and disable web "
+                            "research — inbound decks must not leave "
+                            "this machine")
 
     improve = sub.add_parser(
         "improve",
@@ -675,13 +684,29 @@ def _crash_report(exc: BaseException) -> Optional[Path]:
     import traceback
 
     try:
+        home = str(Path.home())
+
+        def _redact(text: str) -> str:
+            # The report asks to be shared; the username in every path does
+            # not need to travel with it (sixth external audit). Deck names
+            # and other argument values may still be sensitive, so the
+            # header says to review — redaction here is best-effort, not a
+            # promise.
+            for variant in (home, home.replace("\\", "/"),
+                            home.replace("/", "\\")):
+                if variant:
+                    text = text.replace(variant, "~")
+            return text
+
         path = settings.app_dir() / f"crash-{time.strftime('%Y%m%d-%H%M%S')}.log"
         with open(path, "w", encoding="utf-8") as fh:
             fh.write(f"DeckScope crash report — {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
                      f"version: {__version__}\n"
                      f"python:  {platform.python_version()} on {platform.platform()}\n"
-                     f"argv:    {sys.argv[1:]}\n\n")
-            fh.write(traceback.format_exc())
+                     "NOTE: review before sharing — file names and argument\n"
+                     "      values below may name confidential material.\n"
+                     f"argv:    {_redact(str(sys.argv[1:]))}\n\n")
+            fh.write(_redact(traceback.format_exc()))
         return path
     except Exception:  # noqa: BLE001 - the fallback is the caller's raw print
         return None
@@ -2224,6 +2249,24 @@ def _run(args: Any) -> int:
             return 1
         cfg = settings.settings_to_runconfig(overrides)
 
+    if getattr(args, "nda", False):
+        # Same fail-closed gate as improve/batch/diff, on the main workflow
+        # (seventh external audit: NDA coverage was fragmented across
+        # selected commands while the flagship one had none). Both
+        # providers, before anything is read; deck-derived search queries
+        # stay home.
+        from .tiering import is_local
+
+        for label, pc in (("model", cfg.provider),
+                          ("extraction model", cfg.extract_provider)):
+            if pc is not None and not is_local(pc):
+                _out(f"--nda refused: the configured {label} "
+                     f"('{pc.name}') is not local, and this run sends the "
+                     "deck to it. Use a local model (ollama, manual) or "
+                     "drop --nda.")
+                return 4
+        cfg.research.name = "none"
+
     _warn_if_stub(cfg, demo=bool(getattr(args, "demo", False)))
     mode = getattr(args, "mode", "pipeline")
     replay = None
@@ -2677,7 +2720,25 @@ def _panel(args: Any) -> int:
         return 1
 
     _print_panel_summary(result, files)
-    return 0
+    code = _panel_exit_code(result)
+    failures = _revision_failures(result)
+    if failures and code == 0:
+        # "Ran correctly, report incomplete" (exit 6): the review round
+        # produced concessions, but a revision phase failed, so the final
+        # positions are pre-review. Returning success here is how the
+        # seventh external audit got an expensive panel whose central
+        # phase silently did nothing.
+        _out(f"  ⚠ {len(failures)} revision(s) failed — those positions "
+             "are pre-review. Exit 6 (incomplete).")
+        return 6
+    return code
+
+
+def _revision_failures(result: Any) -> list:
+    out = []
+    for lens_metrics in (getattr(result, "metrics", None) or {}).values():
+        out.extend((lens_metrics or {}).get("revision_failures") or [])
+    return out
 
 
 def _panel_exit_code(result: Any) -> int:
@@ -2717,6 +2778,10 @@ def _print_panel_summary(result: Any, files: List[str]) -> None:
         score = m.get("score") or {}
         _out(f"    spread {score.get('spread', '—')} pts ({score.get('convergence', '—')})"
               f" · {m.get('total_position_changes', 0)} position(s) changed after review")
+        for rf in m.get("revision_failures") or []:
+            _out(f"    ⚠ {rf.get('name')}: revision FAILED "
+                 f"({str(rf.get('error'))[:70]}) — its position is "
+                 f"pre-review")
         contested = m.get("contested_claims") or []
         if contested:
             _out(f"    contested claims: {', '.join(contested)}")

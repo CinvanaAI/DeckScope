@@ -296,6 +296,18 @@ generic and sits upstream of the research-loop, evidence-design and
 mode-comparison pins, so this is an investigation, not a patch; it must
 not be closed by teaching the fixture the test answers.
 
+## Architecture directions accepted from the seventh audit (open)
+
+Named as the right long-term shape; each is real work, none is closed:
+one outbound-policy gateway that every model and search call passes
+through (NDA and data-taint enforced at the socket, not per call site);
+an NDA/local-only switch in the web app; typed question intent
+(subject/intent/metric) replacing keyword routing; and consolidating the
+deck orchestrator, research loop, and market-report framework around one
+run model with market report / panel / batch / improve as configurations
+of it. The subject-mask router fix, the engine NDA gate, and the shared
+safe_cell are the tactical layer of these, already shipped.
+
 ## Standing constraints
 
 These are not features. Breaking one is a defect regardless of what it buys.

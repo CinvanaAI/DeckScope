@@ -240,7 +240,7 @@ def command(args: Any) -> int:
 
     body = render_audit(a, report.name, len(registry.sources),
                         structured_note)
-    out_dir = Path(getattr(args, "out", None) or "deckscope_out")
+    out_dir = Path(getattr(args, "out", None) or "deckscope_output")
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / f"{report.stem}_audit.md"
     out.write_text(body, encoding="utf-8")

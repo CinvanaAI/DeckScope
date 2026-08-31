@@ -156,6 +156,19 @@ def txt(value: Any, dash: str = "—") -> str:
     return str(value)
 
 
+def safe_cell(v: Any) -> Any:
+    """Spreadsheet formula-injection defense, shared by every xlsx/csv
+    writer (seventh external audit: the batch table was fixed, the main
+    workbook renderer still wrote raw cells). Deck names, company names,
+    verdicts and error strings are attacker-reachable; a cell starting
+    with = + - @ (or tab/CR) executes as a formula in Excel and in most
+    CSV importers. A leading apostrophe renders it inert; non-strings
+    pass through untouched."""
+    if isinstance(v, str) and v[:1] in ("=", "+", "-", "@", "\t", "\r"):
+        return "'" + v
+    return v
+
+
 SAFE_URL_SCHEMES = ("http://", "https://", "mailto:")
 
 

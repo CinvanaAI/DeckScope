@@ -325,6 +325,7 @@ flags figures with no source in the sentence, structurally.
 
 ```bash
 deckscope batch ./inbound_decks --out screening
+deckscope batch ./inbound_decks --nda   # refuses non-local models outright
 deckscope diff deck_v1.pdf deck_v2.pdf
 deckscope audit-report analyst_memo.md --sources sources.json
 ```
@@ -359,8 +360,10 @@ deckscope app
 ```
 
 Opens a window in your browser. Drag a deck in, pick what you want, press the button.
-It runs entirely on your own machine — nothing is uploaded anywhere except to the AI
-service you configured.
+It runs entirely on your own machine — nothing is uploaded anywhere except
+deck text to the AI service you configured and, when web research is on,
+short deck-derived search queries to your configured search service
+(disable research or use `--nda` paths to keep everything home).
 
 ---
 

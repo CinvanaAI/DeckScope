@@ -116,6 +116,11 @@ _COLUMNS = ["company", "deck", "verdict", "confidence", "contested",
             "out_dir", "error"]
 
 
+# One shared implementation for every spreadsheet writer (seventh audit);
+# the name is kept because it is pinned by the sixth audit's tests.
+from ..render.common import safe_cell as neutralize_cell  # noqa: E402
+
+
 def write_table(rows: List[Dict[str, Any]], out_dir: Path) -> Path:
     """xlsx when openpyxl is present, CSV otherwise — the table is the
     deliverable an associate pastes into the fund's tracker."""
@@ -128,7 +133,8 @@ def write_table(rows: List[Dict[str, Any]], out_dir: Path) -> Path:
         ws.title = "screening"
         ws.append([c.replace("_", " ") for c in _COLUMNS])
         for r in rows:
-            ws.append([r.get(c, "") for c in _COLUMNS])
+            ws.append([neutralize_cell(r.get(c, ""))
+                       for c in _COLUMNS])
         p = out_dir / "summary.xlsx"
         wb.save(p)
         return p
@@ -140,7 +146,7 @@ def write_table(rows: List[Dict[str, Any]], out_dir: Path) -> Path:
             w = csv.DictWriter(fh, fieldnames=_COLUMNS, extrasaction="ignore")
             w.writeheader()
             for r in rows:
-                w.writerow(r)
+                w.writerow({k: neutralize_cell(v) for k, v in r.items()})
         return p
 
 
@@ -168,13 +174,29 @@ def command(args: Any) -> int:
              f"(looked for {', '.join(sorted(SUPPORTED_EXTENSIONS))}).")
         return 2
 
-    out_root = Path(getattr(args, "out", None) or "deckscope_out")
+    out_root = Path(getattr(args, "out", None) or "deckscope_output")
     out_root.mkdir(parents=True, exist_ok=True)
     formats = list(getattr(args, "format", None) or ["markdown"])
 
     cfg0 = load_config(getattr(args, "config", None))
     if getattr(args, "provider", None):
         cfg0.provider.name = args.provider
+
+    nda = bool(getattr(args, "nda", False))
+    if nda:
+        # A folder of INBOUND decks is exactly where confidential material
+        # lives (sixth external audit). Both providers, fail closed, before
+        # a single deck is read.
+        from ..tiering import is_local
+
+        for label, pc in (("model", cfg0.provider),
+                          ("extraction model", cfg0.extract_provider)):
+            if pc is not None and not is_local(pc):
+                _err(f"--nda refused: the configured {label} "
+                     f"('{pc.name}') is not local, and batch sends every "
+                     "deck in the folder to it. Use a local model or drop "
+                     "--nda.")
+                return 4
     provider = get_provider(cfg0.extract_provider or cfg0.provider)
 
     lens = (getattr(args, "lens", None) or ["investor"])
@@ -193,6 +215,9 @@ def command(args: Any) -> int:
                 cfg.provider.name = args.provider
             cfg.deck_path = str(deck)
             cfg.lenses = [lens]
+            if nda:
+                # Search queries are deck-derived; under NDA they stay home.
+                cfg.research.name = "none"
             cfg.__post_init__()
             result = Pipeline(cfg, provider=provider).run()
             deck_out.mkdir(parents=True, exist_ok=True)

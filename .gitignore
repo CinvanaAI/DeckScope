@@ -8,7 +8,9 @@ venv/
 .deckscope_cache/
 .cache/
 deckscope_output/
+deckscope_out/
 deckscope_demo_output/
+deck_analysis/
 deckscope_exchange/
 .env
 *.log

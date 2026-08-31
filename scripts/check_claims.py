@@ -276,7 +276,36 @@ def storage_inventory_is_complete(root: Path) -> List[str]:
     return problems
 
 
+def help_text_carries_no_unqualified_quality_claim(root: Path) -> List[str]:
+    """The CLI help must not assert quality parity as settled fact.
+
+    The seventh external audit found `run --help` saying the baseline
+    "scores the same on every measured dimension" while the README
+    honestly calls the recorded evaluation a mock tie and the real-model
+    benchmark stale. Help text is the most-read sentence in the product;
+    it does not get to be more confident than the evidence page. Any
+    quality comparison in cli.py must name the evaluation it comes from
+    (the word "mock", "offline", "recorded" or "stale" nearby), or say
+    nothing.
+    """
+    src = (root / "deckscope" / "cli.py").read_text(encoding="utf-8")
+    problems = []
+    for needle in ("scores the same", "same quality", "no quality difference",
+                   "identical quality"):
+        for i, line in enumerate(src.splitlines(), 1):
+            if needle in line.lower():
+                window = "\n".join(src.splitlines()[max(0, i - 3):i + 3]).lower()
+                if not any(w in window for w in
+                           ("mock", "offline", "recorded", "stale")):
+                    problems.append(
+                        f"cli.py:{i} asserts '{needle}' without naming the "
+                        f"evaluation it rests on — the README calls that "
+                        f"evidence a mock tie with a stale real benchmark")
+    return problems
+
+
 CHECKS: List[Callable[[Path], List[str]]] = [
+    help_text_carries_no_unqualified_quality_claim,
     audit_gate_language,
     benchmark_staleness_admitted,
     storage_under_app_dir,

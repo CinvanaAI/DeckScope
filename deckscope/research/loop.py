@@ -143,12 +143,14 @@ class ResearchLoop:
                  budget: Optional[Budget] = None,
                  dataset_fixtures: Optional[Dict[str, Any]] = None,
                  framing: Optional[Dict[str, Any]] = None,
+                 subject: str = "",
                  on_event: Optional[Callable[[str], None]] = None) -> None:
         self.researcher = researcher
         self.registry = registry
         self.queue = queue
         self.findings = findings
         self.reader = reader
+        self.subject = subject
         self.policy = policy or SecurityPolicy()
         self.budget = budget or Budget()
         self.dataset_fixtures = dataset_fixtures or {}
@@ -199,7 +201,8 @@ class ResearchLoop:
     def _work(self, question) -> None:
         #: Set by the retrieval helpers when there was nothing new to fetch.
         self._repeated = False
-        route = router.classify(question.text, params=self.framing)
+        route = router.classify(question.text, params=self.framing,
+                                 subject=self.subject)
         self._emit(f"[{question.beat}] {question.text}  →  {route.kind}")
 
         try:

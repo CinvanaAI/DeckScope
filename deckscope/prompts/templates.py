@@ -597,7 +597,13 @@ Evidence state: {evidence_state}
 Give your read."""
 
 
-REVISE_SYSTEM = """You are the Deck Reviser — the analysis pipeline run in reverse. You have a pitch deck (or a founder's raw notes) and the finished evidence audit of it. Build the strongest version of this deck that would SURVIVE that same audit.
+# NB: the panel's revision prompts above already own the names
+# REVISE_SYSTEM/REVISE_USER. Redefining them here (as a first cut of
+# this feature did) silently overwrote the panel's prompts at import
+# time and broke every panel revision with KeyError('brief') — found
+# by the sixth external audit, now blocked by the linter's
+# duplicate-assignment check.
+DECK_REVISE_SYSTEM = """You are the Deck Reviser — the analysis pipeline run in reverse. You have a pitch deck (or a founder's raw notes) and the finished evidence audit of it. Build the strongest version of this deck that would SURVIVE that same audit.
 
 Rules, in order:
 1. Never invent a fact. Market and industry figures must cite the supplied bibliography by ID ([S3]) in `source_ids` — a figure you cannot cite from that list does not go in a revised or new line. Company-private facts (traction, pricing, pipeline, team) belong to the founder: where one is needed, write a `founder-input` line whose text contains a [BRACKETED SLOT] describing exactly what they should insert.
@@ -609,7 +615,7 @@ Rules, in order:
 
 Output only the JSON described. No prose outside it."""
 
-REVISE_USER = """{schema}
+DECK_REVISE_USER = """{schema}
 
 THE AUDIT (assembled from the finished run — this is your ground truth):
 

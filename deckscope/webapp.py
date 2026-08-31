@@ -1073,8 +1073,11 @@ directly, further down the page.</div>
     <p>PDF, PowerPoint, Word, Markdown or text — or click to browse</p>
     <p id="chosen" class="hint"></p>
   </div>
-  <p class="hint">The deck never leaves this machine except as text sent to the
-  AI service you configured. Nothing is uploaded anywhere else, and this page
+  <p class="hint">The deck never leaves this machine except as text sent to
+  the AI service you configured — and, when web research is enabled, short
+  search queries derived from the deck's category and claims go to your
+  configured search service. Disable research (or use a local model) to keep
+  everything home. Nothing else is uploaded anywhere, and this page
   itself runs locally.</p>
   <input id="file" type="file" class="hidden"
          accept=".pdf,.pptx,.docx,.md,.txt,.html,.json">
