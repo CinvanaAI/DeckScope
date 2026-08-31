@@ -22,3 +22,6 @@ pptx_renderer_stub.txt
 # Local-only helper files, not part of the project
 PUBLISHING.md
 publish-to-github.bat
+
+# Local commit-message working file (read by git commit -F)
+COMMIT_MSG.txt
