@@ -273,7 +273,14 @@ def sizing_top_down(*, market: MarketDefinition, question: StandingQuestion,
         question_id=question.id, kind=RETRIEVED, statement=statement,
         value=size, value_text=_money(size), unit="USD", as_of=str(ECN_YEAR),
         confidence="low" if market.demo else "medium", demo=market.demo,
-        source_ids=[] if market.demo else [source],
+        # The demo answer carries its fixture as a named source rather than
+        # an empty list. Fifth audit: the empty list left the Q2 follow-up
+        # ("where does this figure trace to?") permanently open — a report
+        # forever incomplete over provenance the fixture could simply state.
+        # It is not a real source and does not pretend to be: the demo flag
+        # still taints the figure everywhere it renders.
+        source_ids=(["recorded demo fixture (authored sample, not a "
+                     "measurement)"] if market.demo else [source]),
         detail={"national_receipts": national_receipts,
                 "national_establishments": national_estabs,
                 "local_establishments": local_estabs,
@@ -469,10 +476,11 @@ def competitors(*, market: MarketDefinition, question: StandingQuestion,
     lines = "; ".join(f"{p['name']} ({p['note']})" for p in named)
     return Answer(
         question_id=question.id, kind=RETRIEVED,
-        statement=(f"Named participants: {lines}. These are the firms large "
-                   f"enough to be publicly visible; the establishment count "
-                   f"shows the market is mostly firms too small to name "
-                   f"individually. ({fixtures.DEMO_NOTE})"),
+        statement=(f"Named participants: {lines}. These are the companies "
+                   f"large enough to be publicly visible; most establishments "
+                   f"in the count belong to operators too small to be named "
+                   f"in public sources — how many COMPANIES that is, "
+                   f"establishment data cannot say. ({fixtures.DEMO_NOTE})"),
         confidence="medium", as_of=str(CBP_YEAR), demo=True,
         source_ids=["SEC EDGAR", "public filings"],
         detail={"participants": named, "demo": True})

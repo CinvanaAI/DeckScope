@@ -313,6 +313,45 @@ ask> where did the market size figure come from?
 ask> go deeper on the competition section
 ```
 
+**Screen a folder, compare versions, audit anyone's report.** `batch`
+runs every deck in a folder — one deck failing doesn't stop the rest — and
+ranks the results into one screening table (`summary.md` plus `.xlsx`, or
+`.csv` without openpyxl). `diff` compares two versions of the same deck
+claim by claim: which figures changed and by what ratio, which claims
+quietly disappeared, what's newly asserted. `audit-report` points the
+citation-audit layer at a document DeckScope didn't write — any memo or
+report plus a JSON list of its sources — and checks every [S#] resolves,
+flags figures with no source in the sentence, structurally.
+
+```bash
+deckscope batch ./inbound_decks --out screening
+deckscope diff deck_v1.pdf deck_v2.pdf
+deckscope audit-report analyst_memo.md --sources sources.json
+```
+
+`diff` and `batch` use your configured AI backend for claim extraction; the
+comparison, ranking, and audit logic are deterministic code. `audit-report`
+makes no AI call at all.
+
+**Or run it in reverse.** Everything above is the investor's
+direction. `improve` is the founder's: it runs the same audit on your deck,
+then rebuilds the deck into the strongest version that would *survive* that
+audit — contradicted figures corrected to what the cited evidence shows,
+blind spots turned into slides that answer before the room asks, and every
+fact only you can know left as a visible `[YOUR NUMBER]` slot. The honesty
+rules are enforced in code, not requested politely: a citation outside the
+run's bibliography is stripped, an unsourced figure in a new line is demoted
+to a founder slot instead of shipped, and a kept line the evidence
+contradicts is flagged — because an investor running this same tool will
+catch it. It builds from scratch too: hand it a `.txt` of raw notes instead
+of a deck.
+
+```bash
+deckscope improve deck.pdf --pptx        # blueprint + an editable .pptx
+deckscope improve notes.txt              # raw notes in, deck blueprint out
+deckscope improve --demo                 # see the whole reverse flow, free
+```
+
 **Or never touch a terminal:**
 
 ```bash
@@ -412,6 +451,8 @@ and action lists to what fits on slides.
 | PDF | `pdf` | Print-ready. Uses your HTML report if a browser is available, ReportLab otherwise. |
 | Word | `docx` | The format most people actually circulate. |
 | Slides | `pptx` | A summary deck to present back. |
+| Deal memo | `memo` | One page: the call, the claims that decide it, the read, the questions. Alias `ic`. |
+| Fix-it list | `fixit` | For the founder: what a skeptical fund will find, worst first. Alias `founder`. |
 | Spreadsheet | `xlsx` | Scorecard, claim audit, competitors, references, security findings — each on its own filterable sheet. |
 | JSON | `json` | Everything, machine-readable. Always written unless you disable it. |
 | Plain text | `txt` | Email bodies and terminals. |
@@ -732,7 +773,7 @@ once, and reports. Every conclusion is downstream of one guess made at the start
 
 ```bash
 deckscope research deck.pdf --demo      # no AI connection, no search key
-deckscope research deck.pdf --nda       # nothing leaves your machine
+deckscope research deck.pdf --nda       # refuses to run unless the model is on-device
 ```
 
 ```
@@ -772,9 +813,16 @@ When a deck asks for $5,000 and the evidence says $10,000, that is a fact about
 the person who wrote it, not about the industry — and it is the fact that
 decides how much to give and on what terms.
 
-**NDA mode is structural.** `--nda` makes any call carrying deck text to a
-non-local provider *raise*, checked twice: an explicit taint flag, and a content
-fingerprint as a backstop for when somebody forgets to set it.
+**NDA mode is structural, and fail-closed.** `--nda` refuses to START unless
+the configured model is on-device (Ollama, or an openai_compatible endpoint
+whose parsed hostname is loopback — lookalikes such as `localhost.evil.com`
+are refused, and a LAN address does not count as your machine). Web research
+is disabled for the run, because search queries are built from the deck's own
+claims. Only then does the run begin, with every call carrying deck text
+checked twice on the way out: an explicit taint flag, and a content
+fingerprint as a backstop for when somebody forgets to set it. Hosted
+subscription CLIs (Claude Code, Codex, Gemini) do not count as local — the
+model is not on your machine, whatever directory the tool runs in.
 
 It is scoreable on the same nine cases as every other mode:
 

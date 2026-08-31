@@ -369,7 +369,8 @@ def test_the_uploaded_working_copy_is_deleted_when_its_run_ends(tmp_path,
     the outcome."""
     import deckscope.webapp as webapp
 
-    up = tmp_path / "uploads"; up.mkdir()
+    up = tmp_path / "uploads"
+    up.mkdir()
     deck = up / "tmpabc.md"
     deck.write_text("secret deck", encoding="utf-8")
     webapp.UPLOADED_FILES.add(str(deck.resolve()))
@@ -392,7 +393,8 @@ def test_files_the_app_did_not_upload_are_never_deleted(tmp_path):
 def test_leftover_uploads_are_swept_at_startup(tmp_path, monkeypatch):
     import deckscope.webapp as webapp
 
-    home = tmp_path / "home"; (home / "uploads").mkdir(parents=True)
+    home = tmp_path / "home"
+    (home / "uploads").mkdir(parents=True)
     (home / "uploads" / "stale1.pdf").write_bytes(b"x")
     (home / "uploads" / "stale2.md").write_bytes(b"y")
     monkeypatch.setattr(webapp.settings, "app_dir", lambda: home)

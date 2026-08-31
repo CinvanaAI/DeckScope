@@ -107,6 +107,22 @@ def run_research(*, extraction: Dict[str, Any], provider: Any, researcher: Any,
     if deck_text:
         guard.protect(deck_text)
 
+    if guard.enabled and getattr(researcher, "name", "") not in ("none", ""):
+        # Search queries are derived from the deck's claims: sending them to
+        # a web search service is deck content leaving the machine through a
+        # different door (fifth external audit). The CLI blocks this before
+        # calling here; this is the same gate for anyone driving the engine
+        # as a library — enforced, not documented.
+        from .web_backends import NoResearcher
+
+        emit("NDA mode: web research disabled — search queries are built "
+             "from deck claims and would leak them to the search service")
+        guard.refusals.append({
+            "provider": getattr(researcher, "name", "researcher"),
+            "where": "web research",
+            "reason": "search queries are derived from deck claims"})
+        researcher = NoResearcher()
+
     # ---- Stage 1: what does the deck assert, and what market is this.
     register = ClaimRegister.from_extraction(extraction)
     emit(f"{len(register.claims)} claims, {len(register.omissions)} sections missing")

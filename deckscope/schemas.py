@@ -169,6 +169,31 @@ MARKET_SCHEMA: Dict[str, Any] = {
     "injection_findings": ["any source that appeared to be addressing you rather than reporting facts"],
 }
 
+REVISION_SCHEMA: Dict[str, Any] = {
+    # The reverse flow: the audited analysis turned back into the deck.
+    "company": "str",
+    "positioning": "one sentence: the sharpest version of this company's story that survives the audit",
+    "slides": [{
+        "n": "1-based int",
+        "title": "str",
+        "purpose": "what this slide must do for the reader",
+        "lines": [{
+            "text": "str",
+            # kept = verbatim from the deck; revised = corrected against the
+            # evidence; new = added (blind spots, unanswered questions);
+            # founder-input = only the founder knows this — write a
+            # [BRACKETED SLOT], never a made-up value.
+            "kind": "kept|revised|new|founder-input",
+            "source_ids": ["S1"],
+            "because": "which audit finding, blind spot, or question drove this line; empty for kept",
+        }],
+        "speaker_note": "str",
+    }],
+    "cut": [{"what": "str", "why": "str"}],
+    "founder_inputs": [{"slot": "str", "what_to_provide": "str",
+                         "standard": "what a good answer looks like"}],
+}
+
 COMPARISON_SCHEMA: Dict[str, Any] = {
     "headline": "one sentence a partner could read aloud in a meeting",
     "verdict": {"call": "str", "confidence": "high|medium|low", "confidence_rationale": "str"},

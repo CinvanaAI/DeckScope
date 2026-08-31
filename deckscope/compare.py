@@ -23,6 +23,8 @@ no field for it anywhere in the product.
 """
 from __future__ import annotations
 
+import re
+
 from dataclasses import dataclass, field, asdict
 from typing import Any, Dict, List, Optional
 
@@ -119,9 +121,33 @@ def assess_claims(register: ClaimRegister,
         source_ids = sorted({s for f in grounded for s in f.source_ids})
 
         if claimed is not None and measured:
-            evidence = sorted(f.value for f in measured)[len(measured) // 2]
-            ratio = (max(claimed, evidence) / min(claimed, evidence)
-                     if min(claimed, evidence) else None)
+            # ONE finding is the evidence — never a median value detached
+            # from its finding. The fifth audit reproduced the chimera the
+            # median produced: with a $7B segment finding (text "$6-8B") and
+            # a $41B whole-category finding, the median-of-two selected the
+            # $41B value, computed 6.8x, and DISPLAYED it beside the other
+            # finding's "$6-8B" text — contradicting a $6B claim that sits
+            # inside the range printed next to the verdict. The nearest
+            # finding by ratio is chosen; its ratio is range-aware (a claim
+            # inside a stated range is a match, and a claim outside one is
+            # measured against the nearest bound, not a midpoint); and the
+            # displayed text, the ratio, and the gap all come from that same
+            # finding.
+            def _gap_ratio(f):
+                lo, hi = _bounds(f)
+                if lo <= claimed <= hi:
+                    return 1.0
+                near = lo if claimed < lo else hi
+                if not near or not claimed:
+                    return float("inf")
+                return max(claimed, near) / min(claimed, near)
+
+            best = min(measured, key=_gap_ratio)
+            ratio = _gap_ratio(best)
+            b_lo, b_hi = _bounds(best)
+            evidence = b_lo if claimed < b_lo else b_hi \
+                if claimed > b_hi else claimed
+            measured = [best] + [f for f in measured if f is not best]
             if ratio is None or ratio <= MATERIAL_RATIO:
                 out.append(ClaimAssessment(
                     claim.id, claim.text, "supported",
@@ -377,27 +403,89 @@ _NOT_AN_ENTITY = {
     "Vendors", "Buyers", "Net", "Per", "Open", "Small", "Wider", "Category",
     "Support", "Standalone", "Finance", "Reconciliation", "No", "Half", "One",
     "Two", "Three", "Four", "Five",
+    # The fifth audit's fabricated organizations, plus their siblings: generic
+    # report-vocabulary nouns that open sentences and prove nothing by being
+    # capitalized there. A closed class, not an open stoplist — the form
+    # rules (participles, name-by-form) do the general work, and this set
+    # exists for the words those rules cannot decide.
+    "Report", "Reports", "State", "States", "Typical", "Average", "Median",
+    "Annual", "Monthly", "Total", "Overall", "Industry", "Segment",
+    "Pricing", "Margin", "Margins", "Contract", "Platform", "Data",
 }
 
 
 def _subjects(statement: str) -> List[str]:
     """Named entities a finding is about — the things a deck could have named.
 
-    Deliberately crude capitalisation matching, and deliberately the same rule
-    the rest of the product uses, so no stage is advantaged by a cleverer
-    extractor than its neighbour.
+    The docstring here used to claim this was "the same rule the rest of the
+    product uses". It was not: research/metrics grew a grammar-based entity
+    screen in the first audit cycle while this stayed a stoplist, and the
+    fifth audit found the difference on the page — the demo told a founder
+    their deck failed to mention organizations called "Report", "State",
+    "Typical" and "Average", each a sentence-opening common word the
+    stoplist happened not to contain. A stoplist loses to English by
+    volume; the discriminator is form, applied uniformly:
+
+    - sentence-initial tokens are never accepted on capitalization alone
+      (English capitalizes every opener), unless they are names BY FORM —
+      all-caps, digits, '&', internal capitals, or a .com;
+    - mid-sentence capitalized words remain candidates, screened by the
+      shared _NOT_AN_ENTITY closed class and participial morphology.
     """
     import re
 
+    text = statement or ""
     out, seen = [], set()
-    for m in re.finditer(r"\b([A-Z][a-z][A-Za-z0-9.]*(?:\.com)?)\b",
-                         statement or ""):
+    for m in re.finditer(r"\b([A-Z][a-z][A-Za-z0-9.]*(?:\.com)?)\b", text):
         name = m.group(1)
         if name in _NOT_AN_ENTITY or len(name) < 3 or name.lower() in seen:
             continue
-        seen.add(name.lower())
+        lower = name.lower()
+        if lower.endswith(("ing", "ed")):
+            continue          # participles are grammar, not names
+        # Plain names at sentence starts are accepted — "Trintech is an
+        # incumbent" names a real company, and requiring a second
+        # mid-sentence occurrence suppressed genuine omissions (over-strict
+        # first cut of this fix). The closed class above plus the participle
+        # screen carry the fabrication defence, matching the metrics
+        # module's rule.
+        seen.add(lower)
         out.append(name)
     return out
+
+
+_RANGE = re.compile(
+    r"(\d[\d,]*(?:\.\d+)?)\s*[-\u2013]\s*(\d[\d,]*(?:\.\d+)?)\s*"
+    r"(billion|million|thousand|[bmk])?\b", re.IGNORECASE)
+_SCALES = {"b": 1e9, "billion": 1e9, "m": 1e6, "million": 1e6,
+           "k": 1e3, "thousand": 1e3}
+
+
+def _bounds(finding) -> tuple:
+    """The finding's value as an interval: its stated range, else the point.
+
+    "$6-8B" carries its own tolerance; collapsing it to a midpoint and then
+    measuring a claim against that midpoint converts "inside the range" into
+    a fake gap (fifth audit).
+    """
+    text = getattr(finding, "value_text", "") or ""
+    m = _RANGE.search(text)
+    if m:
+        try:
+            lo = float(m.group(1).replace(",", ""))
+            hi = float(m.group(2).replace(",", ""))
+        except ValueError:
+            return (finding.value, finding.value)
+        scale = _SCALES.get((m.group(3) or "").lower(), 1.0)
+        lo, hi = lo * scale, hi * scale
+        if lo > hi:
+            lo, hi = hi, lo
+        # Guard against a parsed range that has nothing to do with the
+        # stored value (e.g. a date span): the stored value must sit inside.
+        if finding.value is not None and lo <= finding.value <= hi:
+            return (lo, hi)
+    v = finding.value
+    return (v, v)
 
 
 def _amount(value_text: str, number: float) -> str:

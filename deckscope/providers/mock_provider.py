@@ -82,6 +82,11 @@ class MockProvider(LLMProvider):
             body = json.dumps(_deck_extraction(joined))
             return Completion(text=body, model=self.model,
                               usage=self._usage(system, messages, body))
+        if "Deck Reviser" in system:
+            allowed = self._available_sids(joined)
+            body = json.dumps(self._clamp_citations(_revision(), allowed))
+            return Completion(text=body, model=self.model,
+                              usage=self._usage(system, messages, body))
         if "reading research material to answer ONE question" in system:
             allowed = self._available_sids(joined)
             body = json.dumps(self._clamp_citations(_read_for(joined), allowed))
@@ -2002,3 +2007,87 @@ def _open_for(prompt: str) -> dict:
         {"text": text, "beat": beat, "weight": "high",
          "because": "opened from the section brief"}
         for text, beat in rows]}
+
+
+def _revision() -> dict:
+    """The reverse-flow fixture: the sample deck rebuilt against its own
+    audit. Authored sample, not model output — and deliberately imperfect:
+    it keeps one contested claim (so the kept-against-evidence flag fires)
+    and offers one unsourced figure (so the demotion rule fires). The demo
+    should show the guardrails working, not a run where they had nothing
+    to do."""
+    return {
+        "company": "Acme Flow",
+        "positioning": "Mid-market workflow automation priced against the "
+                       "cost of the manual work it replaces — in a category "
+                       "where the honest market size is the serviceable "
+                       "slice, not the vendor-report headline.",
+        "slides": [
+            {"n": 1, "title": "Acme Flow", "purpose": "Say what it is in "
+             "one breath", "lines": [
+                 {"text": "Workflow automation for mid-market operations "
+                          "teams.", "kind": "kept", "source_ids": [],
+                  "because": ""}],
+             "speaker_note": "The one-liner survived the audit; don't "
+                             "touch it."},
+            {"n": 2, "title": "The market, honestly sized",
+             "purpose": "Replace the contradicted TAM with a number that "
+                        "survives diligence",
+             "lines": [
+                 {"text": "Independent 2026 estimates put workflow "
+                          "automation at $18-24B; the $45-50B figures come "
+                          "from vendor-sponsored reports and we don't use "
+                          "them.", "kind": "revised", "source_ids": ["S1"],
+                  "because": "C1 was contradicted: the deck's $47B is the "
+                             "vendor-report category"},
+                 {"text": "Our serviceable slice: mid-market North America "
+                          "teams — [YOUR SAM: derive from your ICP count x "
+                          "ACV, and show the arithmetic].",
+                  "kind": "founder-input", "source_ids": [],
+                  "because": "the audit could not verify the SAM either "
+                             "way; only your ICP math settles it"}],
+             "speaker_note": "Leading with the smaller, defensible number "
+                             "converts the room's first objection into "
+                             "credibility."},
+            {"n": 3, "title": "Business model",
+             "purpose": "Numbers an investor can check against cohorts",
+             "lines": [
+                 {"text": "Average contract value: $28,000.",
+                  "kind": "kept", "source_ids": [], "because": ""},
+                 {"text": "Products running an LLM planner per execution "
+                          "report 55-68% gross margins once inference is "
+                          "in COGS - state yours with inference loaded.",
+                  "kind": "revised", "source_ids": ["S4"],
+                  "because": "C4 partly supported: 78% is above the "
+                             "category's loaded-COGS range"},
+                 {"text": "CAC payback under 6 months at $2,000/month "
+                          "pricing.", "kind": "new", "source_ids": [],
+                  "because": "answers the unit-economics question"}],
+             "speaker_note": ""},
+            {"n": 4, "title": "Competition - including the free one",
+             "purpose": "Name the bundled alternative before the room "
+                        "does",
+             "lines": [
+                 {"text": "Microsoft Power Automate ships free inside E5 - "
+                          "its marginal cost to an E5 buyer is zero, and "
+                          "our buyer must justify paying over it.",
+                  "kind": "new", "source_ids": ["S2"],
+                  "because": "the audit's top blind spot"},
+                 {"text": "Why they pay anyway: [YOUR 2-3 named wins "
+                          "against Power Automate, with the deal size].",
+                  "kind": "founder-input", "source_ids": [],
+                  "because": "only real win/loss data answers a free "
+                             "competitor"}],
+             "speaker_note": "Omitting the bundled option reads as either "
+                             "ignorance or concealment; neither survives "
+                             "partner meeting."}],
+        "cut": [{"what": "The $47B TAM headline slide",
+                 "why": "Contradicted by independent estimates; every "
+                        "minute spent defending it is a minute not spent "
+                        "on the business"}],
+        "founder_inputs": [
+            {"slot": "[YOUR NRR]", "what_to_provide": "Net revenue "
+             "retention on the existing customer base",
+             "standard": "a percentage with the cohort table behind it; "
+                         "'strong' is not a number"}],
+    }

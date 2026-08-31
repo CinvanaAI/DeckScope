@@ -210,20 +210,30 @@ went wrong on the first end-to-end run or would have gone unnoticed.
 deckscope eval --mode research pipeline baseline --provider mock
 ```
 
-Nine cases, one trial, identical frozen corpus per case:
+Nine cases, one trial, identical frozen corpus per case. Regenerated with
+`deckscope eval --mode research pipeline baseline --provider mock` after the
+fifth external audit found this table describing an older build; if these
+numbers do not match a fresh run of that command, this table is stale and
+the fresh run wins:
 
 | dimension | research | pipeline | baseline |
 |---|---|---|---|
-| claim_accuracy | 28% | 33% | 33% |
+| claim_accuracy | **41%** | 33% | 33% |
 | claim_citation | **71%** | 59% | 67% |
-| blind_spot_recall | 62% | 100% | 100% |
+| blind_spot_recall | 19% | 100% | 100% |
 | no_fabrication | 100% | 100% | 100% |
 | citation_integrity | 100% | 100% | 100% |
 | calibration | 100% | 100% | 100% |
 | verdict | 100% | 100% | 100% |
 | injection_detection | 100% | 100% | 100% |
 
-Total tokens across nine cases: research 158k, pipeline 144k, baseline 34k.
+Input tokens across nine cases: research 120k, pipeline 133k, baseline 22k.
+
+The blind-spot recall DROPPED from the previously published 62% when the
+entity extractor stopped minting organizations out of capitalized sentence
+openers — some of the old "recalled" blind spots were fabrications
+("Report", "State") that happened to overlap scored phrases. A smaller
+honest number replaced a larger fake one, which is this project's trade.
 
 **Do not read this table as "the research engine is worse."** Read it as: this
 harness cannot answer the question.
@@ -231,10 +241,10 @@ harness cannot answer the question.
 The provider is `mock`. Every mode's answers come from a hand-written fixture,
 and the pipeline's fixture has been refined against these exact nine cases
 across many sessions while the research engine's was written the same day the
-engine was. Its 62% blind-spot recall is mostly the fixture extracting fewer
+engine was. Its low blind-spot recall is mostly the fixture extracting fewer
 phrases from the corpus than `_market_analysis` does — not the loop finding
 less. Three rounds of "improving" that fixture moved the number from 8% to 31%
-to 62% and changed nothing about the architecture, which is the tell: **the
+to 62% (before the entity fix reset it) and changed nothing about the architecture, which is the tell: **the
 measurement was tracking fixture maturity, and continuing would have been
 fitting the mock to the benchmark.** The suite's own caveat warns about exactly
 this.

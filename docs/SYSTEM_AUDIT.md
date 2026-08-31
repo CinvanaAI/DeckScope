@@ -1,6 +1,6 @@
-# System audit — 2026-08-30 (third external audit worked)
+# System audit — 2026-08-30 (fifth external audit worked)
 
-The state of the system after three external audits and the internal
+The state of the system after five external audits and the internal
 hostile-reviewer passes. The standing rule, unchanged:
 
 > **A gate's status is the hosted run's status for the exact commit.**
@@ -13,8 +13,56 @@ hostile-reviewer passes. The standing rule, unchanged:
 | Commit | Hosted result |
 |---|---|
 | 85e7b86 | red — 3 jobs (Ruff, clean-wheel acceptance, Windows/Py3.9) |
-| f98bf23 | **13 of 14 green** — all nine OS/Python combos, eval, core install, clean wheel, MCP handshake passed; lint red on 3 findings in one test file (shadowed `os` imports) |
-| this branch | those 3 fixed, plus 5 more of the same shape found by the widened sweep (2 in production); hosted run pending |
+| f98bf23 | **13 of 14 green** — lint red on 3 findings in one test file |
+| cbe0331 | red on Ruff alone (two E702 semicolons in one test file); all nine OS/Python combos, eval, clean wheel, core install, MCP handshake green |
+| this branch | the E702s fixed and the custom linter taught the rule; hosted run pending |
+
+## Sixth cycle: the fifth external audit, worked (2026-08-30)
+
+The audit's stop-ship finding was the worst any auditor has produced, and
+it was right: **NDA mode did not enforce its promise.** The guard was
+constructed AFTER the full deck had been sent to the extraction model;
+deck-derived search queries went to web search services unguarded; every
+`cli` provider counted as "local" though Claude Code, Codex and Gemini
+CLIs proxy hosted subscriptions; and endpoint locality was a substring
+regex that `localhost.evil.com` sailed through. NDA mode is now
+fail-closed: with a non-local model it refuses to START, before the deck
+is read (exit 4, zero outbound calls — pinned by a spy-transport test);
+web research is disabled under `--nda` in both the CLI and the library
+path because search queries are built from deck claims; only Ollama
+qualifies among CLIs; and locality is parsed with urlparse+ipaddress,
+loopback only — a LAN address has left the machine. The README states
+the enforcement instead of the aspiration.
+
+The second finding changed an investment conclusion: the flagship
+research demo contradicted a $6B SAM with evidence saying $6-8B, because
+the comparison took the median VALUE of two findings (selecting a $41B
+whole-category figure), computed 6.8x, and displayed it beside the other
+finding's range text. The comparison now selects one finding — nearest by
+ratio — reads ranges as ranges (inside a stated range is a match; outside
+one, the gap runs to the nearest bound), and ties the displayed text, the
+ratio, and the gap to that same finding. The exact scenario is pinned.
+
+Also worked: establishment prose stopped saying "firms" and labels its
+midpoint-derived figures as estimates; the lifecycle agent refuses to
+grade a market from location-count growth (Q4's own warning, finally
+enforced); barriers report their trend as "unknown" rather than "steady"
+when one vintage cannot establish a direction; the closure gate accepts a
+reasoned not-identifiable instead of holding the report hostage for a
+number it just explained cannot exist; the fabricated organizations
+("Report", "State", "Typical", "Average") are dead — entity extraction is
+form-based and unified with the metrics module's rule, and blind-spot
+recall DROPPED accordingly, a smaller honest number replacing a larger
+fake one; RESEARCH_ENGINE.md's tables are regenerated with a stated
+self-staleness rule; the custom linter learned E702 so it can no longer
+be green while hosted Ruff is red; and the claims checker runs in CI
+even when lint fails, so a lint red can never again hide the claims
+verdict.
+
+Honestly still open from that audit: `deckscope check --demo` passes 2 of
+6 report cases (the fixtures-only report types — the 6/6 "invented
+nothing" floor holds); the module refactors; the model-mediated
+claim/report join; and the real-model benchmark re-drive.
 
 ## Fourth cycle: self-audit, class-level fixes (2026-08-30)
 

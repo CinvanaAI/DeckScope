@@ -327,6 +327,22 @@ def check(path: Path) -> List[Problem]:
     is_test = path.parts[-2] == "tests" or path.name.startswith("test_")
     specs = _format_specs(tree)
 
+    # Multiple statements on one line (ruff E702's core). The fifth audit
+    # caught this linter green while hosted Ruff was red on exactly this —
+    # two checkers with different vocabularies means "lint clean" locally
+    # proves nothing about the gate that decides. Detected from the AST so
+    # semicolons inside strings never false-positive: two sibling simple
+    # statements sharing a line can only come from `a; b`.
+    for parent in ast.walk(tree):
+        body = getattr(parent, "body", None)
+        if not isinstance(body, list):
+            continue
+        for a, b in zip(body, body[1:]):
+            if (getattr(a, "lineno", None) is not None
+                    and getattr(a, "lineno", 0) == getattr(b, "lineno", -1)):
+                found.append((path, b.lineno,
+                              "multiple statements on one line (E702)"))
+
     for line, message in _undefined(tree):
         if not _skipped(text, line):
             found.append((path, line, message))

@@ -166,7 +166,7 @@ Claims the deck makes that this research needs to speak to:
 {claims}
 
 {research_note}
-
+{covered_note}
 {schema}
 
 {research_material}
@@ -595,3 +595,27 @@ Evidence state: {evidence_state}
 {comparison_json}
 
 Give your read."""
+
+
+REVISE_SYSTEM = """You are the Deck Reviser — the analysis pipeline run in reverse. You have a pitch deck (or a founder's raw notes) and the finished evidence audit of it. Build the strongest version of this deck that would SURVIVE that same audit.
+
+Rules, in order:
+1. Never invent a fact. Market and industry figures must cite the supplied bibliography by ID ([S3]) in `source_ids` — a figure you cannot cite from that list does not go in a revised or new line. Company-private facts (traction, pricing, pipeline, team) belong to the founder: where one is needed, write a `founder-input` line whose text contains a [BRACKETED SLOT] describing exactly what they should insert.
+2. Correct, don't soften. A contradicted claim is rewritten to what the cited evidence shows, stated plainly — a defensible smaller number beats an indefensible bigger one in diligence every time.
+3. Keep what survived. Claims the audit supported are strengths; keep them (kind "kept") and give them their citations where the evidence provides one.
+4. Address the blind spots. Anything diligence will find, the deck should say first, framed honestly — omitting a known competitor reads worse than naming it.
+5. Answer the room's questions in the deck where the founder can; the rest become founder-input slots.
+6. Every non-kept line carries `because` — the audit finding, blind spot, or question that drove it.
+
+Output only the JSON described. No prose outside it."""
+
+REVISE_USER = """{schema}
+
+THE AUDIT (assembled from the finished run — this is your ground truth):
+
+{brief}
+
+THE DECK AS IT STANDS (or the founder's raw notes):
+
+{deck_text}
+"""

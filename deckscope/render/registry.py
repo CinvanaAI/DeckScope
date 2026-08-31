@@ -15,9 +15,19 @@ _BUILTIN = {
     "xlsx":  (".xlsx_renderer", "Spreadsheet: scorecard, claims, references, security"),
     "json":  (".json_renderer", "Machine-readable, everything including the bibliography"),
     "txt":   (".text_renderer", "Plain text for email and terminals"),
+    "memo": (".memo_renderer",
+             "One-page IC deal memo — the verdict, the claims that decide "
+             "it, the read, the questions"),
+    "fixit": (".fixit_renderer",
+              "Founder fix-it list — what a skeptical fund will find, "
+              "worst first, with the evidence they'll be holding"),
+    "questions": (".questions_renderer",
+                  "Question pack — the founder-meeting agenda, each question "
+                  "with the gap that produced it and the standard its answer "
+                  "should meet"),
 }
 
-_ALIASES = {"markdown": "md", "word": "docx", "powerpoint": "pptx", "slides": "pptx",
+_ALIASES = {"ic": "memo", "founder": "fixit", "agenda": "questions", "markdown": "md", "word": "docx", "powerpoint": "pptx", "slides": "pptx",
             "excel": "xlsx", "spreadsheet": "xlsx", "web": "html", "text": "txt"}
 
 _CUSTOM: Dict[str, Callable[..., List[str]]] = {}

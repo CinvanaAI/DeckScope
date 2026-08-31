@@ -299,6 +299,61 @@ def build_parser() -> argparse.ArgumentParser:
                                "mechanics.")
     research.add_argument("--config", default=None)
 
+    diff = sub.add_parser(
+        "diff", help="Compare two versions of the same deck, claim by claim")
+    diff.add_argument("old_deck", help="The earlier version")
+    diff.add_argument("new_deck", help="The later version")
+    diff.add_argument("--provider", help="AI backend for claim extraction")
+    diff.add_argument("--config", help="Config file")
+    diff.add_argument("--out", help="Output folder (default: deckscope_out)")
+    diff.add_argument("--nda", action="store_true",
+                      help="Refuse to run unless the extraction model is "
+                           "local — both decks are sent to it")
+
+    batch = sub.add_parser(
+        "batch", help="Analyze every deck in a folder and rank the results")
+    batch.add_argument("folder", help="Folder of deck files")
+    batch.add_argument("--provider", help="AI backend")
+    batch.add_argument("--config", help="Config file")
+    batch.add_argument("--out", help="Output folder (default: deckscope_out)")
+    batch.add_argument("--lens", action="append",
+                       help="Analysis lens (default: investor)")
+    batch.add_argument("--format", action="append",
+                       help="Per-deck output format(s); repeatable "
+                            "(default: markdown)")
+
+    improve = sub.add_parser(
+        "improve",
+        help="The reverse flow: rebuild a deck (or raw notes) into the "
+             "strongest version that survives this tool's own audit")
+    improve.add_argument("deck", nargs="?",
+                         help="Deck file, or a .txt/.md of raw founder notes")
+    improve.add_argument("--from-run", dest="from_run", metavar="RUN_JSON",
+                         help="Reuse a finished run's audit and sources "
+                              "instead of re-analyzing")
+    improve.add_argument("--lens", default=None,
+                         help="Audit lens to rebuild against (default: founder)")
+    improve.add_argument("--pptx", action="store_true",
+                         help="Also write an editable .pptx starting deck")
+    improve.add_argument("--provider", help="AI backend")
+    improve.add_argument("--config", help="Config file")
+    improve.add_argument("--out", help="Output folder (default: deckscope_out)")
+    improve.add_argument("--demo", action="store_true",
+                         help="Run on the packaged sample deck with the "
+                              "offline mock — no key needed")
+    improve.add_argument("--nda", action="store_true",
+                         help="Refuse non-local models and disable web "
+                              "research — the deck must not leave this machine")
+
+    audit_cmd = sub.add_parser(
+        "audit-report",
+        help="Run the citation audit on any document + a source list")
+    audit_cmd.add_argument("report", help="The document to audit (.md/.txt/.json)")
+    audit_cmd.add_argument("--sources", required=True,
+                           help="JSON file (or folder of them) listing the "
+                                "sources the document may cite")
+    audit_cmd.add_argument("--out", help="Output folder (default: deckscope_out)")
+
     check_cmd = sub.add_parser(
         "check",
         help="Grade market reports against cases with known-correct answers",
@@ -726,6 +781,22 @@ def _main(argv: Optional[List[str]] = None) -> int:
 
     if cmd == "research":
         return _research(args)
+
+    if cmd == "diff":
+        from .commands.diff import command as _diff_cmd
+        return _diff_cmd(args)
+
+    if cmd == "batch":
+        from .commands.batch import command as _batch_cmd
+        return _batch_cmd(args)
+
+    if cmd == "audit-report":
+        from .commands.audit_report import command as _audit_cmd
+        return _audit_cmd(args)
+
+    if cmd == "improve":
+        from .commands.improve import command as _improve_cmd
+        return _improve_cmd(args)
 
     if cmd == "size":
         _out("Note: 'deckscope size' has been retired — it was a subset of "
@@ -1639,16 +1710,50 @@ def _research(args: Any) -> int:
              "up and every question will close as unanswerable. Run "
              "`deckscope setup` to add one, or pass --research-backend.\n")
 
-    if args.nda and not _all_local(cfg):
-        # Said plainly and up front rather than discovered halfway through a run
-        # that has already sent three requests.
-        _out("NDA mode is on and at least one configured connection is a hosted "
-             "API. Deck content will not be sent to it — those calls will be "
-             "refused, not quietly downgraded. Point --provider at a local model "
-             "(Ollama or LM Studio through the openai_compatible backend) for a "
-             "complete run.\n")
+    guard = NDAGuard(enabled=bool(args.nda))
+    if args.nda:
+        # FAIL CLOSED, BEFORE THE DECK IS READ. The fifth external audit
+        # traced the old order: warn, load the deck, send the full text to
+        # the extraction model, and only THEN construct the guard — with a
+        # hosted provider the confidential deck had already left before
+        # anything could refuse. The mode's promise is structural, so the
+        # structure enforces it: a non-local model refuses the RUN, not a
+        # later call.
+        if not _all_local(cfg):
+            _out("NDA mode refuses to start: the configured model is not "
+                 "local, and the very first step sends the full deck to it. "
+                 "Nothing was read and nothing was sent. Point --provider at "
+                 "an on-device model (Ollama directly, or LM Studio via the "
+                 "openai_compatible backend on localhost) and run again.")
+            return 4
+        if getattr(researcher, "name", "") not in ("none",):
+            # Search queries are BUILT FROM DECK CLAIMS — sending them to
+            # Tavily or Brave is deck content leaving the machine through a
+            # different door (fifth audit). NDA mode researches nothing.
+            _out("NDA mode: web research is disabled — search queries are "
+                 "derived from the deck's own claims, so sending them to a "
+                 "search service would leak the deck through a different "
+                 "door. The run will use the deck and the local model only, "
+                 "and the report will say exactly that.")
+            from .research.web_backends import NoResearcher
+            researcher = NoResearcher()
 
     doc = load_deck(cfg.deck_path)
+    if args.nda:
+        # Registered before ANY model call, so the fingerprint backstop
+        # covers even a call site added later that forgets the taint flag.
+        guard.protect(doc.text)
+        # The extraction is the single biggest payload of deck content in
+        # the whole run. It goes through the same gate as everything else —
+        # a redundant check here (the run already refused non-local
+        # providers above), kept because privacy controls should not depend
+        # on one check staying correct.
+        try:
+            guard.check(cfg.provider, doc.text, tainted=True,
+                        where="deck extraction")
+        except NDAViolation as exc:
+            _out(f"\n{exc}")
+            return 4
     try:
         if policy.enabled:
             doc, scan = screen_deck(doc, policy, deck_path=doc.local_path or cfg.deck_path)
@@ -1676,7 +1781,7 @@ def _research(args: Any) -> int:
         result = run_research(
             extraction=extraction, provider=provider, researcher=researcher,
             policy=policy, plan=plan_from_config(cfg),
-            guard=NDAGuard(enabled=bool(args.nda)), budget=budget,
+            guard=guard, budget=budget,
             deck_text=doc.text,
             on_event=(lambda m: None) if args.quiet else _out)
     except NDAViolation as exc:

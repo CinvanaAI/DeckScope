@@ -212,6 +212,18 @@ def build_markdown(result, lens: str) -> str:
             cites = _cite_links(c.get("source_ids"), c.get("sources"), result)
             add(f"**Sources:** {cites}")
             add("")
+            # The structural join: reports the scoper dispatched FOR this
+            # claim, attached by code. Their sources render here as the
+            # report's evidence, distinct from the row's own citations.
+            for rep in (c.get("checked_by_reports") or []):
+                ids = " ".join(f"[{s}]" for s in (rep.get("source_ids") or []))
+                add(f"**Independently checked by the {rep.get('specialist')} "
+                    f"report"
+                    + (f" ({rep['measure']})" if rep.get("measure") else "")
+                    + f":** {rep.get('finding')} {ids}".rstrip()
+                    + (f" — stored as `{rep['stored_as']}`"
+                       if rep.get("stored_as") else ""))
+                add("")
 
     # --------------------------------------------------------- alignment
     align = comp.get("alignment") or {}

@@ -462,6 +462,23 @@ def _lifecycle_agent(*, market: MarketDefinition, question: StandingQuestion,
                      seen: Dict[str, Optional[Answer]]) -> Answer:
     growth_answer = seen.get("Q4")
     growth = growth_answer.value if growth_answer and growth_answer.answered else None
+    # The BASIS of the growth figure decides whether a life-cycle stage can
+    # be assigned at all. Q4's own statement warns that establishment counts
+    # and revenue can move in opposite directions when a market
+    # consolidates — and this agent then used that count growth to declare
+    # the market "mature" anyway (fifth audit). A stage derived from the
+    # wrong quantity is not a weaker answer; it is an answer about a
+    # different question.
+    basis = str((growth_answer.detail or {}).get("basis", "")
+                if growth_answer else "")
+    if growth is not None and "establishment" in basis.lower():
+        return unanswered(
+            question,
+            f"life-cycle stage needs market growth measured in revenue or "
+            f"volume; the only growth series available counts "
+            f"establishments ({basis}), and location counts can grow while "
+            f"a market's revenue shrinks — a stage assigned from them would "
+            f"describe the wrong quantity")
     conc = _concentration_from(seen.get("Q5"))
     stage, because = lifecycle(growth, conc)
     if not stage:

@@ -307,7 +307,7 @@ def lifecycle(growth: Optional[float],
 #: direction is far more useful than either alone, and far more useful than a
 #: paragraph.
 BARRIER_LEVELS = ("low", "medium", "high")
-BARRIER_TRENDS = ("decreasing", "steady", "increasing")
+BARRIER_TRENDS = ("decreasing", "steady", "increasing", "unknown")
 
 
 @dataclass
@@ -374,11 +374,14 @@ def barriers(*, conc: Optional[Concentration] = None,
                                 "cannot be graded")
 
     level = "high" if score >= 3 else "medium" if score >= 1 else "low"
+    # "unknown", not "steady": one vintage cannot establish a direction, and
+    # writing "steady" converts ignorance into a specific empirical claim
+    # (fifth audit) — the exact move the rest of this module exists to stop.
     return Barriers(
-        level=level, trend="steady", reasons=reasons,
+        level=level, trend="unknown", reasons=reasons,
         because=f"graded {level} from {len(reasons)} signal(s); the trend is "
-                f"reported as steady because establishing a direction needs two "
-                f"vintages of the same series and only one was read")
+                f"unknown — establishing a direction needs two vintages of "
+                f"the same series and only one was read")
 
 
 # --------------------------------------------------------------------------
@@ -494,19 +497,27 @@ def _read_shape(per_capita: Optional[float], national: Optional[float],
                      f"with no national rate to compare against")
 
     if average is not None:
-        parts.append(f"averaging {average:.1f} employees each")
-        scale = ("almost entirely sole operators and micro-businesses"
+        # "Roughly", because the figure comes from band MIDPOINTS — the
+        # open-ended top band gets an arbitrary 1,500 — and the prose must
+        # not present an estimate as a measurement (fifth audit). And
+        # "establishments"/"locations", never "firms": these are counts of
+        # places, and one company can own many of them.
+        parts.append(f"averaging roughly {average:.1f} employees each "
+                     f"(estimated from size-band midpoints)")
+        scale = ("almost entirely sole-operator locations"
                  if average < 5 else
-                 "a trade of very small operators" if average < 10 else
-                 "a mix of small and mid-sized firms" if average < 50 else
-                 "a market of substantial firms")
+                 "a trade of very small establishments" if average < 10 else
+                 "a mix of small and mid-sized establishments"
+                 if average < 50 else
+                 "a market of substantial establishments")
 
     if top_decile is not None:
-        parts.append(f"the largest tenth hold {top_decile * 100:.0f}% of "
-                     f"employment")
+        parts.append(f"the largest tenth of establishments hold roughly "
+                     f"{top_decile * 100:.0f}% of estimated employment")
         if top_decile >= 0.50:
-            parts.append("so employment is concentrated in a few larger "
-                         "operators even though the firm count is not")
+            parts.append("so employment concentrates in a few larger "
+                         "locations even though the location count does not "
+                         "(who OWNS those locations, this data cannot say)")
 
     reading = " — ".join(x for x in (scale, density) if x)
     return reading, (f"{total:,} establishments, " + "; ".join(parts)

@@ -219,16 +219,82 @@ into the run's single registry (remap applied per `merge_into`'s contract),
 and hands their findings into the comparison prompt as `specialist_reports`
 — each tagged with the deck claim it was dispatched to check. The verdict is
 derived with them, not despite them, and the per-claim reconciliation is
-computed once, in memory, on the result. What remains for DONE: the claim
-audit rows should be MECHANICALLY joined to their reports via
-`checks_deck_claim` (today the synthesist is instructed to make the join),
-and the lightweight MarketAnalyst pass should shrink to boundary/context
-work the specialists do not cover, rather than researching in parallel.
+computed once, in memory, on the result. The mechanical join is DONE
+(sixth cycle): the scoper declares `checks_claim_ids` per report, and
+`_join_reports_to_claims` in the orchestrator attaches each report's
+finding, stored id, and remapped sources to the matching audit rows by
+code — rendered beside the row, never counted as the model's own
+citations. The MarketAnalyst shrink is DONE (ninth cycle): when
+specialists produced reports, their keys are passed as `covered` — the
+analyst's queries about those quantities are dropped (announced, never
+silent), its prompt forbids parallel estimates and redirects effort to
+boundary/framing/buyers/funding/regulation, the all-covered fallback
+query asks about the boundary itself, and the cache key carries the
+covered set. A vocabulary-coverage test fails if a new report type
+ships without shrink vocabulary. The un-staged pipeline is untouched
+and pinned so.
 
 **Done when:** the claim audit, blind spots and the ask-versus-requirement gap
 are all derived from that diff rather than computed separately.
 
 ---
+
+## The deliverables slate (2026-08-30) — DONE
+
+Five features shipped in one pass, all deterministic on top of the audited
+result (zero new model calls except `diff`/`batch` claim extraction, which
+reuses the pipeline's own DeckAnalyst under the same gates):
+
+- **`--format memo` (alias `ic`)** — the one-page deal memo: verdict via
+  `header_block` (withheld stays withheld), the three decisive claims by
+  materiality, blind spots, one paragraph of the advisor's read, five
+  questions.
+- **`--format fixit` (alias `founder`)** — the founder's fix-it list from
+  the same audit rows, worst first, with what the investor side will be
+  holding when they find each item.
+- **`deckscope diff old new`** — claim-by-claim change log between deck
+  versions: figure changes with ratios, dropped/added claims, moved claims.
+  Pairing is same-type token overlap; the header declares extraction
+  nondeterminism honestly.
+- **`deckscope batch <dir>`** — every deck in a folder, continue-on-error,
+  ranked screening table (verdict rank with withheld in the middle, then
+  fewest contested) as summary.md + xlsx-or-csv.
+- **`deckscope audit-report <doc> --sources <json>`** — the citation-audit
+  layer unbundled: any document plus a source list, dangling/quarantined
+  [S#]s and unsourced-figure sentences flagged, caller S-IDs preserved.
+
+The refactor beachhead came with it: `deckscope/commands/` — new verbs are
+born there (diff, batch, audit-report live in it), cli.py keeps parsing and
+dispatch, and existing commands migrate out as they are next touched. The
+package docstring states the rule; a test pins it.
+
+## The reverse flow (2026-08-30) — DONE
+
+`deckscope improve`: the audit run backwards — deck (or raw `.txt`/`.md`
+notes: the loader already ingests them, so build-from-scratch is the same
+command) in, the strongest audit-surviving version out. One model call (the
+Deck Reviser, schema-validated); everything else is code. The enforcement
+layer is the feature: `validate_revision` strips citations outside the
+run's bibliography via the same `audit_fragment` the pipeline trusts,
+demotes any new/revised figure line with no surviving source to a visible
+founder-input slot (DeckScope invents nothing in either direction), and
+flags kept lines that token-match contested claims as "kept against the
+evidence". Blueprint markdown always; `--pptx` writes an editable starting
+deck; `--demo` runs the whole flow offline on the packaged sample with a
+fixture deliberately authored to trip both guards. `--nda` fails closed
+exactly like run/research. Declared open: the web app exposes analysis
+only — improve is CLI-only until the app grows a founder mode.
+
+**Declared open — mock reader recall on 4 graded cases.** `check --demo`
+passes 2 of 6 cases with 6 of 6 inventing nothing, and the banner
+correctly says those scores measure the fixture. Raising the other four
+honestly means making the mock's generic reading less lossy — legal
+instruments (21 CFR 800.30) are not "figures" so never surface; age
+bands separate from their rates across clause boundaries; demographics
+recalls 0% for a reason not yet diagnosed. `_read_for` is deliberately
+generic and sits upstream of the research-loop, evidence-design and
+mode-comparison pins, so this is an investigation, not a patch; it must
+not be closed by teaching the fixture the test answers.
 
 ## Standing constraints
 

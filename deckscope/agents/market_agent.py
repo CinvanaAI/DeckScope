@@ -1,7 +1,7 @@
 """Agent 2 — researches the market independently of the deck's claims."""
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Sequence, Any, Dict, List
 
 from ..prompts.templates import (MARKET_SYSTEM, MARKET_USER, QUERY_SYSTEM,
                                  QUERY_USER)
@@ -14,6 +14,39 @@ from ..schemas import MARKET_SCHEMA, coerce, schema_block
 from ..validate import validate_market
 from ..security.sanitizer import fence
 from .base import Agent
+
+
+#: Query vocabulary per specialist report key. A query containing any of
+#: these terms is asking for a quantity the named specialist already
+#: established with its own citations.
+_COVERED_VOCAB: Dict[str, tuple] = {
+    "market-size": ("market size", "market sizing", "tam", "total addressable",
+                    "industry size", "market worth", "market value"),
+    "market-share": ("market share", "concentration", "hhi",
+                     "share of market"),
+    "growth": ("growth rate", "cagr", "market growth", "growth forecast"),
+    "demographics": ("demographics", "population count", "household count"),
+    "competitive-landscape": ("competitive landscape", "top competitors",
+                              "leading vendors", "top companies in"),
+    "regulation": ("regulation", "regulatory requirements", "licensing "
+                   "requirements", "compliance requirements"),
+}
+
+
+def covered_note(covered: Sequence[str]) -> str:
+    """The prompt's covered block — empty when nothing ran."""
+    if not covered:
+        return ""
+    names = ", ".join(sorted(str(c) for c in covered))
+    return (
+        "\nALREADY ESTABLISHED BY SPECIALIST REPORTS: " + names + ". Their "
+        "findings and citations are merged into this run and will sit beside "
+        "your analysis. Do NOT produce your own parallel estimates for those "
+        "quantities — where your schema asks for one, state that the "
+        "specialist report establishes it. Spend your effort on what they do "
+        "not cover: the market boundary and framing, buyers and their "
+        "alternatives, competitive dynamics, funding environment, and "
+        "regulatory context.\n")
 
 
 class MarketAnalyst(Agent):
@@ -30,10 +63,19 @@ class MarketAnalyst(Agent):
         self.corpus = None
 
     # ------------------------------------------------------------------
-    def build_queries(self, deck: Dict[str, Any], max_queries: int) -> List[str]:
-        """Prefer the deck agent's agenda; top it up with a dedicated pass."""
+    def build_queries(self, deck: Dict[str, Any], max_queries: int,
+                      covered: Sequence[str] = ()) -> List[str]:
+        """Prefer the deck agent's agenda; top it up with a dedicated pass.
+
+        `covered` names the specialist reports that already ran: queries
+        about their quantities are dropped, because researching them again
+        in parallel is what the external audit called "two partially
+        parallel systems" — the specialists' figures arrive with their own
+        citations, and a second, looser search for the same number can only
+        muddy the evidence."""
         agenda = (deck.get("research_agenda") or {}).get("search_queries") or []
         queries = [q for q in agenda if isinstance(q, str) and len(q) > 8]
+        queries = self._drop_covered(queries, covered, deck)
         if len(queries) >= max_queries:
             return queries[:max_queries]
 
@@ -54,11 +96,43 @@ class MarketAnalyst(Agent):
         for q in extra:
             if isinstance(q, str) and q not in queries:
                 queries.append(q)
-        return queries[:max_queries] or [f"{category} market size competitors {company}"]
+        queries = self._drop_covered(queries, covered, deck)
+        return queries[:max_queries] or [self._fallback_query(deck, covered)]
+
+    @staticmethod
+    def _fallback_query(deck: Dict[str, Any], covered: Sequence[str]) -> str:
+        company = (deck.get("company") or {}).get("name") or "the company"
+        category = (deck.get("market") or {}).get("category") or "its market"
+        if covered:
+            # The sized quantities are the specialists' job now; what is
+            # left to establish is the boundary itself.
+            return (f"{category} market boundary adjacent segments "
+                    f"buyer alternatives {company}")
+        return f"{category} market size competitors {company}"
+
+    def _drop_covered(self, queries: List[str],
+                      covered: Sequence[str],
+                      deck: Dict[str, Any]) -> List[str]:
+        if not covered:
+            return queries
+        vocab: List[str] = []
+        for key in covered:
+            vocab.extend(_COVERED_VOCAB.get(str(key).strip().lower(), ()))
+        if not vocab:
+            return queries
+        kept, dropped = [], []
+        for q in queries:
+            (dropped if any(w in q.lower() for w in vocab) else kept).append(q)
+        if dropped:
+            self.emit(f"skipped {len(dropped)} quer(y/ies) already covered "
+                      f"by specialist reports: "
+                      + "; ".join(d[:60] for d in dropped))
+        return kept
 
     # ------------------------------------------------------------------
     def run(self, deck: Dict[str, Any], *, max_queries: int = 8,
-            max_results: int = 8, corpus: Any = None) -> Dict[str, Any]:
+            max_results: int = 8, corpus: Any = None,
+            covered: Sequence[str] = ()) -> Dict[str, Any]:
         """Analyze the market.
 
         When `corpus` is supplied the research phase is skipped entirely and that
@@ -68,7 +142,7 @@ class MarketAnalyst(Agent):
         from ..corpus import gather
 
         if corpus is None:
-            queries = self.build_queries(deck, max_queries)
+            queries = self.build_queries(deck, max_queries, covered=covered)
             self.emit(f"researching with {self.researcher.name}: "
                       f"{len(queries)} queries")
             for q in queries:
@@ -109,6 +183,7 @@ class MarketAnalyst(Agent):
         )
 
         user = MARKET_USER.format(
+            covered_note=covered_note(covered),
             company=company,
             category=market.get("category") or "unspecified",
             geography=market.get("geography") or "unspecified",
@@ -126,6 +201,7 @@ class MarketAnalyst(Agent):
         # replay each other's market analysis.
         out = self.cached_json(
             self.cache_key(
+                covered=sorted(str(c) for c in covered),
                 queries=sorted(queries),
                 backend=self.researcher.name,
                 security=self.policy.mode.value,

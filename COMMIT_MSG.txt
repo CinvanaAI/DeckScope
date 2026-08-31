@@ -1,0 +1,153 @@
+Work the fifth external audit: NDA fail-closed, one-finding comparison, honest bases
+
+P0: --nda refuses to start with a non-local model, before the deck is
+read (exit 4, zero outbound calls, pinned by spy transport); web
+research disabled under NDA in the CLI and the library path; only
+ollama counts as local among CLIs; endpoint locality is parsed
+(urlparse+ipaddress), loopback only - localhost.evil.com and every
+other lookalike refused. README states the enforcement.
+
+P1: the comparison selected the median VALUE of two findings and
+displayed another finding's text - the flagship demo contradicted a
+$6B SAM with evidence saying $6-8B at "6.8x below". One finding is now
+chosen (nearest by ratio), ranges read as ranges (inside = match;
+outside = gap to the nearest bound), and the displayed text, ratio,
+and gap all come from that same finding. Exact scenario pinned.
+
+Also: establishment prose says locations and labels its midpoint
+estimates; lifecycle refuses location-count growth (the demo now
+honestly reads INCOMPLETE 11 of 12); barriers trend is unknown until a
+second vintage; closure accepts a reasoned not-identifiable; the
+fabricated organizations (Report/State/Typical/Average) are dead via
+participle + closed-class rules with real names like Trintech
+preserved; RESEARCH_ENGINE tables regenerated with a self-staleness
+rule; the custom linter learned E702 so it cannot be green while
+hosted Ruff is red; the claims checker runs in CI even when lint
+fails. Full detail in docs/SYSTEM_AUDIT.md (sixth cycle).
+
+Board: all 43 test files swept green (~1,041 tests), lint clean 184
+files, claims checker holds, demo exit 0.
+
+
+--- also in this commit (seventh cycle, product-forward) ---
+
+The structural claim-report join: the scoper's checks_claim_ids now ride
+on every specialist_reports row, and the orchestrator mechanically
+attaches each report's finding, stored id, and remapped sources to the
+audit rows it declared - rendered beside the row as "Independently
+checked by the <specialist> report", never counted among the model's own
+citations. The model-mediated link two audits flagged is now code.
+
+The question pack: a new output format ("questions", alias "agenda") -
+the founder-meeting agenda assembled deterministically from the finished
+comparison. Every question carries the gap that produced it and the
+standard its answer should meet ("A good answer is a number with a
+cohort behind it. 'Strong' is not a number."), and unverified claims
+become questions for the room rather than marks against the company.
+Zero extra model calls.
+
+The demo's top-down fixture states its provenance ("recorded demo
+fixture (authored sample, not a measurement)"), closing the last open
+follow-up - the demo report's only remaining incompleteness is Q10's
+honest refusal, and the header says exactly that.
+
+
+--- also in this commit (eighth cycle, the deliverables slate) ---
+
+Five features, one pass, all built deterministically on the audited
+result:
+
+- --format memo (alias ic): the one-page deal memo - verdict (a
+  withheld verdict stays withheld), the three claims that decide it
+  ordered by materiality, blind spots, one paragraph of the advisor's
+  read labeled as judgment, five questions.
+- --format fixit (alias founder): the founder's fix-it list from the
+  same audit rows, worst first, each item with the evidence the
+  investor side will be holding when they find it.
+- deckscope diff old new: claim-by-claim change log between deck
+  versions - figure changes with ratios, dropped and added claims,
+  moved claims. Extraction reuses DeckAnalyst under the same security
+  screen and NDA gate (--nda fails closed, exit 4, before any deck is
+  read); the comparison itself is code, and the header says extraction
+  nondeterminism can fake a drop+add pair.
+- deckscope batch <dir>: every deck in a folder, continue-on-error,
+  one ranked screening table (best verdict first, withheld verdicts in
+  the middle - unknown is not bad - then fewest contested) as
+  summary.md plus xlsx, or csv without openpyxl.
+- deckscope audit-report <doc> --sources <json>: the citation-audit
+  layer unbundled - any document plus a source list, dangling and
+  quarantined [S#]s flagged with context, unsourced-figure sentences
+  flagged as advisory, caller-provided S-IDs preserved so the audit
+  can't be falsified by renumbering, and a structured pass over .json
+  reports catches bracketless source_ids references. No AI call.
+
+Plus the refactor beachhead the audits asked for: deckscope/commands/
+- new verbs are born there (all three new ones live in it), cli.py
+keeps parsing and dispatch, existing commands migrate as touched. The
+package docstring states the rule and a test pins it.
+
+22 new tests (tests/test_feature_slate.py). Board: all 44 test files
+green, lint clean 193 files, claims checker holds, demo exit 0,
+identity sweep clean.
+
+
+--- also in this commit (ninth cycle, the reverse flow) ---
+
+deckscope improve: the audit run backwards - a deck (or a .txt/.md of
+raw founder notes: the loader already ingests those, so
+build-from-scratch is the same command) in, the strongest version that
+survives this tool's own audit out. One schema-validated model call
+(the Deck Reviser); everything else is code.
+
+The enforcement layer is the feature, and it is deterministic:
+- citations outside the run's own bibliography are stripped by the
+  same audit_fragment the pipeline trusts, and the blueprint says how
+  many;
+- a new or revised line asserting a figure with no surviving source is
+  demoted to a visible founder-input slot - DeckScope invents nothing
+  in either direction, and a deck-builder that fabricates traction
+  would be worse than no deck-builder;
+- a kept line that token-matches a contested claim is flagged "kept
+  against the evidence (C#)" - keep it knowingly, because an
+  investor-side run of this same tool will contest it;
+- founder-input lines always carry a visible [BRACKETED SLOT].
+
+Output: slide-by-slide blueprint markdown with per-line provenance
+marks, a cut list, the "only you can fill these" list with answer
+standards, and an evidence appendix to carry into the data room;
+--pptx also writes an editable starting deck. --demo runs the whole
+reverse flow offline on the packaged sample deck with a fixture
+deliberately authored to trip both guards, so the demo shows the
+guardrails working rather than idle. --nda fails closed (exit 4)
+before anything is read, and forces research off. improve lives in
+deckscope/commands/ per the beachhead rule.
+
+12 new tests (tests/test_improve.py). Board: all 45 test files green,
+lint clean 195 files, claims checker holds, demo exit 0.
+
+
+--- also in this commit (tenth cycle, closing a declared-open debt) ---
+
+The MarketAnalyst shrink: with market_reports on, the specialists that
+actually produced reports are passed to the analyst as `covered` - its
+queries about their quantities are dropped at the query level (with an
+emitted line naming what was skipped; a silently narrowed search would
+be a hidden behavior change), its prompt forbids parallel estimates
+and redirects effort to the boundary/framing/buyers/funding/regulation
+work the specialists do not cover, the all-covered fallback query asks
+about the market boundary itself, and the cache key carries the
+covered set. The un-staged pipeline is untouched and pinned so. A
+vocabulary-coverage test reads the report-type keys out of
+marketreport/reports.py, so a new report type cannot ship without its
+shrink vocabulary. This closes the "two partially parallel systems"
+remainder BUILD.md carried since the staged integration.
+
+Still declared open, now precisely (BUILD.md): mock reader recall on 4
+of the 6 graded cases - an investigation into the fixture's generic
+reading (legal instruments are not figures; age bands split from their
+rates; demographics recalls 0% undiagnosed), explicitly not to be
+closed by teaching the fixture the test answers.
+
+6 new tests (tests/test_market_shrink.py). Board: all 46 test files
+green, lint clean 196 files, claims checker holds, demo exit 0,
+identity sweep clean.

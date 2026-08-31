@@ -229,7 +229,9 @@ class M4_Concentration(unittest.TestCase):
 
         form = shape({"1-4": 20_000, "5-9": 3_000})
         self.assertEqual(23_000, form.establishments)
-        self.assertIn("sole operators", form.reading)
+        # "locations", never "operators"/"firms": the fifth audit's rule —
+        # this data counts places, and one company can own many of them.
+        self.assertIn("sole-operator locations", form.reading)
 
     def test_a_concentrated_market_reads_as_concentrated(self):
         conc = from_shares([0.6, 0.3, 0.05, 0.05])
@@ -289,13 +291,17 @@ class M5_SaturationAndLifecycle(unittest.TestCase):
 
 class M6_Barriers(unittest.TestCase):
 
-    def test_barriers_carry_a_level_and_a_trend(self):
-        """Copied from IBISWorld, which reports both. A level with a direction
-        beats either alone and beats a paragraph."""
+    def test_barriers_carry_a_level_and_an_honest_trend(self):
+        """Copied from IBISWorld, which reports both — but a direction needs
+        two vintages of the same series, and only one is read. The fifth
+        audit's rule: "steady" is a specific empirical claim, and ignorance
+        must not wear it. The trend is "unknown" until a second vintage
+        exists."""
         graded = barriers(conc=Concentration(hhi=3_000.0),
                           startup_cost=2_000_000.0, licences=2)
         self.assertEqual("high", graded.level)
-        self.assertIn(graded.trend, ("increasing", "steady", "decreasing"))
+        self.assertEqual("unknown", graded.trend)
+        self.assertIn("unknown", graded.because)
 
     def test_a_fragmented_cheap_unlicensed_market_is_low(self):
         graded = barriers(conc=Concentration(hhi=300.0), startup_cost=15_000.0)
@@ -380,10 +386,15 @@ class M8_DemoReport(unittest.TestCase):
         self.assertGreaterEqual(answers.coverage()["answered"], 10)
 
     def test_the_derived_agents_actually_receive_what_they_need(self):
-        """The whole point of the dependency graph, exercised end to end."""
+        """The dependency graph end to end. Q10 is deliberately NOT answered
+        in the demo any more: its only growth input counts establishments,
+        and a life-cycle stage from location-count growth describes the
+        wrong quantity (fifth audit) — the refusal must say so."""
         answers = self._demo()
         self.assertTrue(answers.get("Q9").answered, "barriers needs Q5/Q7/Q8")
-        self.assertTrue(answers.get("Q10").answered, "lifecycle needs Q4/Q5")
+        q10 = answers.get("Q10")
+        self.assertFalse(q10.answered)
+        self.assertIn("wrong quantity", q10.unanswered_because)
 
     def test_barriers_no_longer_cite_a_concentration_nobody_measured(self):
         """Barriers used to grade off the pseudo-HHI. With firm concentration
@@ -394,11 +405,16 @@ class M8_DemoReport(unittest.TestCase):
         reasons = " ".join(answers.get("Q9").detail.get("reasons") or [])
         self.assertNotIn("HHI", reasons)
 
-    def test_the_lifecycle_stage_follows_from_the_growth_figure(self):
-        answers = self._demo()
-        stage = answers.get("Q10").detail["stage"]
-        self.assertIn(stage, ("emerging", "growth", "mature", "declining"))
-        self.assertIn("%", answers.get("Q10").detail["because"])
+    def test_the_lifecycle_stage_follows_from_revenue_basis_growth(self):
+        """The stage mapping itself still works — for growth measured in the
+        RIGHT quantity. The demo path (establishment-count growth) now
+        refuses, pinned above; this exercises the function on a revenue
+        basis."""
+        stage, because = lifecycle(0.20, None)
+        self.assertEqual("growth", stage)
+        self.assertIn("%", because)
+        stage, _ = lifecycle(-0.03, None)
+        self.assertEqual("declining", stage)
 
     def test_every_demo_figure_is_labelled_in_the_report_itself(self):
         """A demo number must never be quotable as a measurement. The label
@@ -454,8 +470,18 @@ class M8_DemoReport(unittest.TestCase):
         closure = answers.closure()
         self.assertFalse(closure["complete"])
         body = text(answers)
-        self.assertNotIn("INCOMPLETE", body)
-        self.assertIn("not answered in it", body)
+        # Q10 is now an honest refusal, so a standing question IS unanswered
+        # and the header must say INCOMPLETE — 11 of 12. (The prior pin
+        # asserted no INCOMPLETE because all twelve then answered; the count
+        # changed, the honesty rule did not.)
+        self.assertIn("INCOMPLETE", body)
+        self.assertIn("11 of 12", body)
+        # Every follow-up now closes (the demo fixture states its own
+        # provenance; not-identifiable closes CR4), so the only remaining
+        # incompleteness is Q10's honest refusal — and the note says
+        # exactly that, and nothing else.
+        self.assertIn("1 of 12 standing questions are unanswered", body)
+        self.assertNotIn("not answered in it", body)
 
     def test_the_two_sizings_are_compared(self):
         """The reason both were built, and it had never once run."""

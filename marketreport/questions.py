@@ -470,12 +470,27 @@ class AnswerSet:
             return True
 
         node: Any = answer
+        parent: Any = None
         for part in rest.split("."):
+            parent = node
             if isinstance(node, dict):
                 node = node.get(part)
             else:
                 node = getattr(node, part, None)
             if node is None:
+                # A reasoned "not identifiable" IS an answer to the
+                # follow-up. The fifth audit's product-level contradiction:
+                # the report correctly established that CR4 cannot be known
+                # from establishment data, then its own completeness gate
+                # held the report hostage for the number it had just
+                # explained cannot exist. An absence is closed when the
+                # containing record ESTABLISHES it — a stated basis of
+                # not-identifiable with a reason — and open when the field
+                # is merely empty.
+                if (isinstance(parent, dict)
+                        and str(parent.get("basis", "")) == "not-identifiable"
+                        and parent.get("because")):
+                    return True
                 return False
         # An empty list, dict or string is a field that exists and says nothing.
         if isinstance(node, (list, dict, str)) and not node:

@@ -277,7 +277,12 @@ jobs:
       # Documented claims re-derived from the tree: cost multiples, storage
       # locations, gate language, surface parity. Three audits found this
       # drift class by hand; this makes it a red build instead.
+      # `if: always()` because a lint failure earlier in the job must not
+      # hide a claims failure — the fifth audit saw exactly that: two ruff
+      # findings skipped this step, so the claims verdict for the commit
+      # simply did not exist.
       - name: Documented claims must match the code
+        if: always()
         run: |
           pip install -e .
           python scripts/check_claims.py

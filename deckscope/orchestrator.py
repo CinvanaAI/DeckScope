@@ -235,9 +235,13 @@ class Pipeline:
 
         market_agent = MarketAnalyst(self.provider, self.researcher,
                                      policy=policy, **kw)
+        # The specialists that actually produced reports shrink the analyst's
+        # job to the boundary/context work they do not cover — the "two
+        # partially parallel systems" gap, closed at the query level.
+        covered = sorted({b.specialist for (b, _p, _s) in report_outcomes})
         market = market_agent.run(deck, max_queries=cfg.research.max_queries,
                                   max_results=cfg.research.max_results,
-                                  corpus=corpus)
+                                  corpus=corpus, covered=covered)
 
         if report_outcomes:
             # One registry for the run. The stored panels keep their own
@@ -252,6 +256,8 @@ class Pipeline:
                                       [""] * len(panels)):
                     block.append({
                         "checks_deck_claim": brief.because or "(unrecorded)",
+                        "checks_claim_ids": list(
+                            getattr(brief, "checks_claim_ids", ()) or ()),
                         "specialist": brief.specialist,
                         "measure": getattr(panel, "measure_label", "")
                                    or getattr(panel, "measure", ""),
@@ -381,6 +387,13 @@ class Pipeline:
             comparisons[lens.value] = synth.run(deck, market, lens=lens,
                                                 valid_source_ids=valid_ids,
                                                 sources_block=sources_block)
+            # THE STRUCTURAL JOIN two audits asked for: the scoper declared
+            # which claim ids each report checks; every matching audit row
+            # is annotated by CODE with that report's finding, stored id,
+            # and remapped sources — rendered beside the row, never counted
+            # as the model's own citations.
+            _join_reports_to_claims(comparisons[lens.value],
+                                    market.get("specialist_reports") or [])
             # The partner's read: a SEPARATE call, after validation, fed the
             # audited comparison — labelled judgment that renders fenced,
             # so opinion sits beside the evidence without wearing its badge.
@@ -633,6 +646,41 @@ def analyze(deck: str, *, lens: "str | Lens | List[Any]" = "investor",
         return result
     finally:
         pipe.close()
+
+
+def _join_reports_to_claims(comparison: Dict[str, Any],
+                            report_rows: Any) -> None:
+    """Attach each specialist report to the audit rows it declared it checks.
+
+    Deterministic, id-based, additive: rows gain `checked_by_reports`, a
+    list of {specialist, measure, finding, stored_as, source_ids}. The
+    model's own assessment and citations are untouched — this is the
+    report's evidence standing NEXT to the row, joined by code rather than
+    by the synthesist noticing (the model-mediated link two audits flagged).
+    """
+    if not isinstance(report_rows, list):
+        return
+    by_claim: Dict[str, list] = {}
+    for row in report_rows:
+        if not isinstance(row, dict):
+            continue
+        for cid in (row.get("checks_claim_ids") or []):
+            by_claim.setdefault(str(cid).upper(), []).append({
+                "specialist": row.get("specialist", ""),
+                "measure": row.get("measure", ""),
+                "finding": row.get("finding", ""),
+                "stored_as": row.get("stored_as", ""),
+                "source_ids": sorted({s for f in (row.get("figures") or [])
+                                      for s in (f.get("source_ids") or [])}),
+            })
+    if not by_claim:
+        return
+    for audit_row in (comparison.get("claim_audit") or []):
+        if not isinstance(audit_row, dict):
+            continue
+        attached = by_claim.get(str(audit_row.get("id", "")).upper())
+        if attached:
+            audit_row["checked_by_reports"] = attached
 
 
 def _slug(name: str) -> str:

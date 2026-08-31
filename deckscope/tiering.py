@@ -48,9 +48,17 @@ DEFAULT_TIERS: Dict[str, str] = {
     JUDGE: "best",
 }
 
-#: Provider names that run on the user's own hardware. Only these may receive
-#: deck content when NDA mode is on.
+#: Provider names that CAN run on the user's own hardware. Membership here
+#: is necessary, not sufficient — `is_local` decides per configuration:
+#: an openai_compatible endpoint must be loopback, and a `cli` preset must
+#: be a genuinely on-device runtime (ollama), because Claude Code, Codex
+#: and Gemini CLIs are hosted subscriptions whatever directory they run in
+#: (fifth external audit).
 LOCAL_PROVIDERS = {"mock", "manual", "openai_compatible", "cli"}
+
+#: CLI presets that execute the model on-device. Everything else in the cli
+#: backend proxies a hosted service.
+LOCAL_CLI_PRESETS = {"ollama"}
 
 
 class NDAViolation(RuntimeError):
@@ -102,20 +110,54 @@ def _tier_chain(tier: str) -> List[str]:
 
 
 def is_local(provider: ProviderConfig) -> bool:
-    """Whether this connection keeps data on the user's machine.
+    """Whether this connection keeps data ON THE USER'S MACHINE.
 
-    `openai_compatible` counts only when pointed at a loopback or private
-    address — it is the backend people use for Ollama and LM Studio, and also
-    the one they use for hosted gateways, so the name alone proves nothing.
+    Rewritten after the fifth external audit demonstrated three ways the old
+    answer was wrong:
+
+    - Every `cli` provider counted as local, but Claude Code, Codex and
+      Gemini CLIs proxy hosted subscriptions — sandboxing removes tools, it
+      does not move the model on-device. Only an on-device runtime (ollama)
+      qualifies now.
+    - The endpoint check was a substring regex, so `localhost.evil.com`,
+      `127.0.0.1.evil.com`, `10.example.com` and `192.168.evil.com` all
+      passed as local. The hostname is now PARSED (urlparse + ipaddress),
+      never pattern-matched.
+    - LAN addresses counted as "the user's machine". Traffic to 192.168.x.x
+      has left the machine; under a promise that reads "nothing leaves your
+      machine", only loopback qualifies.
+
+    `manual` stays local because the tool itself transmits nothing — a
+    human carries each prompt, and the human is the boundary.
     """
     name = (provider.name or "").strip().lower()
-    if name in ("mock", "manual", "cli"):
+    if name in ("mock", "manual"):
         return True
+    if name == "cli":
+        preset = str((provider.extra or {}).get("preset", "")).strip().lower()
+        return preset in LOCAL_CLI_PRESETS
     if name == "openai_compatible":
-        base = (provider.base_url or "").lower()
-        return bool(re.search(r"//(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0|"
-                              r"192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)", base))
+        return _is_loopback_url(provider.base_url or "")
     return False
+
+
+def _is_loopback_url(url: str) -> bool:
+    """True only for a parsed loopback host — never for a lookalike."""
+    import ipaddress
+    from urllib.parse import urlparse
+
+    try:
+        host = (urlparse(url).hostname or "").strip("[]").lower()
+    except ValueError:
+        return False
+    if not host:
+        return False
+    if host == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False  # a DNS name is not provably this machine
 
 
 class NDAGuard:
