@@ -135,6 +135,10 @@ letter-spacing:-.01em;scroll-margin-top:20px}}
 h3{{font-size:16.5px;margin:26px 0 8px}}
 p{{margin:10px 0}}
 .lede{{color:var(--muted);font-size:14.5px}}
+.demo-notice{{grid-column:1/-1;border:2px solid var(--warn);border-radius:var(--radius);
+padding:16px 20px;background:var(--panel);margin:0 0 4px}}
+.demo-notice strong{{display:block;font-size:18px;line-height:1.35}}
+.demo-notice p{{margin:7px 0 0;font-size:14px}}
 
 /* --- table of contents ------------------------------------------------ */
 nav.toc{{position:sticky;top:28px;font-size:13.5px;line-height:1.5}}
@@ -233,6 +237,13 @@ h2{{page-break-after:avoid}}.claim,.find{{page-break-inside:avoid}}
 a.cite{{background:none;color:var(--ink);border:1px solid var(--line)}}
 .find.unsourced{{border-style:solid}}}}
 </style></head><body><div class="wrap">""")
+
+    if str((result.stats or {}).get("provider", "")).strip().lower() == "mock":
+        add('<aside class="demo-notice" data-demo="mock" aria-label="Synthetic demonstration">'
+            '<strong>Synthetic demonstration — mock provider</strong>'
+            '<p>This report contains fixture-generated analysis. Its claims, comparisons, '
+            'and recommendations illustrate the workflow; they are not verified real-world '
+            'findings or evidence of analysis quality.</p></aside>')
 
     add(f"""<header>
 <div class="eyebrow">{_e(h['lens'])}</div>

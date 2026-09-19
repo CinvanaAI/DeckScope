@@ -1,0 +1,140 @@
+{
+  "kind": "synthetic demonstration",
+  "provider": "mock",
+  "research_backend": "none",
+  "source_input": "deckscope/examples/sample_deck.md",
+  "notice": "Fixture-generated analysis. These are illustrative workflow outputs, not verified real-world findings or measured analysis quality.",
+  "findings": {
+    "headline": "Two claims are contested by cited evidence (one outright, one partly supported) \u2014 deck states $47B; Independent 2026 estimates put the whole workflow-automation category at $18-24B, not the $45-50B\u2026, the deck omits Microsoft Power Automate arriving free inside E5 and 1 other gap, and two further claims could not be checked either way. Eight questions to resolve before this can be judged.",
+    "contested": [
+      {
+        "kind": "contested",
+        "text": "The workflow automation market is $47B, growing at 23% CAGR",
+        "why": "Use the evidence range as the working number and read the gap as a signal about how the deck was assembled.",
+        "delta": "deck states $47B; Independent 2026 estimates put the whole workflow-automation category at $18-24B, not the $45-50B figures circulating in vendor-sponsored reports.",
+        "severity": "high",
+        "evidence_quality": "strong",
+        "source_ids": [
+          "S1"
+        ],
+        "claim_id": "C1",
+        "assessment": "contradicted"
+      },
+      {
+        "kind": "contested",
+        "text": "Average contract value: $28,000. Gross margin: 78%",
+        "why": "Consistent with the evidence retrieved.",
+        "delta": "deck states $28,000.; Products that run an LLM planner on every workflow execution report gross margins of 55-68% once inference is loaded into COGS, against 78-85% for\u2026",
+        "severity": "medium",
+        "evidence_quality": "moderate",
+        "source_ids": [
+          "S4"
+        ],
+        "claim_id": "C4",
+        "assessment": "partially-supported"
+      }
+    ],
+    "omissions": [
+      {
+        "kind": "omission",
+        "text": "Microsoft Power Automate arriving free inside E5",
+        "why": "The marginal cost of the bundled option is zero for a buyer already paying for E5.",
+        "delta": "",
+        "severity": "high",
+        "evidence_quality": "",
+        "source_ids": [
+          "S2"
+        ],
+        "claim_id": "",
+        "assessment": ""
+      },
+      {
+        "kind": "omission",
+        "text": "Buyer budgets are substitution, not net-new",
+        "why": "A TAM built by counting companies overstates the reachable market when the buyer must first stop paying someone else.",
+        "delta": "",
+        "severity": "high",
+        "evidence_quality": "",
+        "source_ids": [
+          "S6"
+        ],
+        "claim_id": "",
+        "assessment": ""
+      }
+    ],
+    "unverified": [
+      {
+        "kind": "unverified",
+        "text": "SAM: $6B (mid-market North America)",
+        "why": "Ask the founder directly; nothing retrieved settles it.",
+        "delta": "deck states $6B; Independent 2026 estimates put the whole workflow-automation category at $18-24B, not the $45-50B figures circulating in vendor-sponsored reports.",
+        "severity": "low",
+        "evidence_quality": "none",
+        "source_ids": [],
+        "claim_id": "C2",
+        "assessment": "unverifiable"
+      },
+      {
+        "kind": "unverified",
+        "text": "$1.2M pipeline",
+        "why": "Ask the founder directly; nothing retrieved settles it.",
+        "delta": "No evidence was retrieved that speaks to this figure.",
+        "severity": "low",
+        "evidence_quality": "none",
+        "source_ids": [],
+        "claim_id": "C6",
+        "assessment": "unverifiable"
+      }
+    ],
+    "holds": [
+      {
+        "kind": "holds",
+        "text": "$2,000/month platform fee plus usage",
+        "why": "Consistent with the evidence retrieved.",
+        "delta": "",
+        "severity": "low",
+        "evidence_quality": "moderate",
+        "source_ids": [
+          "S3"
+        ],
+        "claim_id": "C3",
+        "assessment": "supported"
+      },
+      {
+        "kind": "holds",
+        "text": "18% month-over-month growth, four months running",
+        "why": "Consistent with the evidence retrieved.",
+        "delta": "",
+        "severity": "low",
+        "evidence_quality": "moderate",
+        "source_ids": [
+          "S5"
+        ],
+        "claim_id": "C5",
+        "assessment": "supported"
+      }
+    ],
+    "next_steps": [
+      "Reframe market slide around the $3-5B serviceable slice",
+      "Add a slide addressing Power Automate directly",
+      "Disclose retention and CAC payback",
+      "Ask the founder: What is net revenue retention on the first 11 customers?",
+      "Ask the founder: How many deals were competitive against Power Automate, and what happened?",
+      "Ask the founder: Is inference cost inside the 78% margin?",
+      "Verify or refute \u201cSAM: $6B (mid-market North America)\u201d \u2014 the research found nothing either way.",
+      "Verify or refute \u201c$1.2M pipeline\u201d \u2014 the research found nothing either way."
+    ],
+    "evidence_state": "2 of 2 contested points cite retrieved evidence; 6 of 6 sources were used.",
+    "evidence_too_thin": false,
+    "evidence_reason": "ok",
+    "counts": {
+      "contested": 2,
+      "omissions": 2,
+      "unverified": 2,
+      "holds": 2,
+      "claims_examined": 6,
+      "contested_with_evidence": 2
+    },
+    "vertical": "deck"
+  }
+}
