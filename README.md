@@ -1,6 +1,6 @@
 # DeckScope
 
-Turn a document's claims into a report you can check: what the evidence contests, what the document leaves out, what remains unknown, and what to ask next.
+Turn a document's claims into a traceable report you can check: what the evidence contests, what the document leaves out, what remains unknown, and what to ask next.
 
 DeckScope is an exploratory evidence engine with routes for pitch decks, scoped market reports, grant proposals, and nonprofit filings. It keeps claims, source records, arithmetic, and unanswered questions visible in the output. The first example below follows a pitch deck all the way to a report.
 
@@ -23,7 +23,11 @@ python -m deckscope demo --out output --format html md json
 
 Open `output/acme_flow_investor.html`. The same run writes a Markdown report and a full JSON record. It uses the bundled sample, requires no API key, and makes no live research call.
 
+The [provider registry](deckscope/providers/registry.py) ships 11 backends: mock, manual, Anthropic, OpenAI, OpenAI-compatible, OpenRouter, Groq, Gemini, Bedrock, MCP, and CLI. Dependencies and credentials depend on the selected backend.
+
 For a document of your own, start with the [quick start](docs/QUICKSTART.md) and [complete project guide](PROJECT-GUIDE.md). They cover provider selection, research backends, additional document routes, privacy controls, and optional output formats.
+
+**Data leaving your machine:** hosted AI services receive the document text you send for analysis. When web research is enabled, deck-derived search queries go to the configured search service. A local model alone does not make web research local; review the guide's NDA controls before using confidential documents.
 
 ## What makes the report inspectable
 
