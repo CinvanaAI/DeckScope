@@ -1,5 +1,10 @@
 # What this is for
 
+> Design intent and research ambitions. The comparisons and broad goals below are
+> the project’s thesis, not a measured claim of superiority or a verified ability
+> to reproduce any bank’s work. For the demonstrated offline scope and its limits,
+> see the [README](README.md) and [worked evidence trace](docs/READING-THE-DEMO.md).
+
 The one-page version. Detailed build requirements live in [BUILD.md](BUILD.md);
 what the market report must contain lives in
 [market-corpus/SCHEMA.md](market-corpus/SCHEMA.md).

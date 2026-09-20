@@ -1,6 +1,6 @@
 # Quick start
 
-Fifteen minutes, no jargon. If you've already installed DeckScope, start at step 2.
+Start with the offline example. If you've already installed DeckScope, start at step 2.
 
 ---
 
@@ -43,22 +43,27 @@ deckscope setup
 
 Six questions:
 
-1. **Which AI should do the analysis?** If unsure, pick Claude. If you'd rather not
-   create an account, pick the copy-paste option or an AI app already on your computer.
-2. **Which model?** The middle option is right for almost everyone.
-3. **How should it research the market?** Tavily's free tier takes about a minute to set
-   up and is what makes the market half of the report worth reading.
+1. **Which AI should do the analysis?** Choose a service you have configured, a
+   local compatible endpoint, or the manual copy-paste route. Provider availability
+   and credentials vary; the offline demo uses the mock provider.
+2. **Which model?** Choose one your selected provider supports. A listed model is
+   not evidence that it was evaluated for your documents.
+3. **How should it research the market?** A configured web backend receives search
+   queries derived from the document. Review the [privacy controls](../PROJECT-GUIDE.md)
+   before using confidential input; a local model does not make web search local.
 4. **Whose point of view?** Investor, founder, or neutral analyst. You can change this
    per run.
 5. **Which files should it produce?** Type numbers separated by commas.
-6. **How strict should security be?** Balanced is the right default.
+6. **How strict should security be?** Review the offered modes and the NDA controls
+   for your document and provider.
 
-Then it tests everything and tells you what, if anything, is broken.
+Setup checks the selected configuration. A successful connection does not evaluate
+research accuracy or the completeness of a report.
 
-**About API keys.** These are the passwords that let DeckScope use an AI service. You
-create one on the provider's website, paste it once, and DeckScope stores it in a file
-only you can read. It never goes into the settings file, so you can share that safely.
-Costs are usually a few cents per deck.
+**About API keys.** These authorize calls to the selected service. Treat local
+credential files and environment files as secrets; filesystem protections depend
+on your operating system. Review configuration before sharing it. Hosted providers
+and research services can charge for calls; check their current terms before a live run.
 
 ---
 
@@ -71,7 +76,9 @@ deckscope app
 ```
 
 A window opens in your browser. Drag your deck onto it, choose what you want, press
-**Analyze this deck**. Everything runs on your own computer.
+**Analyze this deck**. The interface runs locally; hosted providers receive the
+document text sent for analysis, and enabled web research sends search queries
+to its configured backend.
 
 The command line way:
 
@@ -125,10 +132,11 @@ deckscope run deck.pdf --format docx pdf
 **Run a panel of AIs that argue with each other:**
 
 ```bash
-deckscope panel deck.pdf --panel anthropic:claude-sonnet-5 openai:gpt-5.2
+deckscope panel deck.pdf --panel anthropic:YOUR_MODEL openai:YOUR_MODEL
 ```
 
-Where two independent models disagree is where your own diligence should start.
+Replace the model placeholders with identifiers supported by your configured accounts.
+Disagreement is a lead to investigate, not an independent check of the underlying facts.
 
 **Check everything still works:**
 

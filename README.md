@@ -21,6 +21,8 @@ python -m pip install -e .
 python -m deckscope demo --out output --format html md json
 ```
 
+Follow the [worked claim-to-source trace](docs/READING-THE-DEMO.md) to inspect why C1 is grouped as contested.
+
 Open `output/acme_flow_investor.html`. The same run writes a Markdown report and a full JSON record. It uses the bundled sample, requires no API key, and makes no live research call.
 
 The [provider registry](deckscope/providers/registry.py) ships 11 backends: mock, manual, Anthropic, OpenAI, OpenAI-compatible, OpenRouter, Groq, Gemini, Bedrock, MCP, and CLI. Dependencies and credentials depend on the selected backend.

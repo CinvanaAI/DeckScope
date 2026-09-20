@@ -1,0 +1,33 @@
+{
+  "synthetic": true,
+  "live_research_calls": 0,
+  "counts": {
+    "contested": 2,
+    "omissions": 2,
+    "unverified": 2,
+    "holds": 2,
+    "claims_examined": 6,
+    "contested_with_evidence": 2
+  },
+  "trace": {
+    "claim": {
+      "id": "C1",
+      "claim": "The workflow automation market is $47B, growing at 23% CAGR",
+      "assessment": "contradicted",
+      "delta": "deck states $47B; Independent 2026 estimates put the whole workflow-automation category at $18-24B, not the $45-50B figures circulating in vendor-sponsored reports.",
+      "source_ids": [
+        "S1"
+      ]
+    },
+    "evidence": [
+      {
+        "sid": "S1",
+        "title": "Workflow automation category sizing, independent composite 2026",
+        "snippet": "Independent 2026 estimates put the whole workflow-automation category at $18-24B, not the $45-50B figures circulating in vendor-sponsored reports. The larger numbers are 2030 projections that roll legacy RPA seats, iPaaS spend and agent platforms into a single total. The slice a mid-market agentic tool can realistically serve is estimated at $3-5B today. Category growth is 16-19% annually; the 23%+ CAGR sometimes quoted is drawn from the RPA sub-segment during its 2019-2022 peak and has not been observed since.",
+        "backend": "demo_fixture",
+        "status": "cited"
+      }
+    ]
+  },
+  "interpretation": "These are fixture claims and fixture evidence, not established market facts. Counts are computed by the findings layer; the assessment originates in mock analysis."
+}
